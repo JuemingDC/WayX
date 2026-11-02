@@ -1,0 +1,405 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/NobyDa/Script/master/Bahamut/BahamutAnimeAds.js",
+  "sourceSha256": "7be309316b34c0272bdfef7ababd2219e79e3c85d38b525fa97e3ae409c40252",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "7be309316b34c0272bdfef7ababd2219e79e3c85d38b525fa97e3ae409c40252",
+    "operations": [
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 285,
+        "end": 293,
+        "line": 13,
+        "column": 19,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 306,
+        "end": 320,
+        "line": 13,
+        "column": 40,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 433,
+        "end": 471,
+        "line": 17,
+        "column": 18,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$task",
+        "access": "read",
+        "start": 1411,
+        "end": 1416,
+        "line": 59,
+        "column": 14,
+        "members": [
+          "$task"
+        ]
+      },
+      {
+        "api": "$task.fetch",
+        "access": "call",
+        "start": 1439,
+        "end": 1459,
+        "line": 60,
+        "column": 5,
+        "members": [
+          "$task",
+          "fetch"
+        ]
+      },
+      {
+        "api": "$httpClient",
+        "access": "read",
+        "start": 1642,
+        "end": 1653,
+        "line": 65,
+        "column": 14,
+        "members": [
+          "$httpClient"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 1676,
+        "end": 1710,
+        "line": 66,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "$request",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 2,
+    "branches": 2,
+    "reason": "pure source-host specialization"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "ae61f5dce987651f53e6865afbd35dd0e2d2a2ce94c1cf6ac729fc4c32d594ba",
+        "operations": [
+          {
+            "id": "read:285",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 285,
+              "end": 293,
+              "line": 13,
+              "column": 19,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:306",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 306,
+              "end": 320,
+              "line": 13,
+              "column": 40,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:433",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 433,
+              "end": 471,
+              "line": 17,
+              "column": 18,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1408",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$task.fetch",
+              "start": 1408,
+              "end": 1428,
+              "line": 61,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "Promise or callback",
+            "target": {
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "request-response-error-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "ae61f5dce987651f53e6865afbd35dd0e2d2a2ce94c1cf6ac729fc4c32d594ba",
+        "operations": [
+          {
+            "id": "read:285",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 285,
+              "end": 293,
+              "line": 13,
+              "column": 19,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$request",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:306",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 306,
+              "end": 320,
+              "line": 13,
+              "column": 40,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:433",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 433,
+              "end": 471,
+              "line": 17,
+              "column": 18,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1408",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$task.fetch",
+              "start": 1408,
+              "end": 1428,
+              "line": 61,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "Promise or callback",
+            "target": {
+              "api": "$httpClient.<request-method>",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "request-response-error-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$task",
+                "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
+                "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$request",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$request",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "$task",
+            "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
+            "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$request",
+      "reason": "surge: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$request",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "$task",
+      "reason": "surge: QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
+      "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
+    }
+  ]
+}

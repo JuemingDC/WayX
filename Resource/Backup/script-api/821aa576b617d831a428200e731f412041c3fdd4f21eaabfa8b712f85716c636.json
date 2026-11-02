@@ -1,0 +1,299 @@
+{
+  "version": 1,
+  "sourceUrl": "https://rucu6.pages.dev/Scripts/12306.js",
+  "sourceSha256": "0c805290e56a4b557c0ed235ae06a1e5d70025ed3d990036e3f6b8ca44f3a0c3",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "0c805290e56a4b557c0ed235ae06a1e5d70025ed3d990036e3f6b8ca44f3a0c3",
+    "operations": [
+      {
+        "api": "$request.body",
+        "access": "read",
+        "start": 57,
+        "end": 70,
+        "line": 4,
+        "column": 22,
+        "members": [
+          "$request",
+          "body"
+        ]
+      },
+      {
+        "api": "$task",
+        "access": "read",
+        "start": 96,
+        "end": 101,
+        "line": 5,
+        "column": 24,
+        "members": [
+          "$task"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 449,
+        "end": 464,
+        "line": 17,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 477,
+        "end": 506,
+        "line": 19,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 2,
+    "branches": 1,
+    "reason": "pure source-host specialization"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "request": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "d90caab1e1afa6016a55fc557e8347ebaa71503403013ef7cb4df418c09bd25b",
+        "operations": [
+          {
+            "id": "read:57",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 57,
+              "end": 70,
+              "line": 4,
+              "column": 22,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:415",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 415,
+              "end": 444,
+              "line": 18,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "response.body",
+                "canonical": "complete.response.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "d90caab1e1afa6016a55fc557e8347ebaa71503403013ef7cb4df418c09bd25b",
+        "operations": [
+          {
+            "id": "read:57",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 57,
+              "end": 70,
+              "line": 4,
+              "column": 22,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:415",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 415,
+              "end": 444,
+              "line": 18,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "response.body",
+                "canonical": "complete.response.body",
+                "target": "response.body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "response.body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "response.body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "d90caab1e1afa6016a55fc557e8347ebaa71503403013ef7cb4df418c09bd25b",
+        "operations": [
+          {
+            "id": "read:57",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 57,
+              "end": 70,
+              "line": 4,
+              "column": 22,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:415",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 415,
+              "end": 444,
+              "line": 18,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "response.body",
+                "canonical": "complete.response.body",
+                "target": "response.body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "response.body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "response.body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

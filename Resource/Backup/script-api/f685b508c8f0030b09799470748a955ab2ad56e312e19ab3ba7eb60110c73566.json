@@ -1,0 +1,827 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/txsports-ad-clean.js",
+  "sourceSha256": "4e226de5408e8a6fb25bc5ebfd1cb802bc89097d21dc3c1e85c12f3f3d56fab4",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "4e226de5408e8a6fb25bc5ebfd1cb802bc89097d21dc3c1e85c12f3f3d56fab4",
+    "operations": [
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 3935,
+        "end": 3951,
+        "line": 134,
+        "column": 14,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 4282,
+        "end": 4296,
+        "line": 143,
+        "column": 11,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$request.body",
+        "access": "read",
+        "start": 5825,
+        "end": 5838,
+        "line": 188,
+        "column": 15,
+        "members": [
+          "$request",
+          "body"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 6329,
+        "end": 6343,
+        "line": 200,
+        "column": 15,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 9397,
+        "end": 9405,
+        "line": 268,
+        "column": 16,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$response",
+        "access": "read",
+        "start": 9432,
+        "end": 9441,
+        "line": 268,
+        "column": 51,
+        "members": [
+          "$response"
+        ]
+      },
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 9488,
+        "end": 9500,
+        "line": 269,
+        "column": 19,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 9960,
+        "end": 9976,
+        "line": 273,
+        "column": 14,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$response.statusCode",
+        "access": "read",
+        "start": 10135,
+        "end": 10155,
+        "line": 276,
+        "column": 9,
+        "members": [
+          "$response",
+          "statusCode"
+        ]
+      },
+      {
+        "api": "$response.statusCode",
+        "access": "read",
+        "start": 10159,
+        "end": 10179,
+        "line": 276,
+        "column": 33,
+        "members": [
+          "$response",
+          "statusCode"
+        ]
+      },
+      {
+        "api": "$response.bodyBytes",
+        "access": "read",
+        "start": 10210,
+        "end": 10229,
+        "line": 277,
+        "column": 11,
+        "members": [
+          "$response",
+          "bodyBytes"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 11770,
+        "end": 11787,
+        "line": 319,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "source/text observations retained"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "4e226de5408e8a6fb25bc5ebfd1cb802bc89097d21dc3c1e85c12f3f3d56fab4",
+        "operations": [
+          {
+            "id": "read:3935",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 3935,
+              "end": 3951,
+              "line": 134,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:4282",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 4282,
+              "end": 4296,
+              "line": 143,
+              "column": 11,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:5825",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 5825,
+              "end": 5838,
+              "line": 188,
+              "column": 15,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:6329",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 6329,
+              "end": 6343,
+              "line": 200,
+              "column": 15,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9397",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 9397,
+              "end": 9405,
+              "line": 268,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9432",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 9432,
+              "end": 9441,
+              "line": 268,
+              "column": 51,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9488",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 9488,
+              "end": 9500,
+              "line": 269,
+              "column": 19,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9960",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 9960,
+              "end": 9976,
+              "line": 273,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:10135",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.statusCode",
+              "start": 10135,
+              "end": 10155,
+              "line": 276,
+              "column": 9,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.statusCode",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:10159",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.statusCode",
+              "start": 10159,
+              "end": 10179,
+              "line": 276,
+              "column": 33,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.statusCode",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:10210",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.bodyBytes",
+              "start": 10210,
+              "end": 10229,
+              "line": 277,
+              "column": 11,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source bodyBytes as ArrayBuffer with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:11770",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11770,
+              "end": 11787,
+              "line": 319,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              },
+              {
+                "source": "bodyBytes",
+                "canonical": "complete.body.bytes",
+                "target": "bodyBytes",
+                "action": "map",
+                "transform": "exact ArrayBuffer"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "4e226de5408e8a6fb25bc5ebfd1cb802bc89097d21dc3c1e85c12f3f3d56fab4",
+        "operations": [
+          {
+            "id": "read:3935",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 3935,
+              "end": 3951,
+              "line": 134,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              }
+            ]
+          },
+          {
+            "id": "read:4282",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 4282,
+              "end": 4296,
+              "line": 143,
+              "column": 11,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:5825",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 5825,
+              "end": 5838,
+              "line": 188,
+              "column": 15,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:6329",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 6329,
+              "end": 6343,
+              "line": 200,
+              "column": 15,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9397",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 9397,
+              "end": 9405,
+              "line": 268,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9432",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 9432,
+              "end": 9441,
+              "line": 268,
+              "column": 51,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9488",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 9488,
+              "end": 9500,
+              "line": 269,
+              "column": 19,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9960",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 9960,
+              "end": 9976,
+              "line": 273,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              }
+            ]
+          },
+          {
+            "id": "read:10135",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.statusCode",
+              "start": 10135,
+              "end": 10155,
+              "line": 276,
+              "column": 9,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.status",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:10159",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.statusCode",
+              "start": 10159,
+              "end": 10179,
+              "line": 276,
+              "column": 33,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.status",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:10210",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.bodyBytes",
+              "start": 10210,
+              "end": 10229,
+              "line": 277,
+              "column": 11,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source bodyBytes as ArrayBuffer with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:11770",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11770,
+              "end": 11787,
+              "line": 319,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              },
+              {
+                "source": "bodyBytes",
+                "canonical": "complete.body.bytes",
+                "target": "body",
+                "action": "map",
+                "transform": "exact ArrayBuffer -> Uint8Array"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "headers-shape",
+            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+          },
+          {
+            "api": "binary/text",
+            "reason": "Simultaneous source text and binary views need a decoding contract",
+            "solution": "Convert a binary-only or text-only program, or verify the exact codec and empty-body rules"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "headers-shape",
+      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+    },
+    {
+      "api": "binary/text",
+      "reason": "surge: Simultaneous source text and binary views need a decoding contract",
+      "solution": "Convert a binary-only or text-only program, or verify the exact codec and empty-body rules"
+    }
+  ]
+}

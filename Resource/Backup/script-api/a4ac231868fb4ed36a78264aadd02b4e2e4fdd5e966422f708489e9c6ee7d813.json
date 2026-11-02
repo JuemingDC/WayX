@@ -1,0 +1,706 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/qq-news.js",
+  "sourceSha256": "98b921f278eae3f4d99751a35c2b0c867b9716bd20713da14859f4033f8c7394",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "98b921f278eae3f4d99751a35c2b0c867b9716bd20713da14859f4033f8c7394",
+    "operations": [
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 10,
+        "end": 22,
+        "line": 1,
+        "column": 11,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$request.method",
+        "access": "read",
+        "start": 37,
+        "end": 52,
+        "line": 2,
+        "column": 14,
+        "members": [
+          "$request",
+          "method"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 59,
+        "end": 73,
+        "line": 3,
+        "column": 6,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 133,
+        "end": 142,
+        "line": 5,
+        "column": 5,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 169,
+        "end": 183,
+        "line": 8,
+        "column": 23,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 216,
+        "end": 270,
+        "line": 11,
+        "column": 5,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 1296,
+        "end": 1345,
+        "line": 40,
+        "column": 9,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 1567,
+        "end": 1586,
+        "line": 54,
+        "column": 1,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 1967,
+        "end": 1981,
+        "line": 69,
+        "column": 21,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 1992,
+        "end": 2049,
+        "line": 70,
+        "column": 9,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "98b921f278eae3f4d99751a35c2b0c867b9716bd20713da14859f4033f8c7394",
+        "operations": [
+          {
+            "id": "read:10",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 10,
+              "end": 22,
+              "line": 1,
+              "column": 11,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:37",
+            "rule": "request.method",
+            "kind": "context",
+            "source": {
+              "api": "$request.method",
+              "start": 37,
+              "end": 52,
+              "line": 2,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.method",
+            "value": "String",
+            "target": {
+              "api": "$request.method",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:59",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 59,
+              "end": 73,
+              "line": 3,
+              "column": 6,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:133",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 133,
+              "end": 142,
+              "line": 5,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:169",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 169,
+              "end": 183,
+              "line": 8,
+              "column": 23,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:216",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 216,
+              "end": 270,
+              "line": 11,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1296",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 1296,
+              "end": 1345,
+              "line": 40,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1567",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 1567,
+              "end": 1586,
+              "line": 54,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1967",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 1967,
+              "end": 1981,
+              "line": 69,
+              "column": 21,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1992",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 1992,
+              "end": 2049,
+              "line": 70,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "98b921f278eae3f4d99751a35c2b0c867b9716bd20713da14859f4033f8c7394",
+        "operations": [
+          {
+            "id": "read:10",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 10,
+              "end": 22,
+              "line": 1,
+              "column": 11,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:37",
+            "rule": "request.method",
+            "kind": "context",
+            "source": {
+              "api": "$request.method",
+              "start": 37,
+              "end": 52,
+              "line": 2,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.method",
+            "value": "String",
+            "target": {
+              "api": "$request.method",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:59",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 59,
+              "end": 73,
+              "line": 3,
+              "column": 6,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:133",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 133,
+              "end": 142,
+              "line": 5,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:169",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 169,
+              "end": 183,
+              "line": 8,
+              "column": 23,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:216",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 216,
+              "end": 270,
+              "line": 11,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "call:1296",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 1296,
+              "end": 1345,
+              "line": 40,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "call:1567",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 1567,
+              "end": 1586,
+              "line": 54,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1967",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 1967,
+              "end": 1981,
+              "line": 69,
+              "column": 21,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1992",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 1992,
+              "end": 2049,
+              "line": 70,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$notification.post",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$notification.post",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    }
+  ]
+}

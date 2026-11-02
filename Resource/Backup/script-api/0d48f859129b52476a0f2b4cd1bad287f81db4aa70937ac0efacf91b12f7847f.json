@@ -1,0 +1,392 @@
+{
+  "version": 1,
+  "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js",
+  "sourceSha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605",
+    "operations": [
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 73,
+        "end": 85,
+        "line": 5,
+        "column": 11,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 98,
+        "end": 112,
+        "line": 6,
+        "column": 12,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$notify",
+        "access": "call",
+        "start": 724,
+        "end": 853,
+        "line": 25,
+        "column": 13,
+        "members": [
+          "$notify"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 1244,
+        "end": 1257,
+        "line": 47,
+        "column": 1,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605",
+        "operations": [
+          {
+            "id": "read:73",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 73,
+              "end": 85,
+              "line": 5,
+              "column": 11,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:98",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 98,
+              "end": 112,
+              "line": 6,
+              "column": 12,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:724",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 724,
+              "end": 853,
+              "line": 25,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notify",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              },
+              {
+                "source": "argument3",
+                "canonical": "notify.options",
+                "target": null,
+                "action": "omit"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1244",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 1244,
+              "end": 1257,
+              "line": 47,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "0bbbfc3474f3b0c5a294fd167dff2a804d40cb585cc80d63a868333f9770d605",
+        "operations": [
+          {
+            "id": "read:73",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 73,
+              "end": 85,
+              "line": 5,
+              "column": 11,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:98",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 98,
+              "end": 112,
+              "line": 6,
+              "column": 12,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:724",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 724,
+              "end": 853,
+              "line": 25,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notification.post",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              },
+              {
+                "source": "argument3.media-url",
+                "canonical": "notify.unknown",
+                "target": null,
+                "action": "unresolved"
+              },
+              {
+                "source": "argument3.open-url",
+                "canonical": "notify.unknown",
+                "target": null,
+                "action": "unresolved"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notify",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:1244",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 1244,
+              "end": 1257,
+              "line": 47,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$notify",
+            "reason": "Notification attachments/actions/delay differ across clients",
+            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$notify",
+      "reason": "surge: Notification attachments/actions/delay differ across clients",
+      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+    }
+  ]
+}

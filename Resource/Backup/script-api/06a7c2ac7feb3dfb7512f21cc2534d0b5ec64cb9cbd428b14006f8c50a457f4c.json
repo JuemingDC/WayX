@@ -1,0 +1,1360 @@
+{
+  "version": 1,
+  "sourceUrl": "https://kelee.one/Resource/JavaScript/Qbb/homepage.js",
+  "sourceSha256": "777c52e0bb54ff3982350f826bc9a3cdbddc74538c6411e87cd050e775e7548a",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "777c52e0bb54ff3982350f826bc9a3cdbddc74538c6411e87cd050e775e7548a",
+    "operations": [
+      {
+        "api": "$response.headers",
+        "access": "read",
+        "start": 369570,
+        "end": 369587,
+        "line": 44,
+        "column": 21,
+        "members": [
+          "$response",
+          "headers"
+        ]
+      },
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 369807,
+        "end": 369819,
+        "line": 50,
+        "column": 26,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "atob",
+        "access": "call",
+        "start": 369980,
+        "end": 369997,
+        "line": 56,
+        "column": 22,
+        "members": [
+          "atob"
+        ]
+      },
+      {
+        "api": "WebAssembly.instantiate",
+        "access": "call",
+        "start": 370169,
+        "end": 370199,
+        "line": 59,
+        "column": 21,
+        "members": [
+          "WebAssembly",
+          "instantiate"
+        ]
+      },
+      {
+        "api": "$loon",
+        "access": "read",
+        "start": 370819,
+        "end": 370824,
+        "line": 78,
+        "column": 8,
+        "members": [
+          "$loon"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 370829,
+        "end": 370837,
+        "line": 78,
+        "column": 18,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$response",
+        "access": "read",
+        "start": 370842,
+        "end": 370851,
+        "line": 78,
+        "column": 31,
+        "members": [
+          "$response"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 370856,
+        "end": 370870,
+        "line": 78,
+        "column": 45,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 370879,
+        "end": 370888,
+        "line": 78,
+        "column": 68,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 371002,
+        "end": 371016,
+        "line": 83,
+        "column": 20,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 371175,
+        "end": 371229,
+        "line": 88,
+        "column": 21,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 371197,
+        "end": 371211,
+        "line": 88,
+        "column": 43,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 371248,
+        "end": 371257,
+        "line": 89,
+        "column": 18,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "atob",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "WebAssembly",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "$loon",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "source/text observations retained"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "777c52e0bb54ff3982350f826bc9a3cdbddc74538c6411e87cd050e775e7548a",
+        "operations": [
+          {
+            "id": "read:369570",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 369570,
+              "end": 369587,
+              "line": 44,
+              "column": 21,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "headers",
+                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+              }
+            ]
+          },
+          {
+            "id": "read:369807",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 369807,
+              "end": 369819,
+              "line": 50,
+              "column": 26,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:369980",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 369980,
+              "end": 369997,
+              "line": 56,
+              "column": 22,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:370169",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "WebAssembly.instantiate",
+              "start": 370169,
+              "end": 370199,
+              "line": 59,
+              "column": 21,
+              "access": "call",
+              "memberPath": [
+                "instantiate"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "WebAssembly",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:370819",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$loon",
+              "start": 370819,
+              "end": 370824,
+              "line": 78,
+              "column": 8,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$loon",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$loon",
+                "reason": "Loon runtime identity string cannot be inferred from another application's version",
+                "solution": "Keep environment branches native or resolve them with verified source/target branches"
+              }
+            ]
+          },
+          {
+            "id": "read:370829",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 370829,
+              "end": 370837,
+              "line": 78,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:370842",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 370842,
+              "end": 370851,
+              "line": 78,
+              "column": 31,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:370856",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 370856,
+              "end": 370870,
+              "line": 78,
+              "column": 45,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:370879",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 370879,
+              "end": 370888,
+              "line": 78,
+              "column": 68,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:371002",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 371002,
+              "end": 371016,
+              "line": 83,
+              "column": 20,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:371175",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 371175,
+              "end": 371229,
+              "line": 88,
+              "column": 21,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:371197",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 371197,
+              "end": 371211,
+              "line": 88,
+              "column": 43,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:371248",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 371248,
+              "end": 371257,
+              "line": 89,
+              "column": 18,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "atob",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "WebAssembly",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$loon",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$loon",
+            "reason": "Loon runtime identity string cannot be inferred from another application's version",
+            "solution": "Keep environment branches native or resolve them with verified source/target branches"
+          },
+          {
+            "api": "headers-shape",
+            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+          },
+          {
+            "api": "headers",
+            "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+            "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+          }
+        ]
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "777c52e0bb54ff3982350f826bc9a3cdbddc74538c6411e87cd050e775e7548a",
+        "operations": [
+          {
+            "id": "read:369570",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 369570,
+              "end": 369587,
+              "line": 44,
+              "column": 21,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              }
+            ]
+          },
+          {
+            "id": "read:369807",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 369807,
+              "end": 369819,
+              "line": 50,
+              "column": 26,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:369980",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 369980,
+              "end": 369997,
+              "line": 56,
+              "column": 22,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:370169",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "WebAssembly.instantiate",
+              "start": 370169,
+              "end": 370199,
+              "line": 59,
+              "column": 21,
+              "access": "call",
+              "memberPath": [
+                "instantiate"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "WebAssembly",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:370819",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$loon",
+              "start": 370819,
+              "end": 370824,
+              "line": 78,
+              "column": 8,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$loon",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$loon",
+                "reason": "Loon runtime identity string cannot be inferred from another application's version",
+                "solution": "Keep environment branches native or resolve them with verified source/target branches"
+              }
+            ]
+          },
+          {
+            "id": "read:370829",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 370829,
+              "end": 370837,
+              "line": 78,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:370842",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 370842,
+              "end": 370851,
+              "line": 78,
+              "column": 31,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:370856",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 370856,
+              "end": 370870,
+              "line": 78,
+              "column": 45,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:370879",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 370879,
+              "end": 370888,
+              "line": 78,
+              "column": 68,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:371002",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 371002,
+              "end": 371016,
+              "line": 83,
+              "column": 20,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:371175",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 371175,
+              "end": 371229,
+              "line": 88,
+              "column": 21,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:371197",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 371197,
+              "end": 371211,
+              "line": 88,
+              "column": 43,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:371248",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 371248,
+              "end": 371257,
+              "line": 89,
+              "column": 18,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "atob",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "WebAssembly",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$loon",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$loon",
+            "reason": "Loon runtime identity string cannot be inferred from another application's version",
+            "solution": "Keep environment branches native or resolve them with verified source/target branches"
+          },
+          {
+            "api": "headers-shape",
+            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+          }
+        ]
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "777c52e0bb54ff3982350f826bc9a3cdbddc74538c6411e87cd050e775e7548a",
+        "operations": [
+          {
+            "id": "read:369570",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 369570,
+              "end": 369587,
+              "line": 44,
+              "column": 21,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:369807",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 369807,
+              "end": 369819,
+              "line": 50,
+              "column": 26,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:369980",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 369980,
+              "end": 369997,
+              "line": 56,
+              "column": 22,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:370169",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "WebAssembly.instantiate",
+              "start": 370169,
+              "end": 370199,
+              "line": 59,
+              "column": 21,
+              "access": "call",
+              "memberPath": [
+                "instantiate"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:370819",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$loon",
+              "start": 370819,
+              "end": 370824,
+              "line": 78,
+              "column": 8,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:370829",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 370829,
+              "end": 370837,
+              "line": 78,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:370842",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 370842,
+              "end": 370851,
+              "line": 78,
+              "column": 31,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:370856",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 370856,
+              "end": 370870,
+              "line": 78,
+              "column": 45,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:370879",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 370879,
+              "end": 370888,
+              "line": 78,
+              "column": 68,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:371002",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 371002,
+              "end": 371016,
+              "line": 83,
+              "column": 20,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:371175",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 371175,
+              "end": 371229,
+              "line": 88,
+              "column": 21,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:371197",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 371197,
+              "end": 371211,
+              "line": 88,
+              "column": 43,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:371248",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 371248,
+              "end": 371257,
+              "line": 89,
+              "column": 18,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "atob",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "WebAssembly",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$loon",
+      "reason": "qx: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$loon",
+      "reason": "qx: Loon runtime identity string cannot be inferred from another application's version",
+      "solution": "Keep environment branches native or resolve them with verified source/target branches"
+    },
+    {
+      "api": "headers-shape",
+      "reason": "qx: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+    },
+    {
+      "api": "headers",
+      "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
+      "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+    },
+    {
+      "api": "atob",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "WebAssembly",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$loon",
+      "reason": "surge: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$loon",
+      "reason": "surge: Loon runtime identity string cannot be inferred from another application's version",
+      "solution": "Keep environment branches native or resolve them with verified source/target branches"
+    },
+    {
+      "api": "headers-shape",
+      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+    }
+  ]
+}

@@ -1,0 +1,861 @@
+{
+  "version": 1,
+  "sourceUrl": "https://kelee.one/Resource/JavaScript/Weidian/getAppConfig.js",
+  "sourceSha256": "5dfa32387cc7d12bf1bb517067b2abc8a2e4d3eb83049c98cdcafed2857b24b1",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "5dfa32387cc7d12bf1bb517067b2abc8a2e4d3eb83049c98cdcafed2857b24b1",
+    "operations": [
+      {
+        "api": "atob",
+        "access": "read",
+        "start": 280204,
+        "end": 280208,
+        "line": 34,
+        "column": 20,
+        "members": [
+          "atob"
+        ]
+      },
+      {
+        "api": "atob",
+        "access": "call",
+        "start": 280282,
+        "end": 280293,
+        "line": 35,
+        "column": 25,
+        "members": [
+          "atob"
+        ]
+      },
+      {
+        "api": "WebAssembly.instantiate",
+        "access": "call",
+        "start": 280555,
+        "end": 280609,
+        "line": 42,
+        "column": 31,
+        "members": [
+          "WebAssembly",
+          "instantiate"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 281701,
+        "end": 281710,
+        "line": 63,
+        "column": 29,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 281736,
+        "end": 281751,
+        "line": 66,
+        "column": 14,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 281813,
+        "end": 281827,
+        "line": 67,
+        "column": 41,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 281860,
+        "end": 281874,
+        "line": 68,
+        "column": 31,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 282015,
+        "end": 282068,
+        "line": 71,
+        "column": 13,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "atob",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "atob",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "WebAssembly",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "5dfa32387cc7d12bf1bb517067b2abc8a2e4d3eb83049c98cdcafed2857b24b1",
+        "operations": [
+          {
+            "id": "read:280204",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 280204,
+              "end": 280208,
+              "line": 34,
+              "column": 20,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:280282",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 280282,
+              "end": 280293,
+              "line": 35,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:280555",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "WebAssembly.instantiate",
+              "start": 280555,
+              "end": 280609,
+              "line": 42,
+              "column": 31,
+              "access": "call",
+              "memberPath": [
+                "instantiate"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "WebAssembly",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:281701",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 281701,
+              "end": 281710,
+              "line": 63,
+              "column": 29,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:281736",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 281736,
+              "end": 281751,
+              "line": 66,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:281813",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 281813,
+              "end": 281827,
+              "line": 67,
+              "column": 41,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:281860",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 281860,
+              "end": 281874,
+              "line": 68,
+              "column": 31,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:282015",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 282015,
+              "end": 282068,
+              "line": 71,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "atob",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "WebAssembly",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          }
+        ]
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "5dfa32387cc7d12bf1bb517067b2abc8a2e4d3eb83049c98cdcafed2857b24b1",
+        "operations": [
+          {
+            "id": "read:280204",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 280204,
+              "end": 280208,
+              "line": 34,
+              "column": 20,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:280282",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 280282,
+              "end": 280293,
+              "line": 35,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:280555",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "WebAssembly.instantiate",
+              "start": 280555,
+              "end": 280609,
+              "line": 42,
+              "column": 31,
+              "access": "call",
+              "memberPath": [
+                "instantiate"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "WebAssembly",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:281701",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 281701,
+              "end": 281710,
+              "line": 63,
+              "column": 29,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:281736",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 281736,
+              "end": 281751,
+              "line": 66,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:281813",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 281813,
+              "end": 281827,
+              "line": 67,
+              "column": 41,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:281860",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 281860,
+              "end": 281874,
+              "line": 68,
+              "column": 31,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:282015",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 282015,
+              "end": 282068,
+              "line": 71,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "atob",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "WebAssembly",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          }
+        ]
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "5dfa32387cc7d12bf1bb517067b2abc8a2e4d3eb83049c98cdcafed2857b24b1",
+        "operations": [
+          {
+            "id": "read:280204",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 280204,
+              "end": 280208,
+              "line": 34,
+              "column": 20,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:280282",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 280282,
+              "end": 280293,
+              "line": 35,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:280555",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "WebAssembly.instantiate",
+              "start": 280555,
+              "end": 280609,
+              "line": 42,
+              "column": 31,
+              "access": "call",
+              "memberPath": [
+                "instantiate"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:281701",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 281701,
+              "end": 281710,
+              "line": 63,
+              "column": 29,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:281736",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 281736,
+              "end": 281751,
+              "line": 66,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:281813",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 281813,
+              "end": 281827,
+              "line": 67,
+              "column": 41,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:281860",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 281860,
+              "end": 281874,
+              "line": 68,
+              "column": 31,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:282015",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 282015,
+              "end": 282068,
+              "line": 71,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "atob",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "WebAssembly",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "atob",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "WebAssembly",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    }
+  ]
+}

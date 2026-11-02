@@ -1,0 +1,1756 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amap.js",
+  "sourceSha256": "936aaaf97cf69b8a5a25ba49303c0470a16ac48851e8bf58080ff9f129ff7c48",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "936aaaf97cf69b8a5a25ba49303c0470a16ac48851e8bf58080ff9f129ff7c48",
+    "operations": [
+      {
+        "api": "$response[_0x3ffcae(0x119,'B!tf')]",
+        "access": "read",
+        "start": 6886,
+        "end": 6920,
+        "line": 18,
+        "column": 6570,
+        "members": [
+          "$response",
+          "<computed:_0x3ffcae(0x119,'B!tf')>"
+        ]
+      },
+      {
+        "api": "$request[_0x3ffcae(0x128,'XxYi')][_0x3ffcae(0x143,'Hz$Z')]",
+        "access": "read",
+        "start": 6925,
+        "end": 6983,
+        "line": 18,
+        "column": 6609,
+        "members": [
+          "$request",
+          "<computed:_0x3ffcae(0x128,'XxYi')>",
+          "<computed:_0x3ffcae(0x143,'Hz$Z')>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 7291,
+        "end": 7341,
+        "line": 18,
+        "column": 6975,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request[_0x3ffcae(0xde,'4LTn')][_0x3ffcae(0x144,'m!Rf')]",
+        "access": "read",
+        "start": 7351,
+        "end": 7408,
+        "line": 18,
+        "column": 7035,
+        "members": [
+          "$request",
+          "<computed:_0x3ffcae(0xde,'4LTn')>",
+          "<computed:_0x3ffcae(0x144,'m!Rf')>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 7550,
+        "end": 7600,
+        "line": 18,
+        "column": 7234,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request[_0x3ffcae(0x128,'XxYi')][_0x3ffcae(0x116,')[f%')]",
+        "access": "read",
+        "start": 8316,
+        "end": 8374,
+        "line": 18,
+        "column": 8000,
+        "members": [
+          "$request",
+          "<computed:_0x3ffcae(0x128,'XxYi')>",
+          "<computed:_0x3ffcae(0x116,')[f%')>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 8780,
+        "end": 8829,
+        "line": 18,
+        "column": 8464,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request['url'][_0x3ffcae(0xe5,'FIWd')]",
+        "access": "read",
+        "start": 8838,
+        "end": 8877,
+        "line": 18,
+        "column": 8522,
+        "members": [
+          "$request",
+          "url",
+          "<computed:_0x3ffcae(0xe5,'FIWd')>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9022,
+        "end": 9060,
+        "line": 18,
+        "column": 8706,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request[_0x3ffcae(0x108,'!B[n')]['indexOf']",
+        "access": "read",
+        "start": 9069,
+        "end": 9113,
+        "line": 18,
+        "column": 8753,
+        "members": [
+          "$request",
+          "<computed:_0x3ffcae(0x108,'!B[n')>",
+          "indexOf"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9429,
+        "end": 9479,
+        "line": 18,
+        "column": 9113,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request['url'][_0x3ffcae(0xdc,'w)kg')]",
+        "access": "read",
+        "start": 9489,
+        "end": 9528,
+        "line": 18,
+        "column": 9173,
+        "members": [
+          "$request",
+          "url",
+          "<computed:_0x3ffcae(0xdc,'w)kg')>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9705,
+        "end": 9755,
+        "line": 18,
+        "column": 9389,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request[_0x3ffcae(0x110,'RWNO')]['indexOf']",
+        "access": "read",
+        "start": 9764,
+        "end": 9808,
+        "line": 18,
+        "column": 9448,
+        "members": [
+          "$request",
+          "<computed:_0x3ffcae(0x110,'RWNO')>",
+          "indexOf"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9933,
+        "end": 9983,
+        "line": 18,
+        "column": 9617,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request[_0x3ffcae(0xf4,'[[ZK')][_0x3ffcae(0x11c,'NxmF')]",
+        "access": "read",
+        "start": 9992,
+        "end": 10049,
+        "line": 18,
+        "column": 9676,
+        "members": [
+          "$request",
+          "<computed:_0x3ffcae(0xf4,'[[ZK')>",
+          "<computed:_0x3ffcae(0x11c,'NxmF')>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 10744,
+        "end": 10793,
+        "line": 18,
+        "column": 10428,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request[_0x3ffcae(0xff,']Mz3')][_0x3ffcae(0xed,'IN5%')]",
+        "access": "read",
+        "start": 10803,
+        "end": 10859,
+        "line": 18,
+        "column": 10487,
+        "members": [
+          "$request",
+          "<computed:_0x3ffcae(0xff,']Mz3')>",
+          "<computed:_0x3ffcae(0xed,'IN5%')>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 11319,
+        "end": 11357,
+        "line": 18,
+        "column": 11003,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 11364,
+        "end": 11373,
+        "line": 18,
+        "column": 11048,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "$response",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$request",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$request",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$request",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$request",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$request",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$request",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$request",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$request",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$request",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "936aaaf97cf69b8a5a25ba49303c0470a16ac48851e8bf58080ff9f129ff7c48",
+        "operations": [
+          {
+            "id": "read:6886",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response[_0x3ffcae(0x119,'B!tf')]",
+              "start": 6886,
+              "end": 6920,
+              "line": 18,
+              "column": 6570,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x119,'B!tf')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:6925",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0x128,'XxYi')][_0x3ffcae(0x143,'Hz$Z')]",
+              "start": 6925,
+              "end": 6983,
+              "line": 18,
+              "column": 6609,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x128,'XxYi')>",
+                "<computed:_0x3ffcae(0x143,'Hz$Z')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:7291",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 7291,
+              "end": 7341,
+              "line": 18,
+              "column": 6975,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:7351",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0xde,'4LTn')][_0x3ffcae(0x144,'m!Rf')]",
+              "start": 7351,
+              "end": 7408,
+              "line": 18,
+              "column": 7035,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0xde,'4LTn')>",
+                "<computed:_0x3ffcae(0x144,'m!Rf')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:7550",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 7550,
+              "end": 7600,
+              "line": 18,
+              "column": 7234,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8316",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0x128,'XxYi')][_0x3ffcae(0x116,')[f%')]",
+              "start": 8316,
+              "end": 8374,
+              "line": 18,
+              "column": 8000,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x128,'XxYi')>",
+                "<computed:_0x3ffcae(0x116,')[f%')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:8780",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 8780,
+              "end": 8829,
+              "line": 18,
+              "column": 8464,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8838",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request['url'][_0x3ffcae(0xe5,'FIWd')]",
+              "start": 8838,
+              "end": 8877,
+              "line": 18,
+              "column": 8522,
+              "access": "read",
+              "memberPath": [
+                "url",
+                "<computed:_0x3ffcae(0xe5,'FIWd')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9022",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9022,
+              "end": 9060,
+              "line": 18,
+              "column": 8706,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9069",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0x108,'!B[n')]['indexOf']",
+              "start": 9069,
+              "end": 9113,
+              "line": 18,
+              "column": 8753,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x108,'!B[n')>",
+                "indexOf"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9429",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9429,
+              "end": 9479,
+              "line": 18,
+              "column": 9113,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9489",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request['url'][_0x3ffcae(0xdc,'w)kg')]",
+              "start": 9489,
+              "end": 9528,
+              "line": 18,
+              "column": 9173,
+              "access": "read",
+              "memberPath": [
+                "url",
+                "<computed:_0x3ffcae(0xdc,'w)kg')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9705",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9705,
+              "end": 9755,
+              "line": 18,
+              "column": 9389,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9764",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0x110,'RWNO')]['indexOf']",
+              "start": 9764,
+              "end": 9808,
+              "line": 18,
+              "column": 9448,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x110,'RWNO')>",
+                "indexOf"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9933",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9933,
+              "end": 9983,
+              "line": 18,
+              "column": 9617,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9992",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0xf4,'[[ZK')][_0x3ffcae(0x11c,'NxmF')]",
+              "start": 9992,
+              "end": 10049,
+              "line": 18,
+              "column": 9676,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0xf4,'[[ZK')>",
+                "<computed:_0x3ffcae(0x11c,'NxmF')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:10744",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 10744,
+              "end": 10793,
+              "line": 18,
+              "column": 10428,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:10803",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0xff,']Mz3')][_0x3ffcae(0xed,'IN5%')]",
+              "start": 10803,
+              "end": 10859,
+              "line": 18,
+              "column": 10487,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0xff,']Mz3')>",
+                "<computed:_0x3ffcae(0xed,'IN5%')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:11319",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11319,
+              "end": 11357,
+              "line": 18,
+              "column": 11003,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:11364",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11364,
+              "end": 11373,
+              "line": 18,
+              "column": 11048,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "936aaaf97cf69b8a5a25ba49303c0470a16ac48851e8bf58080ff9f129ff7c48",
+        "operations": [
+          {
+            "id": "read:6886",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response[_0x3ffcae(0x119,'B!tf')]",
+              "start": 6886,
+              "end": 6920,
+              "line": 18,
+              "column": 6570,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x119,'B!tf')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "read:6925",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0x128,'XxYi')][_0x3ffcae(0x143,'Hz$Z')]",
+              "start": 6925,
+              "end": 6983,
+              "line": 18,
+              "column": 6609,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x128,'XxYi')>",
+                "<computed:_0x3ffcae(0x143,'Hz$Z')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:7291",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 7291,
+              "end": 7341,
+              "line": 18,
+              "column": 6975,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:7351",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0xde,'4LTn')][_0x3ffcae(0x144,'m!Rf')]",
+              "start": 7351,
+              "end": 7408,
+              "line": 18,
+              "column": 7035,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0xde,'4LTn')>",
+                "<computed:_0x3ffcae(0x144,'m!Rf')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:7550",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 7550,
+              "end": 7600,
+              "line": 18,
+              "column": 7234,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8316",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0x128,'XxYi')][_0x3ffcae(0x116,')[f%')]",
+              "start": 8316,
+              "end": 8374,
+              "line": 18,
+              "column": 8000,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x128,'XxYi')>",
+                "<computed:_0x3ffcae(0x116,')[f%')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:8780",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 8780,
+              "end": 8829,
+              "line": 18,
+              "column": 8464,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8838",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request['url'][_0x3ffcae(0xe5,'FIWd')]",
+              "start": 8838,
+              "end": 8877,
+              "line": 18,
+              "column": 8522,
+              "access": "read",
+              "memberPath": [
+                "url",
+                "<computed:_0x3ffcae(0xe5,'FIWd')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:9022",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9022,
+              "end": 9060,
+              "line": 18,
+              "column": 8706,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9069",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0x108,'!B[n')]['indexOf']",
+              "start": 9069,
+              "end": 9113,
+              "line": 18,
+              "column": 8753,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x108,'!B[n')>",
+                "indexOf"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:9429",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9429,
+              "end": 9479,
+              "line": 18,
+              "column": 9113,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9489",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request['url'][_0x3ffcae(0xdc,'w)kg')]",
+              "start": 9489,
+              "end": 9528,
+              "line": 18,
+              "column": 9173,
+              "access": "read",
+              "memberPath": [
+                "url",
+                "<computed:_0x3ffcae(0xdc,'w)kg')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:9705",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9705,
+              "end": 9755,
+              "line": 18,
+              "column": 9389,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9764",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0x110,'RWNO')]['indexOf']",
+              "start": 9764,
+              "end": 9808,
+              "line": 18,
+              "column": 9448,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0x110,'RWNO')>",
+                "indexOf"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:9933",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9933,
+              "end": 9983,
+              "line": 18,
+              "column": 9617,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9992",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0xf4,'[[ZK')][_0x3ffcae(0x11c,'NxmF')]",
+              "start": 9992,
+              "end": 10049,
+              "line": 18,
+              "column": 9676,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0xf4,'[[ZK')>",
+                "<computed:_0x3ffcae(0x11c,'NxmF')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:10744",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 10744,
+              "end": 10793,
+              "line": 18,
+              "column": 10428,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:10803",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$request[_0x3ffcae(0xff,']Mz3')][_0x3ffcae(0xed,'IN5%')]",
+              "start": 10803,
+              "end": 10859,
+              "line": 18,
+              "column": 10487,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x3ffcae(0xff,']Mz3')>",
+                "<computed:_0x3ffcae(0xed,'IN5%')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:11319",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11319,
+              "end": 11357,
+              "line": 18,
+              "column": 11003,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:11364",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11364,
+              "end": 11373,
+              "line": 18,
+              "column": 11048,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$response",
+            "reason": "Computed API property cannot be resolved statically",
+            "solution": "Use a static property name or retain the native script"
+          },
+          {
+            "api": "$request",
+            "reason": "Computed API property cannot be resolved statically",
+            "solution": "Use a static property name or retain the native script"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$response",
+      "reason": "surge: Computed API property cannot be resolved statically",
+      "solution": "Use a static property name or retain the native script"
+    },
+    {
+      "api": "$request",
+      "reason": "surge: Computed API property cannot be resolved statically",
+      "solution": "Use a static property name or retain the native script"
+    }
+  ]
+}

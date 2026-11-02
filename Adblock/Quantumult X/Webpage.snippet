@@ -2,9 +2,9 @@
 # Description: 移除网页广告。
 # Author: RuCu6[https://github.com/RuCu6]
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
-# Updated: 2026-11-02 13:30
+# Updated: 2026-11-02 14:15
 
-# Converted: 2026-11-02 13:51:26 +08:00
+# Converted: 2026-11-02 15:24:03 +08:00
 # Converted by: chance
 # Category: 去广告
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
@@ -40,10 +40,11 @@ https:\/\/(rule\.)?kelee\.one\/ url response-header ^([^\r\n]+)(\r\n) response-h
 {# E-Hentai (https://e-hentai.org) //e-hentai.org, exhentai.org #} ^https:\/\/exhentai\.org url 307 https://e-hentai.org
 
 # PornHub (https://cn.pornhub.com/) //*.pornhub.com
-^https:\/\/www\.pornhub\.com\/\?utm url reject
-^https:\/\/www\.pornhub\.com\/ url 302 https://cn.pornhub.com/
+^https:\/\/cn\.pornhub\.com\/\?utm url reject
 ^https:\/\/cn\.pornhub\.com\/(?:interstitial|_xa\/ads) url reject-dict
 ^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$ url 302 $1
+^https:\/\/www\.pornhub\.com\/\?utm url reject
+^https:\/\/www\.pornhub\.com\/ url 302 https://cn.pornhub.com/
 # ======= 普通网页 ======= #
 # 百度 //boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com
 # baidu_boxer
@@ -89,7 +90,7 @@ https:\/\/(rule\.)?kelee\.one\/ url response-header ^([^\r\n]+)(\r\n) response-h
 {# MissAV //missav.ai, missav.fans, missav.ws #} ^https:\/\/missav\.(?:ai|fans|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/). url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160/missav.js
 
 # pornhub_web_ads
-{# PornHub //*.pornhub.com #} ^https:\/\/cn\.pornhub\.com\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-a8d59ed8d2ba/pornhub.js
+{# PornHub //*.pornhub.com #} ^https:\/\/cn\.pornhub\.com\/(?!api\/|front\/|get-allowed-cookies\?|manifest\.|svvt\/|user\/|utils\/) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-a8d59ed8d2ba/pornhub.js
 
 # [mitm]
 hostname = *.google.cn, asserts.avple.tv, kelee.one, rule.kelee.one, e-hentai.org, exhentai.org, *.pornhub.com, boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com, www.hgeme.com, www.xn--wcv59z.com, yhg007.com, *.111107?.xyz, 18hlw.com, 8olbt.imsatcmn.cc, javranking.cc, miniapp2.52ywy.com, *.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com, hanime1.me, javdb.com, missav.ai, missav.fans, missav.ws

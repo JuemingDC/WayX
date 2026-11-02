@@ -1,0 +1,685 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xiaotucc.js",
+  "sourceSha256": "197bc64c8ddf1188d1b876d7b980d5708a0bdb79a01be51a9f3b14adc936cc9d",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "197bc64c8ddf1188d1b876d7b980d5708a0bdb79a01be51a9f3b14adc936cc9d",
+    "operations": [
+      {
+        "api": "$request.url.indexOf",
+        "access": "call",
+        "start": 10,
+        "end": 61,
+        "line": 1,
+        "column": 11,
+        "members": [
+          "$request",
+          "url",
+          "indexOf"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 88,
+        "end": 102,
+        "line": 2,
+        "column": 24,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 129,
+        "end": 163,
+        "line": 4,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request.url.indexOf",
+        "access": "call",
+        "start": 182,
+        "end": 215,
+        "line": 5,
+        "column": 18,
+        "members": [
+          "$request",
+          "url",
+          "indexOf"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 242,
+        "end": 256,
+        "line": 6,
+        "column": 24,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 280,
+        "end": 314,
+        "line": 8,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 323,
+        "end": 339,
+        "line": 9,
+        "column": 8,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response",
+        "access": "read",
+        "start": 329,
+        "end": 338,
+        "line": 9,
+        "column": 14,
+        "members": [
+          "$response"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "$response",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "197bc64c8ddf1188d1b876d7b980d5708a0bdb79a01be51a9f3b14adc936cc9d",
+        "operations": [
+          {
+            "id": "call:10",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.indexOf",
+              "start": 10,
+              "end": 61,
+              "line": 1,
+              "column": 11,
+              "access": "call",
+              "memberPath": [
+                "indexOf"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:88",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 88,
+              "end": 102,
+              "line": 2,
+              "column": 24,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:129",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 129,
+              "end": 163,
+              "line": 4,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:182",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.indexOf",
+              "start": 182,
+              "end": 215,
+              "line": 5,
+              "column": 18,
+              "access": "call",
+              "memberPath": [
+                "indexOf"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:242",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 242,
+              "end": 256,
+              "line": 6,
+              "column": 24,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:280",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 280,
+              "end": 314,
+              "line": 8,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:323",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 323,
+              "end": 339,
+              "line": 9,
+              "column": 8,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:329",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 329,
+              "end": 338,
+              "line": 9,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "197bc64c8ddf1188d1b876d7b980d5708a0bdb79a01be51a9f3b14adc936cc9d",
+        "operations": [
+          {
+            "id": "call:10",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.indexOf",
+              "start": 10,
+              "end": 61,
+              "line": 1,
+              "column": 11,
+              "access": "call",
+              "memberPath": [
+                "indexOf"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:88",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 88,
+              "end": 102,
+              "line": 2,
+              "column": 24,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$response",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "call:129",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 129,
+              "end": 163,
+              "line": 4,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Dynamic completion object needs field/data-flow proof",
+                "solution": "Use explicit result fields or add a verified program-specific plan"
+              }
+            ]
+          },
+          {
+            "id": "call:182",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.indexOf",
+              "start": 182,
+              "end": 215,
+              "line": 5,
+              "column": 18,
+              "access": "call",
+              "memberPath": [
+                "indexOf"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:242",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 242,
+              "end": 256,
+              "line": 6,
+              "column": 24,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$response",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "call:280",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 280,
+              "end": 314,
+              "line": 8,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Dynamic completion object needs field/data-flow proof",
+                "solution": "Use explicit result fields or add a verified program-specific plan"
+              }
+            ]
+          },
+          {
+            "id": "call:323",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 323,
+              "end": 339,
+              "line": 9,
+              "column": 8,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Dynamic completion object needs field/data-flow proof",
+                "solution": "Use explicit result fields or add a verified program-specific plan"
+              }
+            ]
+          },
+          {
+            "id": "read:329",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 329,
+              "end": 338,
+              "line": 9,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$response",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$response",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$response",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "$done",
+            "reason": "Dynamic completion object needs field/data-flow proof",
+            "solution": "Use explicit result fields or add a verified program-specific plan"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$response",
+      "reason": "surge: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$response",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "$done",
+      "reason": "surge: Dynamic completion object needs field/data-flow proof",
+      "solution": "Use explicit result fields or add a verified program-specific plan"
+    }
+  ]
+}

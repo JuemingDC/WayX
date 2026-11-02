@@ -1,0 +1,488 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js",
+  "sourceSha256": "2d49b52df9ba6234d60235d0c2f6e56b1ad251566976fc718221b5e32f8a71d6",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "2d49b52df9ba6234d60235d0c2f6e56b1ad251566976fc718221b5e32f8a71d6",
+    "operations": [
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 13,
+        "end": 21,
+        "line": 1,
+        "column": 14,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 25,
+        "end": 37,
+        "line": 1,
+        "column": 26,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 144,
+        "end": 197,
+        "line": 7,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 944,
+        "end": 952,
+        "line": 37,
+        "column": 22,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$request.body",
+        "access": "read",
+        "start": 956,
+        "end": 969,
+        "line": 37,
+        "column": 34,
+        "members": [
+          "$request",
+          "body"
+        ]
+      },
+      {
+        "api": "$response",
+        "access": "read",
+        "start": 2752,
+        "end": 2761,
+        "line": 100,
+        "column": 17,
+        "members": [
+          "$response"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 2765,
+        "end": 2779,
+        "line": 100,
+        "column": 30,
+        "members": [
+          "$response",
+          "body"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "source/text observations retained"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "2d49b52df9ba6234d60235d0c2f6e56b1ad251566976fc718221b5e32f8a71d6",
+        "operations": [
+          {
+            "id": "read:13",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 13,
+              "end": 21,
+              "line": 1,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:25",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 25,
+              "end": 37,
+              "line": 1,
+              "column": 26,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:144",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 144,
+              "end": 197,
+              "line": 7,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:944",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 944,
+              "end": 952,
+              "line": 37,
+              "column": 22,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:956",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 956,
+              "end": 969,
+              "line": 37,
+              "column": 34,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:2752",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 2752,
+              "end": 2761,
+              "line": 100,
+              "column": 17,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:2765",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 2765,
+              "end": 2779,
+              "line": 100,
+              "column": 30,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "2d49b52df9ba6234d60235d0c2f6e56b1ad251566976fc718221b5e32f8a71d6",
+        "operations": [
+          {
+            "id": "read:13",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 13,
+              "end": 21,
+              "line": 1,
+              "column": 14,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:25",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 25,
+              "end": 37,
+              "line": 1,
+              "column": 26,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:144",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 144,
+              "end": 197,
+              "line": 7,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:944",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 944,
+              "end": 952,
+              "line": 37,
+              "column": 22,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:956",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 956,
+              "end": 969,
+              "line": 37,
+              "column": 34,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:2752",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 2752,
+              "end": 2761,
+              "line": 100,
+              "column": 17,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:2765",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 2765,
+              "end": 2779,
+              "line": 100,
+              "column": 30,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

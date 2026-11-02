@@ -7,9 +7,9 @@
 
 # Author: RuCu6[https://github.com/RuCu6]
 # Icon: https://rucu6.pages.dev/Icons/app/webpage.png
-# Updated: 2026-11-02 13:30
+# Updated: 2026-11-02 14:15
 
-# Converted: 2026-11-02 13:51:26 +08:00
+# Converted: 2026-11-02 15:24:03 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/webpage.lpx
 # Target: Surge
@@ -36,9 +36,10 @@ DOMAIN,yhg007.com,{{{wayx_proxy_policy}}},extended-matching
 (?i)^https:\/\/exhentai\.org https://e-hentai.org 307
 
 # PornHub (https://cn.pornhub.com/) //*.pornhub.com
+(?i)^https:\/\/cn\.pornhub\.com\/\?utm _ reject
+(?i)^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$ $1 302
 (?i)^https:\/\/www\.pornhub\.com\/\?utm _ reject
 (?i)^https:\/\/www\.pornhub\.com\/ https://cn.pornhub.com/ 302
-(?i)^(https:\/\/cn\.pornhub\.com\/view_video\.php\?viewkey=[^&]+)&.*$ $1 302
 
 [Header Rewrite]
 #request if ${url} ~= /^https:\/\/(?:avatars|gist|raw)\.githubusercontent\.com\//i then request.header.set("Accept-Language", "en-us")
@@ -98,7 +99,7 @@ javdb_web_ads = type=http-response,pattern=(?i)^https:\/\/javdb\.com\/(?!over18\
 missav_web_ads = type=http-response,pattern=(?i)^https:\/\/missav\.(?:ai|fans|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/).,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160/missav.js,requires-body=true,max-size=-1,timeout=20
 
 # PornHub //*.pornhub.com
-pornhub_web_ads = type=http-response,pattern=(?i)^https:\/\/cn\.pornhub\.com\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-a8d59ed8d2ba/pornhub.js,requires-body=true,max-size=-1,timeout=20
+pornhub_web_ads = type=http-response,pattern=(?i)^https:\/\/cn\.pornhub\.com\/(?!api\/|front\/|get-allowed-cookies\?|manifest\.|svvt\/|user\/|utils\/),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-a8d59ed8d2ba/pornhub.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% *.google.cn, asserts.avple.tv, kelee.one, rule.kelee.one, e-hentai.org, exhentai.org, *.pornhub.com, boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com, www.hgeme.com, www.xn--wcv59z.com, yhg007.com, *.111107?.xyz, 18hlw.com, 8olbt.imsatcmn.cc, javranking.cc, miniapp2.52ywy.com, *.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com, hanime1.me, javdb.com, missav.ai, missav.fans, missav.ws

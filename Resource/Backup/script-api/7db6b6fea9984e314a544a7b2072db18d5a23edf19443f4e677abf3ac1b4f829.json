@@ -1,0 +1,771 @@
+{
+  "version": 1,
+  "sourceUrl": "https://rucu6.pages.dev/Scripts/manmanbuy_ck.js",
+  "sourceSha256": "3b6deac141eb59cee95aec3bfec295bcfc33b60c8a9710975643f40f97c358d9",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "3b6deac141eb59cee95aec3bfec295bcfc33b60c8a9710975643f40f97c358d9",
+    "operations": [
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 33,
+        "end": 45,
+        "line": 3,
+        "column": 13,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$request.body",
+        "access": "read",
+        "start": 63,
+        "end": 76,
+        "line": 4,
+        "column": 17,
+        "members": [
+          "$request",
+          "body"
+        ]
+      },
+      {
+        "api": "URLSearchParams",
+        "access": "construct",
+        "start": 140,
+        "end": 168,
+        "line": 7,
+        "column": 18,
+        "members": [
+          "URLSearchParams"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 301,
+        "end": 367,
+        "line": 14,
+        "column": 5,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 384,
+        "end": 463,
+        "line": 16,
+        "column": 5,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 472,
+        "end": 481,
+        "line": 20,
+        "column": 1,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "URLSearchParams",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "request": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "3b6deac141eb59cee95aec3bfec295bcfc33b60c8a9710975643f40f97c358d9",
+        "operations": [
+          {
+            "id": "read:33",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 33,
+              "end": 45,
+              "line": 3,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:63",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 63,
+              "end": 76,
+              "line": 4,
+              "column": 17,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "construct:140",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "URLSearchParams",
+              "start": 140,
+              "end": 168,
+              "line": 7,
+              "column": 18,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "URLSearchParams",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:301",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notification.post",
+              "start": 301,
+              "end": 367,
+              "line": 14,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notify",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              },
+              {
+                "source": "argument3",
+                "canonical": "notify.options",
+                "target": null,
+                "action": "omit"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:384",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notification.post",
+              "start": 384,
+              "end": 463,
+              "line": 16,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notify",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              },
+              {
+                "source": "argument3",
+                "canonical": "notify.options",
+                "target": null,
+                "action": "omit"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:472",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 472,
+              "end": 481,
+              "line": 20,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "URLSearchParams",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          }
+        ]
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "3b6deac141eb59cee95aec3bfec295bcfc33b60c8a9710975643f40f97c358d9",
+        "operations": [
+          {
+            "id": "read:33",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 33,
+              "end": 45,
+              "line": 3,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:63",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 63,
+              "end": 76,
+              "line": 4,
+              "column": 17,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "construct:140",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "URLSearchParams",
+              "start": 140,
+              "end": 168,
+              "line": 7,
+              "column": 18,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "URLSearchParams",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:301",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notification.post",
+              "start": 301,
+              "end": 367,
+              "line": 14,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notification.post",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              },
+              {
+                "source": "argument3.openUrl",
+                "canonical": "notify.openURL",
+                "target": "argument3.url",
+                "action": "map"
+              },
+              {
+                "source": "argument3.clipboard",
+                "canonical": "notify.unknown",
+                "target": null,
+                "action": "unresolved"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:384",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notification.post",
+              "start": 384,
+              "end": 463,
+              "line": 16,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notification.post",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              },
+              {
+                "source": "argument3",
+                "canonical": "notify.options",
+                "target": null,
+                "action": "unresolved"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:472",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 472,
+              "end": 481,
+              "line": 20,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "URLSearchParams",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$notification.post",
+            "reason": "Notification attachments/actions/delay differ across clients",
+            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+          }
+        ]
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "3b6deac141eb59cee95aec3bfec295bcfc33b60c8a9710975643f40f97c358d9",
+        "operations": [
+          {
+            "id": "read:33",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 33,
+              "end": 45,
+              "line": 3,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:63",
+            "rule": "request.body",
+            "kind": "context",
+            "source": {
+              "api": "$request.body",
+              "start": 63,
+              "end": 76,
+              "line": 4,
+              "column": 17,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.body",
+            "value": "String",
+            "target": {
+              "api": "$request.body",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "construct:140",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "URLSearchParams",
+              "start": 140,
+              "end": 168,
+              "line": 7,
+              "column": 18,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:301",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notification.post",
+              "start": 301,
+              "end": 367,
+              "line": 14,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notification.post",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              },
+              {
+                "source": "argument3.openUrl",
+                "canonical": "notify.openURL",
+                "target": "argument3.openUrl",
+                "action": "map"
+              },
+              {
+                "source": "argument3.clipboard",
+                "canonical": "notify.unknown",
+                "target": null,
+                "action": "unresolved"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:384",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notification.post",
+              "start": 384,
+              "end": 463,
+              "line": 16,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notification.post",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              },
+              {
+                "source": "argument3",
+                "canonical": "notify.options",
+                "target": null,
+                "action": "unresolved"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:472",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 472,
+              "end": 481,
+              "line": 20,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "URLSearchParams",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "URLSearchParams",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$notification.post",
+      "reason": "surge: Notification attachments/actions/delay differ across clients",
+      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+    }
+  ]
+}

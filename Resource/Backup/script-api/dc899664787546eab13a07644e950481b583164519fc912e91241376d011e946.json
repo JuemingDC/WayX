@@ -1,0 +1,1279 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/quark.js",
+  "sourceSha256": "a80632f4308d8971f2ee1b42cb1b2c3b72c90ec5619ed33849fcc0fcbf0f1bcc",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "a80632f4308d8971f2ee1b42cb1b2c3b72c90ec5619ed33849fcc0fcbf0f1bcc",
+    "operations": [
+      {
+        "api": "window",
+        "access": "read",
+        "start": 2036,
+        "end": 2042,
+        "line": 1,
+        "column": 2037,
+        "members": [
+          "window"
+        ]
+      },
+      {
+        "api": "window",
+        "access": "read",
+        "start": 2068,
+        "end": 2074,
+        "line": 1,
+        "column": 2069,
+        "members": [
+          "window"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "read",
+        "start": 2153,
+        "end": 2160,
+        "line": 1,
+        "column": 2154,
+        "members": [
+          "require"
+        ]
+      },
+      {
+        "api": "global",
+        "access": "read",
+        "start": 2241,
+        "end": 2247,
+        "line": 1,
+        "column": 2242,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "global",
+        "access": "read",
+        "start": 2284,
+        "end": 2290,
+        "line": 1,
+        "column": 2285,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 2291,
+        "end": 2295,
+        "line": 1,
+        "column": 2292,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 5760,
+        "end": 5764,
+        "line": 1,
+        "column": 5761,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 7441,
+        "end": 7445,
+        "line": 1,
+        "column": 7442,
+        "members": []
+      },
+      {
+        "api": "window",
+        "access": "read",
+        "start": 7971,
+        "end": 7977,
+        "line": 1,
+        "column": 7972,
+        "members": [
+          "window"
+        ]
+      },
+      {
+        "api": "window",
+        "access": "read",
+        "start": 8014,
+        "end": 8020,
+        "line": 1,
+        "column": 8015,
+        "members": [
+          "window"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "read",
+        "start": 8134,
+        "end": 8141,
+        "line": 1,
+        "column": 8135,
+        "members": [
+          "require"
+        ]
+      },
+      {
+        "api": "global",
+        "access": "read",
+        "start": 8189,
+        "end": 8195,
+        "line": 1,
+        "column": 8190,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "global",
+        "access": "read",
+        "start": 8232,
+        "end": 8238,
+        "line": 1,
+        "column": 8233,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 8239,
+        "end": 8243,
+        "line": 1,
+        "column": 8240,
+        "members": []
+      },
+      {
+        "api": "$response[_0x412946(0x1ad,'SJDy')]",
+        "access": "read",
+        "start": 9477,
+        "end": 9511,
+        "line": 1,
+        "column": 9478,
+        "members": [
+          "$response",
+          "<computed:_0x412946(0x1ad,'SJDy')>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9649,
+        "end": 9699,
+        "line": 1,
+        "column": 9650,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 13400,
+        "end": 13404,
+        "line": 1,
+        "column": 13401,
+        "members": []
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "window",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "window",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "require",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "window",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "window",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "require",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "$response",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "a80632f4308d8971f2ee1b42cb1b2c3b72c90ec5619ed33849fcc0fcbf0f1bcc",
+        "operations": [
+          {
+            "id": "read:2036",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 2036,
+              "end": 2042,
+              "line": 1,
+              "column": 2037,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:2068",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 2068,
+              "end": 2074,
+              "line": 1,
+              "column": 2069,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:2153",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 2153,
+              "end": 2160,
+              "line": 1,
+              "column": 2154,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:2241",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 2241,
+              "end": 2247,
+              "line": 1,
+              "column": 2242,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:2284",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 2284,
+              "end": 2290,
+              "line": 1,
+              "column": 2285,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:2291",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 2291,
+              "end": 2295,
+              "line": 1,
+              "column": 2292,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:5760",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 5760,
+              "end": 5764,
+              "line": 1,
+              "column": 5761,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:7441",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 7441,
+              "end": 7445,
+              "line": 1,
+              "column": 7442,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:7971",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 7971,
+              "end": 7977,
+              "line": 1,
+              "column": 7972,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8014",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 8014,
+              "end": 8020,
+              "line": 1,
+              "column": 8015,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8134",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 8134,
+              "end": 8141,
+              "line": 1,
+              "column": 8135,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8189",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 8189,
+              "end": 8195,
+              "line": 1,
+              "column": 8190,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8232",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 8232,
+              "end": 8238,
+              "line": 1,
+              "column": 8233,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8239",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 8239,
+              "end": 8243,
+              "line": 1,
+              "column": 8240,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9477",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response[_0x412946(0x1ad,'SJDy')]",
+              "start": 9477,
+              "end": 9511,
+              "line": 1,
+              "column": 9478,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x412946(0x1ad,'SJDy')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9649",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9649,
+              "end": 9699,
+              "line": 1,
+              "column": 9650,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:13400",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 13400,
+              "end": 13404,
+              "line": 1,
+              "column": 13401,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "a80632f4308d8971f2ee1b42cb1b2c3b72c90ec5619ed33849fcc0fcbf0f1bcc",
+        "operations": [
+          {
+            "id": "read:2036",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 2036,
+              "end": 2042,
+              "line": 1,
+              "column": 2037,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "window",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:2068",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 2068,
+              "end": 2074,
+              "line": 1,
+              "column": 2069,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "window",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:2153",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 2153,
+              "end": 2160,
+              "line": 1,
+              "column": 2154,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "require",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:2241",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 2241,
+              "end": 2247,
+              "line": 1,
+              "column": 2242,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "global",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:2284",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 2284,
+              "end": 2290,
+              "line": 1,
+              "column": 2285,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "global",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:2291",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 2291,
+              "end": 2295,
+              "line": 1,
+              "column": 2292,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:5760",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 5760,
+              "end": 5764,
+              "line": 1,
+              "column": 5761,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:7441",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 7441,
+              "end": 7445,
+              "line": 1,
+              "column": 7442,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:7971",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 7971,
+              "end": 7977,
+              "line": 1,
+              "column": 7972,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "window",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:8014",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 8014,
+              "end": 8020,
+              "line": 1,
+              "column": 8015,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "window",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:8134",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 8134,
+              "end": 8141,
+              "line": 1,
+              "column": 8135,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "require",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:8189",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 8189,
+              "end": 8195,
+              "line": 1,
+              "column": 8190,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "global",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:8232",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 8232,
+              "end": 8238,
+              "line": 1,
+              "column": 8233,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "global",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:8239",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 8239,
+              "end": 8243,
+              "line": 1,
+              "column": 8240,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:9477",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response[_0x412946(0x1ad,'SJDy')]",
+              "start": 9477,
+              "end": 9511,
+              "line": 1,
+              "column": 9478,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x412946(0x1ad,'SJDy')>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              }
+            ]
+          },
+          {
+            "id": "call:9649",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9649,
+              "end": 9699,
+              "line": 1,
+              "column": 9650,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:13400",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 13400,
+              "end": 13404,
+              "line": 1,
+              "column": 13401,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "window",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "require",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "global",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "this",
+            "reason": "Dynamic receiver access requires scope/data-flow proof",
+            "solution": "Keep native or resolve the receiver before adaptation"
+          },
+          {
+            "api": "$response",
+            "reason": "Computed API property cannot be resolved statically",
+            "solution": "Use a static property name or retain the native script"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "window",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "require",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "global",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "this",
+      "reason": "surge: Dynamic receiver access requires scope/data-flow proof",
+      "solution": "Keep native or resolve the receiver before adaptation"
+    },
+    {
+      "api": "$response",
+      "reason": "surge: Computed API property cannot be resolved statically",
+      "solution": "Use a static property name or retain the native script"
+    }
+  ]
+}

@@ -1,0 +1,866 @@
+{
+  "version": 1,
+  "sourceUrl": "https://kelee.one/Resource/JavaScript/IThome/IThome_remove_ads.js",
+  "sourceSha256": "3008c1a2831ec084c07e44c2219ee8776aefb45a9b4053da675fde6701caa141",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "3008c1a2831ec084c07e44c2219ee8776aefb45a9b4053da675fde6701caa141",
+    "operations": [
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 42,
+        "end": 57,
+        "line": 4,
+        "column": 10,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 66,
+        "end": 75,
+        "line": 4,
+        "column": 34,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 159,
+        "end": 173,
+        "line": 10,
+        "column": 27,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 256,
+        "end": 265,
+        "line": 13,
+        "column": 16,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$argument.removeAllBanners",
+        "access": "read",
+        "start": 316,
+        "end": 343,
+        "line": 17,
+        "column": 30,
+        "members": [
+          "$argument",
+          "removeAllBanners"
+        ]
+      },
+      {
+        "api": "$argument.removeAllBanners",
+        "access": "read",
+        "start": 360,
+        "end": 386,
+        "line": 17,
+        "column": 74,
+        "members": [
+          "$argument",
+          "removeAllBanners"
+        ]
+      },
+      {
+        "api": "$argument.removePinnedArticles",
+        "access": "read",
+        "start": 428,
+        "end": 459,
+        "line": 18,
+        "column": 34,
+        "members": [
+          "$argument",
+          "removePinnedArticles"
+        ]
+      },
+      {
+        "api": "$argument.removePinnedArticles",
+        "access": "read",
+        "start": 476,
+        "end": 506,
+        "line": 18,
+        "column": 82,
+        "members": [
+          "$argument",
+          "removePinnedArticles"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 2900,
+        "end": 2966,
+        "line": 94,
+        "column": 5,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "3008c1a2831ec084c07e44c2219ee8776aefb45a9b4053da675fde6701caa141",
+        "operations": [
+          {
+            "id": "read:42",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 42,
+              "end": 57,
+              "line": 4,
+              "column": 10,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:66",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 66,
+              "end": 75,
+              "line": 4,
+              "column": 34,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:159",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 159,
+              "end": 173,
+              "line": 10,
+              "column": 27,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:256",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 256,
+              "end": 265,
+              "line": 13,
+              "column": 16,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:316",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removeAllBanners",
+              "start": 316,
+              "end": 343,
+              "line": 17,
+              "column": 30,
+              "access": "read",
+              "memberPath": [
+                "removeAllBanners"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "omitted",
+            "diagnostics": []
+          },
+          {
+            "id": "read:360",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removeAllBanners",
+              "start": 360,
+              "end": 386,
+              "line": 17,
+              "column": 74,
+              "access": "read",
+              "memberPath": [
+                "removeAllBanners"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "omitted",
+            "diagnostics": []
+          },
+          {
+            "id": "read:428",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removePinnedArticles",
+              "start": 428,
+              "end": 459,
+              "line": 18,
+              "column": 34,
+              "access": "read",
+              "memberPath": [
+                "removePinnedArticles"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "omitted",
+            "diagnostics": []
+          },
+          {
+            "id": "read:476",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removePinnedArticles",
+              "start": 476,
+              "end": 506,
+              "line": 18,
+              "column": 82,
+              "access": "read",
+              "memberPath": [
+                "removePinnedArticles"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "omitted",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2900",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 2900,
+              "end": 2966,
+              "line": 94,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "3008c1a2831ec084c07e44c2219ee8776aefb45a9b4053da675fde6701caa141",
+        "operations": [
+          {
+            "id": "read:42",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 42,
+              "end": 57,
+              "line": 4,
+              "column": 10,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:66",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 66,
+              "end": 75,
+              "line": 4,
+              "column": 34,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:159",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 159,
+              "end": 173,
+              "line": 10,
+              "column": 27,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:256",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 256,
+              "end": 265,
+              "line": 13,
+              "column": 16,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:316",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removeAllBanners",
+              "start": 316,
+              "end": 343,
+              "line": 17,
+              "column": 30,
+              "access": "read",
+              "memberPath": [
+                "removeAllBanners"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:360",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removeAllBanners",
+              "start": 360,
+              "end": 386,
+              "line": 17,
+              "column": 74,
+              "access": "read",
+              "memberPath": [
+                "removeAllBanners"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:428",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removePinnedArticles",
+              "start": 428,
+              "end": 459,
+              "line": 18,
+              "column": 34,
+              "access": "read",
+              "memberPath": [
+                "removePinnedArticles"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:476",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removePinnedArticles",
+              "start": 476,
+              "end": 506,
+              "line": 18,
+              "column": 82,
+              "access": "read",
+              "memberPath": [
+                "removePinnedArticles"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2900",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 2900,
+              "end": 2966,
+              "line": 94,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "3008c1a2831ec084c07e44c2219ee8776aefb45a9b4053da675fde6701caa141",
+        "operations": [
+          {
+            "id": "read:42",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 42,
+              "end": 57,
+              "line": 4,
+              "column": 10,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:66",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 66,
+              "end": 75,
+              "line": 4,
+              "column": 34,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:159",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 159,
+              "end": 173,
+              "line": 10,
+              "column": 27,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:256",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 256,
+              "end": 265,
+              "line": 13,
+              "column": 16,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:316",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removeAllBanners",
+              "start": 316,
+              "end": 343,
+              "line": 17,
+              "column": 30,
+              "access": "read",
+              "memberPath": [
+                "removeAllBanners"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:360",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removeAllBanners",
+              "start": 360,
+              "end": 386,
+              "line": 17,
+              "column": 74,
+              "access": "read",
+              "memberPath": [
+                "removeAllBanners"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:428",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removePinnedArticles",
+              "start": 428,
+              "end": 459,
+              "line": 18,
+              "column": 34,
+              "access": "read",
+              "memberPath": [
+                "removePinnedArticles"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:476",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.removePinnedArticles",
+              "start": 476,
+              "end": 506,
+              "line": 18,
+              "column": 82,
+              "access": "read",
+              "memberPath": [
+                "removePinnedArticles"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2900",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 2900,
+              "end": 2966,
+              "line": 94,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

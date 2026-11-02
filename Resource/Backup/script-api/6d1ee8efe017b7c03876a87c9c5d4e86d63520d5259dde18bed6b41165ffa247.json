@@ -1,0 +1,5020 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/zZPiglet/Task/master/asset/UnblockURLinWeChat.js",
+  "sourceSha256": "79098ac4d2eb7932c9b2b45ac7891469703626855e5d13ab4374af52cc48983e",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "79098ac4d2eb7932c9b2b45ac7891469703626855e5d13ab4374af52cc48983e",
+    "operations": [
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 323,
+        "end": 332,
+        "line": 5,
+        "column": 12,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument.split",
+        "access": "call",
+        "start": 384,
+        "end": 404,
+        "line": 6,
+        "column": 34,
+        "members": [
+          "$argument",
+          "split"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 547,
+        "end": 561,
+        "line": 10,
+        "column": 18,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$notify",
+        "access": "read",
+        "start": 803,
+        "end": 810,
+        "line": 15,
+        "column": 24,
+        "members": [
+          "$notify"
+        ]
+      },
+      {
+        "api": "$environment",
+        "access": "read",
+        "start": 873,
+        "end": 885,
+        "line": 17,
+        "column": 28,
+        "members": [
+          "$environment"
+        ]
+      },
+      {
+        "api": "$environment.surge-version",
+        "access": "read",
+        "start": 893,
+        "end": 922,
+        "line": 18,
+        "column": 5,
+        "members": [
+          "$environment",
+          "surge-version"
+        ]
+      },
+      {
+        "api": "$environment.system",
+        "access": "read",
+        "start": 930,
+        "end": 949,
+        "line": 19,
+        "column": 5,
+        "members": [
+          "$environment",
+          "system"
+        ]
+      },
+      {
+        "api": "$loon",
+        "access": "read",
+        "start": 985,
+        "end": 990,
+        "line": 20,
+        "column": 26,
+        "members": [
+          "$loon"
+        ]
+      },
+      {
+        "api": "$loon",
+        "access": "read",
+        "start": 1023,
+        "end": 1028,
+        "line": 20,
+        "column": 64,
+        "members": [
+          "$loon"
+        ]
+      },
+      {
+        "api": "$environment",
+        "access": "read",
+        "start": 1077,
+        "end": 1089,
+        "line": 22,
+        "column": 28,
+        "members": [
+          "$environment"
+        ]
+      },
+      {
+        "api": "$environment.stash-version",
+        "access": "read",
+        "start": 1097,
+        "end": 1126,
+        "line": 23,
+        "column": 5,
+        "members": [
+          "$environment",
+          "stash-version"
+        ]
+      },
+      {
+        "api": "$environment.system",
+        "access": "read",
+        "start": 1134,
+        "end": 1153,
+        "line": 24,
+        "column": 5,
+        "members": [
+          "$environment",
+          "system"
+        ]
+      },
+      {
+        "api": "$rocket",
+        "access": "read",
+        "start": 1210,
+        "end": 1217,
+        "line": 25,
+        "column": 47,
+        "members": [
+          "$rocket"
+        ]
+      },
+      {
+        "api": "$native",
+        "access": "read",
+        "start": 1258,
+        "end": 1265,
+        "line": 26,
+        "column": 40,
+        "members": [
+          "$native"
+        ]
+      },
+      {
+        "api": "global",
+        "access": "read",
+        "start": 1687,
+        "end": 1693,
+        "line": 34,
+        "column": 134,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "global",
+        "access": "read",
+        "start": 1695,
+        "end": 1701,
+        "line": 34,
+        "column": 142,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 70095,
+        "end": 70099,
+        "line": 34,
+        "column": 68542,
+        "members": []
+      },
+      {
+        "api": "window",
+        "access": "read",
+        "start": 70463,
+        "end": 70469,
+        "line": 38,
+        "column": 291,
+        "members": [
+          "window"
+        ]
+      },
+      {
+        "api": "window",
+        "access": "read",
+        "start": 70470,
+        "end": 70476,
+        "line": 38,
+        "column": 298,
+        "members": [
+          "window"
+        ]
+      },
+      {
+        "api": "global",
+        "access": "read",
+        "start": 70497,
+        "end": 70503,
+        "line": 38,
+        "column": 325,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "global",
+        "access": "read",
+        "start": 70504,
+        "end": 70510,
+        "line": 38,
+        "column": 332,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 70511,
+        "end": 70515,
+        "line": 38,
+        "column": 339,
+        "members": []
+      },
+      {
+        "api": "atob",
+        "access": "read",
+        "start": 70578,
+        "end": 70582,
+        "line": 38,
+        "column": 406,
+        "members": [
+          "atob"
+        ]
+      },
+      {
+        "api": "btoa",
+        "access": "read",
+        "start": 70604,
+        "end": 70608,
+        "line": 38,
+        "column": 432,
+        "members": [
+          "btoa"
+        ]
+      },
+      {
+        "api": "Buffer",
+        "access": "read",
+        "start": 70630,
+        "end": 70636,
+        "line": 38,
+        "column": 458,
+        "members": [
+          "Buffer"
+        ]
+      },
+      {
+        "api": "TextDecoder",
+        "access": "read",
+        "start": 70658,
+        "end": 70669,
+        "line": 38,
+        "column": 486,
+        "members": [
+          "TextDecoder"
+        ]
+      },
+      {
+        "api": "TextDecoder",
+        "access": "construct",
+        "start": 70670,
+        "end": 70685,
+        "line": 38,
+        "column": 498,
+        "members": [
+          "TextDecoder"
+        ]
+      },
+      {
+        "api": "TextEncoder",
+        "access": "read",
+        "start": 70714,
+        "end": 70725,
+        "line": 38,
+        "column": 542,
+        "members": [
+          "TextEncoder"
+        ]
+      },
+      {
+        "api": "TextEncoder",
+        "access": "construct",
+        "start": 70726,
+        "end": 70741,
+        "line": 38,
+        "column": 554,
+        "members": [
+          "TextEncoder"
+        ]
+      },
+      {
+        "api": "btoa",
+        "access": "call",
+        "start": 71672,
+        "end": 71679,
+        "line": 38,
+        "column": 1500,
+        "members": [
+          "btoa"
+        ]
+      },
+      {
+        "api": "Buffer.from",
+        "access": "call",
+        "start": 71702,
+        "end": 71725,
+        "line": 38,
+        "column": 1530,
+        "members": [
+          "Buffer",
+          "from"
+        ]
+      },
+      {
+        "api": "Buffer.from",
+        "access": "call",
+        "start": 71771,
+        "end": 71785,
+        "line": 38,
+        "column": 1599,
+        "members": [
+          "Buffer",
+          "from"
+        ]
+      },
+      {
+        "api": "Buffer.from",
+        "access": "call",
+        "start": 72362,
+        "end": 72383,
+        "line": 38,
+        "column": 2190,
+        "members": [
+          "Buffer",
+          "from"
+        ]
+      },
+      {
+        "api": "atob",
+        "access": "call",
+        "start": 73368,
+        "end": 73378,
+        "line": 38,
+        "column": 3196,
+        "members": [
+          "atob"
+        ]
+      },
+      {
+        "api": "Buffer.from",
+        "access": "call",
+        "start": 73401,
+        "end": 73424,
+        "line": 38,
+        "column": 3229,
+        "members": [
+          "Buffer",
+          "from"
+        ]
+      },
+      {
+        "api": "Buffer.from",
+        "access": "call",
+        "start": 73472,
+        "end": 73495,
+        "line": 38,
+        "column": 3300,
+        "members": [
+          "Buffer",
+          "from"
+        ]
+      },
+      {
+        "api": "Buffer.from",
+        "access": "call",
+        "start": 73617,
+        "end": 73640,
+        "line": 38,
+        "column": 3445,
+        "members": [
+          "Buffer",
+          "from"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 74031,
+        "end": 74035,
+        "line": 38,
+        "column": 3859,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 74075,
+        "end": 74079,
+        "line": 38,
+        "column": 3903,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 74123,
+        "end": 74127,
+        "line": 38,
+        "column": 3951,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 74172,
+        "end": 74176,
+        "line": 38,
+        "column": 4000,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 74222,
+        "end": 74226,
+        "line": 38,
+        "column": 4050,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 74359,
+        "end": 74363,
+        "line": 38,
+        "column": 4187,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 74407,
+        "end": 74411,
+        "line": 38,
+        "column": 4235,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 74456,
+        "end": 74460,
+        "line": 38,
+        "column": 4284,
+        "members": []
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 75403,
+        "end": 75412,
+        "line": 47,
+        "column": 9,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 75926,
+        "end": 75941,
+        "line": 62,
+        "column": 13,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 75958,
+        "end": 75967,
+        "line": 63,
+        "column": 16,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 76274,
+        "end": 76283,
+        "line": 72,
+        "column": 17,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 77343,
+        "end": 77358,
+        "line": 95,
+        "column": 25,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 77413,
+        "end": 77422,
+        "line": 97,
+        "column": 25,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 77491,
+        "end": 77500,
+        "line": 100,
+        "column": 21,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 77580,
+        "end": 77589,
+        "line": 104,
+        "column": 13,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 77649,
+        "end": 77658,
+        "line": 109,
+        "column": 5,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$environment.version",
+        "access": "read",
+        "start": 77762,
+        "end": 77782,
+        "line": 113,
+        "column": 31,
+        "members": [
+          "$environment",
+          "version"
+        ]
+      },
+      {
+        "api": "$notify",
+        "access": "call",
+        "start": 77917,
+        "end": 77950,
+        "line": 117,
+        "column": 13,
+        "members": [
+          "$notify"
+        ]
+      },
+      {
+        "api": "$notify",
+        "access": "call",
+        "start": 77981,
+        "end": 78020,
+        "line": 119,
+        "column": 13,
+        "members": [
+          "$notify"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 78212,
+        "end": 78256,
+        "line": 125,
+        "column": 13,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 78287,
+        "end": 78337,
+        "line": 127,
+        "column": 13,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 78506,
+        "end": 78550,
+        "line": 133,
+        "column": 13,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 78581,
+        "end": 78631,
+        "line": 135,
+        "column": 13,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 78712,
+        "end": 78766,
+        "line": 139,
+        "column": 13,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 78797,
+        "end": 78841,
+        "line": 141,
+        "column": 13,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$task.fetch",
+        "access": "call",
+        "start": 79003,
+        "end": 79023,
+        "line": 149,
+        "column": 16,
+        "members": [
+          "$task",
+          "fetch"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 79100,
+        "end": 79300,
+        "line": 152,
+        "column": 13,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "$notify",
+        "access": "read",
+        "start": 79359,
+        "end": 79366,
+        "line": 161,
+        "column": 16,
+        "members": [
+          "$notify"
+        ]
+      },
+      {
+        "api": "$prefs.valueForKey",
+        "access": "call",
+        "start": 79411,
+        "end": 79434,
+        "line": 162,
+        "column": 27,
+        "members": [
+          "$prefs",
+          "valueForKey"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 79484,
+        "end": 79510,
+        "line": 164,
+        "column": 27,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "$loon",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "window",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "window",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "atob",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "btoa",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "Buffer",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "TextDecoder",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "TextDecoder",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "TextEncoder",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "TextEncoder",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "btoa",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "Buffer",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "Buffer",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "Buffer",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "atob",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "Buffer",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "Buffer",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "Buffer",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "source/text observations retained"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "79098ac4d2eb7932c9b2b45ac7891469703626855e5d13ab4374af52cc48983e",
+        "operations": [
+          {
+            "id": "read:323",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$argument",
+              "start": 323,
+              "end": 332,
+              "line": 5,
+              "column": 12,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:384",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$argument.split",
+              "start": 384,
+              "end": 404,
+              "line": 6,
+              "column": 34,
+              "access": "call",
+              "memberPath": [
+                "split"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:547",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 547,
+              "end": 561,
+              "line": 10,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:803",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 803,
+              "end": 810,
+              "line": 15,
+              "column": 24,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notify",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:873",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment",
+              "start": 873,
+              "end": 885,
+              "line": 17,
+              "column": 28,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:893",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.surge-version",
+              "start": 893,
+              "end": 922,
+              "line": 18,
+              "column": 5,
+              "access": "read",
+              "memberPath": [
+                "surge-version"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:930",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.system",
+              "start": 930,
+              "end": 949,
+              "line": 19,
+              "column": 5,
+              "access": "read",
+              "memberPath": [
+                "system"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:985",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$loon",
+              "start": 985,
+              "end": 990,
+              "line": 20,
+              "column": 26,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1023",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$loon",
+              "start": 1023,
+              "end": 1028,
+              "line": 20,
+              "column": 64,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1077",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment",
+              "start": 1077,
+              "end": 1089,
+              "line": 22,
+              "column": 28,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1097",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.stash-version",
+              "start": 1097,
+              "end": 1126,
+              "line": 23,
+              "column": 5,
+              "access": "read",
+              "memberPath": [
+                "stash-version"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1134",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.system",
+              "start": 1134,
+              "end": 1153,
+              "line": 24,
+              "column": 5,
+              "access": "read",
+              "memberPath": [
+                "system"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1210",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$rocket",
+              "start": 1210,
+              "end": 1217,
+              "line": 25,
+              "column": 47,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1258",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$native",
+              "start": 1258,
+              "end": 1265,
+              "line": 26,
+              "column": 40,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1687",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 1687,
+              "end": 1693,
+              "line": 34,
+              "column": 134,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1695",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 1695,
+              "end": 1701,
+              "line": 34,
+              "column": 142,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70095",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 70095,
+              "end": 70099,
+              "line": 34,
+              "column": 68542,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70463",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 70463,
+              "end": 70469,
+              "line": 38,
+              "column": 291,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70470",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 70470,
+              "end": 70476,
+              "line": 38,
+              "column": 298,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70497",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 70497,
+              "end": 70503,
+              "line": 38,
+              "column": 325,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70504",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 70504,
+              "end": 70510,
+              "line": 38,
+              "column": 332,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70511",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 70511,
+              "end": 70515,
+              "line": 38,
+              "column": 339,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70578",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 70578,
+              "end": 70582,
+              "line": 38,
+              "column": 406,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70604",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 70604,
+              "end": 70608,
+              "line": 38,
+              "column": 432,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70630",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer",
+              "start": 70630,
+              "end": 70636,
+              "line": 38,
+              "column": 458,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70658",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 70658,
+              "end": 70669,
+              "line": 38,
+              "column": 486,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "construct:70670",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 70670,
+              "end": 70685,
+              "line": 38,
+              "column": 498,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:70714",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 70714,
+              "end": 70725,
+              "line": 38,
+              "column": 542,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextEncoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "construct:70726",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 70726,
+              "end": 70741,
+              "line": 38,
+              "column": 554,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextEncoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:71672",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 71672,
+              "end": 71679,
+              "line": 38,
+              "column": 1500,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:71702",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 71702,
+              "end": 71725,
+              "line": 38,
+              "column": 1530,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:71771",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 71771,
+              "end": 71785,
+              "line": 38,
+              "column": 1599,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:72362",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 72362,
+              "end": 72383,
+              "line": 38,
+              "column": 2190,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:73368",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 73368,
+              "end": 73378,
+              "line": 38,
+              "column": 3196,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:73401",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 73401,
+              "end": 73424,
+              "line": 38,
+              "column": 3229,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:73472",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 73472,
+              "end": 73495,
+              "line": 38,
+              "column": 3300,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:73617",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 73617,
+              "end": 73640,
+              "line": 38,
+              "column": 3445,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:74031",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74031,
+              "end": 74035,
+              "line": 38,
+              "column": 3859,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:74075",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74075,
+              "end": 74079,
+              "line": 38,
+              "column": 3903,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:74123",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74123,
+              "end": 74127,
+              "line": 38,
+              "column": 3951,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:74172",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74172,
+              "end": 74176,
+              "line": 38,
+              "column": 4000,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:74222",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74222,
+              "end": 74226,
+              "line": 38,
+              "column": 4050,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:74359",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74359,
+              "end": 74363,
+              "line": 38,
+              "column": 4187,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:74407",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74407,
+              "end": 74411,
+              "line": 38,
+              "column": 4235,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:74456",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74456,
+              "end": 74460,
+              "line": 38,
+              "column": 4284,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:75403",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 75403,
+              "end": 75412,
+              "line": 47,
+              "column": 9,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:75926",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 75926,
+              "end": 75941,
+              "line": 62,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "status",
+                "canonical": "complete.status",
+                "target": "status",
+                "action": "map",
+                "transform": "parse status then format HTTP status line"
+              },
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              },
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:75958",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 75958,
+              "end": 75967,
+              "line": 63,
+              "column": 16,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:76274",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 76274,
+              "end": 76283,
+              "line": 72,
+              "column": 17,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77343",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77343,
+              "end": 77358,
+              "line": 95,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "status",
+                "canonical": "complete.status",
+                "target": "status",
+                "action": "map",
+                "transform": "parse status then format HTTP status line"
+              },
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              },
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77413",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77413,
+              "end": 77422,
+              "line": 97,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77491",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77491,
+              "end": 77500,
+              "line": 100,
+              "column": 21,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77580",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77580,
+              "end": 77589,
+              "line": 104,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77649",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77649,
+              "end": 77658,
+              "line": 109,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:77762",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.version",
+              "start": 77762,
+              "end": 77782,
+              "line": 113,
+              "column": 31,
+              "access": "read",
+              "memberPath": [
+                "version"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77917",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 77917,
+              "end": 77950,
+              "line": 117,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notify",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77981",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 77981,
+              "end": 78020,
+              "line": 119,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notify",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              },
+              {
+                "source": "argument3",
+                "canonical": "notify.options",
+                "target": null,
+                "action": "omit"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:78212",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78212,
+              "end": 78256,
+              "line": 125,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:78287",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78287,
+              "end": 78337,
+              "line": 127,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:78506",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78506,
+              "end": 78550,
+              "line": 133,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:78581",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78581,
+              "end": 78631,
+              "line": 135,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:78712",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78712,
+              "end": 78766,
+              "line": 139,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:78797",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78797,
+              "end": 78841,
+              "line": 141,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:79003",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$task.fetch",
+              "start": 79003,
+              "end": 79023,
+              "line": 149,
+              "column": 16,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "Promise or callback",
+            "target": {
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "request-response-error-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:79100",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 79100,
+              "end": 79300,
+              "line": 152,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:79359",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 79359,
+              "end": 79366,
+              "line": 161,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notify",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:79411",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$prefs.valueForKey",
+              "start": 79411,
+              "end": 79434,
+              "line": 162,
+              "column": 27,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$prefs.valueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:79484",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 79484,
+              "end": 79510,
+              "line": 164,
+              "column": 27,
+              "access": "call",
+              "memberPath": [
+                "read"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "79098ac4d2eb7932c9b2b45ac7891469703626855e5d13ab4374af52cc48983e",
+        "operations": [
+          {
+            "id": "read:323",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$argument",
+              "start": 323,
+              "end": 332,
+              "line": 5,
+              "column": 12,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "call:384",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$argument.split",
+              "start": 384,
+              "end": 404,
+              "line": 6,
+              "column": 34,
+              "access": "call",
+              "memberPath": [
+                "split"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:547",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 547,
+              "end": 561,
+              "line": 10,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:803",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 803,
+              "end": 810,
+              "line": 15,
+              "column": 24,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notification.post",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notify",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "read:873",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment",
+              "start": 873,
+              "end": 885,
+              "line": 17,
+              "column": 28,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$environment",
+                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
+                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
+              }
+            ]
+          },
+          {
+            "id": "read:893",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.surge-version",
+              "start": 893,
+              "end": 922,
+              "line": 18,
+              "column": 5,
+              "access": "read",
+              "memberPath": [
+                "surge-version"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$environment",
+                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
+                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
+              }
+            ]
+          },
+          {
+            "id": "read:930",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.system",
+              "start": 930,
+              "end": 949,
+              "line": 19,
+              "column": 5,
+              "access": "read",
+              "memberPath": [
+                "system"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$environment",
+                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
+                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
+              }
+            ]
+          },
+          {
+            "id": "read:985",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$loon",
+              "start": 985,
+              "end": 990,
+              "line": 20,
+              "column": 26,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$loon",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$loon",
+                "reason": "Loon runtime identity string cannot be inferred from another application's version",
+                "solution": "Keep environment branches native or resolve them with verified source/target branches"
+              }
+            ]
+          },
+          {
+            "id": "read:1023",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$loon",
+              "start": 1023,
+              "end": 1028,
+              "line": 20,
+              "column": 64,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$loon",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$loon",
+                "reason": "Loon runtime identity string cannot be inferred from another application's version",
+                "solution": "Keep environment branches native or resolve them with verified source/target branches"
+              }
+            ]
+          },
+          {
+            "id": "read:1077",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment",
+              "start": 1077,
+              "end": 1089,
+              "line": 22,
+              "column": 28,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$environment",
+                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
+                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
+              }
+            ]
+          },
+          {
+            "id": "read:1097",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.stash-version",
+              "start": 1097,
+              "end": 1126,
+              "line": 23,
+              "column": 5,
+              "access": "read",
+              "memberPath": [
+                "stash-version"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$environment",
+                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
+                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
+              }
+            ]
+          },
+          {
+            "id": "read:1134",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.system",
+              "start": 1134,
+              "end": 1153,
+              "line": 24,
+              "column": 5,
+              "access": "read",
+              "memberPath": [
+                "system"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$environment",
+                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
+                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
+              }
+            ]
+          },
+          {
+            "id": "read:1210",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$rocket",
+              "start": 1210,
+              "end": 1217,
+              "line": 25,
+              "column": 47,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$rocket",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:1258",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$native",
+              "start": 1258,
+              "end": 1265,
+              "line": 26,
+              "column": 40,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$native",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:1687",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 1687,
+              "end": 1693,
+              "line": 34,
+              "column": 134,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "global",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:1695",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 1695,
+              "end": 1701,
+              "line": 34,
+              "column": 142,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "global",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:70095",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 70095,
+              "end": 70099,
+              "line": 34,
+              "column": 68542,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:70463",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 70463,
+              "end": 70469,
+              "line": 38,
+              "column": 291,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "window",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:70470",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 70470,
+              "end": 70476,
+              "line": 38,
+              "column": 298,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "window",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:70497",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 70497,
+              "end": 70503,
+              "line": 38,
+              "column": 325,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "global",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:70504",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "global",
+              "start": 70504,
+              "end": 70510,
+              "line": 38,
+              "column": 332,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "global",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:70511",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 70511,
+              "end": 70515,
+              "line": 38,
+              "column": 339,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:70578",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 70578,
+              "end": 70582,
+              "line": 38,
+              "column": 406,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:70604",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 70604,
+              "end": 70608,
+              "line": 38,
+              "column": 432,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "btoa",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:70630",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer",
+              "start": 70630,
+              "end": 70636,
+              "line": 38,
+              "column": 458,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "Buffer",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:70658",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 70658,
+              "end": 70669,
+              "line": 38,
+              "column": 486,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "TextDecoder",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "construct:70670",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 70670,
+              "end": 70685,
+              "line": 38,
+              "column": 498,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "TextDecoder",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:70714",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 70714,
+              "end": 70725,
+              "line": 38,
+              "column": 542,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextEncoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "TextEncoder",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "construct:70726",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 70726,
+              "end": 70741,
+              "line": 38,
+              "column": 554,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextEncoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "TextEncoder",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:71672",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 71672,
+              "end": 71679,
+              "line": 38,
+              "column": 1500,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "btoa",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:71702",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 71702,
+              "end": 71725,
+              "line": 38,
+              "column": 1530,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "Buffer",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:71771",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 71771,
+              "end": 71785,
+              "line": 38,
+              "column": 1599,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "Buffer",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:72362",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 72362,
+              "end": 72383,
+              "line": 38,
+              "column": 2190,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "Buffer",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:73368",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 73368,
+              "end": 73378,
+              "line": 38,
+              "column": 3196,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:73401",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 73401,
+              "end": 73424,
+              "line": 38,
+              "column": 3229,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "Buffer",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:73472",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 73472,
+              "end": 73495,
+              "line": 38,
+              "column": 3300,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "Buffer",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:73617",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Buffer.from",
+              "start": 73617,
+              "end": 73640,
+              "line": 38,
+              "column": 3445,
+              "access": "call",
+              "memberPath": [
+                "from"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "Buffer",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:74031",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74031,
+              "end": 74035,
+              "line": 38,
+              "column": 3859,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:74075",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74075,
+              "end": 74079,
+              "line": 38,
+              "column": 3903,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:74123",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74123,
+              "end": 74127,
+              "line": 38,
+              "column": 3951,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:74172",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74172,
+              "end": 74176,
+              "line": 38,
+              "column": 4000,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:74222",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74222,
+              "end": 74226,
+              "line": 38,
+              "column": 4050,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:74359",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74359,
+              "end": 74363,
+              "line": 38,
+              "column": 4187,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:74407",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74407,
+              "end": 74411,
+              "line": 38,
+              "column": 4235,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:74456",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 74456,
+              "end": 74460,
+              "line": 38,
+              "column": 4284,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "call:75403",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 75403,
+              "end": 75412,
+              "line": 47,
+              "column": 9,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:75926",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 75926,
+              "end": 75941,
+              "line": 62,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "status",
+                "canonical": "complete.status",
+                "target": "status",
+                "action": "map",
+                "transform": "parse status to Number"
+              },
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              },
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:75958",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 75958,
+              "end": 75967,
+              "line": 63,
+              "column": 16,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:76274",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 76274,
+              "end": 76283,
+              "line": 72,
+              "column": 17,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77343",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77343,
+              "end": 77358,
+              "line": 95,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "status",
+                "canonical": "complete.status",
+                "target": "status",
+                "action": "map",
+                "transform": "parse status to Number"
+              },
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              },
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77413",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77413,
+              "end": 77422,
+              "line": 97,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77491",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77491,
+              "end": 77500,
+              "line": 100,
+              "column": 21,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77580",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77580,
+              "end": 77589,
+              "line": 104,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:77649",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 77649,
+              "end": 77658,
+              "line": 109,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:77762",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.version",
+              "start": 77762,
+              "end": 77782,
+              "line": 113,
+              "column": 31,
+              "access": "read",
+              "memberPath": [
+                "version"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$environment",
+                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
+                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
+              }
+            ]
+          },
+          {
+            "id": "call:77917",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 77917,
+              "end": 77950,
+              "line": 117,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notification.post",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notify",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:77981",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 77981,
+              "end": 78020,
+              "line": 119,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notification.post",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "notify.title",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "notify.subtitle",
+                "target": "argument1",
+                "action": "map"
+              },
+              {
+                "source": "argument2",
+                "canonical": "notify.body",
+                "target": "argument2",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notify",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:78212",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78212,
+              "end": 78256,
+              "line": 125,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              },
+              {
+                "api": "$notification.post",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:78287",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78287,
+              "end": 78337,
+              "line": 127,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              },
+              {
+                "api": "$notification.post",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:78506",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78506,
+              "end": 78550,
+              "line": 133,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              },
+              {
+                "api": "$notification.post",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:78581",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78581,
+              "end": 78631,
+              "line": 135,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              },
+              {
+                "api": "$notification.post",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:78712",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78712,
+              "end": 78766,
+              "line": 139,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              },
+              {
+                "api": "$notification.post",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:78797",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification.post",
+              "start": 78797,
+              "end": 78841,
+              "line": 141,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notification.post",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              },
+              {
+                "api": "$notification.post",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:79003",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$task.fetch",
+              "start": 79003,
+              "end": 79023,
+              "line": 149,
+              "column": 16,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "Promise or callback",
+            "target": {
+              "api": "$httpClient.<request-method>",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "request-response-error-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$httpClient",
+                "reason": "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
+                "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
+              },
+              {
+                "api": "$task",
+                "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
+                "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
+              }
+            ]
+          },
+          {
+            "id": "call:79100",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 79100,
+              "end": 79300,
+              "line": 152,
+              "column": 13,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$httpClient",
+                "reason": "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
+                "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
+              }
+            ]
+          },
+          {
+            "id": "read:79359",
+            "rule": "notify",
+            "kind": "notification",
+            "source": {
+              "api": "$notify",
+              "start": 79359,
+              "end": 79366,
+              "line": 161,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
+            "value": "notification request; delivery is not guaranteed",
+            "target": {
+              "api": "$notification.post",
+              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "proof": "notification-option-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$notify",
+                "reason": "Notification attachments/actions/delay differ across clients",
+                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+              }
+            ]
+          },
+          {
+            "id": "call:79411",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$prefs.valueForKey",
+              "start": 79411,
+              "end": 79434,
+              "line": 162,
+              "column": 27,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$prefs.valueForKey",
+                "reason": "Default/dynamic key namespaces differ across clients",
+                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+              }
+            ]
+          },
+          {
+            "id": "call:79484",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 79484,
+              "end": 79510,
+              "line": 164,
+              "column": 27,
+              "access": "call",
+              "memberPath": [
+                "read"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              },
+              {
+                "api": "$persistentStore.read",
+                "reason": "Default/dynamic key namespaces differ across clients",
+                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$loon",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "global",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "this",
+            "reason": "Dynamic receiver access requires scope/data-flow proof",
+            "solution": "Keep native or resolve the receiver before adaptation"
+          },
+          {
+            "api": "window",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "atob",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "btoa",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "Buffer",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "TextDecoder",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "TextEncoder",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$argument",
+            "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+            "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+          },
+          {
+            "api": "$environment",
+            "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
+            "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
+          },
+          {
+            "api": "$httpClient",
+            "reason": "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
+            "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
+          },
+          {
+            "api": "$loon",
+            "reason": "Loon runtime identity string cannot be inferred from another application's version",
+            "solution": "Keep environment branches native or resolve them with verified source/target branches"
+          },
+          {
+            "api": "$native",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "$notification.post",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "$persistentStore.read",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "$rocket",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "$task",
+            "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
+            "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
+          },
+          {
+            "api": "$notify",
+            "reason": "Notification attachments/actions/delay differ across clients",
+            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+          },
+          {
+            "api": "$notification.post",
+            "reason": "Notification attachments/actions/delay differ across clients",
+            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+          },
+          {
+            "api": "$prefs.valueForKey",
+            "reason": "Default/dynamic key namespaces differ across clients",
+            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+          },
+          {
+            "api": "$persistentStore.read",
+            "reason": "Default/dynamic key namespaces differ across clients",
+            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$loon",
+      "reason": "surge: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "global",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "this",
+      "reason": "surge: Dynamic receiver access requires scope/data-flow proof",
+      "solution": "Keep native or resolve the receiver before adaptation"
+    },
+    {
+      "api": "window",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "atob",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "btoa",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "Buffer",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "TextDecoder",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "TextEncoder",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$argument",
+      "reason": "surge: Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+      "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+    },
+    {
+      "api": "$environment",
+      "reason": "surge: Device metadata, sourcePath, parameters and configuration fields differ by host",
+      "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
+    },
+    {
+      "api": "$httpClient",
+      "reason": "surge: HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
+      "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
+    },
+    {
+      "api": "$loon",
+      "reason": "surge: Loon runtime identity string cannot be inferred from another application's version",
+      "solution": "Keep environment branches native or resolve them with verified source/target branches"
+    },
+    {
+      "api": "$native",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "$notification.post",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "$persistentStore.read",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "$rocket",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "$task",
+      "reason": "surge: QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
+      "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
+    },
+    {
+      "api": "$notify",
+      "reason": "surge: Notification attachments/actions/delay differ across clients",
+      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+    },
+    {
+      "api": "$notification.post",
+      "reason": "surge: Notification attachments/actions/delay differ across clients",
+      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
+    },
+    {
+      "api": "$prefs.valueForKey",
+      "reason": "surge: Default/dynamic key namespaces differ across clients",
+      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+    },
+    {
+      "api": "$persistentStore.read",
+      "reason": "surge: Default/dynamic key namespaces differ across clients",
+      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+    }
+  ]
+}

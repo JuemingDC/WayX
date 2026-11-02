@@ -1,0 +1,1125 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js",
+  "sourceSha256": "1a165112aac24bf3830fa47b77d223d85beffdeaf91ee96eef05ab9429b36844",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "1a165112aac24bf3830fa47b77d223d85beffdeaf91ee96eef05ab9429b36844",
+    "operations": [
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 334,
+        "end": 367,
+        "line": 17,
+        "column": 21,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 394,
+        "end": 408,
+        "line": 17,
+        "column": 81,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 596,
+        "end": 632,
+        "line": 17,
+        "column": 283,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 658,
+        "end": 672,
+        "line": 17,
+        "column": 345,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 804,
+        "end": 837,
+        "line": 17,
+        "column": 491,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 851,
+        "end": 887,
+        "line": 17,
+        "column": 538,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 996,
+        "end": 1043,
+        "line": 17,
+        "column": 683,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 1067,
+        "end": 1107,
+        "line": 17,
+        "column": 754,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 1133,
+        "end": 1147,
+        "line": 17,
+        "column": 820,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 1225,
+        "end": 1267,
+        "line": 17,
+        "column": 912,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 1568,
+        "end": 1611,
+        "line": 17,
+        "column": 1255,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 1637,
+        "end": 1651,
+        "line": 17,
+        "column": 1324,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 1715,
+        "end": 1749,
+        "line": 17,
+        "column": 1402,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 1926,
+        "end": 1978,
+        "line": 17,
+        "column": 1613,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$request.url.includes",
+        "access": "call",
+        "start": 2006,
+        "end": 2044,
+        "line": 17,
+        "column": 1693,
+        "members": [
+          "$request",
+          "url",
+          "includes"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 2081,
+        "end": 2090,
+        "line": 17,
+        "column": 1768,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 2091,
+        "end": 2133,
+        "line": 17,
+        "column": 1778,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 1,
+    "branches": 0,
+    "reason": "pure source-host specialization"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "d284b5d88acd262adf82c02f466c7ce73dd34091e3f678bbd129ff4565f515a5",
+        "operations": [
+          {
+            "id": "call:334",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 334,
+              "end": 367,
+              "line": 17,
+              "column": 21,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:394",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 394,
+              "end": 408,
+              "line": 17,
+              "column": 81,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:596",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 596,
+              "end": 632,
+              "line": 17,
+              "column": 283,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:658",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 658,
+              "end": 672,
+              "line": 17,
+              "column": 345,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:804",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 804,
+              "end": 837,
+              "line": 17,
+              "column": 491,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:851",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 851,
+              "end": 887,
+              "line": 17,
+              "column": 538,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:999",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 999,
+              "end": 1046,
+              "line": 17,
+              "column": 686,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1070",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1070,
+              "end": 1110,
+              "line": 17,
+              "column": 757,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1136",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 1136,
+              "end": 1150,
+              "line": 17,
+              "column": 823,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1228",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1228,
+              "end": 1270,
+              "line": 17,
+              "column": 915,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1571",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1571,
+              "end": 1614,
+              "line": 17,
+              "column": 1258,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1640",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 1640,
+              "end": 1654,
+              "line": 17,
+              "column": 1327,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1718",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1718,
+              "end": 1752,
+              "line": 17,
+              "column": 1405,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1929",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1929,
+              "end": 1981,
+              "line": 17,
+              "column": 1616,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2009",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 2009,
+              "end": 2047,
+              "line": 17,
+              "column": 1696,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2084",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 2084,
+              "end": 2093,
+              "line": 17,
+              "column": 1771,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2094",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 2094,
+              "end": 2136,
+              "line": 17,
+              "column": 1781,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "d284b5d88acd262adf82c02f466c7ce73dd34091e3f678bbd129ff4565f515a5",
+        "operations": [
+          {
+            "id": "call:334",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 334,
+              "end": 367,
+              "line": 17,
+              "column": 21,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:394",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 394,
+              "end": 408,
+              "line": 17,
+              "column": 81,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:596",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 596,
+              "end": 632,
+              "line": 17,
+              "column": 283,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:658",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 658,
+              "end": 672,
+              "line": 17,
+              "column": 345,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:804",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 804,
+              "end": 837,
+              "line": 17,
+              "column": 491,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:851",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 851,
+              "end": 887,
+              "line": 17,
+              "column": 538,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:999",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 999,
+              "end": 1046,
+              "line": 17,
+              "column": 686,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1070",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1070,
+              "end": 1110,
+              "line": 17,
+              "column": 757,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1136",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 1136,
+              "end": 1150,
+              "line": 17,
+              "column": 823,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1228",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1228,
+              "end": 1270,
+              "line": 17,
+              "column": 915,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1571",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1571,
+              "end": 1614,
+              "line": 17,
+              "column": 1258,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:1640",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 1640,
+              "end": 1654,
+              "line": 17,
+              "column": 1327,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1718",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1718,
+              "end": 1752,
+              "line": 17,
+              "column": 1405,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:1929",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 1929,
+              "end": 1981,
+              "line": 17,
+              "column": 1616,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2009",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.includes",
+              "start": 2009,
+              "end": 2047,
+              "line": 17,
+              "column": 1696,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2084",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 2084,
+              "end": 2093,
+              "line": 17,
+              "column": 1771,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2094",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 2094,
+              "end": 2136,
+              "line": 17,
+              "column": 1781,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

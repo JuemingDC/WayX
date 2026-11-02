@@ -1,0 +1,3468 @@
+{
+  "version": 1,
+  "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/zimuquan.js",
+  "sourceSha256": "dd3c3ca0ca6b25f0ffecb61c195837821e9b8c3ab08b6f6f2a6de018e6692c81",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "dd3c3ca0ca6b25f0ffecb61c195837821e9b8c3ab08b6f6f2a6de018e6692c81",
+    "operations": [
+      {
+        "api": "$response",
+        "access": "read",
+        "start": 189142,
+        "end": 189151,
+        "line": 13,
+        "column": 188859,
+        "members": [
+          "$response"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "read",
+        "start": 189654,
+        "end": 189659,
+        "line": 13,
+        "column": 189371,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "read",
+        "start": 190196,
+        "end": 190201,
+        "line": 13,
+        "column": 189913,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 201929,
+        "end": 201933,
+        "line": 13,
+        "column": 201646,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 216717,
+        "end": 216721,
+        "line": 13,
+        "column": 216434,
+        "members": []
+      },
+      {
+        "api": "atob",
+        "access": "read",
+        "start": 223775,
+        "end": 223779,
+        "line": 13,
+        "column": 223492,
+        "members": [
+          "atob"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 226764,
+        "end": 226768,
+        "line": 13,
+        "column": 226481,
+        "members": []
+      },
+      {
+        "api": "$done",
+        "access": "read",
+        "start": 231975,
+        "end": 231980,
+        "line": 13,
+        "column": 231692,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "URL",
+        "access": "construct",
+        "start": 232904,
+        "end": 232922,
+        "line": 13,
+        "column": 232621,
+        "members": [
+          "URL"
+        ]
+      },
+      {
+        "api": "btoa",
+        "access": "read",
+        "start": 235609,
+        "end": 235613,
+        "line": 13,
+        "column": 235326,
+        "members": [
+          "btoa"
+        ]
+      },
+      {
+        "api": "btoa",
+        "access": "read",
+        "start": 235911,
+        "end": 235915,
+        "line": 13,
+        "column": 235628,
+        "members": [
+          "btoa"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "read",
+        "start": 238725,
+        "end": 238730,
+        "line": 13,
+        "column": 238442,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response[_0x22778f(a0_0x4cc88d._0x119ace,a0_0x4cc88d._0x314df1,a0_0x4cc88d._0x355b1a,a0_0x4cc88d._0x184d14,a0_0x4cc88d._0x388063)]",
+        "access": "read",
+        "start": 239949,
+        "end": 240080,
+        "line": 13,
+        "column": 239666,
+        "members": [
+          "$response",
+          "<computed:_0x22778f(a0_0x4cc88d._0x119ace,a0_0x4cc88d._0x314df1,a0_0x4cc88d._0x355b1a,a0_0>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "read",
+        "start": 240213,
+        "end": 240218,
+        "line": 13,
+        "column": 239930,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "this['\\x69\\x79\\x58\\x73\\x74\\x73']",
+        "access": "read",
+        "start": 244901,
+        "end": 244933,
+        "line": 13,
+        "column": 244618,
+        "members": []
+      },
+      {
+        "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']",
+        "access": "read",
+        "start": 244944,
+        "end": 244976,
+        "line": 13,
+        "column": 244661,
+        "members": []
+      },
+      {
+        "api": "this['\\x5a\\x46\\x51\\x42\\x51\\x6c']",
+        "access": "read",
+        "start": 245063,
+        "end": 245095,
+        "line": 13,
+        "column": 244780,
+        "members": []
+      },
+      {
+        "api": "this['\\x47\\x4d\\x63\\x6b\\x42\\x64']",
+        "access": "read",
+        "start": 245150,
+        "end": 245182,
+        "line": 13,
+        "column": 244867,
+        "members": []
+      },
+      {
+        "api": "this['\\x57\\x6d\\x53\\x6f\\x63\\x71']",
+        "access": "read",
+        "start": 245254,
+        "end": 245286,
+        "line": 13,
+        "column": 244971,
+        "members": []
+      },
+      {
+        "api": "this['\\x47\\x4d\\x63\\x6b\\x42\\x64']",
+        "access": "read",
+        "start": 245474,
+        "end": 245506,
+        "line": 13,
+        "column": 245191,
+        "members": []
+      },
+      {
+        "api": "this['\\x57\\x6d\\x53\\x6f\\x63\\x71']",
+        "access": "read",
+        "start": 245507,
+        "end": 245539,
+        "line": 13,
+        "column": 245224,
+        "members": []
+      },
+      {
+        "api": "this['\\x5a\\x46\\x51\\x42\\x51\\x6c']['\\x74\\x6f\\x53\\x74\\x72\\x69\\x6e\\x67']",
+        "access": "call",
+        "start": 245581,
+        "end": 245651,
+        "line": 13,
+        "column": 245298,
+        "members": []
+      },
+      {
+        "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][0x1*-0xd72+-0x1264+0x1fd7*0x1]",
+        "access": "read",
+        "start": 245655,
+        "end": 245718,
+        "line": 13,
+        "column": 245372,
+        "members": []
+      },
+      {
+        "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][-0x47*-0x59+-0x212d+0x87e]",
+        "access": "read",
+        "start": 245721,
+        "end": 245780,
+        "line": 13,
+        "column": 245438,
+        "members": []
+      },
+      {
+        "api": "this['\\x4f\\x44\\x66\\x70\\x63\\x66']",
+        "access": "call",
+        "start": 245788,
+        "end": 245831,
+        "line": 13,
+        "column": 245505,
+        "members": []
+      },
+      {
+        "api": "this['\\x79\\x41\\x62\\x79\\x68\\x64']",
+        "access": "call",
+        "start": 245980,
+        "end": 246046,
+        "line": 13,
+        "column": 245697,
+        "members": []
+      },
+      {
+        "api": "this['\\x69\\x79\\x58\\x73\\x74\\x73']",
+        "access": "read",
+        "start": 246013,
+        "end": 246045,
+        "line": 13,
+        "column": 245730,
+        "members": []
+      },
+      {
+        "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x6c\\x65\\x6e\\x67\\x74\\x68']",
+        "access": "read",
+        "start": 246204,
+        "end": 246264,
+        "line": 13,
+        "column": 245921,
+        "members": []
+      },
+      {
+        "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x70\\x75\\x73\\x68']",
+        "access": "call",
+        "start": 246298,
+        "end": 246416,
+        "line": 13,
+        "column": 246015,
+        "members": []
+      },
+      {
+        "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x6c\\x65\\x6e\\x67\\x74\\x68']",
+        "access": "read",
+        "start": 246427,
+        "end": 246487,
+        "line": 13,
+        "column": 246144,
+        "members": []
+      },
+      {
+        "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][0xc0f+0x2329+0x5e7*-0x8]",
+        "access": "read",
+        "start": 246506,
+        "end": 246563,
+        "line": 13,
+        "column": 246223,
+        "members": []
+      },
+      {
+        "api": "Function",
+        "access": "read",
+        "start": 292875,
+        "end": 292883,
+        "line": 13,
+        "column": 292592,
+        "members": [
+          "Function"
+        ]
+      },
+      {
+        "api": "window",
+        "access": "read",
+        "start": 293605,
+        "end": 293611,
+        "line": 13,
+        "column": 293322,
+        "members": [
+          "window"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "$response",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$done",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$done",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "atob",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "$done",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "URL",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "btoa",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "btoa",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "$done",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$response",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$done",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "Function",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "window",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "dd3c3ca0ca6b25f0ffecb61c195837821e9b8c3ab08b6f6f2a6de018e6692c81",
+        "operations": [
+          {
+            "id": "read:189142",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 189142,
+              "end": 189151,
+              "line": 13,
+              "column": 188859,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$response",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              },
+              {
+                "api": "$response",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:189654",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 189654,
+              "end": 189659,
+              "line": 13,
+              "column": 189371,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "read:190196",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 190196,
+              "end": 190201,
+              "line": 13,
+              "column": 189913,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "read:201929",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 201929,
+              "end": 201933,
+              "line": 13,
+              "column": 201646,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:216717",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 216717,
+              "end": 216721,
+              "line": 13,
+              "column": 216434,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:223775",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 223775,
+              "end": 223779,
+              "line": 13,
+              "column": 223492,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:226764",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 226764,
+              "end": 226768,
+              "line": 13,
+              "column": 226481,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:231975",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 231975,
+              "end": 231980,
+              "line": 13,
+              "column": 231692,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "construct:232904",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "URL",
+              "start": 232904,
+              "end": 232922,
+              "line": 13,
+              "column": 232621,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "URL",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:235609",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 235609,
+              "end": 235613,
+              "line": 13,
+              "column": 235326,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "btoa",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:235911",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 235911,
+              "end": 235915,
+              "line": 13,
+              "column": 235628,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "btoa",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:238725",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 238725,
+              "end": 238730,
+              "line": 13,
+              "column": 238442,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "read:239949",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response[_0x22778f(a0_0x4cc88d._0x119ace,a0_0x4cc88d._0x314df1,a0_0x4cc88d._0x355b1a,a0_0x4cc88d._0x184d14,a0_0x4cc88d._0x388063)]",
+              "start": 239949,
+              "end": 240080,
+              "line": 13,
+              "column": 239666,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x22778f(a0_0x4cc88d._0x119ace,a0_0x4cc88d._0x314df1,a0_0x4cc88d._0x355b1a,a0_0>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$response",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              },
+              {
+                "api": "$response",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:240213",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 240213,
+              "end": 240218,
+              "line": 13,
+              "column": 239930,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "read:244901",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x69\\x79\\x58\\x73\\x74\\x73']",
+              "start": 244901,
+              "end": 244933,
+              "line": 13,
+              "column": 244618,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:244944",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']",
+              "start": 244944,
+              "end": 244976,
+              "line": 13,
+              "column": 244661,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245063",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x5a\\x46\\x51\\x42\\x51\\x6c']",
+              "start": 245063,
+              "end": 245095,
+              "line": 13,
+              "column": 244780,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245150",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x47\\x4d\\x63\\x6b\\x42\\x64']",
+              "start": 245150,
+              "end": 245182,
+              "line": 13,
+              "column": 244867,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245254",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x57\\x6d\\x53\\x6f\\x63\\x71']",
+              "start": 245254,
+              "end": 245286,
+              "line": 13,
+              "column": 244971,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245474",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x47\\x4d\\x63\\x6b\\x42\\x64']",
+              "start": 245474,
+              "end": 245506,
+              "line": 13,
+              "column": 245191,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245507",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x57\\x6d\\x53\\x6f\\x63\\x71']",
+              "start": 245507,
+              "end": 245539,
+              "line": 13,
+              "column": 245224,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "call:245581",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x5a\\x46\\x51\\x42\\x51\\x6c']['\\x74\\x6f\\x53\\x74\\x72\\x69\\x6e\\x67']",
+              "start": 245581,
+              "end": 245651,
+              "line": 13,
+              "column": 245298,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245655",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][0x1*-0xd72+-0x1264+0x1fd7*0x1]",
+              "start": 245655,
+              "end": 245718,
+              "line": 13,
+              "column": 245372,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245721",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][-0x47*-0x59+-0x212d+0x87e]",
+              "start": 245721,
+              "end": 245780,
+              "line": 13,
+              "column": 245438,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "call:245788",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x4f\\x44\\x66\\x70\\x63\\x66']",
+              "start": 245788,
+              "end": 245831,
+              "line": 13,
+              "column": 245505,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "call:245980",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x79\\x41\\x62\\x79\\x68\\x64']",
+              "start": 245980,
+              "end": 246046,
+              "line": 13,
+              "column": 245697,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:246013",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x69\\x79\\x58\\x73\\x74\\x73']",
+              "start": 246013,
+              "end": 246045,
+              "line": 13,
+              "column": 245730,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:246204",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x6c\\x65\\x6e\\x67\\x74\\x68']",
+              "start": 246204,
+              "end": 246264,
+              "line": 13,
+              "column": 245921,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "call:246298",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x70\\x75\\x73\\x68']",
+              "start": 246298,
+              "end": 246416,
+              "line": 13,
+              "column": 246015,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:246427",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x6c\\x65\\x6e\\x67\\x74\\x68']",
+              "start": 246427,
+              "end": 246487,
+              "line": 13,
+              "column": 246144,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:246506",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][0xc0f+0x2329+0x5e7*-0x8]",
+              "start": 246506,
+              "end": 246563,
+              "line": 13,
+              "column": 246223,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:292875",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Function",
+              "start": 292875,
+              "end": 292883,
+              "line": 13,
+              "column": 292592,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "Function",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:293605",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 293605,
+              "end": 293611,
+              "line": 13,
+              "column": 293322,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "window",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$response",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$done",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "this",
+            "reason": "Dynamic receiver access requires scope/data-flow proof",
+            "solution": "Keep native or resolve the receiver before adaptation"
+          },
+          {
+            "api": "atob",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "URL",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "btoa",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$response",
+            "reason": "Computed API property cannot be resolved statically",
+            "solution": "Use a static property name or retain the native script"
+          },
+          {
+            "api": "Function",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "window",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$response",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          }
+        ]
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "dd3c3ca0ca6b25f0ffecb61c195837821e9b8c3ab08b6f6f2a6de018e6692c81",
+        "operations": [
+          {
+            "id": "read:189142",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 189142,
+              "end": 189151,
+              "line": 13,
+              "column": 188859,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$response",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              },
+              {
+                "api": "$response",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:189654",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 189654,
+              "end": 189659,
+              "line": 13,
+              "column": 189371,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "read:190196",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 190196,
+              "end": 190201,
+              "line": 13,
+              "column": 189913,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "read:201929",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 201929,
+              "end": 201933,
+              "line": 13,
+              "column": 201646,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:216717",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 216717,
+              "end": 216721,
+              "line": 13,
+              "column": 216434,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:223775",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 223775,
+              "end": 223779,
+              "line": 13,
+              "column": 223492,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "atob",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:226764",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 226764,
+              "end": 226768,
+              "line": 13,
+              "column": 226481,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:231975",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 231975,
+              "end": 231980,
+              "line": 13,
+              "column": 231692,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "construct:232904",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "URL",
+              "start": 232904,
+              "end": 232922,
+              "line": 13,
+              "column": 232621,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "URL",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:235609",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 235609,
+              "end": 235613,
+              "line": 13,
+              "column": 235326,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "btoa",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:235911",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 235911,
+              "end": 235915,
+              "line": 13,
+              "column": 235628,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "btoa",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:238725",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 238725,
+              "end": 238730,
+              "line": 13,
+              "column": 238442,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "read:239949",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response[_0x22778f(a0_0x4cc88d._0x119ace,a0_0x4cc88d._0x314df1,a0_0x4cc88d._0x355b1a,a0_0x4cc88d._0x184d14,a0_0x4cc88d._0x388063)]",
+              "start": 239949,
+              "end": 240080,
+              "line": 13,
+              "column": 239666,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x22778f(a0_0x4cc88d._0x119ace,a0_0x4cc88d._0x314df1,a0_0x4cc88d._0x355b1a,a0_0>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$response",
+                "reason": "Computed API property cannot be resolved statically",
+                "solution": "Use a static property name or retain the native script"
+              },
+              {
+                "api": "$response",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:240213",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 240213,
+              "end": 240218,
+              "line": 13,
+              "column": 239930,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              }
+            ]
+          },
+          {
+            "id": "read:244901",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x69\\x79\\x58\\x73\\x74\\x73']",
+              "start": 244901,
+              "end": 244933,
+              "line": 13,
+              "column": 244618,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:244944",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']",
+              "start": 244944,
+              "end": 244976,
+              "line": 13,
+              "column": 244661,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245063",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x5a\\x46\\x51\\x42\\x51\\x6c']",
+              "start": 245063,
+              "end": 245095,
+              "line": 13,
+              "column": 244780,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245150",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x47\\x4d\\x63\\x6b\\x42\\x64']",
+              "start": 245150,
+              "end": 245182,
+              "line": 13,
+              "column": 244867,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245254",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x57\\x6d\\x53\\x6f\\x63\\x71']",
+              "start": 245254,
+              "end": 245286,
+              "line": 13,
+              "column": 244971,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245474",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x47\\x4d\\x63\\x6b\\x42\\x64']",
+              "start": 245474,
+              "end": 245506,
+              "line": 13,
+              "column": 245191,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245507",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x57\\x6d\\x53\\x6f\\x63\\x71']",
+              "start": 245507,
+              "end": 245539,
+              "line": 13,
+              "column": 245224,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "call:245581",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x5a\\x46\\x51\\x42\\x51\\x6c']['\\x74\\x6f\\x53\\x74\\x72\\x69\\x6e\\x67']",
+              "start": 245581,
+              "end": 245651,
+              "line": 13,
+              "column": 245298,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245655",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][0x1*-0xd72+-0x1264+0x1fd7*0x1]",
+              "start": 245655,
+              "end": 245718,
+              "line": 13,
+              "column": 245372,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:245721",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][-0x47*-0x59+-0x212d+0x87e]",
+              "start": 245721,
+              "end": 245780,
+              "line": 13,
+              "column": 245438,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "call:245788",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x4f\\x44\\x66\\x70\\x63\\x66']",
+              "start": 245788,
+              "end": 245831,
+              "line": 13,
+              "column": 245505,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "call:245980",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x79\\x41\\x62\\x79\\x68\\x64']",
+              "start": 245980,
+              "end": 246046,
+              "line": 13,
+              "column": 245697,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:246013",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x69\\x79\\x58\\x73\\x74\\x73']",
+              "start": 246013,
+              "end": 246045,
+              "line": 13,
+              "column": 245730,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:246204",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x6c\\x65\\x6e\\x67\\x74\\x68']",
+              "start": 246204,
+              "end": 246264,
+              "line": 13,
+              "column": 245921,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "call:246298",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x70\\x75\\x73\\x68']",
+              "start": 246298,
+              "end": 246416,
+              "line": 13,
+              "column": 246015,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:246427",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x6c\\x65\\x6e\\x67\\x74\\x68']",
+              "start": 246427,
+              "end": 246487,
+              "line": 13,
+              "column": 246144,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:246506",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][0xc0f+0x2329+0x5e7*-0x8]",
+              "start": 246506,
+              "end": 246563,
+              "line": 13,
+              "column": 246223,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:292875",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Function",
+              "start": 292875,
+              "end": 292883,
+              "line": 13,
+              "column": 292592,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "Function",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:293605",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 293605,
+              "end": 293611,
+              "line": 13,
+              "column": 293322,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "window",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$response",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$done",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "this",
+            "reason": "Dynamic receiver access requires scope/data-flow proof",
+            "solution": "Keep native or resolve the receiver before adaptation"
+          },
+          {
+            "api": "atob",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "URL",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "btoa",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$response",
+            "reason": "Computed API property cannot be resolved statically",
+            "solution": "Use a static property name or retain the native script"
+          },
+          {
+            "api": "Function",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "window",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$response",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          }
+        ]
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "dd3c3ca0ca6b25f0ffecb61c195837821e9b8c3ab08b6f6f2a6de018e6692c81",
+        "operations": [
+          {
+            "id": "read:189142",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 189142,
+              "end": 189151,
+              "line": 13,
+              "column": 188859,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$response",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:189654",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 189654,
+              "end": 189659,
+              "line": 13,
+              "column": 189371,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:190196",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 190196,
+              "end": 190201,
+              "line": 13,
+              "column": 189913,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:201929",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 201929,
+              "end": 201933,
+              "line": 13,
+              "column": 201646,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:216717",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 216717,
+              "end": 216721,
+              "line": 13,
+              "column": 216434,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:223775",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 223775,
+              "end": 223779,
+              "line": 13,
+              "column": 223492,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "atob",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:226764",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 226764,
+              "end": 226768,
+              "line": 13,
+              "column": 226481,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:231975",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 231975,
+              "end": 231980,
+              "line": 13,
+              "column": 231692,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "construct:232904",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "URL",
+              "start": 232904,
+              "end": 232922,
+              "line": 13,
+              "column": 232621,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:235609",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 235609,
+              "end": 235613,
+              "line": 13,
+              "column": 235326,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:235911",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 235911,
+              "end": 235915,
+              "line": 13,
+              "column": 235628,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "btoa",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:238725",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 238725,
+              "end": 238730,
+              "line": 13,
+              "column": 238442,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:239949",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response[_0x22778f(a0_0x4cc88d._0x119ace,a0_0x4cc88d._0x314df1,a0_0x4cc88d._0x355b1a,a0_0x4cc88d._0x184d14,a0_0x4cc88d._0x388063)]",
+              "start": 239949,
+              "end": 240080,
+              "line": 13,
+              "column": 239666,
+              "access": "read",
+              "memberPath": [
+                "<computed:_0x22778f(a0_0x4cc88d._0x119ace,a0_0x4cc88d._0x314df1,a0_0x4cc88d._0x355b1a,a0_0>"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:240213",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 240213,
+              "end": 240218,
+              "line": 13,
+              "column": 239930,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:244901",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x69\\x79\\x58\\x73\\x74\\x73']",
+              "start": 244901,
+              "end": 244933,
+              "line": 13,
+              "column": 244618,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:244944",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']",
+              "start": 244944,
+              "end": 244976,
+              "line": 13,
+              "column": 244661,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:245063",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x5a\\x46\\x51\\x42\\x51\\x6c']",
+              "start": 245063,
+              "end": 245095,
+              "line": 13,
+              "column": 244780,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:245150",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x47\\x4d\\x63\\x6b\\x42\\x64']",
+              "start": 245150,
+              "end": 245182,
+              "line": 13,
+              "column": 244867,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:245254",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x57\\x6d\\x53\\x6f\\x63\\x71']",
+              "start": 245254,
+              "end": 245286,
+              "line": 13,
+              "column": 244971,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:245474",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x47\\x4d\\x63\\x6b\\x42\\x64']",
+              "start": 245474,
+              "end": 245506,
+              "line": 13,
+              "column": 245191,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:245507",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x57\\x6d\\x53\\x6f\\x63\\x71']",
+              "start": 245507,
+              "end": 245539,
+              "line": 13,
+              "column": 245224,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:245581",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x5a\\x46\\x51\\x42\\x51\\x6c']['\\x74\\x6f\\x53\\x74\\x72\\x69\\x6e\\x67']",
+              "start": 245581,
+              "end": 245651,
+              "line": 13,
+              "column": 245298,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:245655",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][0x1*-0xd72+-0x1264+0x1fd7*0x1]",
+              "start": 245655,
+              "end": 245718,
+              "line": 13,
+              "column": 245372,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:245721",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][-0x47*-0x59+-0x212d+0x87e]",
+              "start": 245721,
+              "end": 245780,
+              "line": 13,
+              "column": 245438,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:245788",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x4f\\x44\\x66\\x70\\x63\\x66']",
+              "start": 245788,
+              "end": 245831,
+              "line": 13,
+              "column": 245505,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:245980",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x79\\x41\\x62\\x79\\x68\\x64']",
+              "start": 245980,
+              "end": 246046,
+              "line": 13,
+              "column": 245697,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:246013",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x69\\x79\\x58\\x73\\x74\\x73']",
+              "start": 246013,
+              "end": 246045,
+              "line": 13,
+              "column": 245730,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:246204",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x6c\\x65\\x6e\\x67\\x74\\x68']",
+              "start": 246204,
+              "end": 246264,
+              "line": 13,
+              "column": 245921,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:246298",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x70\\x75\\x73\\x68']",
+              "start": 246298,
+              "end": 246416,
+              "line": 13,
+              "column": 246015,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:246427",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78']['\\x6c\\x65\\x6e\\x67\\x74\\x68']",
+              "start": 246427,
+              "end": 246487,
+              "line": 13,
+              "column": 246144,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:246506",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this['\\x6e\\x4d\\x75\\x59\\x42\\x78'][0xc0f+0x2329+0x5e7*-0x8]",
+              "start": 246506,
+              "end": 246563,
+              "line": 13,
+              "column": 246223,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:292875",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "Function",
+              "start": 292875,
+              "end": 292883,
+              "line": 13,
+              "column": 292592,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:293605",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 293605,
+              "end": 293611,
+              "line": 13,
+              "column": 293322,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$response",
+      "reason": "qx: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$done",
+      "reason": "qx: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "this",
+      "reason": "qx: Dynamic receiver access requires scope/data-flow proof",
+      "solution": "Keep native or resolve the receiver before adaptation"
+    },
+    {
+      "api": "atob",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "URL",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "btoa",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$response",
+      "reason": "qx: Computed API property cannot be resolved statically",
+      "solution": "Use a static property name or retain the native script"
+    },
+    {
+      "api": "Function",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "window",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$response",
+      "reason": "qx: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "$response",
+      "reason": "surge: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$done",
+      "reason": "surge: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "this",
+      "reason": "surge: Dynamic receiver access requires scope/data-flow proof",
+      "solution": "Keep native or resolve the receiver before adaptation"
+    },
+    {
+      "api": "atob",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "URL",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "btoa",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$response",
+      "reason": "surge: Computed API property cannot be resolved statically",
+      "solution": "Use a static property name or retain the native script"
+    },
+    {
+      "api": "Function",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "window",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$response",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    }
+  ]
+}

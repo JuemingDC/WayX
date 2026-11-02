@@ -1,0 +1,350 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amdc.js",
+  "sourceSha256": "8217f2150f8d12ae04d2c49b5da0a838e83f4de68b34df71c2da16cc1267898f",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "8217f2150f8d12ae04d2c49b5da0a838e83f4de68b34df71c2da16cc1267898f",
+    "operations": [
+      {
+        "api": "$request.headers.User-Agent",
+        "access": "read",
+        "start": 259,
+        "end": 289,
+        "line": 16,
+        "column": 8,
+        "members": [
+          "$request",
+          "headers",
+          "User-Agent"
+        ]
+      },
+      {
+        "api": "$request.headers.user-agent",
+        "access": "read",
+        "start": 291,
+        "end": 321,
+        "line": 16,
+        "column": 40,
+        "members": [
+          "$request",
+          "headers",
+          "user-agent"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 485,
+        "end": 511,
+        "line": 16,
+        "column": 234,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 512,
+        "end": 521,
+        "line": 16,
+        "column": 261,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "8217f2150f8d12ae04d2c49b5da0a838e83f4de68b34df71c2da16cc1267898f",
+        "operations": [
+          {
+            "id": "read:259",
+            "rule": "request.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$request.headers.User-Agent",
+              "start": 259,
+              "end": 289,
+              "line": 16,
+              "column": 8,
+              "access": "read",
+              "memberPath": [
+                "User-Agent"
+              ]
+            },
+            "canonical": "request.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:291",
+            "rule": "request.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$request.headers.user-agent",
+              "start": 291,
+              "end": 321,
+              "line": 16,
+              "column": 40,
+              "access": "read",
+              "memberPath": [
+                "user-agent"
+              ]
+            },
+            "canonical": "request.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:485",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 485,
+              "end": 511,
+              "line": 16,
+              "column": 234,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:512",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 512,
+              "end": 521,
+              "line": 16,
+              "column": 261,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "8217f2150f8d12ae04d2c49b5da0a838e83f4de68b34df71c2da16cc1267898f",
+        "operations": [
+          {
+            "id": "read:259",
+            "rule": "request.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$request.headers.User-Agent",
+              "start": 259,
+              "end": 289,
+              "line": 16,
+              "column": 8,
+              "access": "read",
+              "memberPath": [
+                "User-Agent"
+              ]
+            },
+            "canonical": "request.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              }
+            ]
+          },
+          {
+            "id": "read:291",
+            "rule": "request.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$request.headers.user-agent",
+              "start": 291,
+              "end": 321,
+              "line": 16,
+              "column": 40,
+              "access": "read",
+              "memberPath": [
+                "user-agent"
+              ]
+            },
+            "canonical": "request.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              }
+            ]
+          },
+          {
+            "id": "call:485",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 485,
+              "end": 511,
+              "line": 16,
+              "column": 234,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:512",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 512,
+              "end": 521,
+              "line": 16,
+              "column": 261,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "headers-shape",
+            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "headers-shape",
+      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+    }
+  ]
+}

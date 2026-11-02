@@ -1,0 +1,179 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js",
+  "sourceSha256": "78971da6855858d1a6737872209cfc0aaaf7755fbe8da19f4115a03591820252",
+  "sourceClients": [
+    "loon",
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "78971da6855858d1a6737872209cfc0aaaf7755fbe8da19f4115a03591820252",
+    "operations": [
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 500,
+        "end": 512,
+        "line": 13,
+        "column": 13,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 598,
+        "end": 614,
+        "line": 15,
+        "column": 18,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 667,
+        "end": 673,
+        "line": 17,
+        "column": 33,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 755,
+        "end": 761,
+        "line": 18,
+        "column": 33,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$request.headers[<computed>]",
+        "access": "read",
+        "start": 836,
+        "end": 853,
+        "line": 19,
+        "column": 32,
+        "members": [
+          "$request",
+          "headers",
+          "<computed:traceKey1>"
+        ]
+      },
+      {
+        "api": "$request.headers[<computed>]",
+        "access": "read",
+        "start": 893,
+        "end": 910,
+        "line": 20,
+        "column": 32,
+        "members": [
+          "$request",
+          "headers",
+          "<computed:traceKey2>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 954,
+        "end": 1018,
+        "line": 22,
+        "column": 5,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 1338,
+        "end": 1434,
+        "line": 29,
+        "column": 5,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 1451,
+        "end": 1460,
+        "line": 31,
+        "column": 5,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 1514,
+        "end": 1528,
+        "line": 34,
+        "column": 8,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 1530,
+        "end": 1539,
+        "line": 34,
+        "column": 24,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 1554,
+        "end": 1568,
+        "line": 35,
+        "column": 14,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 1643,
+        "end": 1656,
+        "line": 37,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": null,
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {},
+  "diagnostics": [
+    {
+      "api": "source-profile",
+      "reason": "No unique source platform and HTTP declaration profile",
+      "solution": "Register the source runtime and original adblock HTTP declaration"
+    }
+  ]
+}

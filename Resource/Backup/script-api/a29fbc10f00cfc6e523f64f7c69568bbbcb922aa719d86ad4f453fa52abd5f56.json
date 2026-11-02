@@ -1,0 +1,1939 @@
+{
+  "version": 1,
+  "sourceUrl": "https://kelee.one/Resource/JavaScript/RedPaper/RedPaper_remove_ads.js",
+  "sourceSha256": "f7b637c9c738b18f72dd61824e25b06dad7d55553de204daad0dddd675a74f0c",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "f7b637c9c738b18f72dd61824e25b06dad7d55553de204daad0dddd675a74f0c",
+    "operations": [
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 117,
+        "end": 129,
+        "line": 6,
+        "column": 13,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 136,
+        "end": 150,
+        "line": 7,
+        "column": 6,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 152,
+        "end": 161,
+        "line": 7,
+        "column": 22,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 184,
+        "end": 198,
+        "line": 8,
+        "column": 22,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 313,
+        "end": 361,
+        "line": 12,
+        "column": 33,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 2725,
+        "end": 2793,
+        "line": 74,
+        "column": 13,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 2933,
+        "end": 2974,
+        "line": 82,
+        "column": 30,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 8075,
+        "end": 8143,
+        "line": 223,
+        "column": 5,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 8200,
+        "end": 8247,
+        "line": 225,
+        "column": 36,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 8662,
+        "end": 8739,
+        "line": 238,
+        "column": 5,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 10709,
+        "end": 10757,
+        "line": 297,
+        "column": 35,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 11146,
+        "end": 11223,
+        "line": 308,
+        "column": 5,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 12374,
+        "end": 12415,
+        "line": 349,
+        "column": 30,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 12469,
+        "end": 12516,
+        "line": 350,
+        "column": 36,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 13163,
+        "end": 13244,
+        "line": 372,
+        "column": 3,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 13434,
+        "end": 13443,
+        "line": 379,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 13448,
+        "end": 13484,
+        "line": 382,
+        "column": 1,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "f7b637c9c738b18f72dd61824e25b06dad7d55553de204daad0dddd675a74f0c",
+        "operations": [
+          {
+            "id": "read:117",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 117,
+              "end": 129,
+              "line": 6,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:136",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 136,
+              "end": 150,
+              "line": 7,
+              "column": 6,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:152",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 152,
+              "end": 161,
+              "line": 7,
+              "column": 22,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:184",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 184,
+              "end": 198,
+              "line": 8,
+              "column": 22,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:313",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 313,
+              "end": 361,
+              "line": 12,
+              "column": 33,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$prefs.valueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:2725",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 2725,
+              "end": 2793,
+              "line": 74,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$prefs.setValueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2933",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 2933,
+              "end": 2974,
+              "line": 82,
+              "column": 30,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$prefs.valueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:8075",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 8075,
+              "end": 8143,
+              "line": 223,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$prefs.setValueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:8200",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 8200,
+              "end": 8247,
+              "line": 225,
+              "column": 36,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$prefs.valueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:8662",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 8662,
+              "end": 8739,
+              "line": 238,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$prefs.setValueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:10709",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 10709,
+              "end": 10757,
+              "line": 297,
+              "column": 35,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$prefs.valueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:11146",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 11146,
+              "end": 11223,
+              "line": 308,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$prefs.setValueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:12374",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 12374,
+              "end": 12415,
+              "line": 349,
+              "column": 30,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$prefs.valueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:12469",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 12469,
+              "end": 12516,
+              "line": 350,
+              "column": 36,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$prefs.valueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:13163",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 13163,
+              "end": 13244,
+              "line": 372,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$prefs.setValueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:13434",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 13434,
+              "end": 13443,
+              "line": 379,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:13448",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 13448,
+              "end": 13484,
+              "line": 382,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$persistentStore.read",
+            "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+            "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+          }
+        ]
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "f7b637c9c738b18f72dd61824e25b06dad7d55553de204daad0dddd675a74f0c",
+        "operations": [
+          {
+            "id": "read:117",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 117,
+              "end": 129,
+              "line": 6,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:136",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 136,
+              "end": 150,
+              "line": 7,
+              "column": 6,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:152",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 152,
+              "end": 161,
+              "line": 7,
+              "column": 22,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:184",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 184,
+              "end": 198,
+              "line": 8,
+              "column": 22,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:313",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 313,
+              "end": 361,
+              "line": 12,
+              "column": 33,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:2725",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 2725,
+              "end": 2793,
+              "line": 74,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2933",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 2933,
+              "end": 2974,
+              "line": 82,
+              "column": 30,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:8075",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 8075,
+              "end": 8143,
+              "line": 223,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:8200",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 8200,
+              "end": 8247,
+              "line": 225,
+              "column": 36,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:8662",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 8662,
+              "end": 8739,
+              "line": 238,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:10709",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 10709,
+              "end": 10757,
+              "line": 297,
+              "column": 35,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:11146",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 11146,
+              "end": 11223,
+              "line": 308,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:12374",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 12374,
+              "end": 12415,
+              "line": 349,
+              "column": 30,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:12469",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 12469,
+              "end": 12516,
+              "line": 350,
+              "column": 36,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+              }
+            ]
+          },
+          {
+            "id": "call:13163",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 13163,
+              "end": 13244,
+              "line": 372,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:13434",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 13434,
+              "end": 13443,
+              "line": 379,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:13448",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 13448,
+              "end": 13484,
+              "line": 382,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$persistentStore.read",
+            "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+            "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+          }
+        ]
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "f7b637c9c738b18f72dd61824e25b06dad7d55553de204daad0dddd675a74f0c",
+        "operations": [
+          {
+            "id": "read:117",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 117,
+              "end": 129,
+              "line": 6,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:136",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 136,
+              "end": 150,
+              "line": 7,
+              "column": 6,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:152",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 152,
+              "end": 161,
+              "line": 7,
+              "column": 22,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:184",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 184,
+              "end": 198,
+              "line": 8,
+              "column": 22,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.body",
+            "value": "String",
+            "target": {
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "body-mode-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:313",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 313,
+              "end": 361,
+              "line": 12,
+              "column": 33,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2725",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 2725,
+              "end": 2793,
+              "line": 74,
+              "column": 13,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:2933",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 2933,
+              "end": 2974,
+              "line": 82,
+              "column": 30,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:8075",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 8075,
+              "end": 8143,
+              "line": 223,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:8200",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 8200,
+              "end": 8247,
+              "line": 225,
+              "column": 36,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:8662",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 8662,
+              "end": 8739,
+              "line": 238,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:10709",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 10709,
+              "end": 10757,
+              "line": 297,
+              "column": 35,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:11146",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 11146,
+              "end": 11223,
+              "line": 308,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:12374",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 12374,
+              "end": 12415,
+              "line": 349,
+              "column": 30,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:12469",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 12469,
+              "end": 12516,
+              "line": 350,
+              "column": 36,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:13163",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 13163,
+              "end": 13244,
+              "line": 372,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:13434",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 13434,
+              "end": 13443,
+              "line": 379,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:13448",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 13448,
+              "end": 13484,
+              "line": 382,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$persistentStore.read",
+      "reason": "qx: The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+      "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+    },
+    {
+      "api": "$persistentStore.read",
+      "reason": "surge: The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
+      "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
+    }
+  ]
+}

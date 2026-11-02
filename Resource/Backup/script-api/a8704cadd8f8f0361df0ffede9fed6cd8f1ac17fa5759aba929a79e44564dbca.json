@@ -1,0 +1,1120 @@
+{
+  "version": 1,
+  "sourceUrl": "https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js",
+  "sourceSha256": "af0646890f9847aa4576181b0637e31b86a3e2f6dd4d2041a56ffa971aacc10b",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "af0646890f9847aa4576181b0637e31b86a3e2f6dd4d2041a56ffa971aacc10b",
+    "operations": [
+      {
+        "api": "global",
+        "access": "read",
+        "start": 2971,
+        "end": 2977,
+        "line": 6,
+        "column": 2829,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "global",
+        "access": "read",
+        "start": 3021,
+        "end": 3027,
+        "line": 6,
+        "column": 2879,
+        "members": [
+          "global"
+        ]
+      },
+      {
+        "api": "this.buf[this.pos++]",
+        "access": "read",
+        "start": 4981,
+        "end": 5001,
+        "line": 7,
+        "column": 1266,
+        "members": []
+      },
+      {
+        "api": "this.pos",
+        "access": "read",
+        "start": 4990,
+        "end": 4998,
+        "line": 7,
+        "column": 1275,
+        "members": []
+      },
+      {
+        "api": "this.assertBounds",
+        "access": "call",
+        "start": 5035,
+        "end": 5054,
+        "line": 7,
+        "column": 1320,
+        "members": []
+      },
+      {
+        "api": "this.buf[this.pos++]",
+        "access": "read",
+        "start": 5067,
+        "end": 5087,
+        "line": 7,
+        "column": 1352,
+        "members": []
+      },
+      {
+        "api": "this.pos",
+        "access": "read",
+        "start": 5076,
+        "end": 5084,
+        "line": 7,
+        "column": 1361,
+        "members": []
+      },
+      {
+        "api": "this.assertBounds",
+        "access": "call",
+        "start": 5134,
+        "end": 5153,
+        "line": 7,
+        "column": 1419,
+        "members": []
+      },
+      {
+        "api": "this.buf[this.pos++]",
+        "access": "read",
+        "start": 5190,
+        "end": 5210,
+        "line": 7,
+        "column": 1475,
+        "members": []
+      },
+      {
+        "api": "this.pos",
+        "access": "read",
+        "start": 5199,
+        "end": 5207,
+        "line": 7,
+        "column": 1484,
+        "members": []
+      },
+      {
+        "api": "this.assertBounds",
+        "access": "call",
+        "start": 5244,
+        "end": 5263,
+        "line": 7,
+        "column": 1529,
+        "members": []
+      },
+      {
+        "api": "this.buf[this.pos++]",
+        "access": "read",
+        "start": 6315,
+        "end": 6335,
+        "line": 7,
+        "column": 2600,
+        "members": []
+      },
+      {
+        "api": "this.pos",
+        "access": "read",
+        "start": 6324,
+        "end": 6332,
+        "line": 7,
+        "column": 2609,
+        "members": []
+      },
+      {
+        "api": "this.assertBounds",
+        "access": "call",
+        "start": 6363,
+        "end": 6382,
+        "line": 7,
+        "column": 2648,
+        "members": []
+      },
+      {
+        "api": "this.buf[this.pos++]",
+        "access": "read",
+        "start": 6390,
+        "end": 6410,
+        "line": 7,
+        "column": 2675,
+        "members": []
+      },
+      {
+        "api": "this.pos",
+        "access": "read",
+        "start": 6399,
+        "end": 6407,
+        "line": 7,
+        "column": 2684,
+        "members": []
+      },
+      {
+        "api": "this.assertBounds",
+        "access": "call",
+        "start": 6441,
+        "end": 6460,
+        "line": 7,
+        "column": 2726,
+        "members": []
+      },
+      {
+        "api": "this.buf[this.pos++]",
+        "access": "read",
+        "start": 6468,
+        "end": 6488,
+        "line": 7,
+        "column": 2753,
+        "members": []
+      },
+      {
+        "api": "this.pos",
+        "access": "read",
+        "start": 6477,
+        "end": 6485,
+        "line": 7,
+        "column": 2762,
+        "members": []
+      },
+      {
+        "api": "this.assertBounds",
+        "access": "call",
+        "start": 6520,
+        "end": 6539,
+        "line": 7,
+        "column": 2805,
+        "members": []
+      },
+      {
+        "api": "this.buf[this.pos++]",
+        "access": "read",
+        "start": 6547,
+        "end": 6567,
+        "line": 7,
+        "column": 2832,
+        "members": []
+      },
+      {
+        "api": "this.pos",
+        "access": "read",
+        "start": 6556,
+        "end": 6564,
+        "line": 7,
+        "column": 2841,
+        "members": []
+      },
+      {
+        "api": "this.assertBounds",
+        "access": "call",
+        "start": 6599,
+        "end": 6618,
+        "line": 7,
+        "column": 2884,
+        "members": []
+      },
+      {
+        "api": "this.buf[this.pos++]",
+        "access": "read",
+        "start": 6623,
+        "end": 6643,
+        "line": 7,
+        "column": 2908,
+        "members": []
+      },
+      {
+        "api": "this.pos",
+        "access": "read",
+        "start": 6632,
+        "end": 6640,
+        "line": 7,
+        "column": 2917,
+        "members": []
+      },
+      {
+        "api": "this.buf[this.pos++]",
+        "access": "read",
+        "start": 6688,
+        "end": 6708,
+        "line": 7,
+        "column": 2973,
+        "members": []
+      },
+      {
+        "api": "this.pos",
+        "access": "read",
+        "start": 6697,
+        "end": 6705,
+        "line": 7,
+        "column": 2982,
+        "members": []
+      },
+      {
+        "api": "this.assertBounds",
+        "access": "call",
+        "start": 6759,
+        "end": 6778,
+        "line": 7,
+        "column": 3044,
+        "members": []
+      },
+      {
+        "api": "TextDecoder",
+        "access": "construct",
+        "start": 10197,
+        "end": 10245,
+        "line": 7,
+        "column": 6482,
+        "members": [
+          "TextDecoder"
+        ]
+      },
+      {
+        "api": "TextEncoder",
+        "access": "construct",
+        "start": 12464,
+        "end": 12479,
+        "line": 7,
+        "column": 8749,
+        "members": [
+          "TextEncoder"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 12859,
+        "end": 12863,
+        "line": 7,
+        "column": 9144,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 13198,
+        "end": 13202,
+        "line": 7,
+        "column": 9483,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 13286,
+        "end": 13290,
+        "line": 7,
+        "column": 9571,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 13327,
+        "end": 13331,
+        "line": 7,
+        "column": 9612,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 13368,
+        "end": 13372,
+        "line": 7,
+        "column": 9653,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 13965,
+        "end": 13969,
+        "line": 7,
+        "column": 10250,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 14296,
+        "end": 14300,
+        "line": 7,
+        "column": 10581,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 14398,
+        "end": 14402,
+        "line": 7,
+        "column": 10683,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 14459,
+        "end": 14463,
+        "line": 7,
+        "column": 10744,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 33969,
+        "end": 33973,
+        "line": 7,
+        "column": 30254,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34003,
+        "end": 34007,
+        "line": 7,
+        "column": 30288,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34035,
+        "end": 34039,
+        "line": 7,
+        "column": 30320,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34067,
+        "end": 34071,
+        "line": 7,
+        "column": 30352,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34098,
+        "end": 34102,
+        "line": 7,
+        "column": 30383,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34129,
+        "end": 34133,
+        "line": 7,
+        "column": 30414,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34154,
+        "end": 34158,
+        "line": 7,
+        "column": 30439,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34181,
+        "end": 34185,
+        "line": 7,
+        "column": 30466,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34231,
+        "end": 34235,
+        "line": 7,
+        "column": 30516,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34265,
+        "end": 34269,
+        "line": 7,
+        "column": 30550,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 34439,
+        "end": 34443,
+        "line": 7,
+        "column": 30724,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 35609,
+        "end": 35613,
+        "line": 7,
+        "column": 31894,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 36795,
+        "end": 36799,
+        "line": 7,
+        "column": 33080,
+        "members": []
+      },
+      {
+        "api": "$loon",
+        "access": "read",
+        "start": 39123,
+        "end": 39128,
+        "line": 7,
+        "column": 35408,
+        "members": [
+          "$loon"
+        ]
+      },
+      {
+        "api": "$task",
+        "access": "read",
+        "start": 39149,
+        "end": 39154,
+        "line": 7,
+        "column": 35434,
+        "members": [
+          "$task"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 39884,
+        "end": 39893,
+        "line": 7,
+        "column": 36169,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 39903,
+        "end": 39910,
+        "line": 7,
+        "column": 36188,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 40271,
+        "end": 40279,
+        "line": 7,
+        "column": 36556,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$response",
+        "access": "read",
+        "start": 40312,
+        "end": 40321,
+        "line": 7,
+        "column": 36597,
+        "members": [
+          "$response"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 40375,
+        "end": 40399,
+        "line": 7,
+        "column": 36660,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 40412,
+        "end": 40439,
+        "line": 7,
+        "column": 36697,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$notification.post",
+        "access": "call",
+        "start": 40509,
+        "end": 40536,
+        "line": 7,
+        "column": 36794,
+        "members": [
+          "$notification",
+          "post"
+        ]
+      },
+      {
+        "api": "$httpClient[i.toLowerCase()]",
+        "access": "read",
+        "start": 40658,
+        "end": 40686,
+        "line": 7,
+        "column": 36943,
+        "members": [
+          "$httpClient",
+          "<computed:i.toLowerCase()>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 40906,
+        "end": 40938,
+        "line": 7,
+        "column": 37191,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 40969,
+        "end": 40978,
+        "line": 7,
+        "column": 37254,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument.includes",
+        "access": "call",
+        "start": 40991,
+        "end": 41016,
+        "line": 7,
+        "column": 37276,
+        "members": [
+          "$argument",
+          "includes"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 41045,
+        "end": 41054,
+        "line": 7,
+        "column": 37330,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 41368,
+        "end": 41376,
+        "line": 7,
+        "column": 37653,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$response",
+        "access": "read",
+        "start": 41409,
+        "end": 41418,
+        "line": 7,
+        "column": 37694,
+        "members": [
+          "$response"
+        ]
+      },
+      {
+        "api": "$prefs.valueForKey",
+        "access": "call",
+        "start": 41732,
+        "end": 41753,
+        "line": 7,
+        "column": 38017,
+        "members": [
+          "$prefs",
+          "valueForKey"
+        ]
+      },
+      {
+        "api": "$prefs.setValueForKey",
+        "access": "call",
+        "start": 41766,
+        "end": 41792,
+        "line": 7,
+        "column": 38051,
+        "members": [
+          "$prefs",
+          "setValueForKey"
+        ]
+      },
+      {
+        "api": "$notify",
+        "access": "call",
+        "start": 41822,
+        "end": 41855,
+        "line": 7,
+        "column": 38107,
+        "members": [
+          "$notify"
+        ]
+      },
+      {
+        "api": "$task.fetch",
+        "access": "call",
+        "start": 42086,
+        "end": 42100,
+        "line": 7,
+        "column": 38371,
+        "members": [
+          "$task",
+          "fetch"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 42483,
+        "end": 42491,
+        "line": 7,
+        "column": 38768,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 42610,
+        "end": 42619,
+        "line": 7,
+        "column": 38895,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument?.[t]",
+        "access": "read",
+        "start": 42659,
+        "end": 42673,
+        "line": 7,
+        "column": 38944,
+        "members": [
+          "$argument",
+          "<computed:t>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 43835,
+        "end": 43861,
+        "line": 7,
+        "column": 40120,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 44014,
+        "end": 44102,
+        "line": 7,
+        "column": 40299,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "globalThis",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "globalThis",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "global",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "globalThis",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "TextDecoder",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "TextEncoder",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "globalThis",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "globalThis",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "globalThis",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "globalThis",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "$request",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$response",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$httpClient",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      },
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$request",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$response",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$argument",
+        "reason": "Computed API property cannot be resolved statically",
+        "solution": "Use a static property name or retain the native script"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "source/text observations retained"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {},
+  "diagnostics": [
+    {
+      "api": "source-profile",
+      "reason": "The same script has indistinguishable HTTP contexts with different echo/binary/observable source names",
+      "solution": "Keep one shared file only after the declaration identity can be determined at runtime; never choose the last profile"
+    }
+  ]
+}

@@ -1,0 +1,513 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/usmile.js",
+  "sourceSha256": "afe656ce07d169fb9baf4d4484f77b0861341a88950fb64182cd30b45f70ce95",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "afe656ce07d169fb9baf4d4484f77b0861341a88950fb64182cd30b45f70ce95",
+    "operations": [
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 433,
+        "end": 445,
+        "line": 12,
+        "column": 13,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 462,
+        "end": 478,
+        "line": 13,
+        "column": 16,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 526,
+        "end": 532,
+        "line": 15,
+        "column": 30,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$request.headers[<computed>]",
+        "access": "read",
+        "start": 593,
+        "end": 609,
+        "line": 16,
+        "column": 28,
+        "members": [
+          "$request",
+          "headers",
+          "<computed:traceKey>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 636,
+        "end": 701,
+        "line": 19,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 714,
+        "end": 723,
+        "line": 21,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "afe656ce07d169fb9baf4d4484f77b0861341a88950fb64182cd30b45f70ce95",
+        "operations": [
+          {
+            "id": "read:433",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 433,
+              "end": 445,
+              "line": 12,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:462",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 462,
+              "end": 478,
+              "line": 13,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:526",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 526,
+              "end": 532,
+              "line": 15,
+              "column": 30,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:593",
+            "rule": "request.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$request.headers[<computed>]",
+              "start": 593,
+              "end": 609,
+              "line": 16,
+              "column": 28,
+              "access": "read",
+              "memberPath": [
+                "<computed:traceKey>"
+              ]
+            },
+            "canonical": "request.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:636",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 636,
+              "end": 701,
+              "line": 19,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              },
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              },
+              {
+                "source": "status",
+                "canonical": "complete.status",
+                "target": "status",
+                "action": "map",
+                "transform": "parse status then format HTTP status line"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:714",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 714,
+              "end": 723,
+              "line": 21,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "afe656ce07d169fb9baf4d4484f77b0861341a88950fb64182cd30b45f70ce95",
+        "operations": [
+          {
+            "id": "read:433",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 433,
+              "end": 445,
+              "line": 12,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:462",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 462,
+              "end": 478,
+              "line": 13,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "read:526",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 526,
+              "end": 532,
+              "line": 15,
+              "column": 30,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "read:593",
+            "rule": "request.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$request.headers[<computed>]",
+              "start": 593,
+              "end": 609,
+              "line": 16,
+              "column": 28,
+              "access": "read",
+              "memberPath": [
+                "<computed:traceKey>"
+              ]
+            },
+            "canonical": "request.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "fields": [
+              {
+                "source": "traceKey",
+                "canonical": "header.prefix:tok",
+                "target": "tok",
+                "action": "unresolved"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "call:636",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 636,
+              "end": 701,
+              "line": 19,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              },
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              },
+              {
+                "source": "status",
+                "canonical": "complete.status",
+                "target": "status",
+                "action": "map",
+                "transform": "parse status to Number"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "call:714",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 714,
+              "end": 723,
+              "line": 21,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$done.headers",
+            "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+            "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$done.headers",
+      "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+      "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+    }
+  ]
+}

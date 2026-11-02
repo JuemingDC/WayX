@@ -3,7 +3,7 @@ const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&ty
 if(!__wayxTarget)throw new Error('Unsupported adblock script host');
 const __wayxCodecs=undefined;
 const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task,argument:typeof $argument==='undefined'?undefined:$argument,codecs:__wayxCodecs};
-const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false,"responseBody":true},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"responseBody":true,"headerReads":{},"headerPrefixes":{},"binaryReads":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
+const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false,"responseBody":true,"apiPlan":{"version":1,"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"},"target":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"}}},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"responseBody":true,"apiPlan":{"version":1,"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"},"target":{"responseStatus":"status","scriptStartTime":"epoch-seconds","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":false},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1000,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":false}},"notification":{"root":"$notification.post","open":"url","media":"media-url","action":"action","openAction":"open-url","stringLink":false,"delay":false},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"string"}},"headerReads":{},"headerPrefixes":{},"binaryReads":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
 if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
 const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
 // 2024-09-08 20:59
@@ -135,6 +135,11 @@ if(__wayxTarget==="qx"&&!__wayxConfig.httpTask)return __wayxRun(__wayxHost.reque
 return (function(config,host,run){
   const fail=message=>{throw new Error('WayX API contract: '+message);};
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+  // Modified: 2026-11-02 (chance). All client spellings/defaults below come
+  // from the semantic target plan, shared with parser validation and reports.
+  const sourceLayout=config.apiPlan.source,targetLayout=config.apiPlan.target;
+  const sourceHttp=sourceLayout.http,targetHttp=targetLayout.http;
+  const targetStore=targetLayout.store.style==='prefs'?host.prefs:host.store;
   const bytes=value=>value instanceof Uint8Array?new Uint8Array(value.buffer,value.byteOffset,value.byteLength):value instanceof ArrayBuffer?new Uint8Array(value):fail('expected Uint8Array or ArrayBuffer');
   const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
   const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&value.match(/^HTTP\/\d(?:\.\d)?\s+(\d{3})(?:\s.*)?$/);return m?Number(m[1]):fail('unsupported HTTP status');};
@@ -156,50 +161,50 @@ return (function(config,host,run){
     // Modified: 2026-11-02 (chance). The declaration identifies the principal
     // binary input; never silently feed text into a byte-only source program.
     if(config.binaryReads&&role===(config.phase==='response'?'response':'request')){
-      if(config.to==='qx'){
+      if(targetLayout.binaryField==='bodyBytes'){
         if(!(value.bodyBytes instanceof ArrayBuffer))fail('binary trigger requires QX ArrayBuffer bodyBytes');
-        if(config.from!=='qx'){result.body=new Uint8Array(value.bodyBytes);delete result.bodyBytes;}
+        if(sourceLayout.binaryField!=='bodyBytes'){result.body=new Uint8Array(value.bodyBytes);delete result.bodyBytes;}
       }else{
         const input=bytes(value.body);
-        if(config.from==='qx'){result.bodyBytes=buffer(input);delete result.body;}
+        if(sourceLayout.binaryField==='bodyBytes'){result.bodyBytes=buffer(input);delete result.body;}
         else result.body=input;
       }
     }
-    if(config.from==='qx'){
-      if(own(result,'status')){result.statusCode=status(result.status);delete result.status;}
-      if(result.body instanceof Uint8Array||result.body instanceof ArrayBuffer){result.bodyBytes=buffer(result.body);delete result.body;}
-    }else{
-      if(own(result,'statusCode')){result.status=result.statusCode;delete result.statusCode;}
-      if(own(result,'bodyBytes')){if(config.binaryReads&&role===(config.phase==='response'?'response':'request'))result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;}
+    if(sourceLayout.responseStatus!==targetLayout.responseStatus&&own(result,targetLayout.responseStatus)){
+      result[sourceLayout.responseStatus]=status(result[targetLayout.responseStatus]);delete result[targetLayout.responseStatus];
+    }
+    if(sourceLayout.binaryField==='bodyBytes'){
+      if(result.body instanceof Uint8Array||result.body instanceof ArrayBuffer){result[sourceLayout.binaryField]=buffer(result.body);delete result.body;}
+    }else if(own(result,'bodyBytes')){
+      if(config.binaryReads&&role===(config.phase==='response'?'response':'request'))result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;
     }
     return result;
   }
   const sourceStore={
-    read:key=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');const v=host.store?host.store.read(key):host.prefs.valueForKey(key);return v==null?null:v;},
-    write:(value,key)=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');if(value===undefined&&config.from==='loon')value=null;if(value!==null&&typeof value!=='string')fail('unsupported storage coercion');return host.store?host.store.write(value,key):value===null?host.prefs.removeValueForKey(key):host.prefs.setValueForKey(value,key);}
+    read:key=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');const v=targetStore[targetLayout.store.read](key);return v==null?null:v;},
+    write:(value,key)=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');if(value===undefined&&sourceLayout.store.undefinedDeletes)value=null;if(value!==null&&typeof value!=='string')fail('unsupported storage coercion');return value===null&&targetLayout.store.remove?targetStore[targetLayout.store.remove](key):targetStore[targetLayout.store.write](value,key);}
   };
   const sourcePrefs={valueForKey:key=>sourceStore.read(key),setValueForKey:(value,key)=>sourceStore.write(value,key),removeValueForKey:key=>sourceStore.write(null,key)};
   // Modified: 2026-11-02 (chance). Only explicit URL/HTTP media fields map;
   // no fake notification delay, clipboard action or undocumented QX options.
   function notify(title,subtitle,body,option,delay){
     if(config.to==='egern'){if(arguments.length>3)fail('notification options unavailable');return host.ctx.notify({title,subtitle,body});}
-    if(config.to==='qx')return host.notifyQx(title,subtitle,body);
+    if(targetLayout.notification.open===null)return host.notifyQx(title,subtitle,body);
     if(arguments.length<=3)return host.notify.post(title,subtitle,body);
     if(delay!==undefined&&delay!==0)fail('notification delay has no verified target mapping');
-    let url,media;
-    if(config.from==='loon'){
-      if(typeof option==='string')url=option;
-      else{if(!option||typeof option!=='object'||Array.isArray(option))fail('notification options require a dictionary');url=option.openUrl;media=option.mediaUrl;}
-    }else if(config.from==='surge'){
+    let url,media;const notification=sourceLayout.notification;
+    if(notification.stringLink&&typeof option==='string')url=option;
+    else if(notification.open){
       if(!option||typeof option!=='object'||Array.isArray(option))fail('notification options require a dictionary');
-      if(option.action!==undefined&&option.action!=='open-url')fail('notification action needs an explicit mapping');url=option.url;media=option['media-url'];
+      if(notification.action&&option[notification.action]!==undefined&&option[notification.action]!==notification.openAction)fail('notification action needs an explicit mapping');
+      url=option[notification.open];media=option[notification.media];
     }else if(option&&typeof option==='object'&&!Object.keys(option).length)return host.notify.post(title,subtitle,body);
     else fail('source notification options have no verified mapping');
     if(url!==undefined&&typeof url!=='string')fail('notification URL requires String');
     if(media!==undefined&&(typeof media!=='string'||!/^https?:\/\//i.test(media)))fail('notification media requires HTTP(S) URL');
     const mapped={};
-    if(url!==undefined)mapped[config.to==='loon'?'openUrl':'url']=url;
-    if(media!==undefined)mapped[config.to==='loon'?'mediaUrl':'media-url']=media;
+    if(url!==undefined)mapped[targetLayout.notification.open]=url;
+    if(media!==undefined)mapped[targetLayout.notification.media]=media;
     return host.notify.post(title,subtitle,body,mapped);
   }
   function headersView(headers){
@@ -221,7 +226,7 @@ return (function(config,host,run){
     if(value===undefined||value===null)return {};
     if(typeof value==='string'){if(config.from!=='qx')fail('non-QX string completion');return config.phase==='echo'?{response:{status:200,body:value}}:{body:value};}
     if(typeof value!=='object'||Array.isArray(value))fail('unsupported completion result');
-    if(config.from==='qx'&&config.phase==='echo')value={response:value};
+    if(sourceLayout.completion.synthetic==='flat'&&config.phase==='echo')value={response:value};
     const result=Object.assign({},value);
     if(own(result,'statusCode')){result.status=result.statusCode;delete result.statusCode;}
     if(own(result,'status'))result.status=status(result.status);
@@ -239,7 +244,7 @@ return (function(config,host,run){
       const response=result.response?host.ctx.respond(result.response):result.abort?host.ctx.abort():result;
       resolveDone(Object.keys(result).length?response:undefined);return;
     }
-    if(config.to==='qx'){
+    if(targetLayout.completion.synthetic==='flat'){
       if(result.abort)fail('target abort semantics are not proven');
       let output=result;
       if(result.response){if(config.phase!=='echo')fail('direct response requires a QX echo declaration');output=result.response;}
@@ -254,28 +259,28 @@ return (function(config,host,run){
   // cookies/redirects and native cancellation; no fake Promise timeout or null success.
   function callbackHttp(){
     if(!config.httpCallback)return undefined;
-    if(config.to==='qx'?!host.task:!host.http)fail('native HTTP transport unavailable');
+    if(targetHttp.style==='promise'?!host.task:!host.http)fail('native HTTP transport unavailable');
     const client={};let active=false;
-    for(const method of ['get','post','put','delete','head','options','patch'])client[method]=(input,callback)=>{
+    for(const method of config.apiPlan.methods)client[method]=(input,callback)=>{
       if(active)fail('callback HTTP subset permits one active request');active=true;
       // Modified: 2026-11-02 (chance). QX author-documented fields only;
       // unsupported timeout/ALPN/etc. are omitted by user instruction, never faked.
-      if(config.to==='qx'){
-        const request={url:input.url,method:method.toUpperCase(),headers:Object.assign({},input.headers),opts:{redirection:input['auto-redirect']===undefined?true:input['auto-redirect'],'auto-cookie':input['auto-cookie']===undefined?true:input['auto-cookie'],'skip-cert-verify':input.insecure===undefined?config.from==='loon':input.insecure}};
+      if(targetHttp.style==='promise'){
+        const request={url:input.url,method:method.toUpperCase(),headers:Object.assign({},input.headers),opts:{[targetHttp.redirect]:input[sourceHttp.redirect]===undefined?sourceHttp.defaults.redirect:input[sourceHttp.redirect],[targetHttp.cookie]:input[sourceHttp.cookie]===undefined?sourceHttp.defaults.cookie:input[sourceHttp.cookie],[targetHttp.tls]:input[sourceHttp.tls]===undefined?sourceHttp.defaults.tls:input[sourceHttp.tls]}};
         if(own(input,'body'))request.body=input.body;
-        if(own(input,'policy'))request.opts.policy=input.policy==='DIRECT'?'direct':input.policy;
+        if(own(input,sourceHttp.policy))request.opts[targetHttp.policy]=input[sourceHttp.policy]===sourceHttp.directPolicy?targetHttp.directPolicy:input[sourceHttp.policy];
         let task;
         try{task=host.task.fetch(request);}catch(error){active=false;throw error;}
         return task.then(response=>{
           active=false;
-          if(!response||typeof response.statusCode!=='number'||!Number.isInteger(response.statusCode)||response.statusCode<100||response.statusCode>599)fail('HTTP success requires a numeric response status');
+          if(!response||typeof response[targetLayout.responseStatus]!=='number'||!Number.isInteger(response[targetLayout.responseStatus])||response[targetLayout.responseStatus]<100||response[targetLayout.responseStatus]>599)fail('HTTP success requires a numeric response status');
           const data=response.body;
           if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
-          return callback(null,{status:response.statusCode,headers:response.headers},data);
+          return callback(null,{[sourceLayout.responseStatus]:response[targetLayout.responseStatus],headers:response.headers},data);
         },reason=>{active=false;return callback(reason&&reason.error||reason||'QX fetch failed',undefined,undefined);});
       }
       const opts=Object.assign({},input,{headers:Object.assign({},input.headers)});
-      opts.timeout=input.timeout*(config.from==='surge'?1000:1)/(config.to==='surge'?1000:1);
+      opts.timeout=input.timeout*sourceHttp.timeoutMs/targetHttp.timeoutMs;
       return host.http[method](opts,(error,response,data)=>{
         active=false;
         if(error)return callback(error,response,data);
@@ -291,31 +296,31 @@ return (function(config,host,run){
   function sourceTask(){
     if(!config.httpTask)return undefined;
     const native=host.task,client=host.http;let active=false;
-    if(config.to==='qx'?!native:!client)fail('native HTTP transport unavailable');
+    if(targetHttp.style==='promise'?!native:!client)fail('native HTTP transport unavailable');
     return {fetch:input=>{
       if(active)fail('QX fetch subset permits one active request');active=true;
-      const incoming=input.opts||{},request={url:input.url,method:input.method||'GET',headers:Object.assign({},input.headers),opts:{redirection:incoming.redirection===undefined?true:incoming.redirection,'auto-cookie':incoming['auto-cookie']===undefined?false:incoming['auto-cookie'],'skip-cert-verify':incoming['skip-cert-verify']===undefined?false:incoming['skip-cert-verify']}};
+      const incoming=input[sourceHttp.optionsRoot]||{},request={url:input.url,method:input.method||'GET',headers:Object.assign({},input.headers),opts:{[sourceHttp.redirect]:incoming[sourceHttp.redirect]===undefined?sourceHttp.defaults.redirect:incoming[sourceHttp.redirect],[sourceHttp.cookie]:incoming[sourceHttp.cookie]===undefined?sourceHttp.defaults.cookie:incoming[sourceHttp.cookie],[sourceHttp.tls]:incoming[sourceHttp.tls]===undefined?sourceHttp.defaults.tls:incoming[sourceHttp.tls]}};
       if(own(input,'body'))request.body=input.body;
-      if(own(incoming,'policy'))request.opts.policy=incoming.policy;
+      if(own(incoming,sourceHttp.policy))request.opts[sourceHttp.policy]=incoming[sourceHttp.policy];
       const normalize=(response,data)=>{
-        if(!response||typeof response.statusCode!=='number'||!Number.isInteger(response.statusCode)||response.statusCode<100||response.statusCode>599)fail('QX fetch success requires a numeric statusCode');
-        const result={statusCode:response.statusCode};
-        if(config.httpTaskBinary){const b=bytes(data);if(b.length>65536)fail('QX fetch subset byte limit');result.bodyBytes=buffer(b);}
+        if(!response||typeof response[sourceLayout.responseStatus]!=='number'||!Number.isInteger(response[sourceLayout.responseStatus])||response[sourceLayout.responseStatus]<100||response[sourceLayout.responseStatus]>599)fail('QX fetch success requires a numeric statusCode');
+        const result={[sourceLayout.responseStatus]:response[sourceLayout.responseStatus]};
+        if(config.httpTaskBinary){const b=bytes(data);if(b.length>65536)fail('QX fetch subset byte limit');result[sourceLayout.binaryField]=buffer(b);}
         else{if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('QX fetch subset requires ASCII response text');result.body=data;}
         return result;
       };
-      if(config.to==='qx'){
+      if(targetHttp.style==='promise'){
         let promise;try{promise=native.fetch(request);}catch(error){active=false;throw error;}
         return promise.then(response=>{active=false;return normalize(response,response&&(config.httpTaskBinary?response.bodyBytes:response.body));},reason=>{active=false;throw reason;});
       }
-      const options={url:request.url,headers:request.headers,'auto-redirect':request.opts.redirection,'auto-cookie':request.opts['auto-cookie'],insecure:request.opts['skip-cert-verify']};
+      const options={url:request.url,headers:request.headers,[targetHttp.redirect]:request.opts[sourceHttp.redirect],[targetHttp.cookie]:request.opts[sourceHttp.cookie],[targetHttp.tls]:request.opts[sourceHttp.tls]};
       if(own(request,'body'))options.body=request.body;
-      if(own(request.opts,'policy'))options.policy=request.opts.policy==='direct'?'DIRECT':request.opts.policy;
+      if(own(request.opts,sourceHttp.policy))options[targetHttp.policy]=request.opts[sourceHttp.policy]===sourceHttp.directPolicy?targetHttp.directPolicy:request.opts[sourceHttp.policy];
       if(config.httpTaskBinary)options['binary-mode']=true;
       return new Promise((resolve,reject)=>{
         try{client[request.method.toLowerCase()](options,(error,response,data)=>{
           active=false;if(error){reject({error});return;}
-          try{resolve(normalize(response&&{statusCode:response.status},data));}catch(error){reject(error);}
+          try{resolve(normalize(response&&{[sourceLayout.responseStatus]:response[targetLayout.responseStatus]},data));}catch(error){reject(error);}
         });}catch(error){active=false;reject(error);}
       });
     }};
@@ -324,12 +329,12 @@ return (function(config,host,run){
   // typed Loon PluginObject arguments. QX deliberately supplies no argument.
   function sourceArgument(){
     if(!config.argumentMapped)return undefined;
-    if(config.to==='qx')return undefined;
+    if(targetLayout.argument==='absent')return undefined;
     const schema=config.argumentSchema;let input=host.argument;
     if(schema.kind==='string'){
       if(typeof input!=='string')fail('declared source String argument missing');return input;
     }
-    if(config.to==='surge'){
+    if(targetLayout.argument==='string'){
       if(typeof input!=='string')fail('declared PluginObject JSON argument missing');
       input=JSON.parse(input);
     }
@@ -339,7 +344,7 @@ return (function(config,host,run){
   }
   function start(request,response){
     const script={name:config.name||host.script&&host.script.name||host.ctx&&host.ctx.script.name};
-    if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=config.from==='loon'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
+    if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=sourceLayout.scriptStartTime==='date'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
     const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
     const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
     const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask(),sourceArgument(),host.codecs&&host.codecs.TextEncoder,host.codecs&&host.codecs.TextDecoder,host.codecs&&host.codecs.atob,host.codecs&&host.codecs.btoa);

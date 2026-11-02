@@ -1,0 +1,1098 @@
+{
+  "version": 1,
+  "sourceUrl": "https://rucu6.pages.dev/Scripts/youtube/key_gholts.js",
+  "sourceSha256": "39e3f12a9e31ff74c2768cc467bb989188c212b5dbd5cbb8743f62d961922ea1",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "39e3f12a9e31ff74c2768cc467bb989188c212b5dbd5cbb8743f62d961922ea1",
+    "operations": [
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 336,
+        "end": 362,
+        "line": 7,
+        "column": 20,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 684,
+        "end": 735,
+        "line": 17,
+        "column": 12,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$request.url.split",
+        "access": "call",
+        "start": 3832,
+        "end": 3855,
+        "line": 117,
+        "column": 24,
+        "members": [
+          "$request",
+          "url",
+          "split"
+        ]
+      },
+      {
+        "api": "$response.body.length",
+        "access": "read",
+        "start": 3952,
+        "end": 3974,
+        "line": 118,
+        "column": 67,
+        "members": [
+          "$response",
+          "body",
+          "length"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 3983,
+        "end": 3990,
+        "line": 118,
+        "column": 98,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 4010,
+        "end": 4024,
+        "line": 119,
+        "column": 19,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 4157,
+        "end": 4164,
+        "line": 122,
+        "column": 28,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 4422,
+        "end": 4430,
+        "line": 127,
+        "column": 38,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 5209,
+        "end": 5216,
+        "line": 146,
+        "column": 7,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 5291,
+        "end": 5298,
+        "line": 149,
+        "column": 7,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "$request",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "39e3f12a9e31ff74c2768cc467bb989188c212b5dbd5cbb8743f62d961922ea1",
+        "operations": [
+          {
+            "id": "call:336",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 336,
+              "end": 362,
+              "line": 7,
+              "column": 20,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$prefs.valueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "Default/dynamic key namespaces differ across clients",
+                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+              }
+            ]
+          },
+          {
+            "id": "call:684",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 684,
+              "end": 735,
+              "line": 17,
+              "column": 12,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$prefs.setValueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.write",
+                "reason": "Only explicit plain string keys are proven portable",
+                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+              }
+            ]
+          },
+          {
+            "id": "call:3832",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.split",
+              "start": 3832,
+              "end": 3855,
+              "line": 117,
+              "column": 24,
+              "access": "call",
+              "memberPath": [
+                "split"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$request",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:3952",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body.length",
+              "start": 3952,
+              "end": 3974,
+              "line": 118,
+              "column": 67,
+              "access": "read",
+              "memberPath": [
+                "length"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:3983",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 3983,
+              "end": 3990,
+              "line": 118,
+              "column": 98,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:4010",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 4010,
+              "end": 4024,
+              "line": 119,
+              "column": 19,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:4157",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 4157,
+              "end": 4164,
+              "line": 122,
+              "column": 28,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:4422",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 4422,
+              "end": 4430,
+              "line": 127,
+              "column": 38,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$request",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "call:5209",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5209,
+              "end": 5216,
+              "line": 146,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:5291",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5291,
+              "end": 5298,
+              "line": 149,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$request",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$request",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "$persistentStore.read",
+            "reason": "Default/dynamic key namespaces differ across clients",
+            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+          },
+          {
+            "api": "$persistentStore.write",
+            "reason": "Only explicit plain string keys are proven portable",
+            "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+          }
+        ]
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "39e3f12a9e31ff74c2768cc467bb989188c212b5dbd5cbb8743f62d961922ea1",
+        "operations": [
+          {
+            "id": "call:336",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 336,
+              "end": 362,
+              "line": 7,
+              "column": 20,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "Default/dynamic key namespaces differ across clients",
+                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+              }
+            ]
+          },
+          {
+            "id": "call:684",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 684,
+              "end": 735,
+              "line": 17,
+              "column": 12,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.write",
+                "reason": "Only explicit plain string keys are proven portable",
+                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+              }
+            ]
+          },
+          {
+            "id": "call:3832",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.split",
+              "start": 3832,
+              "end": 3855,
+              "line": 117,
+              "column": 24,
+              "access": "call",
+              "memberPath": [
+                "split"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$request",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:3952",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body.length",
+              "start": 3952,
+              "end": 3974,
+              "line": 118,
+              "column": 67,
+              "access": "read",
+              "memberPath": [
+                "length"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:3983",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 3983,
+              "end": 3990,
+              "line": 118,
+              "column": 98,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:4010",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 4010,
+              "end": 4024,
+              "line": 119,
+              "column": 19,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:4157",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 4157,
+              "end": 4164,
+              "line": 122,
+              "column": 28,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:4422",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 4422,
+              "end": 4430,
+              "line": 127,
+              "column": 38,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$request",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "call:5209",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5209,
+              "end": 5216,
+              "line": 146,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:5291",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5291,
+              "end": 5298,
+              "line": 149,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$request",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$request",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "$persistentStore.read",
+            "reason": "Default/dynamic key namespaces differ across clients",
+            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+          },
+          {
+            "api": "$persistentStore.write",
+            "reason": "Only explicit plain string keys are proven portable",
+            "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+          }
+        ]
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "39e3f12a9e31ff74c2768cc467bb989188c212b5dbd5cbb8743f62d961922ea1",
+        "operations": [
+          {
+            "id": "call:336",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 336,
+              "end": 362,
+              "line": 7,
+              "column": 20,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:684",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 684,
+              "end": 735,
+              "line": 17,
+              "column": 12,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:3832",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url.split",
+              "start": 3832,
+              "end": 3855,
+              "line": 117,
+              "column": 24,
+              "access": "call",
+              "memberPath": [
+                "split"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:3952",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body.length",
+              "start": 3952,
+              "end": 3974,
+              "line": 118,
+              "column": 67,
+              "access": "read",
+              "memberPath": [
+                "length"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:3983",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 3983,
+              "end": 3990,
+              "line": 118,
+              "column": 98,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:4010",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 4010,
+              "end": 4024,
+              "line": 119,
+              "column": 19,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:4157",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 4157,
+              "end": 4164,
+              "line": 122,
+              "column": 28,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:4422",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 4422,
+              "end": 4430,
+              "line": 127,
+              "column": 38,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:5209",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5209,
+              "end": 5216,
+              "line": 146,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:5291",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5291,
+              "end": 5298,
+              "line": 149,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$request",
+      "reason": "qx: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$request",
+      "reason": "qx: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "$persistentStore.read",
+      "reason": "qx: Default/dynamic key namespaces differ across clients",
+      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+    },
+    {
+      "api": "$persistentStore.write",
+      "reason": "qx: Only explicit plain string keys are proven portable",
+      "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+    },
+    {
+      "api": "$request",
+      "reason": "surge: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$request",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "$persistentStore.read",
+      "reason": "surge: Default/dynamic key namespaces differ across clients",
+      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+    },
+    {
+      "api": "$persistentStore.write",
+      "reason": "surge: Only explicit plain string keys are proven portable",
+      "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+    }
+  ]
+}

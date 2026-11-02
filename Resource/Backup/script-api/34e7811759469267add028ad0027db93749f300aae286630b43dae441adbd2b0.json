@@ -1,0 +1,3381 @@
+{
+  "version": 1,
+  "sourceUrl": "https://rucu6.pages.dev/Scripts/youtube/ump_gholts.js",
+  "sourceSha256": "ee4f19c5d19deb3917b1f29674916946b8ba361e82c45adca32e23164ceaae49",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "ee4f19c5d19deb3917b1f29674916946b8ba361e82c45adca32e23164ceaae49",
+    "operations": [
+      {
+        "api": "TextEncoder",
+        "access": "construct",
+        "start": 45566,
+        "end": 45583,
+        "line": 7,
+        "column": 23,
+        "members": [
+          "TextEncoder"
+        ]
+      },
+      {
+        "api": "TextDecoder",
+        "access": "construct",
+        "start": 45600,
+        "end": 45641,
+        "line": 8,
+        "column": 16,
+        "members": [
+          "TextDecoder"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 52130,
+        "end": 52156,
+        "line": 174,
+        "column": 20,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 52478,
+        "end": 52529,
+        "line": 184,
+        "column": 12,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 55188,
+        "end": 55197,
+        "line": 274,
+        "column": 16,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 55225,
+        "end": 55234,
+        "line": 275,
+        "column": 12,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument.includes",
+        "access": "call",
+        "start": 55238,
+        "end": 55263,
+        "line": 275,
+        "column": 25,
+        "members": [
+          "$argument",
+          "includes"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 55327,
+        "end": 55336,
+        "line": 277,
+        "column": 40,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 55397,
+        "end": 55406,
+        "line": 282,
+        "column": 9,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 55417,
+        "end": 55426,
+        "line": 282,
+        "column": 29,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 55466,
+        "end": 55475,
+        "line": 282,
+        "column": 78,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 62465,
+        "end": 62512,
+        "line": 466,
+        "column": 14,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "DecompressionStream",
+        "access": "construct",
+        "start": 112974,
+        "end": 113005,
+        "line": 1683,
+        "column": 33,
+        "members": [
+          "DecompressionStream"
+        ]
+      },
+      {
+        "api": "CompressionStream",
+        "access": "construct",
+        "start": 113008,
+        "end": 113037,
+        "line": 1683,
+        "column": 67,
+        "members": [
+          "CompressionStream"
+        ]
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 123491,
+        "end": 123495,
+        "line": 1935,
+        "column": 36,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 124161,
+        "end": 124165,
+        "line": 1954,
+        "column": 18,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 124236,
+        "end": 124240,
+        "line": 1957,
+        "column": 41,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 124646,
+        "end": 124650,
+        "line": 1968,
+        "column": 46,
+        "members": []
+      },
+      {
+        "api": "this",
+        "access": "read",
+        "start": 125633,
+        "end": 125637,
+        "line": 1988,
+        "column": 56,
+        "members": []
+      },
+      {
+        "api": "$response.status",
+        "access": "read",
+        "start": 128055,
+        "end": 128071,
+        "line": 2047,
+        "column": 29,
+        "members": [
+          "$response",
+          "status"
+        ]
+      },
+      {
+        "api": "$response.body.length",
+        "access": "read",
+        "start": 128102,
+        "end": 128124,
+        "line": 2048,
+        "column": 29,
+        "members": [
+          "$response",
+          "body",
+          "length"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 128133,
+        "end": 128140,
+        "line": 2048,
+        "column": 60,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.headers",
+        "access": "read",
+        "start": 128258,
+        "end": 128275,
+        "line": 2050,
+        "column": 42,
+        "members": [
+          "$response",
+          "headers"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 128439,
+        "end": 128446,
+        "line": 2051,
+        "column": 95,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 128477,
+        "end": 128485,
+        "line": 2052,
+        "column": 30,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 129080,
+        "end": 129094,
+        "line": 2068,
+        "column": 41,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 129184,
+        "end": 129250,
+        "line": 2070,
+        "column": 7,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 129206,
+        "end": 129220,
+        "line": 2070,
+        "column": 29,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 129559,
+        "end": 129679,
+        "line": 2080,
+        "column": 7,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "TextEncoder",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "TextDecoder",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "DecompressionStream",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "CompressionStream",
+        "reason": "Direct host/global access bypasses lexical API bindings",
+        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+      },
+      {
+        "api": "function-constructor",
+        "reason": "Constructor reflection can compile uninspected code",
+        "solution": "Retain native or resolve the exact constructor and call before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "this",
+        "reason": "Dynamic receiver access requires scope/data-flow proof",
+        "solution": "Keep native or resolve the receiver before adaptation"
+      },
+      {
+        "api": "$request",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "source/text observations retained"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "ee4f19c5d19deb3917b1f29674916946b8ba361e82c45adca32e23164ceaae49",
+        "operations": [
+          {
+            "id": "construct:45566",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 45566,
+              "end": 45583,
+              "line": 7,
+              "column": 23,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextEncoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "TextEncoder",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "construct:45600",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 45600,
+              "end": 45641,
+              "line": 8,
+              "column": 16,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "TextDecoder",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:52130",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 52130,
+              "end": 52156,
+              "line": 174,
+              "column": 20,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$prefs.valueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "Default/dynamic key namespaces differ across clients",
+                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+              }
+            ]
+          },
+          {
+            "id": "call:52478",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 52478,
+              "end": 52529,
+              "line": 184,
+              "column": 12,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$prefs.setValueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.write",
+                "reason": "Only explicit plain string keys are proven portable",
+                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+              },
+              {
+                "api": "$persistentStore.write",
+                "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
+                "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
+              }
+            ]
+          },
+          {
+            "id": "read:55188",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55188,
+              "end": 55197,
+              "line": 274,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55225",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55225,
+              "end": 55234,
+              "line": 275,
+              "column": 12,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "call:55238",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.includes",
+              "start": 55238,
+              "end": 55263,
+              "line": 275,
+              "column": 25,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55327",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55327,
+              "end": 55336,
+              "line": 277,
+              "column": 40,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55397",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55397,
+              "end": 55406,
+              "line": 282,
+              "column": 9,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55417",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55417,
+              "end": 55426,
+              "line": 282,
+              "column": 29,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55466",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55466,
+              "end": 55475,
+              "line": 282,
+              "column": 78,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "call:62465",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 62465,
+              "end": 62512,
+              "line": 466,
+              "column": 14,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$prefs.setValueForKey",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.write",
+                "reason": "Only explicit plain string keys are proven portable",
+                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+              },
+              {
+                "api": "$persistentStore.write",
+                "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
+                "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
+              }
+            ]
+          },
+          {
+            "id": "construct:112974",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "DecompressionStream",
+              "start": 112974,
+              "end": 113005,
+              "line": 1683,
+              "column": 33,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "DecompressionStream",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "construct:113008",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "CompressionStream",
+              "start": 113008,
+              "end": 113037,
+              "line": 1683,
+              "column": 67,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "CompressionStream",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:123491",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 123491,
+              "end": 123495,
+              "line": 1935,
+              "column": 36,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:124161",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 124161,
+              "end": 124165,
+              "line": 1954,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:124236",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 124236,
+              "end": 124240,
+              "line": 1957,
+              "column": 41,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:124646",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 124646,
+              "end": 124650,
+              "line": 1968,
+              "column": 46,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:125633",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 125633,
+              "end": 125637,
+              "line": 1988,
+              "column": 56,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:128055",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.status",
+              "start": 128055,
+              "end": 128071,
+              "line": 2047,
+              "column": 29,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.statusCode",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128102",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body.length",
+              "start": 128102,
+              "end": 128124,
+              "line": 2048,
+              "column": 29,
+              "access": "read",
+              "memberPath": [
+                "length"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:128133",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 128133,
+              "end": 128140,
+              "line": 2048,
+              "column": 60,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128258",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 128258,
+              "end": 128275,
+              "line": 2050,
+              "column": 42,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "headers",
+                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+              }
+            ]
+          },
+          {
+            "id": "call:128439",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 128439,
+              "end": 128446,
+              "line": 2051,
+              "column": 95,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128477",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 128477,
+              "end": 128485,
+              "line": 2052,
+              "column": 30,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$request",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:129080",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 129080,
+              "end": 129094,
+              "line": 2068,
+              "column": 41,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:129184",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 129184,
+              "end": 129250,
+              "line": 2070,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:129206",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 129206,
+              "end": 129220,
+              "line": 2070,
+              "column": 29,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:129559",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 129559,
+              "end": 129679,
+              "line": 2080,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "status",
+                "canonical": "complete.status",
+                "target": "status",
+                "action": "map",
+                "transform": "parse status then format HTTP status line"
+              },
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              },
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "TextEncoder",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "TextDecoder",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$argument",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "DecompressionStream",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "CompressionStream",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "function-constructor",
+            "reason": "Constructor reflection can compile uninspected code",
+            "solution": "Retain native or resolve the exact constructor and call before adaptation"
+          },
+          {
+            "api": "this",
+            "reason": "Dynamic receiver access requires scope/data-flow proof",
+            "solution": "Keep native or resolve the receiver before adaptation"
+          },
+          {
+            "api": "$request",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$argument",
+            "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+            "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+          },
+          {
+            "api": "$request",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "headers-shape",
+            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+          },
+          {
+            "api": "$persistentStore.read",
+            "reason": "Default/dynamic key namespaces differ across clients",
+            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+          },
+          {
+            "api": "$persistentStore.write",
+            "reason": "Only explicit plain string keys are proven portable",
+            "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+          },
+          {
+            "api": "$persistentStore.write",
+            "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
+            "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
+          },
+          {
+            "api": "headers",
+            "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+            "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+          }
+        ]
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "ee4f19c5d19deb3917b1f29674916946b8ba361e82c45adca32e23164ceaae49",
+        "operations": [
+          {
+            "id": "construct:45566",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 45566,
+              "end": 45583,
+              "line": 7,
+              "column": 23,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextEncoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "TextEncoder",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "construct:45600",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 45600,
+              "end": 45641,
+              "line": 8,
+              "column": 16,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "TextDecoder",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "call:52130",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 52130,
+              "end": 52156,
+              "line": 174,
+              "column": 20,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.read",
+                "reason": "Default/dynamic key namespaces differ across clients",
+                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+              }
+            ]
+          },
+          {
+            "id": "call:52478",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 52478,
+              "end": 52529,
+              "line": 184,
+              "column": 12,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.write",
+                "reason": "Only explicit plain string keys are proven portable",
+                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+              },
+              {
+                "api": "$persistentStore.write",
+                "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
+                "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
+              }
+            ]
+          },
+          {
+            "id": "read:55188",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55188,
+              "end": 55197,
+              "line": 274,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55225",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55225,
+              "end": 55234,
+              "line": 275,
+              "column": 12,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "call:55238",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.includes",
+              "start": 55238,
+              "end": 55263,
+              "line": 275,
+              "column": 25,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55327",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55327,
+              "end": 55336,
+              "line": 277,
+              "column": 40,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55397",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55397,
+              "end": 55406,
+              "line": 282,
+              "column": 9,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55417",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55417,
+              "end": 55426,
+              "line": 282,
+              "column": 29,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:55466",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55466,
+              "end": 55475,
+              "line": 282,
+              "column": 78,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "call:62465",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 62465,
+              "end": 62512,
+              "line": 466,
+              "column": 14,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$persistentStore.write",
+                "reason": "Only explicit plain string keys are proven portable",
+                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+              },
+              {
+                "api": "$persistentStore.write",
+                "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
+                "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
+              }
+            ]
+          },
+          {
+            "id": "construct:112974",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "DecompressionStream",
+              "start": 112974,
+              "end": 113005,
+              "line": 1683,
+              "column": 33,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "DecompressionStream",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "construct:113008",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "CompressionStream",
+              "start": 113008,
+              "end": 113037,
+              "line": 1683,
+              "column": 67,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "CompressionStream",
+                "reason": "Direct host/global access bypasses lexical API bindings",
+                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+              }
+            ]
+          },
+          {
+            "id": "read:123491",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 123491,
+              "end": 123495,
+              "line": 1935,
+              "column": 36,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:124161",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 124161,
+              "end": 124165,
+              "line": 1954,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:124236",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 124236,
+              "end": 124240,
+              "line": 1957,
+              "column": 41,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:124646",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 124646,
+              "end": 124650,
+              "line": 1968,
+              "column": 46,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:125633",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 125633,
+              "end": 125637,
+              "line": 1988,
+              "column": 56,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "this",
+                "reason": "Dynamic receiver access requires scope/data-flow proof",
+                "solution": "Keep native or resolve the receiver before adaptation"
+              }
+            ]
+          },
+          {
+            "id": "read:128055",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.status",
+              "start": 128055,
+              "end": 128071,
+              "line": 2047,
+              "column": 29,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.status",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128102",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body.length",
+              "start": 128102,
+              "end": 128124,
+              "line": 2048,
+              "column": 29,
+              "access": "read",
+              "memberPath": [
+                "length"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:128133",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 128133,
+              "end": 128140,
+              "line": 2048,
+              "column": 60,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128258",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 128258,
+              "end": 128275,
+              "line": 2050,
+              "column": 42,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              }
+            ]
+          },
+          {
+            "id": "call:128439",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 128439,
+              "end": 128446,
+              "line": 2051,
+              "column": 95,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128477",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 128477,
+              "end": 128485,
+              "line": 2052,
+              "column": 30,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$request",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$request",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:129080",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 129080,
+              "end": 129094,
+              "line": 2068,
+              "column": 41,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:129184",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 129184,
+              "end": 129250,
+              "line": 2070,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:129206",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 129206,
+              "end": 129220,
+              "line": 2070,
+              "column": 29,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:129559",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 129559,
+              "end": 129679,
+              "line": 2080,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "status",
+                "canonical": "complete.status",
+                "target": "status",
+                "action": "map",
+                "transform": "parse status to Number"
+              },
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              },
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "TextEncoder",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "TextDecoder",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "$argument",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "DecompressionStream",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "CompressionStream",
+            "reason": "Direct host/global access bypasses lexical API bindings",
+            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+          },
+          {
+            "api": "function-constructor",
+            "reason": "Constructor reflection can compile uninspected code",
+            "solution": "Retain native or resolve the exact constructor and call before adaptation"
+          },
+          {
+            "api": "this",
+            "reason": "Dynamic receiver access requires scope/data-flow proof",
+            "solution": "Keep native or resolve the receiver before adaptation"
+          },
+          {
+            "api": "$request",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$argument",
+            "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+            "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+          },
+          {
+            "api": "$request",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "headers-shape",
+            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+          },
+          {
+            "api": "$persistentStore.read",
+            "reason": "Default/dynamic key namespaces differ across clients",
+            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+          },
+          {
+            "api": "$persistentStore.write",
+            "reason": "Only explicit plain string keys are proven portable",
+            "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+          },
+          {
+            "api": "$persistentStore.write",
+            "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
+            "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
+          }
+        ]
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "ee4f19c5d19deb3917b1f29674916946b8ba361e82c45adca32e23164ceaae49",
+        "operations": [
+          {
+            "id": "construct:45566",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 45566,
+              "end": 45583,
+              "line": 7,
+              "column": 23,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextEncoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "construct:45600",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 45600,
+              "end": 45641,
+              "line": 8,
+              "column": 16,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "UTF-8/Base64",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "shared scoped standard implementation",
+              "proof": "closed-codec-and-pristine-intrinsics-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:52130",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 52130,
+              "end": 52156,
+              "line": 174,
+              "column": 20,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.read",
+            "value": "String or source absence",
+            "target": {
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.key",
+                "target": "argument0",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:52478",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 52478,
+              "end": 52529,
+              "line": 184,
+              "column": 12,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:55188",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55188,
+              "end": 55197,
+              "line": 274,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:55225",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55225,
+              "end": 55234,
+              "line": 275,
+              "column": 12,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:55238",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument.includes",
+              "start": 55238,
+              "end": 55263,
+              "line": 275,
+              "column": 25,
+              "access": "call",
+              "memberPath": [
+                "includes"
+              ]
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:55327",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55327,
+              "end": 55336,
+              "line": 277,
+              "column": 40,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:55397",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55397,
+              "end": 55406,
+              "line": 282,
+              "column": 9,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:55417",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55417,
+              "end": 55426,
+              "line": 282,
+              "column": 29,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:55466",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 55466,
+              "end": 55475,
+              "line": 282,
+              "column": 78,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:62465",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 62465,
+              "end": 62512,
+              "line": 466,
+              "column": 14,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "storage.write",
+            "value": "String / explicit deletion; Boolean result",
+            "target": {
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "explicit-key-value-and-observation-proof"
+            },
+            "fields": [
+              {
+                "source": "argument0",
+                "canonical": "storage.value",
+                "target": "argument0",
+                "action": "map"
+              },
+              {
+                "source": "argument1",
+                "canonical": "storage.key",
+                "target": "argument1",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "construct:112974",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "DecompressionStream",
+              "start": 112974,
+              "end": 113005,
+              "line": 1683,
+              "column": 33,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "construct:113008",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "CompressionStream",
+              "start": 113008,
+              "end": 113037,
+              "line": 1683,
+              "column": 67,
+              "access": "construct",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:123491",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 123491,
+              "end": 123495,
+              "line": 1935,
+              "column": 36,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:124161",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 124161,
+              "end": 124165,
+              "line": 1954,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:124236",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 124236,
+              "end": 124240,
+              "line": 1957,
+              "column": 41,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:124646",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 124646,
+              "end": 124650,
+              "line": 1968,
+              "column": 46,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:125633",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "this",
+              "start": 125633,
+              "end": 125637,
+              "line": 1988,
+              "column": 56,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128055",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.status",
+              "start": 128055,
+              "end": 128071,
+              "line": 2047,
+              "column": 29,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.status",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128102",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body.length",
+              "start": 128102,
+              "end": 128124,
+              "line": 2048,
+              "column": 29,
+              "access": "read",
+              "memberPath": [
+                "length"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:128133",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 128133,
+              "end": 128140,
+              "line": 2048,
+              "column": 60,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128258",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 128258,
+              "end": 128275,
+              "line": 2050,
+              "column": 42,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:128439",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 128439,
+              "end": 128446,
+              "line": 2051,
+              "column": 95,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:128477",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 128477,
+              "end": 128485,
+              "line": 2052,
+              "column": 30,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "closed context / presence",
+            "target": {
+              "api": "$request",
+              "lowering": "source-shaped context view; no object escape",
+              "proof": "closed-context-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:129080",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 129080,
+              "end": 129094,
+              "line": 2068,
+              "column": 41,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:129184",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 129184,
+              "end": 129250,
+              "line": 2070,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:129206",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 129206,
+              "end": 129220,
+              "line": 2070,
+              "column": 29,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:129559",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 129559,
+              "end": 129679,
+              "line": 2080,
+              "column": 7,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "status",
+                "canonical": "complete.status",
+                "target": "status",
+                "action": "map",
+                "transform": "parse status to Number"
+              },
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              },
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "TextEncoder",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "TextDecoder",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$argument",
+      "reason": "qx: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "DecompressionStream",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "CompressionStream",
+      "reason": "qx: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "function-constructor",
+      "reason": "qx: Constructor reflection can compile uninspected code",
+      "solution": "Retain native or resolve the exact constructor and call before adaptation"
+    },
+    {
+      "api": "this",
+      "reason": "qx: Dynamic receiver access requires scope/data-flow proof",
+      "solution": "Keep native or resolve the receiver before adaptation"
+    },
+    {
+      "api": "$request",
+      "reason": "qx: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$argument",
+      "reason": "qx: Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+      "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+    },
+    {
+      "api": "$request",
+      "reason": "qx: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "headers-shape",
+      "reason": "qx: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+    },
+    {
+      "api": "$persistentStore.read",
+      "reason": "qx: Default/dynamic key namespaces differ across clients",
+      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+    },
+    {
+      "api": "$persistentStore.write",
+      "reason": "qx: Only explicit plain string keys are proven portable",
+      "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+    },
+    {
+      "api": "$persistentStore.write",
+      "reason": "qx: Value coercion/deletion of dynamic non-string values is not proven equivalent",
+      "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
+    },
+    {
+      "api": "headers",
+      "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
+      "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+    },
+    {
+      "api": "TextEncoder",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "TextDecoder",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "$argument",
+      "reason": "surge: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "DecompressionStream",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "CompressionStream",
+      "reason": "surge: Direct host/global access bypasses lexical API bindings",
+      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
+    },
+    {
+      "api": "function-constructor",
+      "reason": "surge: Constructor reflection can compile uninspected code",
+      "solution": "Retain native or resolve the exact constructor and call before adaptation"
+    },
+    {
+      "api": "this",
+      "reason": "surge: Dynamic receiver access requires scope/data-flow proof",
+      "solution": "Keep native or resolve the receiver before adaptation"
+    },
+    {
+      "api": "$request",
+      "reason": "surge: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$argument",
+      "reason": "surge: Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+      "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+    },
+    {
+      "api": "$request",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "headers-shape",
+      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+    },
+    {
+      "api": "$persistentStore.read",
+      "reason": "surge: Default/dynamic key namespaces differ across clients",
+      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
+    },
+    {
+      "api": "$persistentStore.write",
+      "reason": "surge: Only explicit plain string keys are proven portable",
+      "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
+    },
+    {
+      "api": "$persistentStore.write",
+      "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
+      "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
+    }
+  ]
+}

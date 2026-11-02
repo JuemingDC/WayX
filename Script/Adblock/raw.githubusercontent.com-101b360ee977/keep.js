@@ -3,7 +3,7 @@ const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&ty
 if(!__wayxTarget)throw new Error('Unsupported adblock script host');
 const __wayxCodecs=undefined;
 const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task,argument:typeof $argument==='undefined'?undefined:$argument,codecs:__wayxCodecs};
-const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false,"responseBody":true},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"responseBody":true,"headerReads":{},"headerPrefixes":{},"binaryReads":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
+const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false,"responseBody":true,"apiPlan":{"version":1,"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"},"target":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"}}},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"responseBody":true,"apiPlan":{"version":1,"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"},"target":{"responseStatus":"status","scriptStartTime":"epoch-seconds","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":false},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1000,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":false}},"notification":{"root":"$notification.post","open":"url","media":"media-url","action":"action","openAction":"open-url","stringLink":false,"delay":false},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"string"}},"headerReads":{},"headerPrefixes":{},"binaryReads":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
 if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
 const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
 if(-1!=$request.url.indexOf("people/my")){let e=JSON.parse($response.body);e.data.floatingInfo={},$done({body:JSON.stringify(e)})}else if(-1!=$request.url.indexOf("config/v3/basic")){let t=JSON.parse($response.body);t.data.bottomBarControl.defaultTab="home",t.data.bottomBarControl.tabs=Object.values(t.data.bottomBarControl.tabs).filter(e=>"home"==e.tabType||"new_sports"==e.tabType||"personal"==e.tabType),t.data.homeTabs=[{type:"homeRecommend",order:1,name:"推荐",schema:"keep://homepage/homeRecommend",showInFewDays:7,reverseSwitch:false,default:true},{type:"homePrime",order:2,name:"会员",schema:"keep://coursepage/homePrime",showInFewDays:7,reverseSwitch:false,default:false}],$done({body:JSON.stringify(t)})}else if(-1!=$request.url.indexOf("homepage/v")){let n=JSON.parse($response.body);if(n.data.sections.length>0&&"quickEntranceV3"!=n.data.sections[0].contentStyle){var a={sectionStyle:null,contentStyle:"quickEntranceV3",pageId:"",pitId:null,sectionId:null,location:"entrance",pageNum:0,moduleNum:0,bizType:null,backgroundImage:null,sectionTrackProps:{content_style:"quickEntranceV3",pageType:"homeRecommend",section_id:null,sectionTitle:"品类入口",itemDetailId:"",pageVersion:"8.0",page_index:0,page_plan_id:"",sectionPosition:0,sectionType:"categoryEntry"},moreText:null,priority:0,index:0,schema:null,title:null,subBaseSection:null,showUserSettingSwitch:true,quickEntrances:[{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.0",itemTitle:"跳绳",item_type:"smartrope",itemPosition:0},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/4/553246736447566b5831396d774a726d4944386a5763754d4e7243573943632f72766b72713243377433733d/210x174_be8314bcf2ddadaa91d64df15b8179410024b0cc.png",iconInner:"https://static1.keepcdn.com/kylin-cms/2022/11/22/16/40/553246736447566b5831394749734e746f305572724d59745a4f52724b37623655326668714f45504637673d/108x108_bed15c8355030f96af69226270bcc4d508b73375.png",type:"smartrope",schema:"keep://subpage/home?categoryType=jumprope&amp;source=page_home&amp;isPreview=false",title:"跳绳",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.1",itemTitle:"跑步",item_type:"running",itemPosition:1},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/1/553246736447566b58312f39463164783279354b67734b4c7958796e354f32736a2b5a7576306867512b593d/210x174_1a6d2547a58966dbdea3322795acdc2bba24e889.png",iconInner:"https://static1.keepcdn.com/infra-cms/2021/03/21/20/30/298362495336_108x108.png",type:"running",schema:"keep://homepage/running?tabId=cnVubmluZw==&amp;style=tab&amp;trainingTrace=categoryEntry&amp;source=categoryEntry",title:"跑步",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.2",itemTitle:"行走",item_type:"hiking",itemPosition:2},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/1/553246736447566b583138396362694a75476b7567306d6b373158632b4c635635713847456b56325542303d/210x174_990cd347017ad1a7ba63688b96aa64ed9b7ed824.png",iconInner:"https://static1.keepcdn.com/infra-cms/2021/03/22/10/19/79547768652_108x108.png",type:"hiking",schema:"keep://homepage/hiking?tabId=aGlraW5n&amp;new=true&amp;trainingTrace=categoryEntry&amp;source=categoryEntry",title:"行走",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.3",itemTitle:"骑行",item_type:"cycling",itemPosition:3},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/1/553246736447566b583139376d6c764e3637682b4c584c36544d45466c574e556d744f6e443257534435303d/210x174_495638b7a4224c14fde4ee5c88173b32db09c8f2.png",iconInner:"https://static1.keepcdn.com/infra-cms/2021/03/22/10/19/795794009923_108x108.png",type:"cycling",schema:"keep://homepage/cycling?tabId=Y3ljbGluZw==&amp;new=true&amp;trainingTrace=categoryEntry&amp;source=categoryEntry",title:"骑行",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.4",itemTitle:"助眠冥想",item_type:"meditation",itemPosition:4},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/18/38/553246736447566b58313961757053466470325955426a4353427a45627874396d4f6e5144616579646c413d/210x174_c946a5440299cc439ce103629eb9498c120c060e.png",iconInner:"https://static1.keepcdn.com/kylin-cms/2022/11/22/16/27/553246736447566b58312f45336d7949654768352f79793358552f7535797462774e78574e345a3152486f3d/108x108_0e012a0f0154208c791abd0509c5a2ae19c5d40e.png",type:"meditation",schema:"keep://subpage/home?categoryType=meditation&amp;source=page_home&amp;isPreview=false",title:"助眠冥想",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.5",itemTitle:"瑜伽",item_type:"yoga",itemPosition:5},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/1/553246736447566b58312b5173386d5766432f395932726e7a5130523867676676442b463139385462514d3d/210x174_6455aa0d0da392b4dcb1ae02faa7a6de3b12b74a.png",iconInner:"https://static1.keepcdn.com/kylin-cms/2022/11/10/12/35/553246736447566b58313863714d4b313937715338352b6d653032397858705371596d4873385752486b733d/108x108_4cc973b47b99b7ba40ad7e37226c5a07e08be1ed.png",type:"yoga",schema:"keep://subpage/home?categoryType=yoga&amp;source=home_recommend",title:"瑜伽",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.6",itemTitle:"塑形训练",item_type:"bodybuilding",itemPosition:6},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/2/553246736447566b58313848692f6245626c4c72764d4e6b2b3948727a44784a727857427a6b7a326a616b3d/210x174_9537eca338eda8e0d51c40e63378d73743ae2e39.png",iconInner:"https://static1.keepcdn.com/kylin-cms/2022/11/22/16/45/553246736447566b58313843613174565a6962313166665a5666366770765342447368786a4c61377879673d/108x108_b9315d9c9915931c8bdfddbeed40b8c1b7410fa6.png",type:"bodybuilding",schema:"keep://subpage/home?categoryType=bodybuilding&amp;source=page_home&amp;isPreview=false",title:"塑形训练",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.7",itemTitle:"趣味课",item_type:"games",itemPosition:7},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/15/553246736447566b58312b6a326a4432784770777256325373413073464168336753746159436c364f70453d/210x174_efc0141893630618ab491c34999b5b64506ee721.png",iconInner:"https://static1.keepcdn.com/infra-cms/2022/8/26/16/13/553246736447566b58313956386b78707053647a4869527078506d3863736f4c5771557433436445556b673d/108x108_17b1fb9c0175415962aa4582a9deb9baeac0a663.png",type:"games",schema:"https://m.gotokeep.com/live-activity/games/center?fullscreen=true&amp;source=home_quickStart",title:"趣味课",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.8",itemTitle:"呼啦圈",item_type:"smarthulahoop",itemPosition:8},icon:"https://static1.keepcdn.com/kylin-cms/2022/11/22/16/50/553246736447566b58312b436f7931697352694a32653235597378695a39677533515a7630485a556345383d/210x174_d09af7f584c060e3bf20f5713382fb4e502993db.png",iconInner:"https://static1.keepcdn.com/kylin-cms/2022/11/22/16/50/553246736447566b58312b64724d4c6a536d65436f5736434162693172694f6273336268564c355350634d3d/108x108_eb24e19577e617b521363b73363cfc85affa0616.png",type:"smarthulahoop",schema:"keep://subpage/home?categoryType=hulahoop&amp;source=page_home&amp;isPreview=false",title:"呼啦圈",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.9",itemTitle:"跑步机",item_type:"keloton",itemPosition:9},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/5/553246736447566b583138546267467857467a5134322b77685252514656662b504351395278655a6c41513d/210x174_f146aad28baf15d9a967507fb6e8b92cb647a105.png",iconInner:"https://static1.keepcdn.com/infra-cms/2021/03/22/10/20/79638592490_108x108.png",type:"keloton",schema:"keep://homepage/keloton?tabId=keloton",title:"跑步机",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.10",itemTitle:"动感单车",item_type:"puncheur",itemPosition:10},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/5/553246736447566b58313855655a534a706f48447154597675417570646e466c64694337715968325374553d/210x174_d9682832608569e7bfdf8e099a6a4fb271cdd814.png",iconInner:"https://static1.keepcdn.com/infra-cms/2022/4/1/16/36/79214849d54a4c4df7830379af74a37bbe952e55_108x108_9e25f3e357ad724a7b06ca568472c181876cb773.png",type:"puncheur",schema:"keep://homepage/puncheur?tabId=puncheur",title:"动感单车",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.11",itemTitle:"椭圆机",item_type:"elliptical",itemPosition:11},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/5/553246736447566b58312b62724c324c6a643154702f50654447626636676b526262636f5651504f52746b3d/210x174_777c3a7262a4390e851fb1c0005540f824149ac4.png",iconInner:"https://static1.keepcdn.com/infra-cms/2022/4/1/16/34/79214849d54a4c4df7830379af74a37bbe952e55_108x108_93972c09e24276111935364f32f58da9f0b6dfd0.png",type:"elliptical",schema:"keep://koval/main",title:"椭圆机",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.12",itemTitle:"健走机",item_type:"walkman",itemPosition:12},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/6/553246736447566b58312b7a43783335705a5257533431356c61475a76416f2f4a30647a7a47584235636f3d/210x174_31eab9bbbc0c46611911645b7a04e4007752bfe9.png",iconInner:"https://static1.keepcdn.com/infra-cms/2021/03/23/11/40/708221831818_108x108.png",type:"walkman",schema:"keep://homepage/walkman?tabId=walkman",title:"健走机",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.13",itemTitle:"练器械",item_type:"equipment_class",itemPosition:13},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/6/553246736447566b58313948413149376f6d4d4f3065575338374d50716261744f544867773448496b726b3d/210x174_eb833711c3e4896f61dcb636bf0381266e3b4db5.png",iconInner:"https://static1.keepcdn.com/infra-cms/2021/8/20/11/53/79214849d54a4c4df7830379af74a37bbe952e55_108x108_9e353657a04c932a7c07e8221d3ef6d09be02989.png",type:"equipment_class",schema:"keep://equipment/equipment_training",title:"练器械",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0},{itemTrackProps:{itemId:null,spm:"keep.homepage.quickEntrance.14",itemTitle:"Keepland",item_type:"uni_web_keepland",itemPosition:14},icon:"https://static1.keepcdn.com/kylin-cms/2022/12/7/20/7/553246736447566b58313848583836333869584239486c564552317272753876574a43345445306b632f773d/210x174_af8fa993c3b4c33a073d99f791748b3f44a623b2.png",iconInner:"https://static1.keepcdn.com/infra-cms/2021/03/21/20/29/297988776391_108x108.png",type:"uni_web_keepland",schema:"https://keepland.gotokeep.com?kpwebbarcolor=0xffffff&amp;kpwebbtntitlecolor=0x584F60",title:"Keepland",iconLinkFormat:null,showTimes:0,bubbleId:null,bubbleText:null,bubble:null,newBubbleId:null,showInFewDays:0}]};n.data.sections.unshift(a)}$done({body:JSON.stringify(n)})}else if(-1!=$request.url.indexOf("preview")){let i=JSON.parse($response.body);i.data.detailSections=Object.values(i.data.detailSections).filter(e=>"recommendation"!=e.sectionType),$done({body:JSON.stringify(i)})}else if(-1!=$request.url.indexOf("sportpage/sport/v3/mysport")){let l=JSON.parse($response.body);l.data.sections&&delete l.data.sections,$done({body:JSON.stringify(l)})}else $done();
@@ -13,6 +13,11 @@ if(__wayxTarget==="qx"&&!__wayxConfig.httpTask)return __wayxRun(__wayxHost.reque
 return (function(config,host,run){
   const fail=message=>{throw new Error('WayX API contract: '+message);};
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+  // Modified: 2026-11-02 (chance). All client spellings/defaults below come
+  // from the semantic target plan, shared with parser validation and reports.
+  const sourceLayout=config.apiPlan.source,targetLayout=config.apiPlan.target;
+  const sourceHttp=sourceLayout.http,targetHttp=targetLayout.http;
+  const targetStore=targetLayout.store.style==='prefs'?host.prefs:host.store;
   const bytes=value=>value instanceof Uint8Array?new Uint8Array(value.buffer,value.byteOffset,value.byteLength):value instanceof ArrayBuffer?new Uint8Array(value):fail('expected Uint8Array or ArrayBuffer');
   const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
   const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&value.match(/^HTTP\/\d(?:\.\d)?\s+(\d{3})(?:\s.*)?$/);return m?Number(m[1]):fail('unsupported HTTP status');};
@@ -34,50 +39,50 @@ return (function(config,host,run){
     // Modified: 2026-11-02 (chance). The declaration identifies the principal
     // binary input; never silently feed text into a byte-only source program.
     if(config.binaryReads&&role===(config.phase==='response'?'response':'request')){
-      if(config.to==='qx'){
+      if(targetLayout.binaryField==='bodyBytes'){
         if(!(value.bodyBytes instanceof ArrayBuffer))fail('binary trigger requires QX ArrayBuffer bodyBytes');
-        if(config.from!=='qx'){result.body=new Uint8Array(value.bodyBytes);delete result.bodyBytes;}
+        if(sourceLayout.binaryField!=='bodyBytes'){result.body=new Uint8Array(value.bodyBytes);delete result.bodyBytes;}
       }else{
         const input=bytes(value.body);
-        if(config.from==='qx'){result.bodyBytes=buffer(input);delete result.body;}
+        if(sourceLayout.binaryField==='bodyBytes'){result.bodyBytes=buffer(input);delete result.body;}
         else result.body=input;
       }
     }
-    if(config.from==='qx'){
-      if(own(result,'status')){result.statusCode=status(result.status);delete result.status;}
-      if(result.body instanceof Uint8Array||result.body instanceof ArrayBuffer){result.bodyBytes=buffer(result.body);delete result.body;}
-    }else{
-      if(own(result,'statusCode')){result.status=result.statusCode;delete result.statusCode;}
-      if(own(result,'bodyBytes')){if(config.binaryReads&&role===(config.phase==='response'?'response':'request'))result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;}
+    if(sourceLayout.responseStatus!==targetLayout.responseStatus&&own(result,targetLayout.responseStatus)){
+      result[sourceLayout.responseStatus]=status(result[targetLayout.responseStatus]);delete result[targetLayout.responseStatus];
+    }
+    if(sourceLayout.binaryField==='bodyBytes'){
+      if(result.body instanceof Uint8Array||result.body instanceof ArrayBuffer){result[sourceLayout.binaryField]=buffer(result.body);delete result.body;}
+    }else if(own(result,'bodyBytes')){
+      if(config.binaryReads&&role===(config.phase==='response'?'response':'request'))result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;
     }
     return result;
   }
   const sourceStore={
-    read:key=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');const v=host.store?host.store.read(key):host.prefs.valueForKey(key);return v==null?null:v;},
-    write:(value,key)=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');if(value===undefined&&config.from==='loon')value=null;if(value!==null&&typeof value!=='string')fail('unsupported storage coercion');return host.store?host.store.write(value,key):value===null?host.prefs.removeValueForKey(key):host.prefs.setValueForKey(value,key);}
+    read:key=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');const v=targetStore[targetLayout.store.read](key);return v==null?null:v;},
+    write:(value,key)=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');if(value===undefined&&sourceLayout.store.undefinedDeletes)value=null;if(value!==null&&typeof value!=='string')fail('unsupported storage coercion');return value===null&&targetLayout.store.remove?targetStore[targetLayout.store.remove](key):targetStore[targetLayout.store.write](value,key);}
   };
   const sourcePrefs={valueForKey:key=>sourceStore.read(key),setValueForKey:(value,key)=>sourceStore.write(value,key),removeValueForKey:key=>sourceStore.write(null,key)};
   // Modified: 2026-11-02 (chance). Only explicit URL/HTTP media fields map;
   // no fake notification delay, clipboard action or undocumented QX options.
   function notify(title,subtitle,body,option,delay){
     if(config.to==='egern'){if(arguments.length>3)fail('notification options unavailable');return host.ctx.notify({title,subtitle,body});}
-    if(config.to==='qx')return host.notifyQx(title,subtitle,body);
+    if(targetLayout.notification.open===null)return host.notifyQx(title,subtitle,body);
     if(arguments.length<=3)return host.notify.post(title,subtitle,body);
     if(delay!==undefined&&delay!==0)fail('notification delay has no verified target mapping');
-    let url,media;
-    if(config.from==='loon'){
-      if(typeof option==='string')url=option;
-      else{if(!option||typeof option!=='object'||Array.isArray(option))fail('notification options require a dictionary');url=option.openUrl;media=option.mediaUrl;}
-    }else if(config.from==='surge'){
+    let url,media;const notification=sourceLayout.notification;
+    if(notification.stringLink&&typeof option==='string')url=option;
+    else if(notification.open){
       if(!option||typeof option!=='object'||Array.isArray(option))fail('notification options require a dictionary');
-      if(option.action!==undefined&&option.action!=='open-url')fail('notification action needs an explicit mapping');url=option.url;media=option['media-url'];
+      if(notification.action&&option[notification.action]!==undefined&&option[notification.action]!==notification.openAction)fail('notification action needs an explicit mapping');
+      url=option[notification.open];media=option[notification.media];
     }else if(option&&typeof option==='object'&&!Object.keys(option).length)return host.notify.post(title,subtitle,body);
     else fail('source notification options have no verified mapping');
     if(url!==undefined&&typeof url!=='string')fail('notification URL requires String');
     if(media!==undefined&&(typeof media!=='string'||!/^https?:\/\//i.test(media)))fail('notification media requires HTTP(S) URL');
     const mapped={};
-    if(url!==undefined)mapped[config.to==='loon'?'openUrl':'url']=url;
-    if(media!==undefined)mapped[config.to==='loon'?'mediaUrl':'media-url']=media;
+    if(url!==undefined)mapped[targetLayout.notification.open]=url;
+    if(media!==undefined)mapped[targetLayout.notification.media]=media;
     return host.notify.post(title,subtitle,body,mapped);
   }
   function headersView(headers){
@@ -99,7 +104,7 @@ return (function(config,host,run){
     if(value===undefined||value===null)return {};
     if(typeof value==='string'){if(config.from!=='qx')fail('non-QX string completion');return config.phase==='echo'?{response:{status:200,body:value}}:{body:value};}
     if(typeof value!=='object'||Array.isArray(value))fail('unsupported completion result');
-    if(config.from==='qx'&&config.phase==='echo')value={response:value};
+    if(sourceLayout.completion.synthetic==='flat'&&config.phase==='echo')value={response:value};
     const result=Object.assign({},value);
     if(own(result,'statusCode')){result.status=result.statusCode;delete result.statusCode;}
     if(own(result,'status'))result.status=status(result.status);
@@ -117,7 +122,7 @@ return (function(config,host,run){
       const response=result.response?host.ctx.respond(result.response):result.abort?host.ctx.abort():result;
       resolveDone(Object.keys(result).length?response:undefined);return;
     }
-    if(config.to==='qx'){
+    if(targetLayout.completion.synthetic==='flat'){
       if(result.abort)fail('target abort semantics are not proven');
       let output=result;
       if(result.response){if(config.phase!=='echo')fail('direct response requires a QX echo declaration');output=result.response;}
@@ -132,28 +137,28 @@ return (function(config,host,run){
   // cookies/redirects and native cancellation; no fake Promise timeout or null success.
   function callbackHttp(){
     if(!config.httpCallback)return undefined;
-    if(config.to==='qx'?!host.task:!host.http)fail('native HTTP transport unavailable');
+    if(targetHttp.style==='promise'?!host.task:!host.http)fail('native HTTP transport unavailable');
     const client={};let active=false;
-    for(const method of ['get','post','put','delete','head','options','patch'])client[method]=(input,callback)=>{
+    for(const method of config.apiPlan.methods)client[method]=(input,callback)=>{
       if(active)fail('callback HTTP subset permits one active request');active=true;
       // Modified: 2026-11-02 (chance). QX author-documented fields only;
       // unsupported timeout/ALPN/etc. are omitted by user instruction, never faked.
-      if(config.to==='qx'){
-        const request={url:input.url,method:method.toUpperCase(),headers:Object.assign({},input.headers),opts:{redirection:input['auto-redirect']===undefined?true:input['auto-redirect'],'auto-cookie':input['auto-cookie']===undefined?true:input['auto-cookie'],'skip-cert-verify':input.insecure===undefined?config.from==='loon':input.insecure}};
+      if(targetHttp.style==='promise'){
+        const request={url:input.url,method:method.toUpperCase(),headers:Object.assign({},input.headers),opts:{[targetHttp.redirect]:input[sourceHttp.redirect]===undefined?sourceHttp.defaults.redirect:input[sourceHttp.redirect],[targetHttp.cookie]:input[sourceHttp.cookie]===undefined?sourceHttp.defaults.cookie:input[sourceHttp.cookie],[targetHttp.tls]:input[sourceHttp.tls]===undefined?sourceHttp.defaults.tls:input[sourceHttp.tls]}};
         if(own(input,'body'))request.body=input.body;
-        if(own(input,'policy'))request.opts.policy=input.policy==='DIRECT'?'direct':input.policy;
+        if(own(input,sourceHttp.policy))request.opts[targetHttp.policy]=input[sourceHttp.policy]===sourceHttp.directPolicy?targetHttp.directPolicy:input[sourceHttp.policy];
         let task;
         try{task=host.task.fetch(request);}catch(error){active=false;throw error;}
         return task.then(response=>{
           active=false;
-          if(!response||typeof response.statusCode!=='number'||!Number.isInteger(response.statusCode)||response.statusCode<100||response.statusCode>599)fail('HTTP success requires a numeric response status');
+          if(!response||typeof response[targetLayout.responseStatus]!=='number'||!Number.isInteger(response[targetLayout.responseStatus])||response[targetLayout.responseStatus]<100||response[targetLayout.responseStatus]>599)fail('HTTP success requires a numeric response status');
           const data=response.body;
           if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
-          return callback(null,{status:response.statusCode,headers:response.headers},data);
+          return callback(null,{[sourceLayout.responseStatus]:response[targetLayout.responseStatus],headers:response.headers},data);
         },reason=>{active=false;return callback(reason&&reason.error||reason||'QX fetch failed',undefined,undefined);});
       }
       const opts=Object.assign({},input,{headers:Object.assign({},input.headers)});
-      opts.timeout=input.timeout*(config.from==='surge'?1000:1)/(config.to==='surge'?1000:1);
+      opts.timeout=input.timeout*sourceHttp.timeoutMs/targetHttp.timeoutMs;
       return host.http[method](opts,(error,response,data)=>{
         active=false;
         if(error)return callback(error,response,data);
@@ -169,31 +174,31 @@ return (function(config,host,run){
   function sourceTask(){
     if(!config.httpTask)return undefined;
     const native=host.task,client=host.http;let active=false;
-    if(config.to==='qx'?!native:!client)fail('native HTTP transport unavailable');
+    if(targetHttp.style==='promise'?!native:!client)fail('native HTTP transport unavailable');
     return {fetch:input=>{
       if(active)fail('QX fetch subset permits one active request');active=true;
-      const incoming=input.opts||{},request={url:input.url,method:input.method||'GET',headers:Object.assign({},input.headers),opts:{redirection:incoming.redirection===undefined?true:incoming.redirection,'auto-cookie':incoming['auto-cookie']===undefined?false:incoming['auto-cookie'],'skip-cert-verify':incoming['skip-cert-verify']===undefined?false:incoming['skip-cert-verify']}};
+      const incoming=input[sourceHttp.optionsRoot]||{},request={url:input.url,method:input.method||'GET',headers:Object.assign({},input.headers),opts:{[sourceHttp.redirect]:incoming[sourceHttp.redirect]===undefined?sourceHttp.defaults.redirect:incoming[sourceHttp.redirect],[sourceHttp.cookie]:incoming[sourceHttp.cookie]===undefined?sourceHttp.defaults.cookie:incoming[sourceHttp.cookie],[sourceHttp.tls]:incoming[sourceHttp.tls]===undefined?sourceHttp.defaults.tls:incoming[sourceHttp.tls]}};
       if(own(input,'body'))request.body=input.body;
-      if(own(incoming,'policy'))request.opts.policy=incoming.policy;
+      if(own(incoming,sourceHttp.policy))request.opts[sourceHttp.policy]=incoming[sourceHttp.policy];
       const normalize=(response,data)=>{
-        if(!response||typeof response.statusCode!=='number'||!Number.isInteger(response.statusCode)||response.statusCode<100||response.statusCode>599)fail('QX fetch success requires a numeric statusCode');
-        const result={statusCode:response.statusCode};
-        if(config.httpTaskBinary){const b=bytes(data);if(b.length>65536)fail('QX fetch subset byte limit');result.bodyBytes=buffer(b);}
+        if(!response||typeof response[sourceLayout.responseStatus]!=='number'||!Number.isInteger(response[sourceLayout.responseStatus])||response[sourceLayout.responseStatus]<100||response[sourceLayout.responseStatus]>599)fail('QX fetch success requires a numeric statusCode');
+        const result={[sourceLayout.responseStatus]:response[sourceLayout.responseStatus]};
+        if(config.httpTaskBinary){const b=bytes(data);if(b.length>65536)fail('QX fetch subset byte limit');result[sourceLayout.binaryField]=buffer(b);}
         else{if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('QX fetch subset requires ASCII response text');result.body=data;}
         return result;
       };
-      if(config.to==='qx'){
+      if(targetHttp.style==='promise'){
         let promise;try{promise=native.fetch(request);}catch(error){active=false;throw error;}
         return promise.then(response=>{active=false;return normalize(response,response&&(config.httpTaskBinary?response.bodyBytes:response.body));},reason=>{active=false;throw reason;});
       }
-      const options={url:request.url,headers:request.headers,'auto-redirect':request.opts.redirection,'auto-cookie':request.opts['auto-cookie'],insecure:request.opts['skip-cert-verify']};
+      const options={url:request.url,headers:request.headers,[targetHttp.redirect]:request.opts[sourceHttp.redirect],[targetHttp.cookie]:request.opts[sourceHttp.cookie],[targetHttp.tls]:request.opts[sourceHttp.tls]};
       if(own(request,'body'))options.body=request.body;
-      if(own(request.opts,'policy'))options.policy=request.opts.policy==='direct'?'DIRECT':request.opts.policy;
+      if(own(request.opts,sourceHttp.policy))options[targetHttp.policy]=request.opts[sourceHttp.policy]===sourceHttp.directPolicy?targetHttp.directPolicy:request.opts[sourceHttp.policy];
       if(config.httpTaskBinary)options['binary-mode']=true;
       return new Promise((resolve,reject)=>{
         try{client[request.method.toLowerCase()](options,(error,response,data)=>{
           active=false;if(error){reject({error});return;}
-          try{resolve(normalize(response&&{statusCode:response.status},data));}catch(error){reject(error);}
+          try{resolve(normalize(response&&{[sourceLayout.responseStatus]:response[targetLayout.responseStatus]},data));}catch(error){reject(error);}
         });}catch(error){active=false;reject(error);}
       });
     }};
@@ -202,12 +207,12 @@ return (function(config,host,run){
   // typed Loon PluginObject arguments. QX deliberately supplies no argument.
   function sourceArgument(){
     if(!config.argumentMapped)return undefined;
-    if(config.to==='qx')return undefined;
+    if(targetLayout.argument==='absent')return undefined;
     const schema=config.argumentSchema;let input=host.argument;
     if(schema.kind==='string'){
       if(typeof input!=='string')fail('declared source String argument missing');return input;
     }
-    if(config.to==='surge'){
+    if(targetLayout.argument==='string'){
       if(typeof input!=='string')fail('declared PluginObject JSON argument missing');
       input=JSON.parse(input);
     }
@@ -217,7 +222,7 @@ return (function(config,host,run){
   }
   function start(request,response){
     const script={name:config.name||host.script&&host.script.name||host.ctx&&host.ctx.script.name};
-    if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=config.from==='loon'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
+    if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=sourceLayout.scriptStartTime==='date'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
     const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
     const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
     const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask(),sourceArgument(),host.codecs&&host.codecs.TextEncoder,host.codecs&&host.codecs.TextDecoder,host.codecs&&host.codecs.atob,host.codecs&&host.codecs.btoa);

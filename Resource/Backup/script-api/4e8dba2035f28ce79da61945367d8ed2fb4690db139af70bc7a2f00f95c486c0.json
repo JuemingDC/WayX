@@ -1,0 +1,996 @@
+{
+  "version": 1,
+  "sourceUrl": "https://kelee.one/Resource/JavaScript/Spotify/Spotify_remove_ads.js",
+  "sourceSha256": "198cb5869d9710c56ed1945156c8f6227fdf9d19da38ee1c8870f4d72f26c6c8",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "198cb5869d9710c56ed1945156c8f6227fdf9d19da38ee1c8870f4d72f26c6c8",
+    "operations": [
+      {
+        "api": "$response.status",
+        "access": "read",
+        "start": 6,
+        "end": 22,
+        "line": 1,
+        "column": 7,
+        "members": [
+          "$response",
+          "status"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 24,
+        "end": 33,
+        "line": 1,
+        "column": 25,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 8256,
+        "end": 8265,
+        "line": 1,
+        "column": 8257,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 8277,
+        "end": 8286,
+        "line": 1,
+        "column": 8278,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 8305,
+        "end": 8314,
+        "line": 1,
+        "column": 8306,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 8315,
+        "end": 8324,
+        "line": 1,
+        "column": 8316,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 9287,
+        "end": 9299,
+        "line": 1,
+        "column": 9288,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 9300,
+        "end": 9314,
+        "line": 1,
+        "column": 9301,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9316,
+        "end": 9331,
+        "line": 1,
+        "column": 9317,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9364,
+        "end": 9373,
+        "line": 1,
+        "column": 9365,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 9,
+    "branches": 0,
+    "reason": "pure source-host specialization"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "cbb8ac2fece1d4c0d1c78c8fd554d7e8d5fd4fe95b2ebe389d7f997a426e988e",
+        "operations": [
+          {
+            "id": "read:6",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.status",
+              "start": 6,
+              "end": 22,
+              "line": 1,
+              "column": 7,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.statusCode",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:24",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 24,
+              "end": 33,
+              "line": 1,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8281",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8281,
+              "end": 8290,
+              "line": 1,
+              "column": 8282,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:8302",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8302,
+              "end": 8311,
+              "line": 1,
+              "column": 8303,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:8330",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8330,
+              "end": 8339,
+              "line": 1,
+              "column": 8331,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:8340",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8340,
+              "end": 8349,
+              "line": 1,
+              "column": 8341,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": null,
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$argument",
+                "reason": "Bare platform-object aliases require data-flow proof",
+                "solution": "Access the documented member directly or keep this program native"
+              },
+              {
+                "api": "$argument",
+                "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+                "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+              }
+            ]
+          },
+          {
+            "id": "read:9312",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 9312,
+              "end": 9324,
+              "line": 1,
+              "column": 9313,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9325",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 9325,
+              "end": 9339,
+              "line": 1,
+              "column": 9326,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.bodyBytes",
+              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9341",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9341,
+              "end": 9356,
+              "line": 1,
+              "column": 9342,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "bodyBytes",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9389",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9389,
+              "end": 9398,
+              "line": 1,
+              "column": 9390,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$argument",
+            "reason": "Bare platform-object aliases require data-flow proof",
+            "solution": "Access the documented member directly or keep this program native"
+          },
+          {
+            "api": "$argument",
+            "reason": "Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+            "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+          }
+        ]
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "cbb8ac2fece1d4c0d1c78c8fd554d7e8d5fd4fe95b2ebe389d7f997a426e988e",
+        "operations": [
+          {
+            "id": "read:6",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.status",
+              "start": 6,
+              "end": 22,
+              "line": 1,
+              "column": 7,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.status",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:24",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 24,
+              "end": 33,
+              "line": 1,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8281",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8281,
+              "end": 8290,
+              "line": 1,
+              "column": 8282,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8302",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8302,
+              "end": 8311,
+              "line": 1,
+              "column": 8303,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8330",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8330,
+              "end": 8339,
+              "line": 1,
+              "column": 8331,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8340",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8340,
+              "end": 8349,
+              "line": 1,
+              "column": 8341,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9312",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 9312,
+              "end": 9324,
+              "line": 1,
+              "column": 9313,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9325",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 9325,
+              "end": 9339,
+              "line": 1,
+              "column": 9326,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9341",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9341,
+              "end": 9356,
+              "line": 1,
+              "column": 9342,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9389",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9389,
+              "end": 9398,
+              "line": 1,
+              "column": 9390,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "cbb8ac2fece1d4c0d1c78c8fd554d7e8d5fd4fe95b2ebe389d7f997a426e988e",
+        "operations": [
+          {
+            "id": "read:6",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.status",
+              "start": 6,
+              "end": 22,
+              "line": 1,
+              "column": 7,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.status",
+            "value": "HTTP status Number",
+            "target": {
+              "api": "$response.status",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "numeric-status-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:24",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 24,
+              "end": 33,
+              "line": 1,
+              "column": 25,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8281",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8281,
+              "end": 8290,
+              "line": 1,
+              "column": 8282,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8302",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8302,
+              "end": 8311,
+              "line": 1,
+              "column": 8303,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8330",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8330,
+              "end": 8339,
+              "line": 1,
+              "column": 8331,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:8340",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 8340,
+              "end": 8349,
+              "line": 1,
+              "column": 8341,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "declared typed object or String",
+            "target": {
+              "api": "$argument",
+              "lowering": "actual source schema + target payload; QX omission with safe author fallback",
+              "proof": "source-schema-and-default-flow-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9312",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 9312,
+              "end": 9324,
+              "line": 1,
+              "column": 9313,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:9325",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 9325,
+              "end": 9339,
+              "line": 1,
+              "column": 9326,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.bytes",
+            "value": "exact byte view",
+            "target": {
+              "api": "$response.body",
+              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
+              "proof": "explicit-binary-declaration"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9341",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9341,
+              "end": 9356,
+              "line": 1,
+              "column": 9342,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "body",
+                "canonical": "complete.body",
+                "target": "body",
+                "action": "map",
+                "cases": [
+                  {
+                    "when": "String",
+                    "target": "body",
+                    "transform": "identity"
+                  },
+                  {
+                    "when": "Uint8Array or ArrayBuffer",
+                    "target": "body",
+                    "transform": "preserve exact byteOffset/byteLength"
+                  }
+                ]
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:9389",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9389,
+              "end": 9398,
+              "line": 1,
+              "column": 9390,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$argument",
+      "reason": "qx: Bare platform-object aliases require data-flow proof",
+      "solution": "Access the documented member directly or keep this program native"
+    },
+    {
+      "api": "$argument",
+      "reason": "qx: Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
+      "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
+    }
+  ]
+}

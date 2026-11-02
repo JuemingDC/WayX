@@ -1,0 +1,1071 @@
+{
+  "version": 1,
+  "sourceUrl": "https://rucu6.pages.dev/Scripts/baidu/baiduNoRedirect.js",
+  "sourceSha256": "5d8b05231b6cfc7d635ad300611e357f27d2c247a3f012acc7a7464a72e0ee82",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "5d8b05231b6cfc7d635ad300611e357f27d2c247a3f012acc7a7464a72e0ee82",
+    "operations": [
+      {
+        "api": "$request.method",
+        "access": "read",
+        "start": 298,
+        "end": 313,
+        "line": 11,
+        "column": 16,
+        "members": [
+          "$request",
+          "method"
+        ]
+      },
+      {
+        "api": "$response.statusCode",
+        "access": "read",
+        "start": 334,
+        "end": 354,
+        "line": 12,
+        "column": 20,
+        "members": [
+          "$response",
+          "statusCode"
+        ]
+      },
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 368,
+        "end": 380,
+        "line": 13,
+        "column": 13,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$response.headers",
+        "access": "read",
+        "start": 396,
+        "end": 413,
+        "line": 14,
+        "column": 15,
+        "members": [
+          "$response",
+          "headers"
+        ]
+      },
+      {
+        "api": "$response.headers.hasOwnProperty",
+        "access": "call",
+        "start": 479,
+        "end": 513,
+        "line": 16,
+        "column": 64,
+        "members": [
+          "$response",
+          "headers",
+          "hasOwnProperty"
+        ]
+      },
+      {
+        "api": "$response.headers.Location.includes",
+        "access": "call",
+        "start": 523,
+        "end": 562,
+        "line": 17,
+        "column": 7,
+        "members": [
+          "$response",
+          "headers",
+          "Location",
+          "includes"
+        ]
+      },
+      {
+        "api": "$response.headers.Location",
+        "access": "write",
+        "start": 726,
+        "end": 742,
+        "line": 21,
+        "column": 7,
+        "members": [
+          "$response",
+          "headers",
+          "Location"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 775,
+        "end": 802,
+        "line": 25,
+        "column": 1,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.headers",
+        "access": "read",
+        "start": 792,
+        "end": 799,
+        "line": 25,
+        "column": 18,
+        "members": [
+          "$response",
+          "headers"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {
+    "request": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "5d8b05231b6cfc7d635ad300611e357f27d2c247a3f012acc7a7464a72e0ee82",
+        "operations": [
+          {
+            "id": "read:298",
+            "rule": "request.method",
+            "kind": "context",
+            "source": {
+              "api": "$request.method",
+              "start": 298,
+              "end": 313,
+              "line": 11,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.method",
+            "value": "String",
+            "target": {
+              "api": "$request.method",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:334",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response.statusCode",
+              "start": 334,
+              "end": 354,
+              "line": 12,
+              "column": 20,
+              "access": "read",
+              "memberPath": [
+                "statusCode"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response.statusCode",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:368",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 368,
+              "end": 380,
+              "line": 13,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:396",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 396,
+              "end": 413,
+              "line": 14,
+              "column": 15,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              },
+              {
+                "api": "headers",
+                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+              }
+            ]
+          },
+          {
+            "id": "call:479",
+            "rule": "response.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$response.headers.hasOwnProperty",
+              "start": 479,
+              "end": 513,
+              "line": 16,
+              "column": 64,
+              "access": "call",
+              "memberPath": [
+                "hasOwnProperty"
+              ]
+            },
+            "canonical": "response.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              },
+              {
+                "api": "headers",
+                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+              }
+            ]
+          },
+          {
+            "id": "call:523",
+            "rule": "response.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$response.headers.Location.includes",
+              "start": 523,
+              "end": 562,
+              "line": 17,
+              "column": 7,
+              "access": "call",
+              "memberPath": [
+                "Location",
+                "includes"
+              ]
+            },
+            "canonical": "response.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              },
+              {
+                "api": "headers",
+                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+              }
+            ]
+          },
+          {
+            "id": "write:726",
+            "rule": "response.header.write",
+            "kind": "header",
+            "source": {
+              "api": "$response.headers.Location",
+              "start": 726,
+              "end": 742,
+              "line": 21,
+              "column": 7,
+              "access": "write",
+              "memberPath": [
+                "Location"
+              ]
+            },
+            "canonical": "response.header.write",
+            "value": "header dictionary mutation",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              },
+              {
+                "api": "headers",
+                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+              }
+            ]
+          },
+          {
+            "id": "call:775",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 775,
+              "end": 802,
+              "line": 25,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "read:792",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 792,
+              "end": 799,
+              "line": 25,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              },
+              {
+                "api": "headers",
+                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$response.statusCode",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "headers-shape",
+            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+          },
+          {
+            "api": "$done.headers",
+            "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+            "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+          },
+          {
+            "api": "headers",
+            "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
+            "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+          }
+        ]
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "5d8b05231b6cfc7d635ad300611e357f27d2c247a3f012acc7a7464a72e0ee82",
+        "operations": [
+          {
+            "id": "read:298",
+            "rule": "request.method",
+            "kind": "context",
+            "source": {
+              "api": "$request.method",
+              "start": 298,
+              "end": 313,
+              "line": 11,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.method",
+            "value": "String",
+            "target": {
+              "api": "$request.method",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:334",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response.statusCode",
+              "start": 334,
+              "end": 354,
+              "line": 12,
+              "column": 20,
+              "access": "read",
+              "memberPath": [
+                "statusCode"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$response.statusCode",
+                "reason": "API/member is outside the documented portable subset",
+                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+              }
+            ]
+          },
+          {
+            "id": "read:368",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 368,
+              "end": 380,
+              "line": 13,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "mapped",
+            "diagnostics": []
+          },
+          {
+            "id": "read:396",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 396,
+              "end": 413,
+              "line": 14,
+              "column": 15,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "call:479",
+            "rule": "response.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$response.headers.hasOwnProperty",
+              "start": 479,
+              "end": 513,
+              "line": 16,
+              "column": 64,
+              "access": "call",
+              "memberPath": [
+                "hasOwnProperty"
+              ]
+            },
+            "canonical": "response.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "call:523",
+            "rule": "response.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$response.headers.Location.includes",
+              "start": 523,
+              "end": 562,
+              "line": 17,
+              "column": 7,
+              "access": "call",
+              "memberPath": [
+                "Location",
+                "includes"
+              ]
+            },
+            "canonical": "response.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "write:726",
+            "rule": "response.header.write",
+            "kind": "header",
+            "source": {
+              "api": "$response.headers.Location",
+              "start": 726,
+              "end": 742,
+              "line": 21,
+              "column": 7,
+              "access": "write",
+              "memberPath": [
+                "Location"
+              ]
+            },
+            "canonical": "response.header.write",
+            "value": "header dictionary mutation",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "call:775",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 775,
+              "end": 802,
+              "line": 25,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              }
+            ],
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          },
+          {
+            "id": "read:792",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 792,
+              "end": 799,
+              "line": 25,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "requires-proof",
+            "diagnostics": [
+              {
+                "api": "headers-shape",
+                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+              },
+              {
+                "api": "$done.headers",
+                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+              }
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "api": "$response.statusCode",
+            "reason": "API/member is outside the documented portable subset",
+            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+          },
+          {
+            "api": "headers-shape",
+            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+          },
+          {
+            "api": "$done.headers",
+            "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+            "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+          }
+        ]
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "5d8b05231b6cfc7d635ad300611e357f27d2c247a3f012acc7a7464a72e0ee82",
+        "operations": [
+          {
+            "id": "read:298",
+            "rule": "request.method",
+            "kind": "context",
+            "source": {
+              "api": "$request.method",
+              "start": 298,
+              "end": 313,
+              "line": 11,
+              "column": 16,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.method",
+            "value": "String",
+            "target": {
+              "api": "$request.method",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:334",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$response.statusCode",
+              "start": 334,
+              "end": 354,
+              "line": 12,
+              "column": 20,
+              "access": "read",
+              "memberPath": [
+                "statusCode"
+              ]
+            },
+            "canonical": null,
+            "value": null,
+            "target": {
+              "api": null,
+              "lowering": "No semantic mapping is registered for this source operation",
+              "proof": "add-explicit-source-and-target-contract"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:368",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 368,
+              "end": 380,
+              "line": 13,
+              "column": 13,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.url",
+            "value": "String",
+            "target": {
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "context-field-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:396",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 396,
+              "end": 413,
+              "line": 14,
+              "column": 15,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:479",
+            "rule": "response.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$response.headers.hasOwnProperty",
+              "start": 479,
+              "end": 513,
+              "line": 16,
+              "column": 64,
+              "access": "call",
+              "memberPath": [
+                "hasOwnProperty"
+              ]
+            },
+            "canonical": "response.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:523",
+            "rule": "response.header.lookup",
+            "kind": "header",
+            "source": {
+              "api": "$response.headers.Location.includes",
+              "start": 523,
+              "end": 562,
+              "line": 17,
+              "column": 7,
+              "access": "call",
+              "memberPath": [
+                "Location",
+                "includes"
+              ]
+            },
+            "canonical": "response.header.lookup",
+            "value": "header String / missing",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "write:726",
+            "rule": "response.header.write",
+            "kind": "header",
+            "source": {
+              "api": "$response.headers.Location",
+              "start": 726,
+              "end": 742,
+              "line": 21,
+              "column": 7,
+              "access": "write",
+              "memberPath": [
+                "Location"
+              ]
+            },
+            "canonical": "response.header.write",
+            "value": "header dictionary mutation",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "call:775",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 775,
+              "end": 802,
+              "line": 25,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "phase-specific result",
+            "target": {
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "result-field-and-phase-proof"
+            },
+            "fields": [
+              {
+                "source": "headers",
+                "canonical": "complete.headers",
+                "target": "headers",
+                "action": "map"
+              }
+            ],
+            "decision": "native",
+            "diagnostics": []
+          },
+          {
+            "id": "read:792",
+            "rule": "response.headers",
+            "kind": "context",
+            "source": {
+              "api": "$response.headers",
+              "start": 792,
+              "end": 799,
+              "line": 25,
+              "column": 18,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.headers",
+            "value": "header-dictionary",
+            "target": {
+              "api": "$response.headers",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "header-operation-proof"
+            },
+            "decision": "native",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "api": "$response.statusCode",
+      "reason": "qx: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "headers-shape",
+      "reason": "qx: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+    },
+    {
+      "api": "$done.headers",
+      "reason": "qx: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+      "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+    },
+    {
+      "api": "headers",
+      "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
+      "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
+    },
+    {
+      "api": "$response.statusCode",
+      "reason": "surge: API/member is outside the documented portable subset",
+      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
+    },
+    {
+      "api": "headers-shape",
+      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
+      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
+    },
+    {
+      "api": "$done.headers",
+      "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+      "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
+    }
+  ]
+}

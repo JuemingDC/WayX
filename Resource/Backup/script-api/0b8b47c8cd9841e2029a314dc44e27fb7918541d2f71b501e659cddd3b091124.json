@@ -1,0 +1,298 @@
+{
+  "version": 1,
+  "sourceUrl": "https://rucu6.pages.dev/Scripts/youtube/request_gholts.js",
+  "sourceSha256": "b1daa514032c933b4942f7b72d5c2b5f4c95f4262592d3f5d1fe42750cd29061",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "b1daa514032c933b4942f7b72d5c2b5f4c95f4262592d3f5d1fe42750cd29061",
+    "operations": [
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 336,
+        "end": 362,
+        "line": 7,
+        "column": 20,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 684,
+        "end": 735,
+        "line": 17,
+        "column": 12,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 3394,
+        "end": 3403,
+        "line": 107,
+        "column": 16,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 3431,
+        "end": 3440,
+        "line": 108,
+        "column": 12,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument.includes",
+        "access": "call",
+        "start": 3444,
+        "end": 3469,
+        "line": 108,
+        "column": 25,
+        "members": [
+          "$argument",
+          "includes"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 3533,
+        "end": 3542,
+        "line": 110,
+        "column": 40,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 3603,
+        "end": 3612,
+        "line": 115,
+        "column": 9,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 3623,
+        "end": 3632,
+        "line": 115,
+        "column": 29,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$argument",
+        "access": "read",
+        "start": 3672,
+        "end": 3681,
+        "line": 115,
+        "column": 78,
+        "members": [
+          "$argument"
+        ]
+      },
+      {
+        "api": "$request.url.split",
+        "access": "call",
+        "start": 11477,
+        "end": 11500,
+        "line": 331,
+        "column": 14,
+        "members": [
+          "$request",
+          "url",
+          "split"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 11663,
+        "end": 11671,
+        "line": 334,
+        "column": 70,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$request.method",
+        "access": "read",
+        "start": 11806,
+        "end": 11821,
+        "line": 337,
+        "column": 13,
+        "members": [
+          "$request",
+          "method"
+        ]
+      },
+      {
+        "api": "$request.method",
+        "access": "read",
+        "start": 11835,
+        "end": 11850,
+        "line": 337,
+        "column": 42,
+        "members": [
+          "$request",
+          "method"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 11906,
+        "end": 11914,
+        "line": 338,
+        "column": 42,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 11970,
+        "end": 11978,
+        "line": 339,
+        "column": 54,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 12363,
+        "end": 12371,
+        "line": 347,
+        "column": 79,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 12453,
+        "end": 12465,
+        "line": 349,
+        "column": 52,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 12550,
+        "end": 12569,
+        "line": 353,
+        "column": 7,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 12694,
+        "end": 12716,
+        "line": 357,
+        "column": 9,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 12731,
+        "end": 12738,
+        "line": 358,
+        "column": 14,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$argument",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$request",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$request",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$request",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      },
+      {
+        "api": "$request",
+        "reason": "Bare platform-object aliases require data-flow proof",
+        "solution": "Access the documented member directly or keep this program native"
+      }
+    ]
+  },
+  "specialization": {
+    "folds": 0,
+    "branches": 0,
+    "reason": "no provable host branch"
+  },
+  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "plans": {},
+  "diagnostics": [
+    {
+      "api": "source-profile",
+      "reason": "The same script has indistinguishable HTTP contexts with different echo/binary/observable source names",
+      "solution": "Keep one shared file only after the declaration identity can be determined at runtime; never choose the last profile"
+    }
+  ]
+}
