@@ -134,3 +134,7 @@ Modified: 2026-11-02 (chance). 本节补充并取代前文对应的旧阻断描�
 局部实现 UTF-8 TextEncoder/TextDecoder 与 HTML atob/btoa，注入作用域，不修改全局、不调用作者 WebView/WASM。只允许直接构造、闭合实例和已证明的方法/只读属性；覆盖流式、fatal、BOM、孤立代理项、encodeInto 容量、精确 BufferSource 视图、Base64 空白与填充及非法输入。原生标准算法作为独立向量依据；不声称错误文本/stack 或完整 DOMException 身份相同。其它编码、共享缓冲区、实例逃逸/反射、intrinsic 改写、压缩等继续阻断。
 
 存储补充：仅在 pristine JSON.stringify 证明成立时，Loon 的动态序列化写入允许 String 或 undefined，后者保持删除语义；不将此规则推广为任意 QX/Surge 写入。缺失读取可在经同符号数据流审查的 typeof String 守卫下归一化，严格 null/undefined 或序列化观察仍阻断。验证由 tests/script-argument-binary.ts、tests/script-codecs.ts 及既有全量回归覆盖；三端同文件的 VM 证据不替代实机认证。生产更新继续由 Actions 同步原文、脚本、规范证据与产物。
+
+## 三端 API 映射及后续优先级
+
+Modified: 2026-11-02 (chance). 完整字段对应、已实现域与未实现方案见 [Script API 映射与转换优先级](script-api/02-方案设计.md)。每次 Actions 的 script-api-status.json 增加 apiMapping 与 conversionPriorities；后者按源 URL 合并所有目标/profile 的阻断家族，列出共同阻断与单家族候选，不把受影响数量当作预计新增通用文件。优先补公共数据流，再推进 Header 独立候选和存储；复杂 HTTP/结果随依赖推进，WASM/压缩按模块单独验证。QX URL fragment variables 是独立输入，不是 Loon 保存插件参数的等价来源。

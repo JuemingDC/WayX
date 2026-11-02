@@ -1,3 +1,8 @@
+// Modified: 2026-11-02 (chance). Refresh API mapping and source-level priority evidence with each production report.
+import {
+  scriptApiMapping,
+  scriptConversionPriorities,
+} from "../parser/script-api-mapping.ts";
 // Modified: 2026-11-02 (chance). Report static module evidence and analysis categories per source without executing archived author code.
 import {
   inspectEmbeddedWasm,
@@ -268,7 +273,9 @@ export async function prepareScriptApiAdapters(
       (result.features.some((p: string) =>
         /^\$(?:request|response)\.bodyBytes(?:\.|$)/.test(p),
       ) ||
-        Object.values(result.contexts).some((role: any) => role.qx?.binaryReads)) &&
+        Object.values(result.contexts).some(
+          (role: any) => role.qx?.binaryReads,
+        )) &&
       group.refs.some((r: any) => !r.mode.body)
     ) {
       result = {
@@ -466,6 +473,8 @@ export async function prepareScriptApiAdapters(
     targets: ["qx", "surge", "loon"],
     // Modified: 2026-11-02 (chance). Include the audited capability domains and exact upstream comparison revision.
     capabilities: scriptCapabilityBoundaries,
+    apiMapping: scriptApiMapping,
+    conversionPriorities: scriptConversionPriorities(diagnostics),
     ...counts,
     // Modified: 2026-11-02 (chance). Early excluded/profile records receive the
     // same category metadata as fully planned references; none are left untyped.

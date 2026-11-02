@@ -490,3 +490,7 @@ Modified: 2026-11-02 (chance). 本节补充并取代前文对应的旧阻断描�
 局部实现 UTF-8 TextEncoder/TextDecoder 与 HTML atob/btoa，注入作用域，不修改全局、不调用作者 WebView/WASM。只允许直接构造、闭合实例和已证明的方法/只读属性；覆盖流式、fatal、BOM、孤立代理项、encodeInto 容量、精确 BufferSource 视图、Base64 空白与填充及非法输入。原生标准算法作为独立向量依据；不声称错误文本/stack 或完整 DOMException 身份相同。其它编码、共享缓冲区、实例逃逸/反射、intrinsic 改写、压缩等继续阻断。
 
 存储补充：仅在 pristine JSON.stringify 证明成立时，Loon 的动态序列化写入允许 String 或 undefined，后者保持删除语义；不将此规则推广为任意 QX/Surge 写入。缺失读取可在经同符号数据流审查的 typeof String 守卫下归一化，严格 null/undefined 或序列化观察仍阻断。验证由 tests/script-argument-binary.ts、tests/script-codecs.ts 及既有全量回归覆盖；三端同文件的 VM 证据不替代实机认证。生产更新继续由 Actions 同步原文、脚本、规范证据与产物。
+
+## 2.28 API 映射与转换优先级证据
+
+Modified: 2026-11-02 (chance). 映射目录须分别列出 QX/Surge/Loon API 对应、已实现子域、依赖及剩余方案，不能以名称对应宣称完整兼容。报告每次新增 apiMapping/conversionPriorities，按源 URL 合并全部目标/profile 的 blocked 家族并集；统计受影响源、仅单家族候选及共同阻断，未知项进入 other，不丢失诊断、不累计重复引用为源数量、不把候选视作可保证解除的阻断。范围外不计入。优先级为 P0 数据流/来源前提，P1 Header/存储/参数及依赖的 HTTP/结果/字节/编码，P2 通知/实际环境/生命周期，P3 引擎与独立算法。实现必须继续按具体输入域和证据逐项验证；本条只补映射与报告，不放宽通用产物门槛。详见 docs/script-api/02-方案设计.md。
