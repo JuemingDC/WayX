@@ -62,6 +62,61 @@ export async function validateSourceBackups(root: string) {
       add(file, "backup-integrity", e.message);
     }
   }
+  // Modified: 2026-11-02 (chance). Semantic sidecars are bound to exact raw
+  // sources and source-specific directions; metadata cannot silently go stale.
+  for (const [url, record] of Object.entries<any>(index.apiPlans ?? {})) {
+    try {
+      const expected =
+        "Resource/Backup/script-api/" +
+        crypto.createHash("sha256").update(url).digest("hex") +
+        ".json";
+      if (record.path !== expected)
+        throw Error("Invalid semantic API plan identity");
+      const bytes = await readOptional(safePath(root, record.path));
+      if (
+        !bytes ||
+        crypto.createHash("sha256").update(bytes).digest("hex") !==
+          record.sha256
+      )
+        throw Error("Missing or corrupted semantic API plan");
+      const plan = JSON.parse(bytes.toString());
+      if (
+        plan.version !== 1 ||
+        plan.sourceUrl !== url ||
+        plan.sourceSha256 !== record.sourceSha256 ||
+        index.objects[index.latest[url]]?.sha256 !== record.sourceSha256
+      )
+        throw Error("Semantic API plan does not match archived source");
+      for (const contexts of Object.values<any>(plan.plans ?? {}))
+        for (const [to, ir] of Object.entries<any>(contexts)) {
+          if (
+            !ir ||
+            ir.targetClient !== to ||
+            !plan.sourceClients.includes(ir.sourceClient) ||
+            !scriptTargetsForSource(ir.sourceClient).includes(to as any) ||
+            !Array.isArray(ir.operations) ||
+            !/^[a-f0-9]{64}$/.test(ir.analysisSourceSha256)
+          )
+            throw Error("Invalid semantic API plan direction or source view");
+          for (const operation of ir.operations)
+            if (
+              !Number.isInteger(operation.source.start) ||
+              operation.source.start < 0 ||
+              !Number.isInteger(operation.source.end) ||
+              operation.source.end < operation.source.start ||
+              !operation.source.api ||
+              !operation.target.proof
+            )
+              throw Error("Invalid semantic API operation");
+        }
+    } catch (error: any) {
+      add(
+        record.path ?? "Resource/Backup/index.json",
+        "api-plan-integrity",
+        error.message,
+      );
+    }
+  }
   // Modified: 2026-11-01 (chance). Universal source-named adblock programs and retained legacy adapter bytes are audited separately from raw evidence.
   for (const [file, record] of Object.entries<any>(index.adapters ?? {})) {
     try {

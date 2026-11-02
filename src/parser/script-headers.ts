@@ -10,7 +10,10 @@ export function readonlyHeaderContract(
 ) {
   const bases: ts.Node[] = [],
     aliases = new Map<ts.Symbol, string>(),
-    keys = new Map<ts.Symbol, { role: string; name: string }>();
+    keys = new Map<
+      ts.Symbol,
+      { role: string; name: string; mode: "exact" | "prefix" }
+    >();
   const role = (n: ts.Node): string | null => {
     if (ts.isParenthesizedExpression(n)) return role(n.expression);
     if (ts.isIdentifier(n))
@@ -179,7 +182,7 @@ export function readonlyHeaderContract(
     const d = call.parent;
     if (!isConst(d) || d.initializer !== call) return;
     const sym = checker.getSymbolAtLocation(d.name)!;
-    keys.set(sym, { role: r, name });
+    keys.set(sym, { role: r, name, mode: prefix ? "prefix" : "exact" });
     allowed.add(n);
     const target = prefix ? prefixes : reads;
     target[r] = [...new Set([...(target[r] ?? []), name])];
@@ -276,5 +279,5 @@ export function readonlyHeaderContract(
         ok = false;
     }
   });
-  return { ok, reads, prefixes };
+  return { ok, reads, prefixes, queries: keys };
 }

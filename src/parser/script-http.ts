@@ -1,17 +1,13 @@
+// Modified: 2026-11-02 (chance). Callback method spellings derive from the shared semantic method set.
+import { scriptHttpMethods } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). A deliberately bounded callback transport
 // contract maps all seven methods with explicit defaults; QX cancellation is unproven.
 import ts from "typescript";
 import { qxHttpOptions } from "./qx-http-options.ts";
 import { safePresenceUse, valueSymbol } from "./script-analysis.ts";
-export const callbackMethods = [
-  "get",
-  "post",
-  "put",
-  "delete",
-  "head",
-  "options",
-  "patch",
-] as const;
+export const callbackMethods = scriptHttpMethods.map((method) =>
+  method.toLowerCase(),
+);
 export function callbackHttpContract(
   tree: ts.SourceFile,
   checker: ts.TypeChecker,

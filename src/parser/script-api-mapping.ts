@@ -1,12 +1,12 @@
+// Modified: 2026-11-02 (chance). Family priorities are descriptive; concrete
+// API surfaces are derived from the executable semantic catalog.
+import { scriptApiDefinitions } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Keep API correspondence separate from proven
 // implementation and rank source-level blocker coverage without claiming unlocks.
-export const scriptApiMapping = [
+const scriptApiPriorityCatalog = [
   {
     id: "flow",
     priority: "P0",
-    qx: "lexical JavaScript",
-    surge: "lexical JavaScript",
-    loon: "lexical JavaScript",
     support: "bounded",
     next: "Resolve closed framework receivers, aliases and computed constant members; reject reflection and escapes",
     dependsOn: [],
@@ -14,9 +14,6 @@ export const scriptApiMapping = [
   {
     id: "completion",
     priority: "P1",
-    qx: "$done({body,bodyBytes,status,...}); proven response-body String",
-    surge: "$done({body,status,...}); request synthetic response wrapper",
-    loon: "$done({body,status,...}); request synthetic response wrapper",
     support: "bounded-with-fresh-object-assign",
     next: "Prove dynamic result construction, phase and pass-through/synthetic branches before lowering",
     dependsOn: ["flow"],
@@ -24,9 +21,6 @@ export const scriptApiMapping = [
   {
     id: "http",
     priority: "P1",
-    qx: "$task.fetch(options) -> Promise",
-    surge: "$httpClient.<method>(options,callback)",
-    loon: "$httpClient.<method>(options,callback)",
     support: "bounded-with-closed-response-aliases",
     next: "Expand closed Promise/request/error flows; keep seven methods and defaults; omit QX-undocumented parameters without errors",
     dependsOn: ["flow", "headers"],
@@ -34,9 +28,6 @@ export const scriptApiMapping = [
   {
     id: "headers",
     priority: "P1",
-    qx: "$request/$response.headers; body-script output restrictions",
-    surge: "$request/$response.headers",
-    loon: "$request/$response.headers",
     support: "readonly-singleton-exact-and-prefix",
     next: "Prove each read/write, duplicate-field and framing operation; never lowercase the whole dictionary",
     dependsOn: ["flow", "completion"],
@@ -44,9 +35,6 @@ export const scriptApiMapping = [
   {
     id: "storage",
     priority: "P1",
-    qx: "$prefs.valueForKey/setValueForKey/removeValueForKey",
-    surge: "$persistentStore.read/write",
-    loon: "$persistentStore.read/write",
     support: "bounded",
     next: "Resolve explicit key expressions, missing-value observations and String/deletion flows; no invented shared namespace",
     dependsOn: ["flow"],
@@ -54,9 +42,6 @@ export const scriptApiMapping = [
   {
     id: "arguments",
     priority: "P1",
-    qx: "omit unsupported $argument; $environment.variables is a separate fragment input",
-    surge: "$argument String; typed JSON only with actual declaration payload",
-    loon: "$argument String/PluginObject; schema from Script v2 and [Argument]",
     support: "typed-with-qx-omission",
     next: "Prove safe author defaults after omission; distinguish fragment inputs from saved plugin settings; reject unsafe macro escaping",
     dependsOn: ["flow"],
@@ -64,9 +49,6 @@ export const scriptApiMapping = [
   {
     id: "codecs",
     priority: "P1",
-    qx: "scoped UTF-8 TextEncoder/Decoder and atob/btoa",
-    surge: "same scoped implementation",
-    loon: "same scoped implementation",
     support: "closed-direct-use-and-const-aliases",
     next: "Prove constant codec aliases without reflection; legacy encodings/compression require independent algorithms and vectors",
     dependsOn: ["flow"],
@@ -74,9 +56,6 @@ export const scriptApiMapping = [
   {
     id: "binary",
     priority: "P1",
-    qx: "ArrayBuffer bodyBytes",
-    surge: "Uint8Array body in binary-body-mode",
-    loon: "Uint8Array body in binary_body_mode",
     support: "declared-exact-views",
     next: "Keep exact offsets and declaration provenance; distinguish bytes from unflagged String body",
     dependsOn: ["flow", "completion"],
@@ -84,9 +63,6 @@ export const scriptApiMapping = [
   {
     id: "notification",
     priority: "P2",
-    qx: "$notify(title,subtitle,body[,options])",
-    surge: "$notification.post(title,subtitle,body[,options])",
-    loon: "$notification.post(title,subtitle,body[,options])",
     support: "three-text-fields-plus-bounded-url-media-and-qx-omission",
     next: "Map optional fields individually using author evidence; omit QX-undocumented parameters while retaining expression side effects",
     dependsOn: ["flow"],
@@ -94,9 +70,6 @@ export const scriptApiMapping = [
   {
     id: "environment",
     priority: "P2",
-    qx: "$environment; actual target identity",
-    surge: "$environment; $script.name/startTime",
-    loon: "$loon String; $script.name/startTime Date",
     support: "source-presence-and-name-subset",
     next: "Separate presence checks from version/device reads; normalize timestamp units only from actual input, never fabricate source identity",
     dependsOn: ["flow"],
@@ -104,9 +77,6 @@ export const scriptApiMapping = [
   {
     id: "lifecycle",
     priority: "P2",
-    qx: "setTimeout; other scheduling contracts need author evidence",
-    surge: "verify timer/cancellation and post-$done lifetime individually",
-    loon: "setTimeout; documented setInterval is one-shot; no reliable clear pair",
     support: "no-portable-repeating-or-cancel-contract",
     next: "Audit observed callback counts, cancellation and completion lifetime; never no-op timers or invent request cancellation",
     dependsOn: ["flow"],
@@ -114,9 +84,6 @@ export const scriptApiMapping = [
   {
     id: "engine",
     priority: "P3",
-    qx: "no blanket WASM/compression/Node module contract",
-    surge: "verify engine/API mode per operation",
-    loon: "verify engine; $utils.gzip / $crypto.aes have separate contracts",
     support: "inspection-only-for-wasm",
     next: "Group exact module hashes/ABI, independently implement actual operations or certify the required source/destination engines; no fake exports/require",
     dependsOn: ["codecs", "binary"],
@@ -124,9 +91,6 @@ export const scriptApiMapping = [
   {
     id: "profile",
     priority: "P0",
-    qx: "rewrite phase/body/echo declarations",
-    surge: "http-request/response and requires-body",
-    loon: "Script v2 request/response, requires_body and binary_body_mode",
     support: "declaration-specific",
     next: "Resolve ambiguous observable profiles and missing bytes before API work; no inference from a filename alone",
     dependsOn: [],
@@ -134,14 +98,37 @@ export const scriptApiMapping = [
   {
     id: "other",
     priority: "review",
-    qx: "unclassified",
-    surge: "unclassified",
-    loon: "unclassified",
     support: "unproven",
     next: "Inspect source-invalid and remaining operations separately; never silently discard unknown blockers",
     dependsOn: [],
   },
 ] as const;
+export const scriptApiMapping = scriptApiPriorityCatalog.map((family) => {
+  const related = scriptApiDefinitions.filter((rule) =>
+    family.id === "headers"
+      ? rule.kind === "header"
+      : family.id === "binary"
+        ? rule.id.endsWith(".bytes")
+        : family.id === "arguments"
+          ? rule.kind === "argument"
+          : family.id === "codecs"
+            ? rule.kind === "codec"
+            : family.id === "environment"
+              ? rule.kind === "environment"
+              : rule.kind === family.id,
+  );
+  const surface = (client: "qx" | "surge" | "loon") =>
+    [
+      ...new Set(related.map((rule) => rule.source[client]).filter(Boolean)),
+    ].join(", ") || "No direct SDK surface; see semantic operation plan";
+  return {
+    ...family,
+    qx: surface("qx"),
+    surge: surface("surge"),
+    loon: surface("loon"),
+    ruleIds: related.map((rule) => rule.id),
+  };
+});
 export function scriptApiFamily(api: string): string {
   if (/headers/i.test(api)) return "headers";
   if (/^\$done$/.test(api)) return "completion";

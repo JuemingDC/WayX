@@ -89,7 +89,8 @@ export function planUniversalAdblockScript(
       contexts: {},
     };
   const problems: ApiProblem[] = [],
-    contexts: Record<string, any> = {};
+    contexts: Record<string, any> = {},
+    operationPlans: Record<string, any> = {};
   const usesName = features.some((p) => /^\$script\.name(?:\.|$)/.test(p));
   for (const role of ["request", "response"]) {
     const candidates = profiles.filter(
@@ -143,8 +144,10 @@ export function planUniversalAdblockScript(
       ...(usesName ? { name: names[0] } : {}),
     };
     contexts[role] = {};
+    operationPlans[role] = {};
     for (const to of scriptTargetsForSource(from)) {
       const plan = planScriptApiConversion(source, { from, to, ...profile });
+      operationPlans[role][to] = plan.operationIR;
       problems.push(
         ...plan.problems.map((p) => ({ ...p, reason: to + ": " + p.reason })),
       );
@@ -169,6 +172,7 @@ export function planUniversalAdblockScript(
       features,
       problems,
       contexts,
+      operationPlans,
     };
   const identifiers = new Set<string>();
   const visit = (n: ts.Node) => {
@@ -242,6 +246,7 @@ return (${scriptApiRuntime})(${config},${host},${runBinding});
         ),
       ],
       contexts,
+      operationPlans,
     };
   }
   return {
@@ -255,5 +260,6 @@ return (${scriptApiRuntime})(${config},${host},${runBinding});
     features,
     problems: [] as ApiProblem[],
     contexts,
+    operationPlans,
   };
 }

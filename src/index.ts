@@ -250,4 +250,18 @@ export {
 export { convertNativeQxToSurge } from "./emit/conversion.ts";
 
 // Modified: 2026-11-01 (chance). Public API planner exposes four runtime contracts and structured unsupported-API evidence.
-export { inspectScriptApis, planScriptApiConversion } from "./parser/script-api.ts";
+export {
+  inspectScriptApis,
+  planScriptApiConversion,
+} from "./parser/script-api.ts";
+
+// Modified: 2026-11-02 (chance). Expose the shared semantic catalog and concrete operation planner.
+export {
+  scriptApiDefinitions,
+  scriptHostLayouts,
+} from "./domain/script-api.ts";
+export type { ScriptApiIR, ScriptApiOperation } from "./domain/script-api.ts";
+export {
+  collectScriptApiReferences,
+  parseScriptApiIR,
+} from "./parser/script-api-ir.ts";

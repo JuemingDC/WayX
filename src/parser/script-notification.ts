@@ -1,6 +1,7 @@
 // Modified: 2026-11-02 (chance). Prove notification options per source contract;
 // target QX omits undocumented optional parameters without evaluating them twice.
 import ts from "typescript";
+import { scriptHostLayouts, type ScriptClient } from "../domain/script-api.ts";
 import { constantString } from "./script-bindings.ts";
 export function notificationContract(
   args: readonly ts.Expression[],
@@ -18,12 +19,13 @@ export function notificationContract(
     };
   if (!["surge", "loon"].includes(to))
     return { ok: false, omitted: [] as string[] };
-  if (args.length > (from === "loon" ? 5 : 4))
+  const notification = scriptHostLayouts[from as ScriptClient].notification;
+  if (args.length > (notification.delay ? 5 : 4))
     return { ok: false, omitted: [] as string[] };
   if (args[4] && (!ts.isNumericLiteral(args[4]) || Number(args[4].text) !== 0))
     return { ok: false, omitted: [] as string[] };
   const option = args[3];
-  if (from === "loon" && constantString(option, checker) !== null)
+  if (notification.stringLink && constantString(option, checker) !== null)
     return { ok: true, omitted: [] as string[] };
   if (!ts.isObjectLiteralExpression(option))
     return { ok: false, omitted: [] as string[] };
@@ -40,19 +42,22 @@ export function notificationContract(
     }
     keys.add(p.name.text);
     if (
-      from === "loon"
-        ? !["openUrl", "mediaUrl"].includes(p.name.text)
-        : from === "surge"
-          ? !["url", "action", "media-url"].includes(p.name.text)
-          : true
+      ![notification.open, notification.media, notification.action]
+        .filter(Boolean)
+        .includes(p.name.text)
     )
       ok = false;
     if (
-      p.name.text === "action" &&
-      constantString(p.initializer, checker) !== "open-url"
+      p.name.text === notification.action &&
+      constantString(p.initializer, checker) !== notification.openAction
     )
       ok = false;
   }
-  if (from === "surge" && keys.has("action") && !keys.has("url")) ok = false;
+  if (
+    notification.action &&
+    keys.has(notification.action) &&
+    (!notification.open || !keys.has(notification.open))
+  )
+    ok = false;
   return { ok, omitted: [] as string[] };
 }

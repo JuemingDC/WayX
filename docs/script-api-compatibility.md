@@ -4,6 +4,12 @@ Modified: 2026-11-02 (chance). **当前方向以用户最新说明为准：Loon�
 
 Modified: 2026-11-02 (chance). 当前范围为去广告插件的 HTTP 脚本：按来源共用同一文件：Loon 来源支持原生及 QX/Surge，QX 来源支持原生及 Surge。配置控制 API、Module 工具、任务、Egern 暂不处理；原始插件和脚本的全仓库备份继续进行。
 
+## 当前统一转换链路
+
+Modified: 2026-11-02 (chance). `src/domain/script-api.ts` 是具体 API/宿主字段的共同目录；AST 逐调用生成规范操作，既有证明器审查适用域，轻量目标计划驱动共同运行时。HTTP 默认值/单位、状态、存储删除、通知和完成包装使用同一宿主布局。家族优先级中的 API 拼写也从目录派生。
+
+每源逐操作记录保存为 `Resource/Backup/script-api/<URL SHA-256>.json`，包含原始语法引用、特化分析摘要、具体源→规范→目标字段、参数省略和证明缺口；索引 `apiPlans` 绑定当前原件及计划摘要。未知 API 和未证明语义保留诊断。它让每个脚本的具体问题可追查，并不自动解除原有阻断。详见 [当前设计](script-api/02-方案设计.md)。
+
 ## 文件和引用
 
 - 原件：`Resource/Backup/script/<URL SHA-256>/<源文件名>`，逐字节保存。

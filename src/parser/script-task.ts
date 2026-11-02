@@ -1,18 +1,12 @@
+// Modified: 2026-11-02 (chance). Promise response field names and methods use the same host contract as emission.
+import { scriptHttpMethods, scriptHostLayouts } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Prove QX fetch Promise/await consumers and
 // author-documented fields; optional undocumented parameters are omitted, not errors.
 import ts from "typescript";
 import { valueSymbol, safePresenceUse } from "./script-analysis.ts";
 import { constantString } from "./script-bindings.ts";
 import { qxHttpOptions } from "./qx-http-options.ts";
-const methods = new Set([
-  "GET",
-  "POST",
-  "PUT",
-  "DELETE",
-  "HEAD",
-  "OPTIONS",
-  "PATCH",
-]);
+const methods = new Set<string>(scriptHttpMethods);
 export function qxTaskContract(
   tree: ts.SourceFile,
   checker: ts.TypeChecker,
@@ -87,7 +81,11 @@ export function qxTaskContract(
         !ts.isIdentifier(e.name) ||
         !(ts.isIdentifier(property) || ts.isStringLiteralLike(property)) ||
         seen.has(property.text) ||
-        !["statusCode", "body", "bodyBytes"].includes(property.text)
+        ![
+          scriptHostLayouts.qx.responseStatus,
+          "body",
+          scriptHostLayouts.qx.binaryField,
+        ].includes(property.text)
       )
         return false;
       seen.add(property.text);
@@ -174,7 +172,14 @@ export function qxTaskContract(
       const field = ts.isPropertyAccessExpression(p)
         ? p.name.text
         : constantString(p.argumentExpression, checker);
-      if (!field || !["statusCode", "body", "bodyBytes"].includes(field)) {
+      if (
+        !field ||
+        ![
+          scriptHostLayouts.qx.responseStatus,
+          "body",
+          scriptHostLayouts.qx.binaryField,
+        ].includes(field)
+      ) {
         valid = false;
         return;
       }

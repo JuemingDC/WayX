@@ -1,6 +1,9 @@
 // Modified: 2026-11-02 (chance). Specialize only pure source-host predicates;
 // never invent versions, execute author code, or lose dead-branch var hoisting.
 import ts from "typescript";
+// Modified: 2026-11-02 (chance). Presence branches and field lowering share
+// one source-host contract; no independent client capability table lives here.
+import { scriptHostPresence } from "../domain/script-api.ts";
 import { scriptChecker, valueSymbol } from "./script-analysis.ts";
 import type { ScriptPlatform } from "./script-api.ts";
 const UNKNOWN = Symbol("unknown");
@@ -18,18 +21,7 @@ export function specializeScript(source: string, from: ScriptPlatform) {
       branches,
       reason: "source/text observations retained",
     };
-  const presence: Record<string, string> = {
-    $task: from === "qx" ? "object" : "undefined",
-    $httpClient: from === "qx" ? "undefined" : "object",
-    $loon: from === "loon" ? "string" : "undefined",
-    $script: from === "qx" ? "undefined" : "object",
-    $prefs: from === "qx" ? "object" : "undefined",
-    $persistentStore: from === "qx" ? "undefined" : "object",
-    $notify: from === "qx" ? "function" : "undefined",
-    $notification: from === "qx" ? "undefined" : "object",
-    $surge: from === "surge" ? "object" : "undefined",
-    $rocket: "undefined",
-  };
+  const presence = scriptHostPresence(from);
   for (let pass = 0; pass < 5; pass++) {
     const tree = ts.createSourceFile(
         "upstream.js",

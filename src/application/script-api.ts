@@ -1,3 +1,8 @@
+import { collectScriptApiReferences } from "../parser/script-api-ir.ts";
+import { inspectScriptApis } from "../parser/script-api.ts";
+// Modified: 2026-11-02 (chance). Publish concrete semantic plans separately
+// from author JS, with one stable source-URL sidecar and integrity manifest.
+import { scriptApiDefinitions } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Persist source-specific supported hosts and the authorized conversion directions.
 import {
   scriptTargetsForSource,
@@ -54,6 +59,11 @@ export async function prepareScriptApiAdapters(
     bindings: any = structuredClone(index.bindings ?? {}),
     diagnostics: any[] = [],
     counts = { adapted: 0, blocked: 0, excluded: 0, universal: 0 };
+  const apiPlans: Record<
+    string,
+    { path: string; sha256: string; sourceSha256: string }
+  > = {};
+  const priorApiPlans = index.apiPlans ?? {};
   const known = new Map<string, any>();
   for (const entry of catalog)
     for (const file of [
@@ -348,6 +358,54 @@ export async function prepareScriptApiAdapters(
           },
         ],
       };
+    const rawInventory = inspectScriptApis(sourceText);
+    const syntax = collectScriptApiReferences(
+      rawInventory.tree,
+      rawInventory.checker,
+      rawInventory.contextAliases,
+    ).map((reference) => {
+      const start = reference.node.getStart(rawInventory.tree),
+        position = rawInventory.tree.getLineAndCharacterOfPosition(start);
+      return {
+        api: reference.api,
+        access: reference.access,
+        start,
+        end: reference.node.end,
+        line: position.line + 1,
+        column: position.character + 1,
+        members: reference.members,
+      };
+    });
+    const apiPlanPath =
+      "Resource/Backup/script-api/" + digest(sourceUrl) + ".json";
+    const apiPlanText =
+      JSON.stringify(
+        {
+          version: 1,
+          sourceUrl,
+          sourceSha256: record.sha256,
+          sourceClients: [...group.from],
+          sourceSyntax: {
+            view: "decoded archived UTF-8 input",
+            sha256: digest(sourceText),
+            operations: syntax,
+            diagnostics: rawInventory.problems,
+          },
+          specialization: result.specialization ?? null,
+          sourceView:
+            "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+          plans: result.operationPlans ?? {},
+          diagnostics: result.problems,
+        },
+        null,
+        2,
+      ) + "\n";
+    changes.set(apiPlanPath, apiPlanText);
+    apiPlans[sourceUrl] = {
+      path: apiPlanPath,
+      sha256: digest(apiPlanText),
+      sourceSha256: record.sha256,
+    };
     const file = universalScriptPath(sourceUrl),
       prior = adapters[file];
     if (prior && prior.sourceUrl !== sourceUrl)
@@ -474,6 +532,13 @@ export async function prepareScriptApiAdapters(
     for (const [url, binding] of Object.entries<any>(values))
       if (binding.path?.startsWith("Script/Api/") && !adapters[binding.path])
         delete values[url];
+  for (const [url, entry] of Object.entries<any>(priorApiPlans))
+    if (
+      !apiPlans[url] &&
+      entry.path === "Resource/Backup/script-api/" + digest(url) + ".json"
+    )
+      changes.set(entry.path, null);
+  index.apiPlans = apiPlans;
   index.adapters = adapters;
   index.bindings = bindings;
   const report = {
@@ -485,6 +550,8 @@ export async function prepareScriptApiAdapters(
     // Modified: 2026-11-02 (chance). Include the audited capability domains and exact upstream comparison revision.
     capabilities: scriptCapabilityBoundaries,
     apiMapping: scriptApiMapping,
+    apiDefinitions: scriptApiDefinitions,
+    apiPlans,
     conversionPriorities: scriptConversionPriorities(diagnostics),
     ...counts,
     // Modified: 2026-11-02 (chance). Early excluded/profile records receive the

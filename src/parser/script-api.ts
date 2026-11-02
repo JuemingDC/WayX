@@ -1,3 +1,8 @@
+// Modified: 2026-11-02 (chance). Concrete API occurrences lower through one
+// semantic IR and target plan; lexical proofs remain separate from API mappings.
+import { parseScriptApiIR } from "./script-api-ir.ts";
+import { emitScriptApiPlan } from "../emit/script-api-plan.ts";
+import { scriptSourceFields } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Map documented optional notifications separately from HTTP options.
 import { notificationContract } from "./script-notification.ts";
 // Modified: 2026-11-01 (chance). Inspect JavaScript syntax rather than replacing API names in strings/comments; only emit adapters for a documented bounded contract.
@@ -483,24 +488,35 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     options.from,
     options.to,
   );
-  if (options.from === options.to)
+  if (options.from === options.to) {
+    const operationIR = parseScriptApiIR(
+      inventory.tree,
+      inventory.checker,
+      inventory.contextAliases,
+      options.from,
+      options.to,
+      options,
+      [],
+    );
     return {
       status: "native" as const,
       problems: [] as ApiProblem[],
       features: [] as string[],
       code: source,
-      ...(codecs.ok ? { contract: { portableCodecs: codecs.names } } : {}),
-      ...(taskContract.ok
-        ? {
-            contract: {
-              ...(codecs.ok ? { portableCodecs: codecs.names } : {}),
+      operationIR,
+      contract: {
+        apiPlan: emitScriptApiPlan(operationIR),
+        ...(codecs.ok ? { portableCodecs: codecs.names } : {}),
+        ...(taskContract.ok
+          ? {
               httpTask: true,
               httpTaskBinary: taskContract.binary,
               httpIgnoredOptions: taskContract.ignoredOptions,
-            },
-          }
-        : {}),
+            }
+          : {}),
+      },
     };
+  }
   // Modified: 2026-11-02 (chance). Grant only proven readonly headers and explicit callback HTTP options.
   const headerContract = readonlyHeaderContract(
     inventory.tree,
@@ -541,18 +557,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
   });
   const add = (api: string, reason: string, solution: string) =>
     problems.push({ api, reason, solution });
-  const allowedFields: Record<string, Set<string>> = {
-    $request: new Set(["url", "method", "headers", "body", "bodyBytes"]),
-    $response: new Set(
-      options.from === "qx"
-        ? ["statusCode", "headers", "body", "bodyBytes"]
-        : ["status", "headers", "body"],
-    ),
-    $script: new Set(["name", "startTime"]),
-    $persistentStore: new Set(["read", "write"]),
-    $prefs: new Set(["valueForKey", "setValueForKey", "removeValueForKey"]),
-    $notification: new Set(["post"]),
-  };
+  const allowedFields = scriptSourceFields(options.from);
   for (const api of features) {
     const [root, field] = api.split(".");
     if (root === "$httpClient" && httpContract.ok) continue;
@@ -968,8 +973,20 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     (p, i) =>
       problems.findIndex((v) => v.api === p.api && v.reason === p.reason) === i,
   );
+  const operationIR = parseScriptApiIR(
+    inventory.tree,
+    inventory.checker,
+    inventory.contextAliases,
+    options.from,
+    options.to,
+    options,
+    unique,
+    headerContract.queries,
+  );
+  const apiPlan = emitScriptApiPlan(operationIR);
   if (unique.length)
     return {
+      operationIR,
       status: "blocked" as const,
       problems: unique,
       features,
@@ -977,6 +994,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     };
   const effectiveOptions = {
     ...options,
+    apiPlan,
     binaryReads:
       !!options.binary &&
       features.some((p) =>
@@ -1026,7 +1044,9 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     problems: [],
     features,
     code,
+    operationIR,
     contract: {
+      apiPlan,
       headerReads: headerContract.reads,
       headerPrefixes: headerContract.prefixes,
       binaryReads: effectiveOptions.binaryReads,
