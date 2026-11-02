@@ -147,6 +147,453 @@
     },
     "verification": "Node VM, native ICU, file-integrity and classic-JS syntax checks are engineering evidence, not blanket iOS device certification"
   },
+  "apiMapping": [
+    {
+      "id": "flow",
+      "priority": "P0",
+      "qx": "lexical JavaScript",
+      "surge": "lexical JavaScript",
+      "loon": "lexical JavaScript",
+      "support": "bounded",
+      "next": "Resolve closed framework receivers, aliases and computed constant members; reject reflection and escapes",
+      "dependsOn": []
+    },
+    {
+      "id": "completion",
+      "priority": "P1",
+      "qx": "$done({body,bodyBytes,status,...}); proven response-body String",
+      "surge": "$done({body,status,...}); request synthetic response wrapper",
+      "loon": "$done({body,status,...}); request synthetic response wrapper",
+      "support": "bounded",
+      "next": "Prove dynamic result construction, phase and pass-through/synthetic branches before lowering",
+      "dependsOn": [
+        "flow"
+      ]
+    },
+    {
+      "id": "http",
+      "priority": "P1",
+      "qx": "$task.fetch(options) -> Promise",
+      "surge": "$httpClient.<method>(options,callback)",
+      "loon": "$httpClient.<method>(options,callback)",
+      "support": "bounded",
+      "next": "Expand closed Promise/request/error flows; keep seven methods and defaults; omit QX-undocumented parameters without errors",
+      "dependsOn": [
+        "flow",
+        "headers"
+      ]
+    },
+    {
+      "id": "headers",
+      "priority": "P1",
+      "qx": "$request/$response.headers; body-script output restrictions",
+      "surge": "$request/$response.headers",
+      "loon": "$request/$response.headers",
+      "support": "readonly-singleton",
+      "next": "Prove each read/write, duplicate-field and framing operation; never lowercase the whole dictionary",
+      "dependsOn": [
+        "flow",
+        "completion"
+      ]
+    },
+    {
+      "id": "storage",
+      "priority": "P1",
+      "qx": "$prefs.valueForKey/setValueForKey/removeValueForKey",
+      "surge": "$persistentStore.read/write",
+      "loon": "$persistentStore.read/write",
+      "support": "bounded",
+      "next": "Resolve explicit key expressions, missing-value observations and String/deletion flows; no invented shared namespace",
+      "dependsOn": [
+        "flow"
+      ]
+    },
+    {
+      "id": "arguments",
+      "priority": "P1",
+      "qx": "omit unsupported $argument; $environment.variables is a separate fragment input",
+      "surge": "$argument String; typed JSON only with actual declaration payload",
+      "loon": "$argument String/PluginObject; schema from Script v2 and [Argument]",
+      "support": "typed-with-qx-omission",
+      "next": "Prove safe author defaults after omission; distinguish fragment inputs from saved plugin settings; reject unsafe macro escaping",
+      "dependsOn": [
+        "flow"
+      ]
+    },
+    {
+      "id": "codecs",
+      "priority": "P1",
+      "qx": "scoped UTF-8 TextEncoder/Decoder and atob/btoa",
+      "surge": "same scoped implementation",
+      "loon": "same scoped implementation",
+      "support": "closed-direct-use",
+      "next": "Prove constant codec aliases without reflection; legacy encodings/compression require independent algorithms and vectors",
+      "dependsOn": [
+        "flow"
+      ]
+    },
+    {
+      "id": "binary",
+      "priority": "P1",
+      "qx": "ArrayBuffer bodyBytes",
+      "surge": "Uint8Array body in binary-body-mode",
+      "loon": "Uint8Array body in binary_body_mode",
+      "support": "declared-exact-views",
+      "next": "Keep exact offsets and declaration provenance; distinguish bytes from unflagged String body",
+      "dependsOn": [
+        "flow",
+        "completion"
+      ]
+    },
+    {
+      "id": "notification",
+      "priority": "P2",
+      "qx": "$notify(title,subtitle,body[,options])",
+      "surge": "$notification.post(title,subtitle,body[,options])",
+      "loon": "$notification.post(title,subtitle,body[,options])",
+      "support": "three-text-fields",
+      "next": "Map optional fields individually using author evidence; omit QX-undocumented parameters while retaining expression side effects",
+      "dependsOn": [
+        "flow"
+      ]
+    },
+    {
+      "id": "environment",
+      "priority": "P2",
+      "qx": "$environment; actual target identity",
+      "surge": "$environment; $script.name/startTime",
+      "loon": "$loon String; $script.name/startTime Date",
+      "support": "source-presence-and-name-subset",
+      "next": "Separate presence checks from version/device reads; normalize timestamp units only from actual input, never fabricate source identity",
+      "dependsOn": [
+        "flow"
+      ]
+    },
+    {
+      "id": "lifecycle",
+      "priority": "P2",
+      "qx": "setTimeout; other scheduling contracts need author evidence",
+      "surge": "verify timer/cancellation and post-$done lifetime individually",
+      "loon": "setTimeout; documented setInterval is one-shot; no reliable clear pair",
+      "support": "no-portable-repeating-or-cancel-contract",
+      "next": "Audit observed callback counts, cancellation and completion lifetime; never no-op timers or invent request cancellation",
+      "dependsOn": [
+        "flow"
+      ]
+    },
+    {
+      "id": "engine",
+      "priority": "P3",
+      "qx": "no blanket WASM/compression/Node module contract",
+      "surge": "verify engine/API mode per operation",
+      "loon": "verify engine; $utils.gzip / $crypto.aes have separate contracts",
+      "support": "inspection-only-for-wasm",
+      "next": "Group exact module hashes/ABI, independently implement actual operations or certify all three engines; no fake exports/require",
+      "dependsOn": [
+        "codecs",
+        "binary"
+      ]
+    },
+    {
+      "id": "profile",
+      "priority": "P0",
+      "qx": "rewrite phase/body/echo declarations",
+      "surge": "http-request/response and requires-body",
+      "loon": "Script v2 request/response, requires_body and binary_body_mode",
+      "support": "declaration-specific",
+      "next": "Resolve ambiguous observable profiles and missing bytes before API work; no inference from a filename alone",
+      "dependsOn": []
+    },
+    {
+      "id": "other",
+      "priority": "review",
+      "qx": "unclassified",
+      "surge": "unclassified",
+      "loon": "unclassified",
+      "support": "unproven",
+      "next": "Inspect source-invalid and remaining operations separately; never silently discard unknown blockers",
+      "dependsOn": []
+    }
+  ],
+  "conversionPriorities": {
+    "basis": "Distinct blocked source URLs across every registered target/profile; family counts overlap. Single-family candidates still require implementation, all API proofs and runtime checks, not guaranteed unlocks.",
+    "blockedSources": 80,
+    "families": [
+      {
+        "family": "flow",
+        "priority": "P0",
+        "affectedSources": 45,
+        "singleFamilyCandidates": [
+          "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/xhey-ad-clean.js",
+          "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.js",
+          "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amap.js",
+          "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/chelaile.js",
+          "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/reddit.js",
+          "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_json.js",
+          "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/caixin/caixinAd.js"
+        ],
+        "coBlockers": {
+          "arguments": 14,
+          "binary": 5,
+          "codecs": 14,
+          "completion": 21,
+          "engine": 18,
+          "environment": 17,
+          "headers": 7,
+          "http": 24,
+          "notification": 16,
+          "other": 18,
+          "profile": 1,
+          "storage": 20
+        }
+      },
+      {
+        "family": "completion",
+        "priority": "P1",
+        "affectedSources": 22,
+        "singleFamilyCandidates": [],
+        "coBlockers": {
+          "arguments": 8,
+          "codecs": 8,
+          "engine": 10,
+          "environment": 15,
+          "flow": 21,
+          "headers": 2,
+          "http": 16,
+          "notification": 14,
+          "other": 12,
+          "profile": 1,
+          "storage": 16
+        }
+      },
+      {
+        "family": "http",
+        "priority": "P1",
+        "affectedSources": 25,
+        "singleFamilyCandidates": [],
+        "coBlockers": {
+          "arguments": 12,
+          "binary": 4,
+          "codecs": 10,
+          "completion": 16,
+          "engine": 13,
+          "environment": 17,
+          "flow": 24,
+          "headers": 2,
+          "notification": 16,
+          "other": 15,
+          "storage": 18
+        }
+      },
+      {
+        "family": "headers",
+        "priority": "P1",
+        "affectedSources": 22,
+        "singleFamilyCandidates": [
+          "https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js",
+          "https://kelee.one/Resource/JavaScript/12306/12306_remove_ads.js",
+          "https://kelee.one/Resource/JavaScript/Umetrip/Umetrip_remove_ads.js",
+          "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/migu_vip.js",
+          "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-sub-clean.js",
+          "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-qx-header.js",
+          "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amdc.js",
+          "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/umetrip/umetrip_ads.js",
+          "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/flyert.js",
+          "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/usmile.js",
+          "https://rucu6.pages.dev/Scripts/header.js"
+        ],
+        "coBlockers": {
+          "arguments": 2,
+          "binary": 1,
+          "codecs": 5,
+          "completion": 2,
+          "engine": 5,
+          "environment": 3,
+          "flow": 7,
+          "http": 2,
+          "other": 2,
+          "storage": 2
+        }
+      },
+      {
+        "family": "storage",
+        "priority": "P1",
+        "affectedSources": 24,
+        "singleFamilyCandidates": [
+          "https://kelee.one/Resource/JavaScript/RedPaper/RedPaper_remove_ads.js",
+          "https://rucu6.pages.dev/Scripts/xiaohongshu.js"
+        ],
+        "coBlockers": {
+          "arguments": 12,
+          "codecs": 9,
+          "completion": 16,
+          "engine": 12,
+          "environment": 17,
+          "flow": 20,
+          "headers": 2,
+          "http": 18,
+          "notification": 16,
+          "other": 14,
+          "profile": 1
+        }
+      },
+      {
+        "family": "arguments",
+        "priority": "P1",
+        "affectedSources": 16,
+        "singleFamilyCandidates": [
+          "https://kelee.one/Resource/JavaScript/Spotify/Spotify_remove_ads.js"
+        ],
+        "coBlockers": {
+          "binary": 2,
+          "codecs": 11,
+          "completion": 8,
+          "engine": 7,
+          "environment": 10,
+          "flow": 14,
+          "headers": 2,
+          "http": 12,
+          "notification": 10,
+          "other": 7,
+          "storage": 12
+        }
+      },
+      {
+        "family": "codecs",
+        "priority": "P1",
+        "affectedSources": 26,
+        "singleFamilyCandidates": [],
+        "coBlockers": {
+          "arguments": 11,
+          "binary": 2,
+          "completion": 8,
+          "engine": 19,
+          "environment": 11,
+          "flow": 14,
+          "headers": 5,
+          "http": 10,
+          "notification": 6,
+          "other": 5,
+          "storage": 9
+        }
+      },
+      {
+        "family": "binary",
+        "priority": "P1",
+        "affectedSources": 6,
+        "singleFamilyCandidates": [],
+        "coBlockers": {
+          "arguments": 2,
+          "codecs": 2,
+          "engine": 2,
+          "flow": 5,
+          "headers": 1,
+          "http": 4,
+          "other": 2
+        }
+      },
+      {
+        "family": "notification",
+        "priority": "P2",
+        "affectedSources": 18,
+        "singleFamilyCandidates": [
+          "https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js"
+        ],
+        "coBlockers": {
+          "arguments": 10,
+          "codecs": 6,
+          "completion": 14,
+          "engine": 9,
+          "environment": 16,
+          "flow": 16,
+          "http": 16,
+          "other": 13,
+          "storage": 16
+        }
+      },
+      {
+        "family": "environment",
+        "priority": "P2",
+        "affectedSources": 21,
+        "singleFamilyCandidates": [],
+        "coBlockers": {
+          "arguments": 10,
+          "codecs": 11,
+          "completion": 15,
+          "engine": 14,
+          "flow": 17,
+          "headers": 3,
+          "http": 17,
+          "notification": 16,
+          "other": 13,
+          "storage": 17
+        }
+      },
+      {
+        "family": "lifecycle",
+        "priority": "P2",
+        "affectedSources": 0,
+        "singleFamilyCandidates": [],
+        "coBlockers": {}
+      },
+      {
+        "family": "engine",
+        "priority": "P3",
+        "affectedSources": 29,
+        "singleFamilyCandidates": [],
+        "coBlockers": {
+          "arguments": 7,
+          "binary": 2,
+          "codecs": 19,
+          "completion": 10,
+          "environment": 14,
+          "flow": 18,
+          "headers": 5,
+          "http": 13,
+          "notification": 9,
+          "other": 12,
+          "profile": 1,
+          "storage": 12
+        }
+      },
+      {
+        "family": "profile",
+        "priority": "P0",
+        "affectedSources": 5,
+        "singleFamilyCandidates": [
+          "https://kelee.one/Resource/JavaScript/NeteaseCloudMusic/NeteaseCloudMusic_remove_ads.js",
+          "https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js",
+          "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js",
+          "https://rucu6.pages.dev/Scripts/youtube/request_gholts.js"
+        ],
+        "coBlockers": {
+          "completion": 1,
+          "engine": 1,
+          "flow": 1,
+          "storage": 1
+        }
+      },
+      {
+        "family": "other",
+        "priority": "review",
+        "affectedSources": 19,
+        "singleFamilyCandidates": [],
+        "coBlockers": {
+          "arguments": 7,
+          "binary": 2,
+          "codecs": 5,
+          "completion": 12,
+          "engine": 12,
+          "environment": 13,
+          "flow": 18,
+          "headers": 2,
+          "http": 15,
+          "notification": 13,
+          "storage": 14
+        }
+      }
+    ]
+  },
   "adapted": 804,
   "blocked": 545,
   "excluded": 4,
