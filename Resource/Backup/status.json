@@ -1,5 +1,13 @@
 {
   "version": 1,
+  "scriptCleanup": {
+    "removed": [
+      "Script/Quark/QuantumultX/legacy/Quark.js",
+      "Script/Quark/QuantumultX/legacy/quark_scan.js"
+    ],
+    "retainedGenerated": 252,
+    "policy": "unreferenced-generated-only; active/transitive/manual/source dependencies retained"
+  },
   "pluginSources": 362,
   "scriptUrls": 246,
   "backedUpScripts": 241,
