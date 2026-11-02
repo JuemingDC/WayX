@@ -1,6 +1,6 @@
-// 2026-10-30 13:02
+// 2026-11-02 12:44
 // Pornhub 去推广/广告 + 去年龄门（Loon http-response 脚本，独立版）
-// 2026-10-30 按 home.html（首页）+ play.html（播放页）两份实测结构编写
+// 按 home.html（首页）+ play.html（播放页）两份实测结构编写
 // 注意：广告容器的类名前缀会轮换（首页 rdisc5*、播放页 yv3wl*），不能认前缀——2e~2h 全部按结构（ins.adsbytrafficjunky 为首子元素）删
 // 做法与 myblockads 一致：正则删节点 + 掐掉触发脚本，不靠 CSS 硬压（站点内联样式特异性会压过 display:none）
 // 不写 accessAgeDisclaimerPH cookie——那等于替站点记下「已确认」，本脚本只是不让弹窗和模糊出现
@@ -21,6 +21,23 @@ if (interTarget) {
   });
 } else if (isHtml && /^https:\/\/cn\.pornhub\.com\//i.test(url)) {
   let body = $response.body;
+
+  // ============ 0. 异步 CSS 转渲染阻塞（2026-11-02 修「出画约 1 秒样式错乱」） ============
+  // 机制（home/play 两样本 head 实查）：关键 CSS（main.css 等）本就是普通 stylesheet、渲染阻塞，没问题；
+  // 但另有 5 条被站点故意写成异步加载——media="print"/"none" 先让浏览器低优先级拿文件、onload 再把 media 切回 'all' 才生效：
+  // 首页 subscription-carousel / recommended-carousel / main-non-critical / modals_commons / premium-modals，播放页同构 5 条。
+  // 它们冷缓存下比首绘晚到约 1 秒，生效瞬间整页重排，就是看到的错乱；此前「CSS 走代理链路晚到」的判断到此钉死到这 5 条。
+  // 修法：认准「stylesheet + media 为 print/none + onload 是 media 切 'all'」这组异步签名，把 media 与 onload 两个属性摘掉，
+  // 让它们变回普通渲染阻塞样式表——浏览器等齐了才首绘，错乱在源头消失。它们在 head 解析期已被预加载扫描并行拉取，
+  // 代价只是首绘等最慢的一条到齐（与原先「先出画再错乱 1 秒」总时长相当，白屏可能略显长，但出画即成品）。
+  // 守卫：三个签名缺一不动；<noscript> 里的普通备份 link 无 media/onload、不受影响；JS 后加载的 pornhubX.css 不是 link 标签、不在这步范围。
+  body = body.replace(/<link\b[^>]*\brel="stylesheet"[^>]*>/g, (tag) => {
+    if (!/\bmedia="(?:print|none)"/.test(tag)) return tag;
+    if (!/\bonload="this\.(?:onload=null;this\.)?media='all'"/.test(tag)) return tag;
+    return tag
+      .replace(/\s*\bmedia="(?:print|none)"/, "")
+      .replace(/\s*\bonload="[^"]*"/, "");
+  });
 
   // ============ 1. 年龄门 + 全页模糊 ============
   body = body

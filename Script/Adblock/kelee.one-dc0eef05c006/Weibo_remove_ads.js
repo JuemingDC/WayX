@@ -1648,10 +1648,28 @@ return (function(config,host,run){
     write:(value,key)=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');if(value===undefined&&config.from==='loon')value=null;if(value!==null&&typeof value!=='string')fail('unsupported storage coercion');return host.store?host.store.write(value,key):value===null?host.prefs.removeValueForKey(key):host.prefs.setValueForKey(value,key);}
   };
   const sourcePrefs={valueForKey:key=>sourceStore.read(key),setValueForKey:(value,key)=>sourceStore.write(value,key),removeValueForKey:key=>sourceStore.write(null,key)};
-  function notify(title,subtitle,body){
-    if(arguments.length>3)fail('notification options require an explicit platform mapping');
-    if(config.to==='egern')return host.ctx.notify({title,subtitle,body});
-    return host.notify?host.notify.post(title,subtitle,body):host.notifyQx(title,subtitle,body);
+  // Modified: 2026-11-02 (chance). Only explicit URL/HTTP media fields map;
+  // no fake notification delay, clipboard action or undocumented QX options.
+  function notify(title,subtitle,body,option,delay){
+    if(config.to==='egern'){if(arguments.length>3)fail('notification options unavailable');return host.ctx.notify({title,subtitle,body});}
+    if(config.to==='qx')return host.notifyQx(title,subtitle,body);
+    if(arguments.length<=3)return host.notify.post(title,subtitle,body);
+    if(delay!==undefined&&delay!==0)fail('notification delay has no verified target mapping');
+    let url,media;
+    if(config.from==='loon'){
+      if(typeof option==='string')url=option;
+      else{if(!option||typeof option!=='object'||Array.isArray(option))fail('notification options require a dictionary');url=option.openUrl;media=option.mediaUrl;}
+    }else if(config.from==='surge'){
+      if(!option||typeof option!=='object'||Array.isArray(option))fail('notification options require a dictionary');
+      if(option.action!==undefined&&option.action!=='open-url')fail('notification action needs an explicit mapping');url=option.url;media=option['media-url'];
+    }else if(option&&typeof option==='object'&&!Object.keys(option).length)return host.notify.post(title,subtitle,body);
+    else fail('source notification options have no verified mapping');
+    if(url!==undefined&&typeof url!=='string')fail('notification URL requires String');
+    if(media!==undefined&&(typeof media!=='string'||!/^https?:\/\//i.test(media)))fail('notification media requires HTTP(S) URL');
+    const mapped={};
+    if(url!==undefined)mapped[config.to==='loon'?'openUrl':'url']=url;
+    if(media!==undefined)mapped[config.to==='loon'?'mediaUrl':'media-url']=media;
+    return host.notify.post(title,subtitle,body,mapped);
   }
   function headersView(headers){
     const object=Object.assign({},headers||{});
