@@ -1,8 +1,7 @@
+// Modified: 2026-11-03 (chance). Keep development notes outside emitted runtime code.
 // Modified: 2026-11-02 (chance). Reuse Pako for synchronous Loon gzip APIs;
 // retain native Loon methods and exact typed-array input views.
 export const scriptCompression = String.raw`function(host,config){
-  // Modified: 2026-11-02 (chance). A complete native Loon object retains its
-  // own identity, method receivers, descriptors and original parameter errors.
   if(config.from===config.to&&host.utils&&typeof host.utils.gzip==='function'&&typeof host.utils.ungzip==='function')return host.utils;
   let provider;
   const proto=Object.getPrototypeOf(Uint8Array.prototype);
@@ -18,9 +17,6 @@ export const scriptCompression = String.raw`function(host,config){
     try{
       if(!provider)provider=host.compression();
       if(method==='gzip')return provider.gzip(input);
-      // Modified: 2026-11-02 (chance). Require gzip and stream completion;
-      // Pako's convenience ungzip also accepts zlib and may return undefined
-      // for a truncated stream. Leave member/CRC/trailer parsing to Pako.
       const inflater=new provider.Inflate({windowBits:31});
       inflater.push(input,true);
       if(inflater.err||!inflater.ended||!inflater.result)throw new Error(inflater.msg||'incomplete gzip stream');

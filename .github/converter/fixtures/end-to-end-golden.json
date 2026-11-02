@@ -1,13 +1,13 @@
 {
-  "version": 11,
-  "modified": "2026-11-01 (chance): restore Surge inline flags and compensate Body Rewrite default multiline; QX baselines unchanged.",
+  "version": 12,
+  "modified": "2026-11-03 (chance): omit generated Target and routine conversion notes; reviewed fixture diffs contain only comment deletions.",
   "stamp": "2026-09-29 12:00:00 +08:00",
   "cases": {
     "HTTPDNS": {
-      "qxSha256": "4da05d87420ef8e196e3b529a5dc60eb29e2e6cd25c12dffc6bf61d7942f042c",
-      "surgeSha256": "236ac79ab7ddc55b75d2b974ed6f113682b68135f6d7272baec6a0eafef9fa9d",
-      "qxBytes": 8018,
-      "surgeBytes": 12082,
+      "qxSha256": "6b5404a06e0bbba50fcf77ef28e59fbc2b83014cad037b82839f36c334ec1374",
+      "surgeSha256": "1a35855fd7329d029b645aa19f1b68f23d97e3806ee2af13bc990b0f76f9a8ca",
+      "qxBytes": 7995,
+      "surgeBytes": 12066,
       "sourceScriptCount": 0,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -20,10 +20,10 @@
       ]
     },
     "PinDuoDuo": {
-      "qxSha256": "445b4323b12b7079d42886ba6e3ecab2aed39e2d96c41847663fe880451402a5",
-      "surgeSha256": "eae035faece8e14fff456672903bbec06e7cbf0d846085ccddc617fd20515e38",
-      "qxBytes": 5997,
-      "surgeBytes": 6840,
+      "qxSha256": "074b6bb197bcc4d386142047224af6db96e440abe9c8c00e66c504fef13e3419",
+      "surgeSha256": "6daf1984f4cb21fa4b8f950db557b003b24b7aff29bd1899418bd639922995ed",
+      "qxBytes": 5974,
+      "surgeBytes": 6824,
       "sourceScriptCount": 1,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -37,10 +37,10 @@
       ]
     },
     "MyBlockAds": {
-      "qxSha256": "d79ceac223cd270bf28746dde612680b7bb20e7c3ce4b6fb43e37e3a7506a43a",
-      "surgeSha256": "d1fe6b5a0b4fd891ee7f7d2d4195017e52d1da2f7f29057f88e7191c61f2a8cc",
-      "qxBytes": 24176,
-      "surgeBytes": 34040,
+      "qxSha256": "7d6466aa3af2a9cad631f6909dbb0caaeadb8d0206c2cfc188d95d49467ed975",
+      "surgeSha256": "6af7204dd676ecc00f431c71fd331bf3d3c0c346515125d908284b777fe3db7b",
+      "qxBytes": 24153,
+      "surgeBytes": 34024,
       "sourceScriptCount": 9,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -55,10 +55,10 @@
       ]
     },
     "JingDong": {
-      "qxSha256": "ccef95c9083ac68aca39720198df865aec30a03162f61320ad1123a67d6e3a18",
-      "surgeSha256": "b408c62db18ebd2d941415e98c2be44fec7c685c0e6274d8d201258bd6781c4d",
-      "qxBytes": 2571,
-      "surgeBytes": 2441,
+      "qxSha256": "5eb0750f2523e50e93425fccc5f8a998c99dd36635a809bc11b62387f1bd117f",
+      "surgeSha256": "5bd01a017173d5a7f43c06859036acaaec96e3c8c4df3b33b0cd911cce74ffb9",
+      "qxBytes": 2303,
+      "surgeBytes": 2425,
       "sourceScriptCount": 3,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -71,6 +71,5 @@
         "MITM"
       ]
     }
-  },
-  "note": "Modified: 2026-10-30 (chance). Refresh stale URL-metadata expectations after the previously merged original-script-URL policy; TypeScript outputs are byte-identical to the pre-migration generator for these fixtures."
+  }
 }

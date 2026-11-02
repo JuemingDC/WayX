@@ -1,3 +1,4 @@
+import { compactGeneratedPluginComments } from "../domain/output-comments.ts";
 import { pruneGeneratedScripts } from "./generated-scripts.ts";
 import { prepareScriptApiAdapters } from "./script-api.ts";
 // Modified: 2026-11-01 (chance). Archive upstream bytes and publish only verified WayX script references, in one repository transaction.
@@ -237,9 +238,26 @@ export async function refreshSourceBackups(
       const relative = directory + "/" + file,
         original = await fs.readFile(path.join(root, relative), "utf8");
       // Modified: 2026-11-02 (chance). Apply authorized script-echo corrections to retained/pause artifacts before backup operand discovery.
-      const repaired = repairScriptEchoDeclarations(original),
-        text = repaired.text;
-      if (repaired.count) changes.set(relative, text);
+      const repaired = repairScriptEchoDeclarations(original);
+      // Modified: 2026-11-03 (chance). Compact retained outputs only with archived author comments available; paused sources stay frozen.
+      const sourceUrls = [
+        ...original.matchAll(/^# Source:\s*(https?:\/\/\S+)\s*$/gm),
+      ].map((match) => match[1]);
+      const originals = await Promise.all(
+        sourceUrls.map(async (url) => {
+          const record = index.objects[index.latest[sourceKey(url)]];
+          if (record?.kind !== "plugin") return null;
+          const bytes =
+            changes.get(record.path) ??
+            (await readOptional(safePath(root, record.path)));
+          return bytes == null ? null : Buffer.from(bytes).toString("utf8");
+        }),
+      );
+      const text =
+        originals.length && originals.every((value) => value !== null)
+          ? compactGeneratedPluginComments(repaired.text, originals.join("\n"))
+          : repaired.text;
+      if (text !== original) changes.set(relative, text);
       const refs = scriptReferences(text);
       artifacts.push({ relative, text, refs });
       for (const ref of refs) {

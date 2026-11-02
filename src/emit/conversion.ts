@@ -1,3 +1,4 @@
+import { compactGeneratedPluginComments } from "../domain/output-comments.ts";
 // Modified: 2026-11-03 (chance). Remove unused parser dependencies from the active conversion path.
 import { repairScriptEchoDeclarations } from "../parser/backup-references.ts";
 import { bindKnownBackups } from "../parser/backup-references.ts";
@@ -1180,25 +1181,31 @@ export function convertPlugin(
     appendQxOutput(qx, "notes", ...notes);
     appendSurgeOutput(sg, "notes", ...notes);
   }
-  // Modified: 2026-10-30 (chance). Fill missing target metadata only; author icons win.
+  // Modified: 2026-11-03 (chance). Keep author comments/icons while omitting routine generated explanations.
   return {
-    qx: addAppIcon(
-      renderQxOutput({ state: qx, headerLines: sourceHeader, entry, stamp }),
-      icons,
-      [entry.id],
-    ).text,
-    surge: addAppIcon(
-      renderSurgeOutput({
-        state: sg,
-        headerLines: sourceHeader,
-        entry,
-        stamp,
-        argumentMetadata: surgeArgumentPlan.lines,
-        needsLineRequirement: surgeNeedsLineRequirement,
-      }),
-      icons,
-      [entry.id],
-    ).text,
+    qx: compactGeneratedPluginComments(
+      addAppIcon(
+        renderQxOutput({ state: qx, headerLines: sourceHeader, entry, stamp }),
+        icons,
+        [entry.id],
+      ).text,
+      source,
+    ),
+    surge: compactGeneratedPluginComments(
+      addAppIcon(
+        renderSurgeOutput({
+          state: sg,
+          headerLines: sourceHeader,
+          entry,
+          stamp,
+          argumentMetadata: surgeArgumentPlan.lines,
+          needsLineRequirement: surgeNeedsLineRequirement,
+        }),
+        icons,
+        [entry.id],
+      ).text,
+      source,
+    ),
     generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]),
   };
 }

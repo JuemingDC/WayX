@@ -67,12 +67,14 @@ function execute(
 // Dynamic receiver/alias/key/return flow is runtime JavaScript, never a whitelist.
 for (const [from, to] of directions) {
   const api = from === "qx" ? "$prefs" : "$persistentStore";
-  const source = `class Env{constructor(){this.values=[];}read(message){const k=['bo','dy'].join('');return message[k];}done(v){const result={};result[['bo','dy'].join('')]=v;globalThis.$done(result);}}const env=new Env();env.done(env.read($response));`;
+  const source = `// Modified: author note must survive\n/* Original author license */\nclass Env{constructor(){this.values=[];}read(message){const k=['bo','dy'].join('');return message[k];}done(v){const result={};result[['bo','dy'].join('')]=v;globalThis.$done(result);}}const env=new Env();env.done(env.read($response));`;
   const r = execute(source, from, to, {
     $response: { body: "dynamic ✓", status: 201, statusCode: 201 },
   });
   assert.equal(r.out.body, "dynamic ✓");
   assert.ok(r.p.code!.includes(source));
+  assert.match(r.p.code!, /Adapter: GPL-3.0-only/);
+  assert.doesNotMatch(r.p.code!, /Modified: 2026-11-02 \(chance\)/);
 }
 // ScriptHub Header behavior with the missing deletion/has/descriptor traps fixed.
 for (const [from, to] of directions) {

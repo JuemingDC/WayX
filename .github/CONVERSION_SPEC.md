@@ -428,6 +428,8 @@ Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与
 
 Modified: 2026-11-02 (chance). 旧生成脚本清理在所有声明重绑定后、同一备份发布事务中执行。仅管理 API/Adblock 生成目录、生成器共享文件名规则及 legacy 目录；未标记为生成的作者/手工脚本不因无引用而删除。根据最终产物、冻结源声明、保留的手工脚本和脚本间相对/完整/编码 URL 建立引用闭包，保留传递依赖与仍作为来源 URL 的文件；无根引用的旧生成文件和孤立循环才移除。同步清理 adapters/bindings 的悬空记录，原始 Resource/Backup 字节不删除，status.json 记录 scriptCleanup。正在使用的 Rewrite mock/helper 和 Module 方向适配文件不按年代或目录整批删除。
 
-Modified: 2026-11-02 (chance). 用户新授权覆盖此前 Surge 严格阻断策略：全量清空存储操作忽略、返回 undefined；HTTP ALPN 与完成值 h2_trailers/node/policy 省略。通知忽略延时和所有点击行为，立即提交内容，远程媒体及可识别内嵌图片映射官方 media-url 或 media-base64/media-base64-mime。Header 匹配保持大小写无关。源版本/构建/路径字段不恢复、不阻断转换，以包装器注释说明；保留实际可得信息及兼容 presence，不通过源码猜测删除业务分支。这些明确接受的降级不等于严格语义一致；普通业务异常、网络错误和加密错误不得吞掉。
+Modified: 2026-11-02 (chance). 用户新授权覆盖此前 Surge 严格阻断策略：全量清空存储操作忽略、返回 undefined；HTTP ALPN 与完成值 h2_trailers/node/policy 省略。通知忽略延时和所有点击行为，立即提交内容，远程媒体及可识别内嵌图片映射官方 media-url 或 media-base64/media-base64-mime。Header 匹配保持大小写无关。源版本/构建/路径字段不恢复、不阻断转换，以规范和兼容性报告说明；保留实际可得信息及兼容 presence，不通过源码猜测删除业务分支。这些明确接受的降级不等于严格语义一致；普通业务异常、网络错误和加密错误不得吞掉。
 
 Modified: 2026-11-03 (chance). 当前实现只维护运行时 API 契约，不保留旧 author-composition 实验、静态证明参数或未使用的选项目录；历史设计查阅 Git。原始归档及仍被引用的旧适配文件保留完整性验证，只有现有 Actions 引用闭包清理确认无用后才删除。
+
+Modified: 2026-11-03 (chance). 生成正文精简：通用脚本不附带适配层开发备注；插件省略重复 Target 和常规参数转换说明，规划诊断仍保留。保留原作者注释、许可、转换日期、chance、分类、出处、必要分段和异常提示。已有暂停产物仅使用归档源执行注释精简，不恢复获取。

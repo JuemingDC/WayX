@@ -614,9 +614,9 @@ const ignoredScriptMap = new Map([
 ]);
 const qxIgnoredOptionsOutput = convert(qxIgnoredOptionsFixture, qxIgnoredOptionsSource, ignoredScriptMap, STAMP);
 assert.doesNotMatch(qxIgnoredOptionsOutput.qx,/SCRIPT V2 REVIEW REQUIRED|Script disabled by source option:/);
-assert.match(qxIgnoredOptionsOutput.qx, /Source enable forced to enabled for Quantumult X/i);
-assert.match(qxIgnoredOptionsOutput.qx, /Source Script timeout ignored for Quantumult X/);
-assert.match(qxIgnoredOptionsOutput.qx, /Source Script argument ignored for Quantumult X/);
+assert.doesNotMatch(qxIgnoredOptionsOutput.qx, /Source enable forced to enabled for Quantumult X/i);
+assert.doesNotMatch(qxIgnoredOptionsOutput.qx, /Source Script timeout ignored for Quantumult X/);
+assert.doesNotMatch(qxIgnoredOptionsOutput.qx, /Source Script argument ignored for Quantumult X/);
 assert.match(qxIgnoredOptionsOutput.qx, /url script-response-body https:\/\/example\.com\/legacy\.js/);
 assert.match(qxIgnoredOptionsOutput.qx,/^[^#\n]*url script-response-body https:\/\/example\.com\/v2\.js/m);
 assert.doesNotMatch(qxIgnoredOptionsOutput.surge, /SCRIPT(?: V2)? REVIEW REQUIRED/);
@@ -1166,8 +1166,8 @@ for (const testCase of cases) {
     assert.ok(qxActive.some(line=>/Scripts\/manmanbuy_ck\.js$/.test(line)),'JingDong Capture=false must be forced active in QX by user policy');
     assert.ok(qxActive.some(line => /Scripts\/jd_price\.js$/.test(line)), 'JingDong argument-bearing response script must remain active in QX');
     assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
-    assert.match(out.qx,/Source enable forced to enabled for Quantumult X/);
-    assert.match(out.qx, /Source Script argument ignored for Quantumult X/);
+    assert.doesNotMatch(out.qx, /Source enable forced to enabled for Quantumult X/);
+    assert.doesNotMatch(out.qx, /Source Script argument ignored for Quantumult X/);
   }
 
   report.push(actual);
@@ -1821,6 +1821,8 @@ event-interaction https://example.com/task.js, tag=Demo, enabled=true
 hostname = example.com
 `;
 validateConversionMetadata(qx,entry,'qx');validateQX(qx,entry);
+// Modified: 2026-11-03 (chance). Compact headers and retained legacy headers both validate.
+validateConversionMetadata(qx.replace('# Target: Quantumult X\n',''),entry,'qx');
 assert.throws(()=>validateQX(qx.replace("^https://example.com/ url jsonjq-response-body '.items'",'response if ${url} ~= /api/ then reject(404)'),entry));
 assert.throws(()=>validateConversionMetadata(qx.replace('# Converted by: chance',''),entry,'qx'),/metadata/);
 const surge=`#!name=Demo
@@ -1838,6 +1840,7 @@ DOMAIN,example.com,REJECT
 hostname = %APPEND% example.com
 `;
 validateConversionMetadata(surge,entry,'surge');validateSurgeModule(surge,entry);
+validateConversionMetadata(surge.replace('# Target: Surge\n',''),entry,'surge');
 assert.throws(()=>validateConversionMetadata(surge.replace('#!category=WayX','#!category=Other'),entry,'surge'),/exactly one/);
 assert.throws(()=>validateConversionMetadata(surge.replace('#!category=WayX','#!category=WayX\n#!category=WayX'),entry,'surge'),/exactly one/);
 assert.throws(()=>validateConversionMetadata(surge.replace('#!category=WayX','#!category=WayX\n# Category: Test'),entry,'surge'),/legacy/);

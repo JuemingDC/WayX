@@ -15,6 +15,9 @@ try {
  const target='# Original '+url+'\n^https://example\\.test/ url script-response-body '+url+'#arg=x\n^https://example\\.test/ url 302 '+url+'\n';
  await fs.mkdir(path.join(root,"Adblock/Quantumult X"),{recursive:true});
  await fs.writeFile(path.join(root,"Adblock/Quantumult X/raw.snippet"),target);
+ // Modified: 2026-11-03 (chance). Existing managed outputs compact from archived sources in the same transaction.
+ const managed='# Converted: 2026-11-03\n# Converted by: chance\n# Source: '+entry.source+'\n# Target: Quantumult X\n# [WayX] Source Script timeout ignored for Quantumult X.\n';
+ await fs.writeFile(path.join(root,"Adblock/Quantumult X/managed.snippet"),managed);
  let count=0;
  const resources=createResourceSnapshot({directory:path.join(root,"snapshot"),fetchBytes:async(u:string)=>{if(u===entry.source)return source;assert.equal(u,url);count++;return bytes;}});
  await resources.fetchBytes(entry.source);await resources.fetchText(url+'#arg=x');
@@ -24,6 +27,9 @@ try {
  assert.deepEqual(await fs.readFile(path.join(root,record.path)),bytes);
  const saved=await fs.readFile(path.join(root,"Adblock/Quantumult X/raw.snippet"),"utf8");
  assert.ok(saved.includes(record.path+'#arg=x'));assert.ok(saved.includes('# Original '+url));assert.ok(saved.includes('url 302 '+url));
+ const compacted=await fs.readFile(path.join(root,"Adblock/Quantumult X/managed.snippet"),"utf8");
+ assert.equal(compacted,managed.replace('# Target: Quantumult X\n','').replace('# [WayX] Source Script timeout ignored for Quantumult X.\n',''));
+ await fs.rm(path.join(root,"Adblock/Quantumult X/managed.snippet"));
  assert.equal((await validateSourceBackups(root)).length,0);
  await resources.seal();
  // A second acquisition changes only the stored bytes/index; the public script address stays fixed.

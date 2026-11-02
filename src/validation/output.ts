@@ -124,7 +124,6 @@ export function renderQxSnippetHeader(
     "# Converted by: chance",
     `# Category: ${entry.category}`,
     `# Source: ${entry.source}`,
-    "# Target: Quantumult X",
   );
   return out;
 }
@@ -158,10 +157,10 @@ export function renderSurgeModuleHeader(
     "# Converted: " + stamp,
     "# Converted by: chance",
     "# Source: " + entry.source,
-    "# Target: Surge",
   );
   return out;
 }
+// Modified: 2026-11-03 (chance). Target is implicit in client syntax; retain essential conversion metadata.
 // Generated-file policy metadata; target syntax is validated by its sole adapter.
 export function validateConversionMetadata(
   text: any,
@@ -172,9 +171,6 @@ export function validateConversionMetadata(
     /^# Converted:\s*.+$/m,
     /^# Converted by:\s*chance\s*$/m,
     /^# Source:\s*.+$/m,
-    target === "qx"
-      ? /^# Target:\s*Quantumult X\s*$/m
-      : /^# Target:\s*Surge\s*$/m,
   ];
   for (const pattern of common) {
     if (!pattern.test(text))
@@ -769,7 +765,9 @@ export function validateQX(text: any, entry: any): any {
       .split("\n")
       .find(
         (line: any): any =>
-          line.trim() && !/^(?:#|;|\/\/)/.test(line.trim()) && line.includes(bad),
+          line.trim() &&
+          !/^(?:#|;|\/\/)/.test(line.trim()) &&
+          line.includes(bad),
       );
     if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
   }
