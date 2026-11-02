@@ -1,3 +1,5 @@
+// Modified: 2026-11-02 (chance). QX parameter omission is a user-authorized exception backed by the author repository.
+import { qxHttpOptions } from "./qx-http-options.ts";
 // Modified: 2026-11-02 (chance). Publish capability evidence with every API
 // report, separating proven subsets, precise boundaries and out-of-scope controls.
 export const scriptCapabilityBoundaries = {
@@ -54,18 +56,19 @@ export const scriptCapabilityBoundaries = {
     next: "Extend exact per-field operations and real-client vectors without changing dictionary casing, duplicates or framing",
   },
   http: {
-    status: "callback-pair-only; blocked-for-three-host-equivalence",
+    status: "conditional-callback-bridge-with-authorized-qx-omissions",
+    qx: qxHttpOptions,
     implemented:
-      "Surge/Loon CLI pair: seven native callback methods, HTTP-only literal options, explicit timeout/cookie=false/redirect=false, explicit UA/Accept/identity encoding, ASCII <=64KiB, one active request, ignored return, Boolean-only errors and success-guarded response/data with numeric response.status; native timeout unit conversion",
+      "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. Both retain bounded literal input, UA/Accept/identity encoding, ASCII <=64KiB, one active request, ignored return and success-guarded response/error data flow",
     production:
-      "No Adblock HTTP shim is published until QX also passes; the pairwise CLI implementation is not a three-host certification",
+      "Shared callback-source scripts may publish only when all profiles pass, with QX ignored options recorded explicitly; QX-source Promise programs still need separate data-flow proof",
     fixtures:
       "tests/support/http-contract-server.ts, tests/script-contracts.ts and manual tools/script-client-probe.js; no real-client result has been supplied",
     methods: ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"],
     timeout: {
       surge: "seconds; default 5",
       loon: "milliseconds; default 5000",
-      qx: "matching per-request timeout/cancel contract not established by the cited official sample",
+      qx: "omitted without parameter errors by user instruction; no request cancellation is claimed and no timer is invented",
     },
     cookie: {
       surge: "default true",
@@ -78,7 +81,7 @@ export const scriptCapabilityBoundaries = {
     },
     errors:
       "QX rejected Promise reason.error versus callback error/response/data; missing response must not become successful null",
-    next: "Map all options/methods explicitly, establish QX timeout/cancel behavior and real-client default/error/limit fixtures; no Promise.race fake cancellation",
+    next: "Extend QX-source Promise data flow and independent real-client fixtures; documented optional settings are mapped and undocumented QX request parameters are omitted without error",
   },
   webAssembly: {
     status: "blocked-without-engine-proof",

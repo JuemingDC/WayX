@@ -194,8 +194,8 @@ try {
     );
   assert.equal(
     planUniversalAdblockScript(source, "surge", [{ phase: "response" }]).status,
-    "blocked",
-    "pairwise HTTP evidence cannot enable three hosts",
+    "universal",
+    "user-authorized QX timeout omission permits the bounded shared callback program",
   );
   const plan = planScriptApiConversion(source, {
     from: "surge",

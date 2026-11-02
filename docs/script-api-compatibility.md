@@ -85,3 +85,22 @@ Modified: 2026-11-02 (chance). 以下内容是当前实现，取代上文对应�
 `node tests/script-contracts.ts` 使用真实本地 HTTP 服务和 Node 实现的宿主 API 测试替身，验证方法、超时单位、Host、Cookie/redirect 选项、503、超时/断连、缺失响应和 Header/结果反例；`node tests/script-specialize.ts` 验证来源分支、变量提升、词法遮蔽、TDZ 和未知条件。这些测试不冒充 Surge/Loon/QX 实机。
 
 Modified: 2026-11-02 (chance). 最终复核修正：来源分支优化使用局部文本替换，不整文件重排；未证明仅直接调用的函数体和类体不做内部裁剪，保留可隐式字符串化的作者函数文本。条件表达式取值保留 unbound callee 语义。HTTP 回调的 response/data 只允许在已证明 error 为假的成功分支观察，错误结果形状不猜测。补充相应反例验证。
+
+## QX 请求参数策略：2026-11-02 用户更正
+
+Modified: 2026-11-02 (chance). 以作者 [crossutility/Quantumult-X](https://github.com/crossutility/Quantumult-X/tree/af6fb594233ec4a3ec6d4ccb3601e9c36b75ea2d) 的示例为依据。下表及本节取代前文“QX timeout 未证明即阻断整个 HTTP 转换”的旧策略。
+
+| 来源回调参数                    | QX 派发字段                | 当前处理                                            |
+| ------------------------------- | -------------------------- | --------------------------------------------------- |
+| URL、方法、headers、body        | url、method、headers、body | 保留七种方法和原值，继续受已支持的输入形状约束      |
+| auto-redirect                   | opts.redirection           | 映射并显式保留源默认值                              |
+| auto-cookie                     | opts.auto-cookie           | 映射并显式保留源默认值                              |
+| insecure                        | opts.skip-cert-verify      | 映射并显式保留源默认值                              |
+| policy                          | opts.policy                | 源内置 DIRECT 改为 direct，其余策略名称保留         |
+| timeout、ALPN、其它未说明的参数 | 不发送                     | 按用户要求省略，不报参数错误；列表仅写外部状态/索引 |
+
+依据包括作者的 sample-task.js、sample-fetch-opts-policy.js、sample-fetch-opts-filter.js 和 sample-bytes-rewrite.js；filter 示例已弃用，不作为活跃选项。响应 bodyBytes 是已说明的 ArrayBuffer 字段，不据此宣称请求也接受同名参数。
+
+省略是用户授权的语义例外：不声称仍保留源请求级超时或 ALPN，不发明取消接口，不用计时器伪装请求取消。真实网络失败仍进入错误回调，成功缺少合法响应仍报契约错误；“参数不报错”不会吞掉业务 JS 错误。其它客户端的参数及 API 支持边界保持严格。
+
+已证明的源回调程序可以通过 QX 桥接进入三端共同文件；仍须三个宿主及全部声明通过。QX 来源的任意 Promise/别名/动态结果程序不因这个例外自动视为已转换。`node tests/qx-http-options.ts` 验证七方法、参数无错省略、Cookie/redirect/TLS/policy、延迟/断连及同一文件的三端执行。

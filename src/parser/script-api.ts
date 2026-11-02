@@ -25,12 +25,12 @@ export type ApiOptions = {
 export type ApiProblem = { api: string; reason: string; solution: string };
 const gaps: Record<string, [string, string]> = {
   $task: [
-    "HTTP defaults, errors, timeout/cancellation and response filtering are not a complete cross-client contract",
-    "Translate each option explicitly; test all seven methods, cookie jars, TLS, failures, timeout and body limits on actual clients before enabling HTTP adapters",
+    "QX-source Promise chains and their response/error data flow are outside the currently proven callback-source HTTP subset",
+    "Prove the Promise/result flow separately; omit undocumented target-QX optional request parameters without errors under the user-authorized policy",
   ],
   $httpClient: [
-    "Loon/Surge timeout units, TLS defaults, ALPN, cookie scope and trailers differ; QX lacks documented matching cancellation semantics",
-    "Use a per-option HTTP capability table; never replace PUT/DELETE/HEAD/PATCH with GET or emulate cancellation with Promise.race",
+    "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
+    "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation",
   ],
   $configuration: [
     "QX message actions operate on client-specific configuration, DNS caches and traffic state",
@@ -849,13 +849,21 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
       ? header +
         `export default async function(ctx){const ${hostBinding}={ctx};return await ${core};}\n`
       : header +
-        `(function(){const ${hostBinding}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient};${core};})();\n`;
+        `(function(){const ${hostBinding}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task};${core};})();\n`;
   return {
     status: "adapted" as const,
     problems: [],
     features,
     code,
-    contract: { headerReads: headerContract.reads },
+    contract: {
+      headerReads: headerContract.reads,
+      ...(httpContract.ok
+        ? {
+            httpCallback: true,
+            httpIgnoredOptions: httpContract.ignoredOptions,
+          }
+        : {}),
+    },
     echoRequired: options.to === "qx" && synthesis > 0,
   };
 }

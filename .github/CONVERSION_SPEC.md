@@ -447,3 +447,16 @@ Header 仅增加经过证明的只读单字段操作：Object.keys(h).find(k=>k.
 WASM 对受大小约束且明确命名的 base64 字面量做解码、SHA-256、编译、imports/exports 检查，绝不实例化或执行作者 start；无法定位的动态模块报告缺口。相同摘要仅用于归并 ABI 调查，Node 编译不证明目标引擎可用。状态问题分类区分 source-invalid、analysis-unresolved、mapping-missing、target-contract-unverified 与范围外，不能将所有 blocked 称为不可运行。每次 Actions 连同原文、脚本、证据、索引及引用同事务更新；未通过升级继续保留已验证旧版本。
 
 Modified: 2026-11-02 (chance). 最终复核修正：来源分支优化使用局部文本替换，不整文件重排；未证明仅直接调用的函数体和类体不做内部裁剪，保留可隐式字符串化的作者函数文本。条件表达式取值保留 unbound callee 语义。HTTP 回调的 response/data 只允许在已证明 error 为假的成功分支观察，错误结果形状不猜测。补充相应反例验证。
+
+
+## 2.25 QX 作者依据及未说明请求参数的用户授权例外
+
+Modified: 2026-11-02 (chance). 用户明确要求“qx 的需要查看作者的仓库，没有提到的先忽略掉参数不报错”。本条取代前文仅因 QX 请求级 timeout/取消参数未获证明就阻断转换的策略；这是 2.2 语义保留默认规则的限定例外，仅适用于目标 QX 的 HTTP 请求参数。其它宿主、未知 API、动态对象流、WASM 等仍按各自边界处理，原始备份不改写。
+
+已查阅作者 crossutility/Quantumult-X，修订 af6fb594233ec4a3ec6d4ccb3601e9c36b75ea2d：sample-task.js 给出 url/method/headers/body/opts 和 opts.redirection、skip-cert-verify、auto-cookie；sample-fetch-opts-policy.js 给出 opts.policy；sample-bytes-rewrite.js 给出响应 bodyBytes 的 ArrayBuffer（不能推断为请求 bodyBytes 参数）；sample-fetch-opts-filter.js 标记 filter 已弃用。force-timeout 示例仅用 setTimeout 结束脚本，不是请求级取消，不生成同名超时 API 或 Promise.race 模拟取消。
+
+源回调 HTTP 到 QX 时保留七方法、URL/headers/body，将 auto-redirect → opts.redirection、insecure → opts.skip-cert-verify、auto-cookie → opts.auto-cookie、policy → opts.policy（源内置 DIRECT → direct，其余名称保留）；已知来源默认值显式绑定。QX 未说明的 timeout、ALPN、policy-descriptor 等请求选项在派发时省略，不报“参数不支持”、不输出警告，也不阻断仅因该参数存在的转换。参数对象的原构造表达式照常求值，不删除作者业务副作用；实际 JS/网络异常不在“参数不报错”的范围内。
+
+忽略列表记入上下文、索引和状态中的 omittedParameters/httpIgnoredOptions，不在脚本中加说明头。只对已证明的回调形状启用桥接：源回调错误只作布尔观察，response/data 只在成功分支读取，响应 status 与 ASCII 文本/容量检查保持原有子域；输入/结果动态逃逸等不因本例外放开。所有注册 profile 都通过后才发布源名三端同一文件。QX 来源 Promise 脚本的数据流证明仍单独处理，不能把省略可选参数等同于任意脚本 API 兼容。
+
+验证包含七种方法、未说明参数及异常类型 timeout 的无错省略、显式和缺省 Cookie/redirect/TLS 选项、真实本地延迟与断连，以及同一程序字节在三端的执行。测试不使用假超时，延迟请求可按 QX 原生默认完成；忽略参数后的行为不再声称与源选项全等价。

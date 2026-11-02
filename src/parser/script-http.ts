@@ -1,6 +1,7 @@
 // Modified: 2026-11-02 (chance). A deliberately bounded callback transport
 // contract maps all seven methods with explicit defaults; QX cancellation is unproven.
 import ts from "typescript";
+import { qxHttpOptions } from "./qx-http-options.ts";
 import { safePresenceUse, valueSymbol } from "./script-analysis.ts";
 export const callbackMethods = [
   "get",
@@ -18,7 +19,20 @@ export function callbackHttpContract(
   to: string,
 ) {
   let uses = 0,
-    ok = ["surge", "loon"].includes(from) && ["surge", "loon"].includes(to);
+    ok =
+      ["surge", "loon"].includes(from) && ["surge", "loon", "qx"].includes(to);
+  // Modified: 2026-11-02 (chance). Only the QX target may omit undocumented
+  // options under the user's explicit exception; callback pairs stay strict.
+  const ignored = new Set<string>();
+  const qxMapped = new Set([
+    "url",
+    "headers",
+    "body",
+    "auto-cookie",
+    "auto-redirect",
+    "insecure",
+    "policy",
+  ]);
   const fields = (o: ts.Expression) => {
     if (!ts.isObjectLiteralExpression(o)) return null;
     const map = new Map<string, ts.Expression>();
@@ -62,17 +76,35 @@ export function callbackHttpContract(
       fn = call.arguments[1];
     if (
       !opts ||
-      [...opts.keys()].some(
-        (k) =>
-          ![
-            "url",
-            "headers",
-            "body",
-            "timeout",
-            "auto-cookie",
-            "auto-redirect",
-          ].includes(k),
-      )
+      (to !== "qx" &&
+        [...opts.keys()].some(
+          (k) =>
+            ![
+              "url",
+              "headers",
+              "body",
+              "timeout",
+              "auto-cookie",
+              "auto-redirect",
+            ].includes(k),
+        ))
+    ) {
+      ok = false;
+      return;
+    }
+    if (to === "qx")
+      for (const key of opts.keys()) if (!qxMapped.has(key)) ignored.add(key);
+    const literalBoolean = (key: string) =>
+      !opts.has(key) ||
+      [ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword].includes(
+        opts.get(key)!.kind,
+      );
+    if (
+      to === "qx" &&
+      (!literalBoolean("auto-cookie") ||
+        !literalBoolean("auto-redirect") ||
+        !literalBoolean("insecure") ||
+        (opts.has("policy") && !ts.isStringLiteralLike(opts.get("policy")!)))
     ) {
       ok = false;
       return;
@@ -82,13 +114,14 @@ export function callbackHttpContract(
     if (
       !url ||
       !ts.isStringLiteralLike(url) ||
-      !/^http:\/\//.test(url.text) ||
-      !timeout ||
-      !ts.isNumericLiteral(timeout) ||
-      !(Number(timeout.text) > 0) ||
-      Number(timeout.text) > 60000 ||
-      opts.get("auto-cookie")?.kind !== ts.SyntaxKind.FalseKeyword ||
-      opts.get("auto-redirect")?.kind !== ts.SyntaxKind.FalseKeyword
+      !(to === "qx" ? /^https?:\/\// : /^http:\/\//).test(url.text) ||
+      (to !== "qx" &&
+        (!timeout ||
+          !ts.isNumericLiteral(timeout) ||
+          !(Number(timeout.text) > 0) ||
+          Number(timeout.text) > 60000 ||
+          opts.get("auto-cookie")?.kind !== ts.SyntaxKind.FalseKeyword ||
+          opts.get("auto-redirect")?.kind !== ts.SyntaxKind.FalseKeyword))
     ) {
       ok = false;
       return;
@@ -202,5 +235,10 @@ export function callbackHttpContract(
         ok = false;
     });
   });
-  return { ok: ok && uses > 0, uses };
+  return {
+    ok: ok && uses > 0,
+    uses,
+    ignoredOptions: [...ignored].sort(),
+    ...(to === "qx" ? { authority: qxHttpOptions } : {}),
+  };
 }

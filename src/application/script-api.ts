@@ -300,6 +300,19 @@ export async function prepareScriptApiAdapters(
         ...(result.specialization
           ? { specialization: result.specialization }
           : {}),
+        // Modified: 2026-11-02 (chance). QX omissions are informational metadata,
+        // never parameter errors or extra declarations in the author script.
+        ...(result.contexts
+          ? {
+              omittedParameters: [
+                ...new Set(
+                  Object.values(result.contexts).flatMap(
+                    (role: any) => role.qx?.httpIgnoredOptions ?? [],
+                  ),
+                ),
+              ],
+            }
+          : {}),
         ...(wasmEvidence ? { wasm: wasmEvidence } : {}),
         ...(binding
           ? { path: binding.path, retained: result.status !== "universal" }

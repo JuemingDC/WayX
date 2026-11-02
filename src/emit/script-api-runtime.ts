@@ -87,10 +87,26 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   // cookies/redirects and native cancellation; no fake Promise timeout or null success.
   function callbackHttp(){
     if(!config.httpCallback)return undefined;
-    if(!host.http)fail('native callback HTTP transport unavailable');
+    if(config.to==='qx'?!host.task:!host.http)fail('native HTTP transport unavailable');
     const client={};let active=false;
     for(const method of ['get','post','put','delete','head','options','patch'])client[method]=(input,callback)=>{
       if(active)fail('callback HTTP subset permits one active request');active=true;
+      // Modified: 2026-11-02 (chance). QX author-documented fields only;
+      // unsupported timeout/ALPN/etc. are omitted by user instruction, never faked.
+      if(config.to==='qx'){
+        const request={url:input.url,method:method.toUpperCase(),headers:Object.assign({},input.headers),opts:{redirection:input['auto-redirect']===undefined?true:input['auto-redirect'],'auto-cookie':input['auto-cookie']===undefined?true:input['auto-cookie'],'skip-cert-verify':input.insecure===undefined?config.from==='loon':input.insecure}};
+        if(own(input,'body'))request.body=input.body;
+        if(own(input,'policy'))request.opts.policy=input.policy==='DIRECT'?'direct':input.policy;
+        let task;
+        try{task=host.task.fetch(request);}catch(error){active=false;throw error;}
+        return task.then(response=>{
+          active=false;
+          if(!response||typeof response.statusCode!=='number'||!Number.isInteger(response.statusCode)||response.statusCode<100||response.statusCode>599)fail('HTTP success requires a numeric response status');
+          const data=response.body;
+          if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
+          return callback(null,{status:response.statusCode,headers:response.headers},data);
+        },reason=>{active=false;return callback(reason&&reason.error||reason||'QX fetch failed',undefined,undefined);});
+      }
       const opts=Object.assign({},input,{headers:Object.assign({},input.headers)});
       opts.timeout=input.timeout*(config.from==='surge'?1000:1)/(config.to==='surge'?1000:1);
       return host.http[method](opts,(error,response,data)=>{

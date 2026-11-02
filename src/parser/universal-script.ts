@@ -146,16 +146,21 @@ export function planUniversalAdblockScript(
     role = fresh("__wayxRole"),
     config = fresh("__wayxConfig"),
     runBinding = fresh("__wayxRun");
+  // Modified: 2026-11-02 (chance). Inject HTTP only when a proven callback
+  // contract needs it; all hosts still execute one author-named shared program.
+  const usesHttp = Object.values(contexts).some((role: any) =>
+    Object.values(role).some((c: any) => c.httpCallback),
+  );
   // The source business body occurs once; only generated bindings are renamed.
-  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctx},setTimeout,setInterval){\n${source}\n}`;
+  const run = `function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,${ctx},setTimeout,setInterval${usesHttp ? ",$httpClient" : ""}){\n${source}\n}`;
   const code = `(function(){
 const ${target}=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
 if(!${target})throw new Error('Unsupported adblock script host');
-const ${host}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};
+const ${host}={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task};
 const ${contextTable}=${JSON.stringify(contexts)},${role}=${host}.response===undefined?'request':'response',${config}=${contextTable}[${role}]&&${contextTable}[${role}][${target}];
 if(!${config})throw new Error('Unregistered adblock HTTP trigger');
 const ${runBinding}=${run};
-if(${target}===${JSON.stringify(from)})return ${runBinding}(${host}.request,${host}.response,${host}.done,${host}.script,${host}.store,${host}.prefs,${host}.notify,${host}.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
+if(${target}===${JSON.stringify(from)})return ${runBinding}(${host}.request,${host}.response,${host}.done,${host}.script,${host}.store,${host}.prefs,${host}.notify,${host}.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,${host}.http);
 return (${scriptApiRuntime})(${config},${host},${runBinding});
 })();\n`;
   try {
