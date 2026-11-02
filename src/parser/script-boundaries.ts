@@ -27,7 +27,7 @@ export const scriptCapabilityBoundaries = {
   lexicalBindings: {
     status: "supported",
     domain:
-      "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, guarded same-context scalar && reads, immutable literal keys/string tables without decoder execution, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
+      "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, guarded same-context scalar && reads, immutable literal keys/string tables without decoder execution, including unrelated delayed readonly uses while the queried access remains top-level, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
     outside:
       "Escaping platform aliases, class-getter receiver identity, nonsequential const/TDZ uses, dynamic receivers, eval and Function construction remain blocked",
   },

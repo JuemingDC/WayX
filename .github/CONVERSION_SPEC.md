@@ -511,3 +511,8 @@ Modified: 2026-11-02 (chance). QX fetch 可证明的 const String 请求字段�
 Modified: 2026-11-02 (chance). 用户明确限定三个转换方向：Loon → Quantumult X、Loon → Surge、Quantumult X → Surge。生产规划、公开 CLI 和发布报告使用同一方向表；Surge 来源、QX → Loon 及其它反向转换不属于本项目当前生产范围。来源端原生运行是保留共用脚本的来源执行，不算反向转换：Loon 来源校验 Loon/QX/Surge，QX 来源只校验 QX/Surge，不能再因 Loon 目标缺口阻断 QX 来源产物。每个源 URL 仍仅一个同源名共用文件，QX/Surge 产物引用同一地址；不需要额外 Loon 插件副本。索引 targets 按来源写实际支持宿主，报告额外记录 conversionDirections；所有仍需的目标和注册 HTTP profile 必须通过。底层隔离 pairwise 测试可保留，但不开放其它发布方向；历史“三端全部通过”规则仅对 Loon 来源适用。本条不更改 QX 未说明参数无错省略、原始字节备份、固定路径和 Actions 事务更新。
 
 Modified: 2026-11-02 (chance). 迁移时未带 directionPolicyVersion 的旧三宿主文件仍可按旧校验记录验证，直到 Actions 原位替换；新适配记录必须写 directionPolicyVersion=1 及来源相关 targets/conversionTargets，不能用旧元数据产生新的反向转换。
+
+
+## 2.32 字符串表只读引用证明修正
+
+Modified: 2026-11-02 (chance). 对顶层且初始化后的固定字符串表字段读取，其它函数中同表的闭合只读数字索引不是阻断理由；所查询字段本身的延迟函数访问仍须进一步证明。不可变扫描必须检测直接/括号/解构赋值和循环写入目标，以及 delete/update、别名和外传；未知索引和混淆解码调用继续阻断。按 AST 事实解释字段，不执行作者函数、不重排原文。此修正针对现存财新脚本的误阻断，不扩展方向或放宽 Header/存储等契约；Actions 同时更新原件备份、固定通用文件及状态。

@@ -46,6 +46,45 @@ export function constantString(
       !items.every(ts.isStringLiteralLike)
     )
       return null;
+    // Modified: 2026-11-02 (chance). Only the queried read needs a proven
+    // top-level initialization order. Other closed indexed reads in functions
+    // cannot modify this table and must not invalidate the top-level fact.
+    let ancestor: ts.Node = node;
+    while (ancestor.parent) {
+      ancestor = ancestor.parent;
+      if (ts.isFunctionLike(ancestor)) return null;
+    }
+    // Modified: 2026-11-02 (chance). Assignment patterns and loop targets
+    // can mutate an indexed slot without a direct binary parent.
+    const written = (access: ts.Node) => {
+      let current = access;
+      while (current.parent) {
+        const parent = current.parent;
+        if (
+          ts.isParenthesizedExpression(parent) ||
+          ts.isArrayLiteralExpression(parent) ||
+          ts.isObjectLiteralExpression(parent) ||
+          ts.isSpreadElement(parent) ||
+          ts.isSpreadAssignment(parent) ||
+          (ts.isPropertyAssignment(parent) && parent.initializer === current)
+        ) {
+          current = parent;
+          continue;
+        }
+        return (
+          (ts.isBinaryExpression(parent) &&
+            parent.left === current &&
+            parent.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
+            parent.operatorToken.kind <= ts.SyntaxKind.LastAssignment) ||
+          ((ts.isForOfStatement(parent) || ts.isForInStatement(parent)) &&
+            parent.initializer === current) ||
+          ts.isDeleteExpression(parent) ||
+          ts.isPrefixUnaryExpression(parent) ||
+          ts.isPostfixUnaryExpression(parent)
+        );
+      }
+      return false;
+    };
     let safe = true;
     const scan = (n: ts.Node) => {
       if (
@@ -53,27 +92,14 @@ export function constantString(
         valueSymbol(n, checker) === symbol &&
         n !== d.name
       ) {
-        const p = n.parent,
-          q = p.parent;
+        const p = n.parent;
         if (
           !ts.isElementAccessExpression(p) ||
           p.expression !== n ||
           !ts.isNumericLiteral(p.argumentExpression) ||
-          (ts.isBinaryExpression(q) &&
-            q.left === p &&
-            q.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
-            q.operatorToken.kind <= ts.SyntaxKind.LastAssignment) ||
-          ts.isDeleteExpression(q) ||
-          ts.isPrefixUnaryExpression(q) ||
-          ts.isPostfixUnaryExpression(q)
+          written(p)
         )
           safe = false;
-        // Function-delayed uses require call-order proof beyond this table subset.
-        let ancestor: ts.Node = n;
-        while (ancestor.parent) {
-          ancestor = ancestor.parent;
-          if (ts.isFunctionLike(ancestor)) safe = false;
-        }
       }
       ts.forEachChild(n, scan);
     };
