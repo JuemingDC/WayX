@@ -228,7 +228,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 2,
+  "runtimePolicyVersion": 3,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
@@ -258,7 +258,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -284,7 +284,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -310,7 +310,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -408,7 +408,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextDecoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -435,7 +435,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -535,7 +535,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -559,7 +559,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -583,7 +583,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -607,7 +607,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -679,7 +679,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -703,7 +703,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -737,7 +737,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -763,7 +763,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -789,7 +789,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -887,7 +887,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextDecoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -914,7 +914,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -1014,7 +1014,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -1038,7 +1038,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -1062,7 +1062,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -1086,7 +1086,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -1158,7 +1158,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -1182,7 +1182,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []

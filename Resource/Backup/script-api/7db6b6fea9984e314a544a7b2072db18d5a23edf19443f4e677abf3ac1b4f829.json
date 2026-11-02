@@ -82,7 +82,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 2,
+  "runtimePolicyVersion": 3,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
@@ -161,19 +161,13 @@
             "canonical": "standard.URLSearchParams",
             "value": "runtime value",
             "target": {
-              "capability": "native-only",
+              "capability": "runtime",
               "api": "URLSearchParams",
-              "lowering": "actual native engine global; no bundled fallback yet",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
-            "diagnostics": [
-              {
-                "api": "URLSearchParams",
-                "reason": "actual native engine global; no bundled fallback yet",
-                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
-              }
-            ]
+            "diagnostics": []
           },
           {
             "id": "api:3",
@@ -329,19 +323,13 @@
             "canonical": "standard.URLSearchParams",
             "value": "runtime value",
             "target": {
-              "capability": "native-only",
+              "capability": "runtime",
               "api": "URLSearchParams",
-              "lowering": "actual native engine global; no bundled fallback yet",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
-            "diagnostics": [
-              {
-                "api": "URLSearchParams",
-                "reason": "actual native engine global; no bundled fallback yet",
-                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
-              }
-            ]
+            "diagnostics": []
           },
           {
             "id": "api:3",
@@ -497,19 +485,13 @@
             "canonical": "standard.URLSearchParams",
             "value": "runtime value",
             "target": {
-              "capability": "native-only",
+              "capability": "runtime",
               "api": "URLSearchParams",
-              "lowering": "actual native engine global; no bundled fallback yet",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
-            "diagnostics": [
-              {
-                "api": "URLSearchParams",
-                "reason": "actual native engine global; no bundled fallback yet",
-                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
-              }
-            ]
+            "diagnostics": []
           },
           {
             "id": "api:3",

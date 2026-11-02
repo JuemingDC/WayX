@@ -10,6 +10,237 @@
     "sha256": "e7c13594f68a12745d9bc16b171c6bfdb3b4591ab482eb256453150f812d6f10",
     "operations": [
       {
+        "api": "setTimeout",
+        "access": "read",
+        "start": 524,
+        "end": 534,
+        "line": 3,
+        "column": 407,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 542,
+        "end": 557,
+        "line": 3,
+        "column": 425,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "read",
+        "start": 574,
+        "end": 584,
+        "line": 3,
+        "column": 457,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "read",
+        "start": 594,
+        "end": 604,
+        "line": 3,
+        "column": 477,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 605,
+        "end": 620,
+        "line": 3,
+        "column": 488,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "read",
+        "start": 748,
+        "end": 758,
+        "line": 3,
+        "column": 631,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "read",
+        "start": 759,
+        "end": 769,
+        "line": 3,
+        "column": 642,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 27197,
+        "end": 27212,
+        "line": 3,
+        "column": 27080,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 27235,
+        "end": 27267,
+        "line": 3,
+        "column": 27118,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 27270,
+        "end": 27286,
+        "line": 3,
+        "column": 27153,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 27617,
+        "end": 27648,
+        "line": 3,
+        "column": 27500,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 27649,
+        "end": 27664,
+        "line": 3,
+        "column": 27532,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 27666,
+        "end": 27681,
+        "line": 3,
+        "column": 27549,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 35864,
+        "end": 35895,
+        "line": 3,
+        "column": 35747,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 35897,
+        "end": 35912,
+        "line": 3,
+        "column": 35780,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 36060,
+        "end": 36075,
+        "line": 3,
+        "column": 35943,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 36076,
+        "end": 36091,
+        "line": 3,
+        "column": 35959,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 36247,
+        "end": 36262,
+        "line": 3,
+        "column": 36130,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 36263,
+        "end": 36278,
+        "line": 3,
+        "column": 36146,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 36286,
+        "end": 36301,
+        "line": 3,
+        "column": 36169,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 36303,
+        "end": 36318,
+        "line": 3,
+        "column": 36186,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
         "api": "global",
         "access": "read",
         "start": 58086,
@@ -192,7 +423,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 2,
+  "runtimePolicyVersion": 3,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
@@ -205,6 +436,510 @@
         "operations": [
           {
             "id": "api:0",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 524,
+              "end": 534,
+              "line": 3,
+              "column": 407,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 542,
+              "end": 557,
+              "line": 3,
+              "column": 425,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 574,
+              "end": 584,
+              "line": 3,
+              "column": 457,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 594,
+              "end": 604,
+              "line": 3,
+              "column": 477,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 605,
+              "end": 620,
+              "line": 3,
+              "column": 488,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 748,
+              "end": 758,
+              "line": 3,
+              "column": 631,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 759,
+              "end": 769,
+              "line": 3,
+              "column": 642,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27197,
+              "end": 27212,
+              "line": 3,
+              "column": 27080,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27235,
+              "end": 27267,
+              "line": 3,
+              "column": 27118,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27270,
+              "end": 27286,
+              "line": 3,
+              "column": 27153,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27617,
+              "end": 27648,
+              "line": 3,
+              "column": 27500,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27649,
+              "end": 27664,
+              "line": 3,
+              "column": 27532,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27666,
+              "end": 27681,
+              "line": 3,
+              "column": 27549,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 35864,
+              "end": 35895,
+              "line": 3,
+              "column": 35747,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 35897,
+              "end": 35912,
+              "line": 3,
+              "column": 35780,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:15",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36060,
+              "end": 36075,
+              "line": 3,
+              "column": 35943,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36076,
+              "end": 36091,
+              "line": 3,
+              "column": 35959,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:17",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36247,
+              "end": 36262,
+              "line": 3,
+              "column": 36130,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:18",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36263,
+              "end": 36278,
+              "line": 3,
+              "column": 36146,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:19",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36286,
+              "end": 36301,
+              "line": 3,
+              "column": 36169,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:20",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36303,
+              "end": 36318,
+              "line": 3,
+              "column": 36186,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:21",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -222,13 +957,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:1",
+            "id": "api:22",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -248,13 +983,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:2",
+            "id": "api:23",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -274,13 +1009,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:3",
+            "id": "api:24",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -298,13 +1033,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:4",
+            "id": "api:25",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -330,7 +1065,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:5",
+            "id": "api:26",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -356,7 +1091,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:6",
+            "id": "api:27",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -380,7 +1115,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:7",
+            "id": "api:28",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -404,7 +1139,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:8",
+            "id": "api:29",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -428,7 +1163,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:9",
+            "id": "api:30",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -452,7 +1187,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:10",
+            "id": "api:31",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -476,7 +1211,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:11",
+            "id": "api:32",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -500,7 +1235,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:12",
+            "id": "api:33",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -524,7 +1259,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:13",
+            "id": "api:34",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -548,7 +1283,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:35",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -572,7 +1307,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:36",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -607,6 +1342,510 @@
         "operations": [
           {
             "id": "api:0",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 524,
+              "end": 534,
+              "line": 3,
+              "column": 407,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 542,
+              "end": 557,
+              "line": 3,
+              "column": 425,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 574,
+              "end": 584,
+              "line": 3,
+              "column": 457,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 594,
+              "end": 604,
+              "line": 3,
+              "column": 477,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 605,
+              "end": 620,
+              "line": 3,
+              "column": 488,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 748,
+              "end": 758,
+              "line": 3,
+              "column": 631,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 759,
+              "end": 769,
+              "line": 3,
+              "column": 642,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27197,
+              "end": 27212,
+              "line": 3,
+              "column": 27080,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27235,
+              "end": 27267,
+              "line": 3,
+              "column": 27118,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27270,
+              "end": 27286,
+              "line": 3,
+              "column": 27153,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27617,
+              "end": 27648,
+              "line": 3,
+              "column": 27500,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27649,
+              "end": 27664,
+              "line": 3,
+              "column": 27532,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 27666,
+              "end": 27681,
+              "line": 3,
+              "column": 27549,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 35864,
+              "end": 35895,
+              "line": 3,
+              "column": 35747,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 35897,
+              "end": 35912,
+              "line": 3,
+              "column": 35780,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:15",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36060,
+              "end": 36075,
+              "line": 3,
+              "column": 35943,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36076,
+              "end": 36091,
+              "line": 3,
+              "column": 35959,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:17",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36247,
+              "end": 36262,
+              "line": 3,
+              "column": 36130,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:18",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36263,
+              "end": 36278,
+              "line": 3,
+              "column": 36146,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:19",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36286,
+              "end": 36301,
+              "line": 3,
+              "column": 36169,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:20",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 36303,
+              "end": 36318,
+              "line": 3,
+              "column": 36186,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:21",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -624,13 +1863,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:1",
+            "id": "api:22",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -650,13 +1889,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:2",
+            "id": "api:23",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -676,13 +1915,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:3",
+            "id": "api:24",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -700,13 +1939,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:4",
+            "id": "api:25",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -732,7 +1971,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:5",
+            "id": "api:26",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -758,7 +1997,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:6",
+            "id": "api:27",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -782,7 +2021,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:7",
+            "id": "api:28",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -806,7 +2045,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:8",
+            "id": "api:29",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -830,7 +2069,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:9",
+            "id": "api:30",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -854,7 +2093,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:10",
+            "id": "api:31",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -878,7 +2117,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:11",
+            "id": "api:32",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -902,7 +2141,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:12",
+            "id": "api:33",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -926,7 +2165,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:13",
+            "id": "api:34",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -950,7 +2189,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:35",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -974,7 +2213,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:36",
             "rule": "complete",
             "kind": "completion",
             "source": {

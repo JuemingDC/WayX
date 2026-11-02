@@ -160,6 +160,17 @@
         ]
       },
       {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 16305,
+        "end": 16394,
+        "line": 411,
+        "column": 21,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
         "api": "window",
         "access": "read",
         "start": 17580,
@@ -273,6 +284,17 @@
         "column": 402,
         "members": [
           "require"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 25789,
+        "end": 25831,
+        "line": 452,
+        "column": 279,
+        "members": [
+          "setTimeout"
         ]
       },
       {
@@ -518,6 +540,17 @@
         ]
       },
       {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 37234,
+        "end": 37249,
+        "line": 452,
+        "column": 11724,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
         "api": "$done",
         "access": "call",
         "start": 37472,
@@ -531,7 +564,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 2,
+  "runtimePolicyVersion": 3,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
@@ -868,6 +901,30 @@
           },
           {
             "id": "api:13",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 16305,
+              "end": 16394,
+              "line": 411,
+              "column": 21,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -885,13 +942,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:15",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -911,13 +968,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:16",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -937,13 +994,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:16",
+            "id": "api:17",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -961,13 +1018,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:17",
+            "id": "api:18",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -987,13 +1044,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:18",
+            "id": "api:19",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1013,13 +1070,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:19",
+            "id": "api:20",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1037,13 +1094,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:20",
+            "id": "api:21",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1063,13 +1120,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:21",
+            "id": "api:22",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1089,13 +1146,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:22",
+            "id": "api:23",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1113,13 +1170,37 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:24",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 25789,
+              "end": 25831,
+              "line": 452,
+              "column": 279,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:23",
+            "id": "api:25",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1137,13 +1218,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:24",
+            "id": "api:26",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1163,13 +1244,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:25",
+            "id": "api:27",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1187,13 +1268,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:26",
+            "id": "api:28",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1213,13 +1294,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:27",
+            "id": "api:29",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1237,13 +1318,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:28",
+            "id": "api:30",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1261,13 +1342,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:29",
+            "id": "api:31",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1285,13 +1366,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:30",
+            "id": "api:32",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1317,7 +1398,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:31",
+            "id": "api:33",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1337,13 +1418,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:32",
+            "id": "api:34",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1369,7 +1450,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:33",
+            "id": "api:35",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1389,13 +1470,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:34",
+            "id": "api:36",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -1421,7 +1502,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:35",
+            "id": "api:37",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1441,13 +1522,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:36",
+            "id": "api:38",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -1473,7 +1554,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:37",
+            "id": "api:39",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1493,13 +1574,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:38",
+            "id": "api:40",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1517,13 +1598,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:39",
+            "id": "api:41",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1541,13 +1622,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:40",
+            "id": "api:42",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1565,13 +1646,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:41",
+            "id": "api:43",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1589,13 +1670,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:42",
+            "id": "api:44",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -1621,7 +1702,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:43",
+            "id": "api:45",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1639,13 +1720,37 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:46",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 37234,
+              "end": 37249,
+              "line": 452,
+              "column": 11724,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:44",
+            "id": "api:47",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -2004,6 +2109,30 @@
           },
           {
             "id": "api:13",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 16305,
+              "end": 16394,
+              "line": 411,
+              "column": 21,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2021,13 +2150,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:15",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2047,13 +2176,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:16",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2073,13 +2202,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:16",
+            "id": "api:17",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2097,13 +2226,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:17",
+            "id": "api:18",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2123,13 +2252,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:18",
+            "id": "api:19",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2149,13 +2278,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:19",
+            "id": "api:20",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2173,13 +2302,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:20",
+            "id": "api:21",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2199,13 +2328,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:21",
+            "id": "api:22",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2225,13 +2354,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:22",
+            "id": "api:23",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2249,13 +2378,37 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:24",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 25789,
+              "end": 25831,
+              "line": 452,
+              "column": 279,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:23",
+            "id": "api:25",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2273,13 +2426,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:24",
+            "id": "api:26",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2299,13 +2452,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:25",
+            "id": "api:27",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2323,13 +2476,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:26",
+            "id": "api:28",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2349,13 +2502,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:27",
+            "id": "api:29",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2373,13 +2526,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:28",
+            "id": "api:30",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2397,13 +2550,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:29",
+            "id": "api:31",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2421,13 +2574,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:30",
+            "id": "api:32",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -2453,7 +2606,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:31",
+            "id": "api:33",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2473,13 +2626,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:32",
+            "id": "api:34",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -2505,7 +2658,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:33",
+            "id": "api:35",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2525,13 +2678,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:34",
+            "id": "api:36",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -2557,7 +2710,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:35",
+            "id": "api:37",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2577,13 +2730,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:36",
+            "id": "api:38",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -2609,7 +2762,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:37",
+            "id": "api:39",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2629,13 +2782,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:38",
+            "id": "api:40",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2653,13 +2806,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:39",
+            "id": "api:41",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2677,13 +2830,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:40",
+            "id": "api:42",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2701,13 +2854,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:41",
+            "id": "api:43",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2725,13 +2878,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:42",
+            "id": "api:44",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -2757,7 +2910,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:43",
+            "id": "api:45",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2775,13 +2928,37 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:46",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 37234,
+              "end": 37249,
+              "line": 452,
+              "column": 11724,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:44",
+            "id": "api:47",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3140,6 +3317,30 @@
           },
           {
             "id": "api:13",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 16305,
+              "end": 16394,
+              "line": 411,
+              "column": 21,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3157,13 +3358,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:15",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3183,13 +3384,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:16",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3209,13 +3410,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:16",
+            "id": "api:17",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3233,13 +3434,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:17",
+            "id": "api:18",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3259,13 +3460,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:18",
+            "id": "api:19",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3285,13 +3486,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:19",
+            "id": "api:20",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3309,13 +3510,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:20",
+            "id": "api:21",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3335,13 +3536,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:21",
+            "id": "api:22",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3361,13 +3562,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:22",
+            "id": "api:23",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3385,13 +3586,37 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:24",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 25789,
+              "end": 25831,
+              "line": 452,
+              "column": 279,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:23",
+            "id": "api:25",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3409,13 +3634,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:24",
+            "id": "api:26",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3435,13 +3660,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:25",
+            "id": "api:27",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3459,13 +3684,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:26",
+            "id": "api:28",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3485,13 +3710,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:27",
+            "id": "api:29",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3509,13 +3734,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:28",
+            "id": "api:30",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3533,13 +3758,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:29",
+            "id": "api:31",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3557,13 +3782,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:30",
+            "id": "api:32",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -3589,7 +3814,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:31",
+            "id": "api:33",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3609,13 +3834,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:32",
+            "id": "api:34",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -3641,7 +3866,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:33",
+            "id": "api:35",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3661,13 +3886,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:34",
+            "id": "api:36",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -3693,7 +3918,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:35",
+            "id": "api:37",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3713,13 +3938,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:36",
+            "id": "api:38",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -3745,7 +3970,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:37",
+            "id": "api:39",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3765,13 +3990,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:38",
+            "id": "api:40",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3789,13 +4014,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:39",
+            "id": "api:41",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3813,13 +4038,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:40",
+            "id": "api:42",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3837,13 +4062,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:41",
+            "id": "api:43",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3861,13 +4086,13 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:42",
+            "id": "api:44",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -3893,7 +4118,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:43",
+            "id": "api:45",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3911,13 +4136,37 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:46",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 37234,
+              "end": 37249,
+              "line": 452,
+              "column": 11724,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:44",
+            "id": "api:47",
             "rule": "complete",
             "kind": "completion",
             "source": {

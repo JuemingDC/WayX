@@ -237,7 +237,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 2,
+  "runtimePolicyVersion": 3,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
@@ -267,7 +267,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -291,7 +291,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -312,19 +312,13 @@
             "canonical": "standard.URL",
             "value": "runtime value",
             "target": {
-              "capability": "native-only",
+              "capability": "runtime",
               "api": "URL",
-              "lowering": "actual native engine global; no bundled fallback yet",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
-            "diagnostics": [
-              {
-                "api": "URL",
-                "reason": "actual native engine global; no bundled fallback yet",
-                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
-              }
-            ]
+            "diagnostics": []
           },
           {
             "id": "api:3",
@@ -773,7 +767,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -797,7 +791,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -818,19 +812,13 @@
             "canonical": "standard.URL",
             "value": "runtime value",
             "target": {
-              "capability": "native-only",
+              "capability": "runtime",
               "api": "URL",
-              "lowering": "actual native engine global; no bundled fallback yet",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
-            "diagnostics": [
-              {
-                "api": "URL",
-                "reason": "actual native engine global; no bundled fallback yet",
-                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
-              }
-            ]
+            "diagnostics": []
           },
           {
             "id": "api:3",
@@ -1279,7 +1267,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -1303,7 +1291,7 @@
               "capability": "unclassified",
               "api": "native engine / runtime capability",
               "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -1324,19 +1312,13 @@
             "canonical": "standard.URL",
             "value": "runtime value",
             "target": {
-              "capability": "native-only",
+              "capability": "runtime",
               "api": "URL",
-              "lowering": "actual native engine global; no bundled fallback yet",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
-            "diagnostics": [
-              {
-                "api": "URL",
-                "reason": "actual native engine global; no bundled fallback yet",
-                "solution": "Evaluate a pinned whatwg-url bundle with URL/URLSearchParams together, WPT vectors, IDNA dependencies, ES compatibility and bundle-size budget"
-              }
-            ]
+            "diagnostics": []
           },
           {
             "id": "api:3",

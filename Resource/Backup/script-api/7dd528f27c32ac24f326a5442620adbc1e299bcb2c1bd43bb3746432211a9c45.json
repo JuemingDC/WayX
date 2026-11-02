@@ -117,7 +117,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 2,
+  "runtimePolicyVersion": 3,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
@@ -146,7 +146,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextEncoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -173,7 +173,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextEncoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -197,7 +197,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextEncoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -221,7 +221,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextDecoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -248,7 +248,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextDecoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -272,7 +272,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextDecoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -382,7 +382,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextEncoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -409,7 +409,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextEncoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -433,7 +433,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextEncoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -457,7 +457,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextDecoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -484,7 +484,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextDecoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -508,7 +508,7 @@
             "target": {
               "capability": "runtime",
               "api": "TextDecoder",
-              "lowering": "shared scoped standard implementation",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
