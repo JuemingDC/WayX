@@ -32,20 +32,23 @@ export function readonlyHeaderContract(
     fn(n);
     ts.forEachChild(n, (c) => walk(c, fn));
   };
+  // Modified: 2026-11-02 (chance). A let binding is accepted only when all
+  // uses remain audited readonly accesses; reassignment is rejected below.
   const isConst = (n: ts.Node): n is ts.VariableDeclaration =>
     ts.isVariableDeclaration(n) &&
     ts.isIdentifier(n.name) &&
     ts.isVariableDeclarationList(n.parent) &&
-    !!(n.parent.flags & ts.NodeFlags.Const);
+    !!(n.parent.flags & (ts.NodeFlags.Const | ts.NodeFlags.Let));
   walk(tree, (n) => {
     if (role(n) && !ts.isIdentifier(n)) bases.push(n);
   });
-  // Only direct const aliases; chained aliases are intentionally outside the proof.
+  // Only direct lexical aliases; chained aliases are intentionally outside the proof.
   for (const n of bases)
     if (isConst(n.parent) && n.parent.initializer === n)
       aliases.set(checker.getSymbolAtLocation(n.parent.name)!, role(n)!);
   const allowed = new Set<ts.Node>(),
-    reads: Record<string, string[]> = {};
+    reads: Record<string, string[]> = {},
+    prefixes: Record<string, string[]> = {};
   let ok = true;
   walk(tree, (n) => {
     const r = role(n);
@@ -92,43 +95,101 @@ export function readonlyHeaderContract(
       !ts.isArrowFunction(fn) ||
       fn.parameters.length !== 1 ||
       !ts.isIdentifier(fn.parameters[0].name) ||
+      fn.parameters[0].dotDotDotToken ||
+      fn.parameters[0].initializer ||
+      fn.modifiers?.some((m) => m.kind === ts.SyntaxKind.AsyncKeyword) ||
       ts.isBlock(fn.body)
     )
       return;
     const expr = fn.body;
+    let name: string | null = null,
+      prefix = false;
+    // Modified: 2026-11-02 (chance). Recognize exact/prefix case-insensitive
+    // literal predicates; preserve original find order and reject multiple hits.
     if (
-      !ts.isBinaryExpression(expr) ||
-      expr.operatorToken.kind !== ts.SyntaxKind.EqualsEqualsEqualsToken
-    )
-      return;
-    const lower = expr.left,
-      name = expr.right;
+      ts.isBinaryExpression(expr) &&
+      expr.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken &&
+      ts.isStringLiteralLike(expr.right)
+    ) {
+      const lower = expr.left;
+      if (
+        ts.isCallExpression(lower) &&
+        !lower.arguments.length &&
+        ts.isPropertyAccessExpression(lower.expression) &&
+        lower.expression.name.text === "toLowerCase" &&
+        ts.isIdentifier(lower.expression.expression) &&
+        valueSymbol(lower.expression.expression, checker) ===
+          checker.getSymbolAtLocation(fn.parameters[0].name)
+      )
+        name = expr.right.text;
+    } else if (
+      ts.isCallExpression(expr) &&
+      expr.arguments.length === 1 &&
+      ts.isIdentifier(expr.arguments[0]) &&
+      valueSymbol(expr.arguments[0], checker) ===
+        checker.getSymbolAtLocation(fn.parameters[0].name) &&
+      ts.isPropertyAccessExpression(expr.expression) &&
+      expr.expression.name.text === "test" &&
+      ts.isRegularExpressionLiteral(expr.expression.expression)
+    ) {
+      const match = /^\/\^([!#%&',:;=@_`~0-9a-z-]+)(\$)?\/i$/.exec(
+        expr.expression.expression.text,
+      );
+      let pristine = true;
+      walk(tree, (n) => {
+        if (
+          (ts.isIdentifier(n) &&
+            ["RegExp", "Reflect"].includes(n.text) &&
+            !valueSymbol(n, checker)) ||
+          (ts.isPropertyAccessExpression(n) &&
+            [
+              "prototype",
+              "__proto__",
+              "getPrototypeOf",
+              "setPrototypeOf",
+              "defineProperty",
+              "defineProperties",
+            ].includes(n.name.text)) ||
+          (ts.isElementAccessExpression(n) &&
+            ((!ts.isStringLiteralLike(n.argumentExpression) &&
+              !role(n.expression)) ||
+              (ts.isStringLiteralLike(n.argumentExpression) &&
+                [
+                  "prototype",
+                  "__proto__",
+                  "getPrototypeOf",
+                  "setPrototypeOf",
+                  "defineProperty",
+                  "defineProperties",
+                ].includes(n.argumentExpression.text))))
+        )
+          pristine = false;
+      });
+      if (match && pristine) {
+        name = match[1];
+        prefix = !match[2];
+      }
+    }
     if (
-      !ts.isStringLiteralLike(name) ||
-      !name.text ||
-      name.text !== name.text.toLowerCase() ||
-      !/^[!#$%&'*+.^_`|~0-9a-z-]+$/.test(name.text) ||
-      !ts.isCallExpression(lower) ||
-      lower.arguments.length ||
-      !ts.isPropertyAccessExpression(lower.expression) ||
-      lower.expression.name.text !== "toLowerCase" ||
-      !ts.isIdentifier(lower.expression.expression) ||
-      valueSymbol(lower.expression.expression, checker) !==
-        checker.getSymbolAtLocation(fn.parameters[0].name)
+      !name ||
+      name !== name.toLowerCase() ||
+      !/^[!#$%&'*+.^_`|~0-9a-z-]+$/.test(name)
     )
       return;
     const d = call.parent;
     if (!isConst(d) || d.initializer !== call) return;
     const sym = checker.getSymbolAtLocation(d.name)!;
-    keys.set(sym, { role: r, name: name.text });
+    keys.set(sym, { role: r, name });
     allowed.add(n);
-    reads[r] = [...new Set([...(reads[r] ?? []), name.text])];
+    const target = prefix ? prefixes : reads;
+    target[r] = [...new Set([...(target[r] ?? []), name])];
   });
   walk(tree, (n) => {
     if (ts.isIdentifier(n) && keys.has(valueSymbol(n, checker)!)) {
       const p = n.parent,
         key = keys.get(valueSymbol(n, checker)!)!;
       if (isConst(p) && p.name === n) return;
+      if (safePresenceUse(n)) return;
       if (
         ts.isBinaryExpression(p) &&
         [
@@ -155,6 +216,14 @@ export function readonlyHeaderContract(
         if (ts.isConditionalExpression(q)) {
           const c = q.condition;
           if (
+            ts.isIdentifier(c) &&
+            valueSymbol(c, checker) === valueSymbol(n, checker) &&
+            q.whenTrue === p
+          ) {
+            allowed.add(p.expression);
+            return;
+          }
+          if (
             ts.isBinaryExpression(c) &&
             ts.isIdentifier(c.left) &&
             valueSymbol(c.left, checker) === valueSymbol(n, checker) &&
@@ -178,5 +247,34 @@ export function readonlyHeaderContract(
   walk(tree, (n) => {
     if (role(n) && !allowed.has(n)) ok = false;
   });
-  return { ok, reads };
+  // Modified: 2026-11-02 (chance). Predicate proofs require unmodified
+  // lookup intrinsics; async/rest callbacks and monkey-patched methods differ.
+  walk(tree, (n) => {
+    if (
+      ts.isBinaryExpression(n) &&
+      n.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
+      n.operatorToken.kind <= ts.SyntaxKind.LastAssignment
+    ) {
+      const lhs = n.left;
+      const member = ts.isPropertyAccessExpression(lhs)
+        ? lhs.name.text
+        : ts.isElementAccessExpression(lhs) &&
+            ts.isStringLiteralLike(lhs.argumentExpression)
+          ? lhs.argumentExpression.text
+          : null;
+      if (
+        member &&
+        [
+          "keys",
+          "find",
+          "toLowerCase",
+          "test",
+          "prototype",
+          "__proto__",
+        ].includes(member)
+      )
+        ok = false;
+    }
+  });
+  return { ok, reads, prefixes };
 }

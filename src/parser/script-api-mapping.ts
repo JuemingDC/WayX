@@ -37,7 +37,7 @@ export const scriptApiMapping = [
     qx: "$request/$response.headers; body-script output restrictions",
     surge: "$request/$response.headers",
     loon: "$request/$response.headers",
-    support: "readonly-singleton",
+    support: "readonly-singleton-exact-and-prefix",
     next: "Prove each read/write, duplicate-field and framing operation; never lowercase the whole dictionary",
     dependsOn: ["flow", "completion"],
   },

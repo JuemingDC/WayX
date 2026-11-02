@@ -17,6 +17,7 @@ import { readonlyHeaderContract } from "./script-headers.ts";
 import {
   scriptChecker,
   safePresenceUse,
+  safeContextMemberGuard,
   unusedPresenceProbe,
   classLocalThis,
   completionObjects,
@@ -285,7 +286,7 @@ export function inspectScriptApis(source: string) {
           "$notification",
           "$notify",
         ].includes(node.text) &&
-        safePresenceUse(node)
+        (safePresenceUse(node) || safeContextMemberGuard(node, checker))
       ) {
         ts.forEachChild(node, visit);
         return;
@@ -314,7 +315,9 @@ export function inspectScriptApis(source: string) {
           outer.parent.expression === outer
         )
           outer = outer.parent;
-        const p = propertyPath(outer);
+        // Modified: 2026-11-02 (chance). Inventory proven const keys/tables,
+        // not dynamic decoder calls; keep author evaluation/source untouched.
+        const p = resolvedPath(outer, checker, contexts.aliases);
         if (p) paths.add(p);
         else
           add(
@@ -720,6 +723,18 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
             const key = property.name
               ?.getText(inventory.tree)
               .replace(/^['"]|['"]$/g, "");
+            // Modified: 2026-11-02 (chance). A proven readonly Header query
+            // does not authorize invalid String/dynamic output dictionaries.
+            if (
+              key === "headers" &&
+              (!ts.isPropertyAssignment(property) ||
+                !ts.isObjectLiteralExpression(property.initializer))
+            )
+              add(
+                "$done.headers",
+                "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
+                "Preserve the source diagnostic; prove output fields separately from readonly input queries",
+              );
             if (key === "response") {
               response = true;
               if (
@@ -966,7 +981,12 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     ...(taskContract.ok
       ? { httpTask: true, httpTaskBinary: taskContract.binary }
       : {}),
-    ...(headerContract.ok ? { headerReads: headerContract.reads } : {}),
+    ...(headerContract.ok
+      ? {
+          headerReads: headerContract.reads,
+          headerPrefixes: headerContract.prefixes,
+        }
+      : {}),
     ...(options.to === "qx" && synthesis ? { phase: "echo" } : {}),
   };
   const config = JSON.stringify(effectiveOptions);
@@ -996,6 +1016,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     code,
     contract: {
       headerReads: headerContract.reads,
+      headerPrefixes: headerContract.prefixes,
       binaryReads: effectiveOptions.binaryReads,
       ...(codecs.ok ? { portableCodecs: codecs.names } : {}),
       ...(argsContract.ok

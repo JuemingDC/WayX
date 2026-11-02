@@ -138,3 +138,15 @@ Modified: 2026-11-02 (chance). 本节补充并取代前文对应的旧阻断描�
 ## 三端 API 映射及后续优先级
 
 Modified: 2026-11-02 (chance). 完整字段对应、已实现域与未实现方案见 [Script API 映射与转换优先级](script-api/02-方案设计.md)。每次 Actions 的 script-api-status.json 增加 apiMapping 与 conversionPriorities；后者按源 URL 合并所有目标/profile 的阻断家族，列出共同阻断与单家族候选，不把受影响数量当作预计新增通用文件。优先补公共数据流，再推进 Header 独立候选和存储；复杂 HTTP/结果随依赖推进，WASM/压缩按模块单独验证。QX URL fragment variables 是独立输入，不是 Loon 保存插件参数的等价来源。
+
+
+## P0／P1 首批实现
+
+Modified: 2026-11-02 (chance). 本节更新前文对应的支持域，尚未通过的脚本仍保留诊断。
+
+- 数据流：识别 `$request && $request.url`、`$response && $response.body` 及同上下文 typeof 守卫链，只允许最终得到已支持标量；不得把平台对象本身外传。const 字符串键、只含字符串且所有引用均为直接只读索引的字面量表可以解析；不执行混淆解码函数，表逃逸、写入、延迟函数访问和初始化前访问仍阻断。
+- 来源 profile：只有清单不存在未知访问、且程序不观察任何输入 body/bodyBytes 或 binaryBodyMode 时，二进制声明差异才可忽略。读取正文、未知别名或动态成员仍保留冲突；echo/名称/参数歧义不受此规则影响。
+- Header：在原 singleton 查询基础上支持 `/^literal/i` 前缀和 `/^literal$/i` 精确查询、truthy key 守卫，以及所有使用点只读的 let 绑定。仅固定非元字符 token，禁止 g/y/复杂正则与未证明 intrinsic 变更；前缀命中多个字段或非 String 值明确失败，不以字典顺序任选。Header 输出另行验证，String 或未知输出字典不得因只读查询已证明就自动通过。
+- 存储：同符号读取别名只在 truthy 分支消费时，null 和 undefined 均不进入该分支，可证明缺失观察相同。无守卫 JSON.parse、严格缺失比较、序列化和外传仍不能归一；不改变源存储的真实内容和保存设置。
+
+`tests/script-p01.ts` 用同一通用程序字节验证三端标量、存储、Header、声明观察域与逃逸/重复字段/动态输出反例。Node 测试不代替实机证据，生产原文、通用文件和报告继续仅由 Actions 发布。

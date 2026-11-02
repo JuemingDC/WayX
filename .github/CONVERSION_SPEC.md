@@ -494,3 +494,8 @@ Modified: 2026-11-02 (chance). 本节补充并取代前文对应的旧阻断描�
 ## 2.28 API 映射与转换优先级证据
 
 Modified: 2026-11-02 (chance). 映射目录须分别列出 QX/Surge/Loon API 对应、已实现子域、依赖及剩余方案，不能以名称对应宣称完整兼容。报告每次新增 apiMapping/conversionPriorities，按源 URL 合并全部目标/profile 的 blocked 家族并集；统计受影响源、仅单家族候选及共同阻断，未知项进入 other，不丢失诊断、不累计重复引用为源数量、不把候选视作可保证解除的阻断。范围外不计入。优先级为 P0 数据流/来源前提，P1 Header/存储/参数及依赖的 HTTP/结果/字节/编码，P2 通知/实际环境/生命周期，P3 引擎与独立算法。实现必须继续按具体输入域和证据逐项验证；本条只补映射与报告，不放宽通用产物门槛。详见 docs/script-api/02-方案设计.md。
+
+
+## 2.29 P0／P1 数据流及只读 Header 扩展
+
+Modified: 2026-11-02 (chance). 支持同上下文短路后得到已支持标量的读取、闭合 const 字段名和没有任何写入/逃逸/延迟使用的字面量字符串表；不运行混淆解码器。仅在完整清单没有未知观察且完全不读取输入正文或模式时忽略 binary profile 差异；其它歧义继续阻断。Header 支持固定 literal 的锚定 i 精确/前缀 find 与 guarded singleton lookup，保留原字典和原业务表达式；多命中/非字符串明确失败，readonly let 别名须逐使用点证明，不扩展为任意可变对象。输入查询通过不能放行 String/未知输出 Header 字典。存储别名的 truthy 分支只在相同符号和所有引用经过审查时证明缺失等价；直接 JSON.parse 的 null/undefined 差异不消除。范围、三端共用文件、源名、逐字节备份和 QX 未说明参数无错省略规则不变；详见 docs/script-api-compatibility.md 的 P0／P1 节。

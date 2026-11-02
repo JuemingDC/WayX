@@ -71,6 +71,75 @@ export function safePresenceUse(node: ts.Node): boolean {
     (ts.isConditionalExpression(p) && p.condition === value)
   );
 }
+// Modified: 2026-11-02 (chance). A context && guard may produce only a
+// documented scalar member of that same lexical context, never the object itself.
+export function safeContextMemberGuard(
+  node: ts.Node,
+  checker: ts.TypeChecker,
+): boolean {
+  if (
+    !ts.isIdentifier(node) ||
+    !["$request", "$response", "$script"].includes(node.text) ||
+    valueSymbol(node, checker)
+  )
+    return false;
+  let expression: ts.Node = node;
+  while (ts.isParenthesizedExpression(expression.parent))
+    expression = expression.parent;
+  let chain: ts.Node = expression;
+  while (
+    ts.isBinaryExpression(chain.parent) &&
+    chain.parent.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken
+  )
+    chain = chain.parent;
+  const parts: ts.Node[] = [];
+  const flatten = (n: ts.Node) => {
+    if (ts.isParenthesizedExpression(n)) return flatten(n.expression);
+    if (
+      ts.isBinaryExpression(n) &&
+      n.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken
+    ) {
+      flatten(n.left);
+      flatten(n.right);
+    } else parts.push(n);
+  };
+  flatten(chain);
+  if (
+    parts.length < 2 ||
+    !parts.slice(0, -1).some((p) => p === node || p === expression)
+  )
+    return false;
+  const last = parts.at(-1)!;
+  if (
+    !ts.isPropertyAccessExpression(last) ||
+    !ts.isIdentifier(last.expression) ||
+    last.expression.text !== node.text ||
+    valueSymbol(last.expression, checker) ||
+    !["url", "method", "body", "status", "statusCode", "name"].includes(
+      last.name.text,
+    )
+  )
+    return false;
+  return parts
+    .slice(0, -1)
+    .every(
+      (p) =>
+        (ts.isIdentifier(p) &&
+          p.text === node.text &&
+          !valueSymbol(p, checker)) ||
+        (ts.isBinaryExpression(p) &&
+          ts.isTypeOfExpression(p.left) &&
+          ts.isIdentifier(p.left.expression) &&
+          p.left.expression.text === node.text &&
+          !valueSymbol(p.left.expression, checker) &&
+          ts.isStringLiteralLike(p.right) &&
+          p.right.text === "undefined" &&
+          [
+            ts.SyntaxKind.ExclamationEqualsToken,
+            ts.SyntaxKind.ExclamationEqualsEqualsToken,
+          ].includes(p.operatorToken.kind)),
+    );
+}
 export function unusedPresenceProbe(
   node: ts.Node,
   tree: ts.SourceFile,
@@ -365,6 +434,20 @@ export function absenceInsensitive(
     const stringGuard = (condition: ts.Expression): boolean | null => {
       if (ts.isParenthesizedExpression(condition))
         return stringGuard(condition.expression);
+      // Modified: 2026-11-02 (chance). Both missing values skip a truthy
+      // branch; analyze bound aliases only, with every reference still audited.
+      if (
+        ts.isIdentifier(condition) &&
+        valueSymbol(condition, checker) === symbol
+      )
+        return true;
+      if (
+        ts.isPrefixUnaryExpression(condition) &&
+        condition.operator === ts.SyntaxKind.ExclamationToken &&
+        ts.isIdentifier(condition.operand) &&
+        valueSymbol(condition.operand, checker) === symbol
+      )
+        return false;
       if (!ts.isBinaryExpression(condition)) return null;
       const op = condition.operatorToken.kind,
         expr = ts.isTypeOfExpression(condition.left)

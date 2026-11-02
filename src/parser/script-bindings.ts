@@ -18,6 +18,68 @@ export function constantString(
       b = constantString(node.right, checker, seen);
     return a !== null && b !== null ? a + b : null;
   }
+  // Modified: 2026-11-02 (chance). Resolve an immutable literal string table
+  // without executing an obfuscator. Every table use must be a direct index read.
+  if (
+    ts.isElementAccessExpression(node) &&
+    ts.isIdentifier(node.expression) &&
+    ts.isNumericLiteral(node.argumentExpression)
+  ) {
+    const symbol = valueSymbol(node.expression, checker),
+      d = symbol?.valueDeclaration;
+    if (
+      !symbol ||
+      seen.has(symbol) ||
+      !d ||
+      !ts.isVariableDeclaration(d) ||
+      !d.initializer ||
+      !ts.isArrayLiteralExpression(d.initializer) ||
+      d.end >= node.pos
+    )
+      return null;
+    const index = Number(node.argumentExpression.text),
+      items = d.initializer.elements;
+    if (
+      !Number.isSafeInteger(index) ||
+      index < 0 ||
+      index >= items.length ||
+      !items.every(ts.isStringLiteralLike)
+    )
+      return null;
+    let safe = true;
+    const scan = (n: ts.Node) => {
+      if (
+        ts.isIdentifier(n) &&
+        valueSymbol(n, checker) === symbol &&
+        n !== d.name
+      ) {
+        const p = n.parent,
+          q = p.parent;
+        if (
+          !ts.isElementAccessExpression(p) ||
+          p.expression !== n ||
+          !ts.isNumericLiteral(p.argumentExpression) ||
+          (ts.isBinaryExpression(q) &&
+            q.left === p &&
+            q.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
+            q.operatorToken.kind <= ts.SyntaxKind.LastAssignment) ||
+          ts.isDeleteExpression(q) ||
+          ts.isPrefixUnaryExpression(q) ||
+          ts.isPostfixUnaryExpression(q)
+        )
+          safe = false;
+        // Function-delayed uses require call-order proof beyond this table subset.
+        let ancestor: ts.Node = n;
+        while (ancestor.parent) {
+          ancestor = ancestor.parent;
+          if (ts.isFunctionLike(ancestor)) safe = false;
+        }
+      }
+      ts.forEachChild(n, scan);
+    };
+    scan(d.getSourceFile());
+    return safe ? (items[index] as ts.StringLiteralLike).text : null;
+  }
   if (!ts.isIdentifier(node)) return null;
   const symbol = valueSymbol(node, checker),
     d = symbol?.valueDeclaration;
@@ -112,12 +174,10 @@ export function resolvedPath(
     const root = resolvedPath(node.expression, checker, aliases);
     return root ? root + "." + node.name.text : null;
   }
-  if (
-    ts.isElementAccessExpression(node) &&
-    ts.isStringLiteralLike(node.argumentExpression)
-  ) {
+  if (ts.isElementAccessExpression(node)) {
+    const key = constantString(node.argumentExpression, checker);
     const root = resolvedPath(node.expression, checker, aliases);
-    return root ? root + "." + node.argumentExpression.text : null;
+    return root && key !== null ? root + "." + key : null;
   }
   return null;
 }

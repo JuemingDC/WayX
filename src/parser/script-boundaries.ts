@@ -27,7 +27,7 @@ export const scriptCapabilityBoundaries = {
   lexicalBindings: {
     status: "supported",
     domain:
-      "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
+      "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, guarded same-context scalar && reads, immutable literal keys/string tables without decoder execution, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
     outside:
       "Escaping platform aliases, class-getter receiver identity, nonsequential const/TDZ uses, dynamic receivers, eval and Function construction remain blocked",
   },
@@ -41,14 +41,14 @@ export const scriptCapabilityBoundaries = {
   storage: {
     status: "conditional",
     domain:
-      "Explicit plain constant strings/concatenations/const aliases as keys; known nonempty JSON serialization writes and pristine Loon JSON.stringify results including undefined deletion; read absence may normalize under ||, ??, Boolean/loose-null tests or proven String type guards, including fully audited local aliases",
+      "Explicit plain constant strings/concatenations/const aliases as keys; known nonempty JSON serialization writes and pristine Loon JSON.stringify results including undefined deletion; read absence may normalize under ||, ??, Boolean/loose-null tests or proven String/truthy branch guards, including fully audited local aliases",
     outside:
       "Strict null/undefined observations, stringification, implicit/dynamic keys, Loon empty-string writes and full cleanup remain blocked",
   },
   headers: {
     status: "conditional-readonly-singleton",
     domain:
-      "Pure Object.keys(h).find(k=>k.toLowerCase()===literal) with a const result key, guarded readonly lookup and no key/header alias escape; target validates one string value per queried name",
+      "Pure Object.keys(h).find with lowercase-literal equality or anchored literal case-insensitive exact/prefix regex, guarded readonly lookup and no key/header alias escape; lexical let aliases must remain readonly; target validates one string value per queried name/prefix",
     outside:
       "General object casing, duplicate values, mutation, output headers and framing remain unproven",
     reason:

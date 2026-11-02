@@ -82,7 +82,19 @@ export function planUniversalAdblockScript(
     );
     if (!candidates.length) continue;
     const modes = [...new Set(candidates.map((p) => p.phase))];
-    const binary = [...new Set(candidates.map((p) => Boolean(p.binary)))];
+    // Modified: 2026-11-02 (chance). Distinct binary flags are immaterial
+    // only when the audited source cannot observe any input body or body mode.
+    // Unknown aliases/computed accesses keep the profile conflict intact.
+    const observesBinary =
+      inventory.problems.length > 0 ||
+      features.some((p) =>
+        /^\$(?:request|response)(?:$|\.body(?:Bytes)?(?:\.|$))|^\$script(?:$|\.binaryBodyMode(?:\.|$))/.test(
+          p,
+        ),
+      );
+    const binary = [
+      ...new Set(candidates.map((p) => observesBinary && Boolean(p.binary))),
+    ];
     const names = [...new Set(candidates.map((p) => p.name).filter(Boolean))];
     const argumentSchemas = [
       ...new Set(
@@ -92,7 +104,7 @@ export function planUniversalAdblockScript(
     if (
       modes.length !== 1 ||
       binary.length !== 1 ||
-      candidates.some((p) => p.binaryKnown === false) ||
+      (observesBinary && candidates.some((p) => p.binaryKnown === false)) ||
       (features.some((p) => p.startsWith("$argument")) &&
         argumentSchemas.length !== 1) ||
       (usesName && (names.length !== 1 || candidates.some((p) => !p.name)))

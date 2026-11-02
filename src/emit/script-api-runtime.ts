@@ -11,8 +11,12 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   function view(value,role){
     if(value===undefined)return undefined;
     const names=config.headerReads&&config.headerReads[role]||[];
-    if(names.length){
+    // Modified: 2026-11-02 (chance). Prefix-find input requires at most one
+    // matching field, so dictionary enumeration order cannot alter the result.
+    const prefixes=config.headerPrefixes&&config.headerPrefixes[role]||[];
+    if(names.length||prefixes.length){
       if(!value.headers||typeof value.headers!=='object'||Array.isArray(value.headers))fail('header dictionary required');
+      for(const prefix of prefixes){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase().startsWith(prefix));if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header prefix lookup requires a singleton string field: '+prefix);}
       for(const name of names){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase()===name);if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header lookup requires a singleton string field: '+name);}
     }
     const result=Object.assign({},value);
