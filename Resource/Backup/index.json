@@ -27321,7 +27321,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-9d456958a066/tieba-json.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-json.js",
       "sourceSha256": "91040c0d5bf906357829d8df344a3bdce00b59e6c24f255e54a2ef7a46d04c69",
-      "sha256": "c1d433e92ad0743010e40daee9356c2a9267d83cee4f6a2c9c5007bfad787329",
+      "sha256": "cfe9e551dd717708e3febae0e136ffa4afd4e5ef05196565b395baecb49b7843",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -27338,7 +27338,103 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
-            "responseBody": true
+            "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              }
+            }
           },
           "surge": {
             "from": "qx",
@@ -27346,6 +27442,102 @@
             "phase": "response",
             "binary": false,
             "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "status",
+                "scriptStartTime": "epoch-seconds",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "policy",
+                  "timeoutMs": 1000,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "url",
+                  "media": "media-url",
+                  "action": "action",
+                  "openAction": "open-url",
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "string"
+              }
+            },
             "headerReads": {},
             "headerPrefixes": {},
             "binaryReads": false
@@ -31516,7 +31708,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-758f3f177a29/adsense.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/adsense.js",
       "sourceSha256": "171f97bb25c6cb29aeb134acdddca5c96b06e0e70a6e4f670914eba1c8f3b662",
-      "sha256": "33a1f762858a1dc142c9390448aa09f66131ea23e27447c7826fa8e554342214",
+      "sha256": "b9acf1fbdcf00f8bee4b680385e9e117ab4664d6b222a950a13bda102dcc9adb",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -31533,7 +31725,103 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
-            "responseBody": true
+            "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              }
+            }
           },
           "surge": {
             "from": "qx",
@@ -31541,6 +31829,102 @@
             "phase": "response",
             "binary": false,
             "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "status",
+                "scriptStartTime": "epoch-seconds",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "policy",
+                  "timeoutMs": 1000,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "url",
+                  "media": "media-url",
+                  "action": "action",
+                  "openAction": "open-url",
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "string"
+              }
+            },
             "headerReads": {},
             "headerPrefixes": {},
             "binaryReads": false
@@ -33468,7 +33852,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-ac2c1ec848a8/qidian.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/qidian.js",
       "sourceSha256": "e599a063040ecb222ad5d4f8666157ef1ee31495aef6d87fb13453dce46f5c19",
-      "sha256": "e2741dd1d655c4caf3d40918ce09cff9aadb86cb70be5f7ac036021b90cfd30e",
+      "sha256": "f22651913d20a1aa01dbdf345f9dfbcc89dfa08cf966189ecb53558d9ff88e92",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -33485,7 +33869,103 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
-            "responseBody": true
+            "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              }
+            }
           },
           "surge": {
             "from": "qx",
@@ -33493,6 +33973,102 @@
             "phase": "response",
             "binary": false,
             "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "status",
+                "scriptStartTime": "epoch-seconds",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "policy",
+                  "timeoutMs": 1000,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "url",
+                  "media": "media-url",
+                  "action": "action",
+                  "openAction": "open-url",
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "string"
+              }
+            },
             "headerReads": {},
             "headerPrefixes": {},
             "binaryReads": false
@@ -35177,7 +35753,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a4ac231868fb/qq-news.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/qq-news.js",
       "sourceSha256": "98b921f278eae3f4d99751a35c2b0c867b9716bd20713da14859f4033f8c7394",
-      "sha256": "59c09557671fc453eb28b272bfddd17fdb51c87f7432342d9acbeedbe16dbf28",
+      "sha256": "4d323c582211e60b7d2fc48010b823f95ad8e461042d06b9152b0c299cdc5bb9",
       "from": "qx",
       "directionPolicyVersion": 1,
       "targets": [
@@ -35194,7 +35770,103 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
-            "responseBody": true
+            "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              }
+            }
           },
           "surge": {
             "from": "qx",
@@ -35202,6 +35874,102 @@
             "phase": "response",
             "binary": false,
             "responseBody": true,
+            "apiPlan": {
+              "version": 1,
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "statusCode",
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": null,
+                  "media": null,
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              },
+              "target": {
+                "responseStatus": "status",
+                "scriptStartTime": "epoch-seconds",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "policy",
+                  "timeoutMs": 1000,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "url",
+                  "media": "media-url",
+                  "action": "action",
+                  "openAction": "open-url",
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "string"
+              }
+            },
             "headerReads": {},
             "headerPrefixes": {},
             "binaryReads": false
@@ -49573,7 +50341,7 @@
     },
     "https://rucu6.pages.dev/Scripts/jd_price.js": {
       "path": "Resource/Backup/script-api/c93a9fa5ed13c4398531edbf5b19305907661f85ee5fc0465566111ede6eee36.json",
-      "sha256": "47c3e571d599b6faa06b48283fda107137caafddd0844a7758b053be26587db9",
+      "sha256": "bb875f97f3a9452d325da8b1e19b264a6a56c4acf2fedd3b72c1956adfe7a46d",
       "sourceSha256": "037c93dea8c42d0c38f8c2a9cdfe3b507c5f81cec06cde407fee0e1bb01d2aa6"
     },
     "https://kelee.one/Resource/JavaScript/KebidaDushu/KebidaDushu_remove_ads.js": {
@@ -49643,7 +50411,7 @@
     },
     "https://rucu6.pages.dev/Scripts/wechat.js": {
       "path": "Resource/Backup/script-api/06cb926a57e5541695aa9fc972751a3b94682030339647b39c3ced5f897e833b.json",
-      "sha256": "dccb2dd34b12176f78c11617868a9722b65542e670c3974ba0420327e002daf4",
+      "sha256": "98acd0f8420afa01094933e69598d8b65877562a10a11d9901d7fcf8158e2139",
       "sourceSha256": "6477808f1d8ba96c16b5d6851ac646ad45a28ad24d2ea829377fcb4e14832a72"
     },
     "https://rucu6.pages.dev/Scripts/cloud139.js": {
@@ -49678,7 +50446,7 @@
     },
     "https://raw.githubusercontent.com/TomCatXue/MyCookieCenter/main/scripts/tools/pixiv/pixiv_enhanced.js?v=202610071014": {
       "path": "Resource/Backup/script-api/c29ecf653b69d224f412b9b4b229eadbc789c8b181950eac0ac70658859b17f6.json",
-      "sha256": "968a53a0562009806d45d3e1a0cd8ef1f2acb298c49f45191954848d0625a7f9",
+      "sha256": "ca9c0be2cb1fdffcf6331519a173158d1b9e108293cf3dedd248a60e904b3963",
       "sourceSha256": "b61d3c03029a71983a7a41c08b8bd1458f6e38f14b9f735e6a2294dda5739aec"
     },
     "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js": {
@@ -49773,7 +50541,7 @@
     },
     "https://kelee.one/Resource/JavaScript/Tieba/tieba-proto.js": {
       "path": "Resource/Backup/script-api/3a02881f13f2cc05630d750b53d6b0a3484c5fb25b305021aa845ecea9ea5d8d.json",
-      "sha256": "0957318fc13877e2d3dc1f603d027f65a017d6421d3115f54c7348afe099ba25",
+      "sha256": "360bc7b5932ca6e8914556463ee79fa386c654ee61b5b9b644b5d9728ccd479e",
       "sourceSha256": "2ab9006be369e1083072ec49f4163245d8c385b0f3acc40910c2922454ebbd78"
     },
     "https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js": {
@@ -49788,7 +50556,7 @@
     },
     "https://rucu6.pages.dev/Scripts/baidu/baiduNoRedirect.js": {
       "path": "Resource/Backup/script-api/bbc2d768f38a841840d4729b5086ac803121a5730637f841316ba2f08c3e18a6.json",
-      "sha256": "7c685f6bcc894b093b6a99035e05c992cb2cd3dce1f99ee0e987544854356aec",
+      "sha256": "c1dd1b7236993f71c8a2f64382b990130fed093b2e942506bfa4cb47aab874c6",
       "sourceSha256": "5d8b05231b6cfc7d635ad300611e357f27d2c247a3f012acc7a7464a72e0ee82"
     },
     "https://rucu6.pages.dev/Scripts/webpage/baidu-index.js": {
@@ -49808,7 +50576,7 @@
     },
     "https://rucu6.pages.dev/Scripts/webpage/52ywy.js": {
       "path": "Resource/Backup/script-api/24bc13763e144e10fa2864b8c0239419987b1d1adbe8cd3ed6abbf7624ca0b19.json",
-      "sha256": "8de57ca278fbbdb33e47401676abf05c6bdd295775dc7f2b448c368f4225dd37",
+      "sha256": "4f095730d6bf05dba12ca80ce06dfa2255e5efeb26803be5ea9bee1a3aa95211",
       "sourceSha256": "2051c156d4925925782ed34ee620d1310e6cbd86ec27815e1a39f2dd13827afc"
     },
     "https://rucu6.pages.dev/Scripts/webpage/zimuquan.js": {
@@ -49818,17 +50586,17 @@
     },
     "https://rucu6.pages.dev/Scripts/webpage/ehentai.js": {
       "path": "Resource/Backup/script-api/0ff77e6a08bcc0a1faa6cdde63dec8da3c3c46cf097b6f1e9df778b111f37ec3.json",
-      "sha256": "c18f83e26d0fcbd70f2702dcd4ac77110e17dd0f1754188951daa4d47118416d",
+      "sha256": "0de823c509140f75aa5ed9efaf2995ab30c430019b399a50d909d2065eafe90a",
       "sourceSha256": "c0a40ce4101392ea9d53ca2c84425f568505c0d2f4ac8293c9c46739424966cd"
     },
     "https://rucu6.pages.dev/Scripts/webpage/hanime.js": {
       "path": "Resource/Backup/script-api/ceb4bbfde63b333edd46f20884f99c7dff7bdfd7ed5acbb49a8faebb76a9ec7d.json",
-      "sha256": "4bc1b8f88bb2fd7fa3e4011b5d7050df03d9e1babdad40aed54c0c810d7263e6",
+      "sha256": "311c3824ba23caaa02c8af043ca4b5b8fe2dadc0e3bed526e65bf5610ae39a29",
       "sourceSha256": "08724fecc23a1150d6e5fc3d4b38d3e6a89d9d356bd5eea8c6d37a732836c6bb"
     },
     "https://rucu6.pages.dev/Scripts/webpage/missav.js": {
       "path": "Resource/Backup/script-api/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160.json",
-      "sha256": "30fb4fbc4169d055d1b2d9fb4e33d1725a465c0a9151efbba92003ad06d0e75c",
+      "sha256": "8a3b555d72272a9b1589270a6c10980512d1750b1d611b402bd3b7dbff5efb5c",
       "sourceSha256": "e5b92cc3652fd59b6702cef572f43a8781bca3e71cba6bab47fd29d541804ad5"
     },
     "https://rucu6.pages.dev/Scripts/webpage/pornhub.js": {
@@ -49923,7 +50691,7 @@
     },
     "https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_response.js": {
       "path": "Resource/Backup/script-api/0e06084d89adaf0d3f92e233b0f9f95d1aae4c373095783b586b5128c12dc025.json",
-      "sha256": "d2c6ff8d3f1faa768be564c8a229941a4430efd23b103b48f325b4ea2cd407e2",
+      "sha256": "b6cfc44c5a4c9edc7fa5848778274128935c565839c3067f712773f966d67702",
       "sourceSha256": "b926d339069a8f54e84bd5d29e8c8364ee9ea72bb170197e281b04eda49e3568"
     },
     "https://kelee.one/Resource/JavaScript/YouTube/YouTube_remove_ads/YouTube_remove_ads_request.js": {
@@ -49998,7 +50766,7 @@
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-proto.js": {
       "path": "Resource/Backup/script-api/f38021eb462fc211f4f2a268377861af099b43fbfb4eb694b9db532b5376b213.json",
-      "sha256": "bc856fa39965a942519ffcb9a0b04ef283bc644a96ce29b1ee84b10317a1993f",
+      "sha256": "3e2aedbad3def376ffd77acaba95cf18ae1c86f31882307ab69286a40a672cf3",
       "sourceSha256": "6015d737870b6d89c38a0181479ed715e07d11b5a2c3746f96f95e25835e8610"
     },
     "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_json.js": {
@@ -50023,7 +50791,7 @@
     },
     "https://raw.githubusercontent.com/Maasea/sgmodule/refs/heads/master/Script/Youtube/youtube.response.js": {
       "path": "Resource/Backup/script-api/b4990e49550a5d8d9faa02a517837d3d8b3ff5bb2a4904a65cd3ffaadbbf9722.json",
-      "sha256": "39dbf9ac3e8bd8c4b40b85778a6d09c71cc086d0d40a085cfe0e1c7aaa2cf1d2",
+      "sha256": "b9c18282dc6e2f02a5bd0450393d5b6d8ec2a1250b52b87ee03c208bdd9c093c",
       "sourceSha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
     },
     "https://raw.githubusercontent.com/kokoryh/Script/master/js/12306.js": {
@@ -50068,7 +50836,7 @@
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-json.js": {
       "path": "Resource/Backup/script-api/9d456958a06617ecb6c35fd8d9d427acdbeae6938bee0217e440dbb184ab3aef.json",
-      "sha256": "cc33281c69c53dd5801cbd445adba800ddd3227281d19d58a408306a8606cc36",
+      "sha256": "6c4ae16a181bac36dce00a643f55f966fc3aa60646d0a60a1f981cec53f37bb5",
       "sourceSha256": "91040c0d5bf906357829d8df344a3bdce00b59e6c24f255e54a2ef7a46d04c69"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/bohe/bohe_ads.js": {
@@ -50193,7 +50961,7 @@
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/adsense.js": {
       "path": "Resource/Backup/script-api/758f3f177a2912da809f4ccab4471090ad10ac4e170a5389d05fde35240a6159.json",
-      "sha256": "257e4b9e8696e393c80f623f60b085029f42518e3511a488f7c4c77fbd2858c7",
+      "sha256": "12a3bd1b7a4e18462202a2b5a1e4e8fd3b6700cbf9d69a9fca89d5872d9abbdb",
       "sourceSha256": "171f97bb25c6cb29aeb134acdddca5c96b06e0e70a6e4f670914eba1c8f3b662"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/keep.js": {
@@ -50233,12 +51001,12 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/meiyou/meiyou_ads.js": {
       "path": "Resource/Backup/script-api/b5150f8cfaf435b65d8721028b861bd99ac68318860ae2d9972134549a8f2226.json",
-      "sha256": "d83ecfa8b52183ea2b16601a423b288e9ae7dfdb83738699d55fc6552f7a34b8",
+      "sha256": "b909bcba74ebc62d68eddc0f18f51635b2483a3dec0d8b6dbbe694373f44d61b",
       "sourceSha256": "5bfa31920f176ec0a992d6dfd3ee68d3ea3e416597f87af622665fe6b8cb626a"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/refs/heads/main/Scripts/miguvideo/miguvideo_ads.js": {
       "path": "Resource/Backup/script-api/379472e34e6e55f279936c3e01d36ac83bca218ee6c55fb32762ef99e99353b5.json",
-      "sha256": "3156a516118bcb771ce02bcb7817f25b6386c5ce50d1b9257f9f1edfa23eb571",
+      "sha256": "e61170df959eabfb040d8d40684797b118b7ade49173727e5c630f3743944f19",
       "sourceSha256": "869200a4759c7a9f3f89359fb36275121b0de0ae9772c5f0ce9765a5fcbec999"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/PupuSplashAds.js": {
@@ -50253,7 +51021,7 @@
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/qidian.js": {
       "path": "Resource/Backup/script-api/ac2c1ec848a8bd342ca543a3175e7744ecdf954df4544c8612a4ff038d1d86d1.json",
-      "sha256": "f82b3f37fc8bb11361b7a71e7d05dcc755e587613fff68e89fe9c37e327eb037",
+      "sha256": "fc37df00562c9e93ba7e079701e1022a1dd899c78855335c1e55d5be67151a55",
       "sourceSha256": "e599a063040ecb222ad5d4f8666157ef1ee31495aef6d87fb13453dce46f5c19"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/51job.js": {
@@ -50268,7 +51036,7 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/rrtv_json.js": {
       "path": "Resource/Backup/script-api/26050e48827affcf3cd2597466f26cff304152bab18e2309d8688be69d7d838f.json",
-      "sha256": "a353d94de43e5a4a81a627d66991b9ecc24099555f726aa1a194e64c9c43f16a",
+      "sha256": "f80c5c3204e748ae88d6d36ef13cd73c33f0f10007136163c08cb851631aa874",
       "sourceSha256": "4202921945c0ba616133ca833b034954c3b3b5f328199c809065ce25d16446a7"
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/reddit.js": {
@@ -50298,7 +51066,7 @@
     },
     "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/soul/soul_ads.js": {
       "path": "Resource/Backup/script-api/b605a47fa7e7a42cc3cabfd42c314f33e3f35404114c5fa92d8e1dfc6013cbb0.json",
-      "sha256": "60646d03e185cb3f588d68cbf1141c9d8e2199840c615c5241a53d26886acbc5",
+      "sha256": "744de7c76cdd4fd2dba3ece6331641b41c53c6bb4804ba079ab5a3e3cfb25866",
       "sourceSha256": "a2987051900998f971fa9f9eba9b1ab96fa15fcfbc1848f7c96afa0dd038bdf1"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-qx-header.js": {
@@ -50308,7 +51076,7 @@
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-proto.js": {
       "path": "Resource/Backup/script-api/99449675fd0d0002a7253dc6cded1942830b104fa4589ecb2fc8000b45a7ff8f.json",
-      "sha256": "c2c7289a79698f17e92f3dc6f1525aea2b8f54ca66400f739fabb137eaa6ad09",
+      "sha256": "9da4446b49ced01fb409253aead808b024661633645d136b6ac3af09d6ce290c",
       "sourceSha256": "2e6850e888d092905c766f0bbedc4b4afb9a712330970cc1265105d7fb4995d0"
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-json.js": {
@@ -50318,7 +51086,7 @@
     },
     "https://raw.githubusercontent.com/app2smile/rules/master/js/qq-news.js": {
       "path": "Resource/Backup/script-api/a4ac231868fb4ed36a78264aadd02b4e2e4fdd5e966422f708489e9c6ee7d813.json",
-      "sha256": "950a72e16c698141885a3895937b6a1513e5035bdd5e6f780efa88a2b4fcbacd",
+      "sha256": "c8b718987bdd1ebb37bc87f888a231afae90e6907910a25ef3323025b1508983",
       "sourceSha256": "98b921f278eae3f4d99751a35c2b0c867b9716bd20713da14859f4033f8c7394"
     },
     "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/tuhu.js": {
@@ -50343,7 +51111,7 @@
     },
     "https://raw.githubusercontent.com/zZPiglet/Task/master/asset/UnblockURLinWeChat.js": {
       "path": "Resource/Backup/script-api/6d1ee8efe017b7c03876a87c9c5d4e86d63520d5259dde18bed6b41165ffa247.json",
-      "sha256": "8f52fc4d2d4115bed02cadbd1c85f6f66efa312d32ea4ed026cff3df0050a15a",
+      "sha256": "199a4e77634dffba7e6198ad4b31748282da81add63fa07b79207cf23244985e",
       "sourceSha256": "79098ac4d2eb7932c9b2b45ac7891469703626855e5d13ab4374af52cc48983e"
     },
     "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js": {
@@ -50363,7 +51131,7 @@
     },
     "https://github.com/fmz200/wool_scripts/raw/main/Scripts/xiaohongshu/xiaohongshu.js": {
       "path": "Resource/Backup/script-api/9f5ee26c8a7e012dee5b993dccd77e876aa7e9413833c2bf09d3f6a29800f552.json",
-      "sha256": "75fe13fc0c770e8cbc84083a513871a541df6b07f217f411b404995062d05e21",
+      "sha256": "30a200533ad127fba8ddcd78e5090ec0c3d89ab5b76b5e4b8e3bdbbd026e63ca",
       "sourceSha256": "318d89bce1117edb26a93b383804e195649ec4674a04efa9e3ddb4ef7f34b498"
     },
     "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/xmApp.js": {
@@ -50488,7 +51256,7 @@
     },
     "https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js": {
       "path": "Resource/Backup/script-api/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317.json",
-      "sha256": "1a2d4e1d7c3098f91d237bbdae0ccb92312327bb5efa536b9ba1aaa4e80a0978",
+      "sha256": "5fdd52b34331a06a9175e51a4be37adbf59f5588cfb001ec2609d4ee8d0fe944",
       "sourceSha256": "f98483d5f5017514f82502253c0db5ce2d4ffb7839887aa2cadc22666f5a7f12"
     },
     "https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js": {
@@ -50558,7 +51326,7 @@
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/youtube.response.js": {
       "path": "Resource/Backup/script-api/fa5f41822e443a9b0f0b3b7ed54bd4d0b23da8806a9c86021ba1eb7b02fa6ddc.json",
-      "sha256": "46099044c182d008dc962bb667bfd3eddd00b60332428146625f0bf171284420",
+      "sha256": "bd3e0ac5ae8496ba99fe47862d1e4fe986e554ef5e4f49b010904e4da5728ce3",
       "sourceSha256": "715d0d3fc27b8af35fdabefd6698fc984ec9f54612799921b3cf8f71575849c3"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/yt-sub-clean.js": {

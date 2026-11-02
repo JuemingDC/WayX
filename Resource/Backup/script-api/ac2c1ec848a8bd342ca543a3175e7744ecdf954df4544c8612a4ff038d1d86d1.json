@@ -393,8 +393,8 @@
           },
           {
             "id": "call:338",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 338,
@@ -406,12 +406,12 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -441,8 +441,8 @@
           },
           {
             "id": "call:598",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 598,
@@ -454,12 +454,12 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -489,8 +489,8 @@
           },
           {
             "id": "call:1076",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 1076,
@@ -502,12 +502,12 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -537,8 +537,8 @@
           },
           {
             "id": "call:1796",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 1796,
@@ -550,12 +550,12 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -585,8 +585,8 @@
           },
           {
             "id": "call:2946",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 2946,
@@ -598,12 +598,12 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -633,8 +633,8 @@
           },
           {
             "id": "call:3696",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 3696,
@@ -646,20 +646,20 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
           },
           {
             "id": "call:5147",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 5147,
@@ -671,12 +671,12 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -874,8 +874,8 @@
           },
           {
             "id": "call:338",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 338,
@@ -887,21 +887,15 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "read:567",
@@ -928,8 +922,8 @@
           },
           {
             "id": "call:598",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 598,
@@ -941,21 +935,15 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "read:1045",
@@ -982,8 +970,8 @@
           },
           {
             "id": "call:1076",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 1076,
@@ -995,21 +983,15 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "read:1765",
@@ -1036,8 +1018,8 @@
           },
           {
             "id": "call:1796",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 1796,
@@ -1049,21 +1031,15 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "read:2915",
@@ -1090,8 +1066,8 @@
           },
           {
             "id": "call:2946",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 2946,
@@ -1103,21 +1079,15 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "read:3665",
@@ -1144,8 +1114,8 @@
           },
           {
             "id": "call:3696",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 3696,
@@ -1157,26 +1127,20 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:5147",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 5147,
@@ -1188,21 +1152,15 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:5259",
@@ -1248,21 +1206,9 @@
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "$notification.post",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          }
-        ]
+        "diagnostics": []
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "$notification.post",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    }
-  ]
+  "diagnostics": []
 }

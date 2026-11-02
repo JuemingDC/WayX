@@ -7583,14 +7583,8 @@
               "lowering": "No semantic mapping is registered for this source operation",
               "proof": "add-explicit-source-and-target-contract"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response.statusCode",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "unmapped",
+            "diagnostics": []
           },
           {
             "id": "call:88317",
@@ -7640,8 +7634,8 @@
           },
           {
             "id": "read:88394",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 88394,
@@ -7651,12 +7645,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -7691,11 +7685,6 @@
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$response.bodyBytes",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$response.bodyBytes",
                 "reason": "bodyBytes is a QX ArrayBuffer field; callback hosts use body/Uint8Array",
@@ -7987,18 +7976,8 @@
           },
           {
             "api": "$response.bodyBytes",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$response.bodyBytes",
             "reason": "bodyBytes is a QX ArrayBuffer field; callback hosts use body/Uint8Array",
             "solution": "Use source binary-body mode and the correct host field"
-          },
-          {
-            "api": "$response.statusCode",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
           },
           {
             "api": "$task",
@@ -12785,14 +12764,8 @@
               "lowering": "No semantic mapping is registered for this source operation",
               "proof": "add-explicit-source-and-target-contract"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response.statusCode",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "unmapped",
+            "diagnostics": []
           },
           {
             "id": "call:88317",
@@ -12842,8 +12815,8 @@
           },
           {
             "id": "read:88394",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 88394,
@@ -12853,12 +12826,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -12893,11 +12866,6 @@
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$response.bodyBytes",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$response.bodyBytes",
                 "reason": "bodyBytes is a QX ArrayBuffer field; callback hosts use body/Uint8Array",
@@ -13189,18 +13157,8 @@
           },
           {
             "api": "$response.bodyBytes",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$response.bodyBytes",
             "reason": "bodyBytes is a QX ArrayBuffer field; callback hosts use body/Uint8Array",
             "solution": "Use source binary-body mode and the correct host field"
-          },
-          {
-            "api": "$response.statusCode",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
           },
           {
             "api": "$task",
@@ -17066,8 +17024,8 @@
           },
           {
             "id": "read:88394",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 88394,
@@ -17077,12 +17035,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -17367,18 +17325,8 @@
     },
     {
       "api": "$response.bodyBytes",
-      "reason": "qx: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$response.bodyBytes",
       "reason": "qx: bodyBytes is a QX ArrayBuffer field; callback hosts use body/Uint8Array",
       "solution": "Use source binary-body mode and the correct host field"
-    },
-    {
-      "api": "$response.statusCode",
-      "reason": "qx: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
     },
     {
       "api": "$task",
@@ -17427,18 +17375,8 @@
     },
     {
       "api": "$response.bodyBytes",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$response.bodyBytes",
       "reason": "surge: bodyBytes is a QX ArrayBuffer field; callback hosts use body/Uint8Array",
       "solution": "Use source binary-body mode and the correct host field"
-    },
-    {
-      "api": "$response.statusCode",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
     },
     {
       "api": "$task",

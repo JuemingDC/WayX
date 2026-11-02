@@ -1138,8 +1138,8 @@
         "operations": [
           {
             "id": "read:1313",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 1313,
@@ -1149,12 +1149,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -1361,8 +1361,8 @@
           },
           {
             "id": "call:1807",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.valueForKey",
               "start": 1807,
@@ -1374,20 +1374,15 @@
                 "valueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$prefs.valueForKey",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$prefs.valueForKey",
                 "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
@@ -1450,8 +1445,8 @@
           },
           {
             "id": "call:2012",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.setValueForKey",
               "start": 2012,
@@ -1463,20 +1458,15 @@
                 "setValueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$prefs.setValueForKey",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$prefs.setValueForKey",
                 "reason": "Only explicit plain string keys are proven portable",
@@ -1563,8 +1553,8 @@
           },
           {
             "id": "call:2604",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task.fetch",
               "start": 2604,
@@ -1576,12 +1566,12 @@
                 "fetch"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -1666,8 +1656,8 @@
           },
           {
             "id": "call:3357",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notify",
+            "kind": "environment",
             "source": {
               "api": "$notify",
               "start": 3357,
@@ -1677,14 +1667,14 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "unmapped",
+            "decision": "mapped",
             "diagnostics": []
           },
           {
@@ -3117,8 +3107,8 @@
           },
           {
             "id": "read:145520",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 145520,
@@ -3128,12 +3118,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -3973,16 +3963,6 @@
             "solution": "Keep environment branches native or resolve them with verified source/target branches"
           },
           {
-            "api": "$prefs.setValueForKey",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$prefs.valueForKey",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
             "api": "$task",
             "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
             "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
@@ -4073,8 +4053,8 @@
         "operations": [
           {
             "id": "read:1313",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 1313,
@@ -4084,12 +4064,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -4296,8 +4276,8 @@
           },
           {
             "id": "call:1807",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.valueForKey",
               "start": 1807,
@@ -4309,20 +4289,15 @@
                 "valueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$prefs.valueForKey",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$prefs.valueForKey",
                 "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
@@ -4385,8 +4360,8 @@
           },
           {
             "id": "call:2012",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.setValueForKey",
               "start": 2012,
@@ -4398,20 +4373,15 @@
                 "setValueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$prefs.setValueForKey",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$prefs.setValueForKey",
                 "reason": "Only explicit plain string keys are proven portable",
@@ -4498,8 +4468,8 @@
           },
           {
             "id": "call:2604",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task.fetch",
               "start": 2604,
@@ -4511,12 +4481,12 @@
                 "fetch"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -4601,8 +4571,8 @@
           },
           {
             "id": "call:3357",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notify",
+            "kind": "environment",
             "source": {
               "api": "$notify",
               "start": 3357,
@@ -4612,14 +4582,14 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "unmapped",
+            "decision": "mapped",
             "diagnostics": []
           },
           {
@@ -5988,8 +5958,8 @@
           },
           {
             "id": "read:145520",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 145520,
@@ -5999,12 +5969,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -6804,16 +6774,6 @@
             "solution": "Keep environment branches native or resolve them with verified source/target branches"
           },
           {
-            "api": "$prefs.setValueForKey",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$prefs.valueForKey",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
             "api": "$task",
             "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
             "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
@@ -6894,8 +6854,8 @@
         "operations": [
           {
             "id": "read:1313",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 1313,
@@ -6905,12 +6865,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -7065,8 +7025,8 @@
           },
           {
             "id": "call:1807",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.valueForKey",
               "start": 1807,
@@ -7078,12 +7038,12 @@
                 "valueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -7127,8 +7087,8 @@
           },
           {
             "id": "call:2012",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.setValueForKey",
               "start": 2012,
@@ -7140,12 +7100,12 @@
                 "setValueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -7202,8 +7162,8 @@
           },
           {
             "id": "call:2604",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task.fetch",
               "start": 2604,
@@ -7215,12 +7175,12 @@
                 "fetch"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -7293,8 +7253,8 @@
           },
           {
             "id": "call:3357",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notify",
+            "kind": "environment",
             "source": {
               "api": "$notify",
               "start": 3357,
@@ -7304,12 +7264,12 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -8445,8 +8405,8 @@
           },
           {
             "id": "read:145520",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 145520,
@@ -8456,12 +8416,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -9148,8 +9108,8 @@
         "operations": [
           {
             "id": "read:1313",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 1313,
@@ -9159,12 +9119,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -9371,8 +9331,8 @@
           },
           {
             "id": "call:1807",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.valueForKey",
               "start": 1807,
@@ -9384,20 +9344,15 @@
                 "valueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$prefs.valueForKey",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$prefs.valueForKey",
                 "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
@@ -9460,8 +9415,8 @@
           },
           {
             "id": "call:2012",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.setValueForKey",
               "start": 2012,
@@ -9473,20 +9428,15 @@
                 "setValueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$prefs.setValueForKey",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$prefs.setValueForKey",
                 "reason": "Only explicit plain string keys are proven portable",
@@ -9573,8 +9523,8 @@
           },
           {
             "id": "call:2604",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task.fetch",
               "start": 2604,
@@ -9586,12 +9536,12 @@
                 "fetch"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -9676,8 +9626,8 @@
           },
           {
             "id": "call:3357",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notify",
+            "kind": "environment",
             "source": {
               "api": "$notify",
               "start": 3357,
@@ -9687,14 +9637,14 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "unmapped",
+            "decision": "mapped",
             "diagnostics": []
           },
           {
@@ -11127,8 +11077,8 @@
           },
           {
             "id": "read:145520",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 145520,
@@ -11138,12 +11088,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -11983,16 +11933,6 @@
             "solution": "Keep environment branches native or resolve them with verified source/target branches"
           },
           {
-            "api": "$prefs.setValueForKey",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$prefs.valueForKey",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
             "api": "$task",
             "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
             "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
@@ -12083,8 +12023,8 @@
         "operations": [
           {
             "id": "read:1313",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 1313,
@@ -12094,12 +12034,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -12306,8 +12246,8 @@
           },
           {
             "id": "call:1807",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.valueForKey",
               "start": 1807,
@@ -12319,20 +12259,15 @@
                 "valueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$prefs.valueForKey",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$prefs.valueForKey",
                 "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
@@ -12395,8 +12330,8 @@
           },
           {
             "id": "call:2012",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.setValueForKey",
               "start": 2012,
@@ -12408,20 +12343,15 @@
                 "setValueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$prefs.setValueForKey",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$prefs.setValueForKey",
                 "reason": "Only explicit plain string keys are proven portable",
@@ -12508,8 +12438,8 @@
           },
           {
             "id": "call:2604",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task.fetch",
               "start": 2604,
@@ -12521,12 +12451,12 @@
                 "fetch"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -12611,8 +12541,8 @@
           },
           {
             "id": "call:3357",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notify",
+            "kind": "environment",
             "source": {
               "api": "$notify",
               "start": 3357,
@@ -12622,14 +12552,14 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "unmapped",
+            "decision": "mapped",
             "diagnostics": []
           },
           {
@@ -13998,8 +13928,8 @@
           },
           {
             "id": "read:145520",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 145520,
@@ -14009,12 +13939,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -14814,16 +14744,6 @@
             "solution": "Keep environment branches native or resolve them with verified source/target branches"
           },
           {
-            "api": "$prefs.setValueForKey",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$prefs.valueForKey",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
             "api": "$task",
             "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
             "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
@@ -14904,8 +14824,8 @@
         "operations": [
           {
             "id": "read:1313",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 1313,
@@ -14915,12 +14835,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -15075,8 +14995,8 @@
           },
           {
             "id": "call:1807",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.valueForKey",
               "start": 1807,
@@ -15088,12 +15008,12 @@
                 "valueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -15137,8 +15057,8 @@
           },
           {
             "id": "call:2012",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.prefs",
+            "kind": "environment",
             "source": {
               "api": "$prefs.setValueForKey",
               "start": 2012,
@@ -15150,12 +15070,12 @@
                 "setValueForKey"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -15212,8 +15132,8 @@
           },
           {
             "id": "call:2604",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task.fetch",
               "start": 2604,
@@ -15225,12 +15145,12 @@
                 "fetch"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -15303,8 +15223,8 @@
           },
           {
             "id": "call:3357",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notify",
+            "kind": "environment",
             "source": {
               "api": "$notify",
               "start": 3357,
@@ -15314,12 +15234,12 @@
               "access": "call",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -16455,8 +16375,8 @@
           },
           {
             "id": "read:145520",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.task",
+            "kind": "environment",
             "source": {
               "api": "$task",
               "start": 145520,
@@ -16466,12 +16386,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -17196,16 +17116,6 @@
       "solution": "Keep environment branches native or resolve them with verified source/target branches"
     },
     {
-      "api": "$prefs.setValueForKey",
-      "reason": "qx: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$prefs.valueForKey",
-      "reason": "qx: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
       "api": "$task",
       "reason": "qx: QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
       "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
@@ -17329,16 +17239,6 @@
       "api": "$loon",
       "reason": "surge: Loon runtime identity string cannot be inferred from another application's version",
       "solution": "Keep environment branches native or resolve them with verified source/target branches"
-    },
-    {
-      "api": "$prefs.setValueForKey",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$prefs.valueForKey",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
     },
     {
       "api": "$task",
@@ -17456,16 +17356,6 @@
       "solution": "Keep environment branches native or resolve them with verified source/target branches"
     },
     {
-      "api": "$prefs.setValueForKey",
-      "reason": "qx: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$prefs.valueForKey",
-      "reason": "qx: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
       "api": "$task",
       "reason": "qx: QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
       "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
@@ -17589,16 +17479,6 @@
       "api": "$loon",
       "reason": "surge: Loon runtime identity string cannot be inferred from another application's version",
       "solution": "Keep environment branches native or resolve them with verified source/target branches"
-    },
-    {
-      "api": "$prefs.setValueForKey",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$prefs.valueForKey",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
     },
     {
       "api": "$task",

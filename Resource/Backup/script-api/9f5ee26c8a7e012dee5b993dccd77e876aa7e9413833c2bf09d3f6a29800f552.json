@@ -629,8 +629,8 @@
           },
           {
             "id": "read:18376",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.httpClient",
+            "kind": "environment",
             "source": {
               "api": "$httpClient",
               "start": 18376,
@@ -640,12 +640,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -769,8 +769,8 @@
           },
           {
             "id": "call:21523",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.persistentStore",
+            "kind": "environment",
             "source": {
               "api": "$persistentStore.read",
               "start": 21523,
@@ -782,12 +782,12 @@
                 "read"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -825,8 +825,8 @@
           },
           {
             "id": "call:21745",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.persistentStore",
+            "kind": "environment",
             "source": {
               "api": "$persistentStore.write",
               "start": 21745,
@@ -838,12 +838,12 @@
                 "write"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -887,8 +887,8 @@
           },
           {
             "id": "call:22561",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.httpClient",
+            "kind": "environment",
             "source": {
               "api": "$httpClient.get",
               "start": 22561,
@@ -900,12 +900,12 @@
                 "get"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -935,8 +935,8 @@
           },
           {
             "id": "read:24067",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.httpClient",
+            "kind": "environment",
             "source": {
               "api": "$httpClient[s]",
               "start": 24067,
@@ -948,12 +948,12 @@
                 "<computed:s>"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -983,8 +983,8 @@
           },
           {
             "id": "call:26186",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 26186,
@@ -996,12 +996,12 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -1379,8 +1379,8 @@
           },
           {
             "id": "read:18376",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.httpClient",
+            "kind": "environment",
             "source": {
               "api": "$httpClient",
               "start": 18376,
@@ -1390,12 +1390,12 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -1560,8 +1560,8 @@
           },
           {
             "id": "call:21523",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.persistentStore",
+            "kind": "environment",
             "source": {
               "api": "$persistentStore.read",
               "start": 21523,
@@ -1573,20 +1573,15 @@
                 "read"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$persistentStore.read",
                 "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
@@ -1643,8 +1638,8 @@
           },
           {
             "id": "call:21745",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.persistentStore",
+            "kind": "environment",
             "source": {
               "api": "$persistentStore.write",
               "start": 21745,
@@ -1656,20 +1651,15 @@
                 "write"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$persistentStore.write",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$persistentStore.write",
                 "reason": "Only explicit plain string keys are proven portable",
@@ -1732,8 +1722,8 @@
           },
           {
             "id": "call:22561",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.httpClient",
+            "kind": "environment",
             "source": {
               "api": "$httpClient.get",
               "start": 22561,
@@ -1745,12 +1735,12 @@
                 "get"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -1807,8 +1797,8 @@
           },
           {
             "id": "read:24067",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.httpClient",
+            "kind": "environment",
             "source": {
               "api": "$httpClient[s]",
               "start": 24067,
@@ -1820,12 +1810,12 @@
                 "<computed:s>"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
@@ -1882,8 +1872,8 @@
           },
           {
             "id": "call:26186",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 26186,
@@ -1895,20 +1885,15 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "requires-proof",
             "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              },
               {
                 "api": "$notification.post",
                 "reason": "Notification attachments/actions/delay differ across clients",
@@ -2033,21 +2018,6 @@
             "solution": "Keep environment branches native or resolve them with verified source/target branches"
           },
           {
-            "api": "$notification.post",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$persistentStore.read",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$persistentStore.write",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
             "api": "$rocket",
             "reason": "API/member is outside the documented portable subset",
             "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
@@ -2146,21 +2116,6 @@
       "api": "$loon",
       "reason": "surge: Loon runtime identity string cannot be inferred from another application's version",
       "solution": "Keep environment branches native or resolve them with verified source/target branches"
-    },
-    {
-      "api": "$notification.post",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$persistentStore.read",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$persistentStore.write",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
     },
     {
       "api": "$rocket",

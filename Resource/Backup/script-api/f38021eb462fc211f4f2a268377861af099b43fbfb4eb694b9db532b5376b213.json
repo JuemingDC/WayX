@@ -6804,8 +6804,8 @@
           },
           {
             "id": "call:95433",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 95433,
@@ -6817,12 +6817,12 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
             "decision": "native",
             "diagnostics": []
@@ -11632,14 +11632,8 @@
               "lowering": "No semantic mapping is registered for this source operation",
               "proof": "add-explicit-source-and-target-contract"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response.status",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "unmapped",
+            "diagnostics": []
           },
           {
             "id": "read:88107",
@@ -11663,14 +11657,8 @@
               "lowering": "No semantic mapping is registered for this source operation",
               "proof": "add-explicit-source-and-target-contract"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response.status",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "unmapped",
+            "diagnostics": []
           },
           {
             "id": "read:88126",
@@ -11922,8 +11910,8 @@
           },
           {
             "id": "call:95433",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "source.absent.notification",
+            "kind": "environment",
             "source": {
               "api": "$notification.post",
               "start": 95433,
@@ -11935,21 +11923,15 @@
                 "post"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "source.unavailable-binding",
+            "value": "undefined source SDK binding; original member access is not implemented",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "undefined",
+              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
+              "proof": "source-host-presence-layout; not foreign-API support"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "mapped",
+            "diagnostics": []
           },
           {
             "id": "call:95520",
@@ -12064,16 +12046,6 @@
             "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
           },
           {
-            "api": "$notification.post",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$response.status",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
             "api": "$task",
             "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
             "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
@@ -12122,16 +12094,6 @@
       "api": "$argument",
       "reason": "surge: Source argument schema is missing, ambiguous, or its use is unsafe after QX omission",
       "solution": "Bind arguments at declaration generation with exact types/defaults; do not serialize objects into an assumed equivalent string"
-    },
-    {
-      "api": "$notification.post",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$response.status",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
     },
     {
       "api": "$task",

@@ -183,14 +183,8 @@
               "lowering": "No semantic mapping is registered for this source operation",
               "proof": "add-explicit-source-and-target-contract"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response.statusCode",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "unmapped",
+            "diagnostics": []
           },
           {
             "id": "read:368",
@@ -456,11 +450,6 @@
           }
         ],
         "diagnostics": [
-          {
-            "api": "$response.statusCode",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
           {
             "api": "headers-shape",
             "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
@@ -530,14 +519,8 @@
               "lowering": "No semantic mapping is registered for this source operation",
               "proof": "add-explicit-source-and-target-contract"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response.statusCode",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "unmapped",
+            "diagnostics": []
           },
           {
             "id": "read:368",
@@ -778,11 +761,6 @@
           }
         ],
         "diagnostics": [
-          {
-            "api": "$response.statusCode",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
           {
             "api": "headers-shape",
             "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
@@ -1033,11 +1011,6 @@
   },
   "diagnostics": [
     {
-      "api": "$response.statusCode",
-      "reason": "qx: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
       "api": "headers-shape",
       "reason": "qx: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
       "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
@@ -1051,11 +1024,6 @@
       "api": "headers",
       "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
       "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
-    },
-    {
-      "api": "$response.statusCode",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
     },
     {
       "api": "headers-shape",
