@@ -75,6 +75,114 @@ export function qxTaskContract(
     !n.asteriskToken
       ? n
       : null;
+  // Modified: 2026-11-02 (chance). Audit every lexical response alias and
+  // destructuring use; String/bytes may leave the object but the object may not.
+  const responseFields = (pattern: ts.ObjectBindingPattern) => {
+    const seen = new Set<string>();
+    for (const e of pattern.elements) {
+      const property = e.propertyName ?? e.name;
+      if (
+        e.dotDotDotToken ||
+        e.initializer ||
+        !ts.isIdentifier(e.name) ||
+        !(ts.isIdentifier(property) || ts.isStringLiteralLike(property)) ||
+        seen.has(property.text) ||
+        !["statusCode", "body", "bodyBytes"].includes(property.text)
+      )
+        return false;
+      seen.add(property.text);
+      if (property.text === "body") text = true;
+      if (property.text === "bodyBytes") binary = true;
+    }
+    return true;
+  };
+  const isWrite = (node: ts.Node) => {
+    let current = node;
+    while (current.parent) {
+      const p = current.parent;
+      if (
+        ts.isParenthesizedExpression(p) ||
+        ts.isArrayLiteralExpression(p) ||
+        ts.isObjectLiteralExpression(p) ||
+        ts.isSpreadElement(p) ||
+        ts.isSpreadAssignment(p) ||
+        (ts.isPropertyAssignment(p) && p.initializer === current)
+      ) {
+        current = p;
+        continue;
+      }
+      return (
+        (ts.isBinaryExpression(p) &&
+          p.left === current &&
+          p.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
+          p.operatorToken.kind <= ts.SyntaxKind.LastAssignment) ||
+        ((ts.isForInStatement(p) || ts.isForOfStatement(p)) &&
+          p.initializer === current) ||
+        ts.isDeleteExpression(p) ||
+        ts.isPostfixUnaryExpression(p) ||
+        (ts.isPrefixUnaryExpression(p) &&
+          [ts.SyntaxKind.PlusPlusToken, ts.SyntaxKind.MinusMinusToken].includes(
+            p.operator,
+          ))
+      );
+    }
+    return false;
+  };
+  let responseAliasBudget = 64;
+  const responseBinding = (
+    symbol: ts.Symbol | undefined,
+    seen = new Set<ts.Symbol>(),
+  ): boolean => {
+    if (
+      !symbol ||
+      seen.has(symbol) ||
+      seen.size >= 16 ||
+      --responseAliasBudget < 0
+    )
+      return false;
+    const next = new Set(seen).add(symbol);
+    let valid = true;
+    walk(tree, (n) => {
+      if (!ts.isIdentifier(n) || valueSymbol(n, checker) !== symbol) return;
+      const p = n.parent;
+      if ((ts.isParameter(p) || ts.isVariableDeclaration(p)) && p.name === n)
+        return;
+      if (safePresenceUse(n) && !ts.isTypeOfExpression(p)) return;
+      if (
+        ts.isVariableDeclaration(p) &&
+        p.initializer === n &&
+        ts.isVariableDeclarationList(p.parent) &&
+        p.parent.flags & ts.NodeFlags.Const
+      ) {
+        if (ts.isIdentifier(p.name))
+          valid =
+            responseBinding(checker.getSymbolAtLocation(p.name), next) && valid;
+        else if (ts.isObjectBindingPattern(p.name))
+          valid = responseFields(p.name) && valid;
+        else valid = false;
+        return;
+      }
+      if (
+        (!ts.isPropertyAccessExpression(p) &&
+          !ts.isElementAccessExpression(p)) ||
+        p.expression !== n ||
+        isWrite(p)
+      ) {
+        valid = false;
+        return;
+      }
+      const field = ts.isPropertyAccessExpression(p)
+        ? p.name.text
+        : constantString(p.argumentExpression, checker);
+      if (!field || !["statusCode", "body", "bodyBytes"].includes(field)) {
+        valid = false;
+        return;
+      }
+      if (field === "body") text = true;
+      if (field === "bodyBytes") binary = true;
+    });
+    return valid;
+  };
   const consumer = (
     fn: ts.ArrowFunction | ts.FunctionExpression,
     kind: "success" | "error",
@@ -87,22 +195,8 @@ export function qxTaskContract(
       ts.isObjectBindingPattern(fn.parameters[0].name) &&
       !fn.parameters[0].initializer
     ) {
-      const seen = new Set<string>();
-      for (const element of fn.parameters[0].name.elements) {
-        const property = element.propertyName ?? element.name;
-        if (
-          element.dotDotDotToken ||
-          element.initializer ||
-          !ts.isIdentifier(element.name) ||
-          !(ts.isIdentifier(property) || ts.isStringLiteralLike(property)) ||
-          seen.has(property.text) ||
-          !["statusCode", "body", "bodyBytes"].includes(property.text)
-        )
-          return false;
-        seen.add(property.text);
-        if (property.text === "body") text = true;
-        if (property.text === "bodyBytes") binary = true;
-      }
+      if (!responseFields(fn.parameters[0].name as ts.ObjectBindingPattern))
+        return false;
       let observesArguments = false;
       walk(fn.body, (n) => {
         if (ts.isIdentifier(n) && n.text === "arguments")
@@ -119,6 +213,13 @@ export function qxTaskContract(
       return false;
     if (!fn.parameters.length) return true;
     const sym = checker.getSymbolAtLocation(fn.parameters[0].name);
+    if (kind === "success") {
+      let noArguments = true;
+      walk(fn.body, (n) => {
+        if (ts.isIdentifier(n) && n.text === "arguments") noArguments = false;
+      });
+      return noArguments && responseBinding(sym);
+    }
     let valid = true;
     walk(fn.body, (n) => {
       if (ts.isIdentifier(n) && n.text === "arguments") valid = false;
@@ -129,33 +230,12 @@ export function qxTaskContract(
         valid = false;
         return;
       }
-      if (kind === "error") {
-        if (
-          p.name.text !== "error" ||
-          !safePresenceUse(p) ||
-          ts.isTypeOfExpression(p.parent)
-        )
-          valid = false;
-        return;
-      }
-      const op = p.parent;
       if (
-        (ts.isBinaryExpression(op) &&
-          op.left === p &&
-          op.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
-          op.operatorToken.kind <= ts.SyntaxKind.LastAssignment) ||
-        ts.isPostfixUnaryExpression(op) ||
-        ts.isDeleteExpression(op) ||
-        (ts.isPrefixUnaryExpression(op) &&
-          op.operator !== ts.SyntaxKind.ExclamationToken)
-      ) {
+        p.name.text !== "error" ||
+        !safePresenceUse(p) ||
+        ts.isTypeOfExpression(p.parent)
+      )
         valid = false;
-        return;
-      }
-      if (!["statusCode", "body", "bodyBytes"].includes(p.name.text))
-        valid = false;
-      if (p.name.text === "body") text = true;
-      if (p.name.text === "bodyBytes") binary = true;
     });
     return valid;
   };
@@ -348,39 +428,8 @@ export function qxTaskContract(
         current = parent;
       }
       if (!handled) ok = false;
-      // Audit the awaited alias throughout its lexical binding; it cannot escape.
-      walk(tree, (ref) => {
-        if (
-          !ts.isIdentifier(ref) ||
-          valueSymbol(ref, checker) !== sym ||
-          ref === d.name
-        )
-          return;
-        const parent = ref.parent;
-        if (
-          !ts.isPropertyAccessExpression(parent) ||
-          parent.expression !== ref ||
-          !["statusCode", "body", "bodyBytes"].includes(parent.name.text)
-        ) {
-          ok = false;
-          return;
-        }
-        const op = parent.parent;
-        if (
-          (ts.isBinaryExpression(op) &&
-            op.left === parent &&
-            op.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
-            op.operatorToken.kind <= ts.SyntaxKind.LastAssignment) ||
-          ts.isDeleteExpression(op) ||
-          ts.isPostfixUnaryExpression(op) ||
-          ts.isPrefixUnaryExpression(op)
-        ) {
-          ok = false;
-          return;
-        }
-        if (parent.name.text === "body") text = true;
-        if (parent.name.text === "bodyBytes") binary = true;
-      });
+      // The same alias/field proof applies after a locally caught await.
+      if (!responseBinding(sym)) ok = false;
     } else ok = false;
   });
   return {

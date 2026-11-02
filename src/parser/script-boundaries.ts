@@ -34,7 +34,7 @@ export const scriptCapabilityBoundaries = {
   completion: {
     status: "conditional",
     domain:
-      "Literal/conditional/spread result objects, closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
+      "Literal/conditional/spread result objects and pristine Object.assign into a fresh empty literal from finite plain dictionaries (no getters/prototype fields), closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
     outside:
       "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown/async returns, escaped function results, header/response mutations and dynamic property writes remain blocked",
   },
@@ -60,7 +60,7 @@ export const scriptCapabilityBoundaries = {
       "conditional-callback-and-qx-Promise-bridge-with-authorized-omissions",
     qx: qxHttpOptions,
     implemented:
-      "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. QX-source literal/closed-const String request fields and fetch calls support closed then/catch, success-field destructuring without rest/defaults, and locally caught await, numeric statusCode, ASCII or exact-offset bodyBytes. All retain explicit UA/Accept/identity encoding, <=64KiB and one active request; source Promise errors propagate and unknown QX fields are omitted on all hosts including QX itself",
+      "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. QX-source literal/closed-const String request fields and fetch calls support closed then/catch, readonly response const-alias chains and field destructuring/computed constant reads without rest/defaults, and locally caught await, numeric statusCode, ASCII or exact-offset bodyBytes. All retain explicit UA/Accept/identity encoding, <=64KiB and one active request; source Promise errors propagate and unknown QX fields are omitted on all hosts including QX itself",
     production:
       "Shared callback-source and proven QX-source Promise programs publish only after every registered profile passes the authorized targets and native source host; ignored QX fields are recorded outside author scripts",
     fixtures:

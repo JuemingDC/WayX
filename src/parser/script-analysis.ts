@@ -225,6 +225,66 @@ export function completionObjects(
     }
     return variants.map((v) => ts.factory.createObjectLiteralExpression(v));
   }
+  // Modified: 2026-11-02 (chance). Object.assign into a fresh empty literal
+  // is a finite completion shape only with pristine builtins and plain sources.
+  if (
+    ts.isCallExpression(node) &&
+    ts.isPropertyAccessExpression(node.expression) &&
+    ts.isIdentifier(node.expression.expression) &&
+    node.expression.expression.text === "Object" &&
+    !valueSymbol(node.expression.expression, checker) &&
+    node.expression.name.text === "assign"
+  ) {
+    if (
+      !node.arguments.length ||
+      !ts.isObjectLiteralExpression(node.arguments[0]) ||
+      node.arguments[0].properties.length ||
+      node.arguments.some(ts.isSpreadElement)
+    )
+      return null;
+    let pristine = true;
+    const inspect = (n: ts.Node) => {
+      if (
+        ts.isIdentifier(n) &&
+        n.text === "Object" &&
+        !valueSymbol(n, checker)
+      ) {
+        const p = n.parent;
+        if (
+          !ts.isPropertyAccessExpression(p) ||
+          p.expression !== n ||
+          !["assign", "keys", "values", "entries"].includes(p.name.text) ||
+          !ts.isCallExpression(p.parent) ||
+          p.parent.expression !== p
+        )
+          pristine = false;
+      }
+      ts.forEachChild(n, inspect);
+    };
+    inspect(tree);
+    if (!pristine) return null;
+    let variants: ts.ObjectLiteralElementLike[][] = [[]];
+    for (const argument of node.arguments.slice(1)) {
+      const objects = completionObjects(argument, tree, checker, seen);
+      if (!objects || variants.length * objects.length > 64) return null;
+      for (const object of objects)
+        for (const property of object.properties) {
+          const name = property.name;
+          if (
+            (!ts.isPropertyAssignment(property) &&
+              !ts.isShorthandPropertyAssignment(property)) ||
+            !name ||
+            (!ts.isIdentifier(name) && !ts.isStringLiteralLike(name)) ||
+            ["__proto__", "constructor", "prototype"].includes(name.text)
+          )
+            return null;
+        }
+      variants = variants.flatMap((v) =>
+        objects.map((o) => [...v, ...o.properties]),
+      );
+    }
+    return variants.map((v) => ts.factory.createObjectLiteralExpression(v));
+  }
   if (ts.isCallExpression(node) && ts.isIdentifier(node.expression)) {
     const symbol = valueSymbol(node.expression, checker),
       decl = symbol?.valueDeclaration;

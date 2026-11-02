@@ -179,3 +179,17 @@ Modified: 2026-11-02 (chance). 本节补充当前已实现的子域，不将“�
 Modified: 2026-11-02 (chance). 财新 caixinAd.js 的固定字符串表同时用于顶层 `$response` 字段和后续作者函数。此前只因其它函数也读取同一表而拒绝整个表，属于分析过度保守。现仅要求被查询字段在顶层并位于表初始化之后；其它函数只能保留闭合数字索引读取，不允许任何写入、外传或未知索引。扫描覆盖括号、数组/对象解构赋值、for-in/for-of 写入目标、delete 和自增自减，不能借嵌套赋值绕过不可变证明。不执行混淆解码函数，不改作者业务表达式，源原件逐字节保留。
 
 `tests/script-table-reads.ts` 在同一 QX/Surge 文件上检查正文实际变更、原生分支、延迟只读引用及写入/逃逸反例。方向仍仅 Loon→QX/Surge、QX→Surge；本轮不引入 QX→Loon 门槛。
+
+
+## 批次：同时补充 HTTP 响应流和完成对象构造
+
+Modified: 2026-11-02 (chance). 本批处理两个独立能力家族，不以单个脚本的一个字段替代类别实现。生产方向仍仅 Loon→QX/Surge、QX→Surge。
+
+| 家族 | 已补支持域 | 保留边界 |
+| --- | --- | --- |
+| HTTP 响应数据流 | QX then 成功对象及本地捕获的 await，可经闭合 const 别名链读取 statusCode/body/bodyBytes；允许局部字段解构重命名和 const 计算字段名 | 每个别名所有引用均审查；不接受对象外传、可变别名、未知/headers 字段、defaults/rest、写入/删除/循环或解构写入；最多 16 层及 64 次绑定证明 |
+| 完成对象构造 | `$done(Object.assign({}, ...))` 和闭合变量形式；来源为已证明的普通结果对象、条件、闭合工厂，保留覆盖顺序和作者原表达式 | 必须新建空对象作为目标；拒绝已有目标、未知来源、getter/method、动态键、原型相关字段、反射/别名或内置 Object 方法被改写；候选形状上限 64 |
+
+HTTP 的请求选项、七方法、文本/字节和错误观察契约保持不变；别名证明不允许把响应对象整个交给未知函数。真实网络拒绝仍进入原 Promise 错误流；只对成功对象的已知字段建立证明。Object.assign 只是确定结果形状，不静态执行作者函数、不把源码改成 spread 或 JSON；同一源的业务正文仍只保存一次。
+
+独立验证分别为 `tests/script-response-aliases.ts`（QX/Surge 成功/失败、别名、await、字节偏移和反例）和 `tests/script-completion-assign.ts`（Loon 原生及 QX/Surge 的覆盖顺序、工厂/条件与原型/getter/逃逸反例）。`tests/script-multiclass-production.ts` 将两类用法组合在同一来源脚本中，实际通过备份事务检查逐字节原件、单一共用地址、原名、索引和方向契约。新增子域不保证现有复杂框架整脚本马上通过，其余共同阻断继续报告，发布结果以 Actions 重新统计为准。
