@@ -16,7 +16,6 @@
 # Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/YouTube_remove_ads.lpx
-# Target: Surge
 
 [Script]
 YouTube去广告 = type=http-response,pattern=(?i)^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-0e06084d89ad/YouTube_remove_ads_response.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20,argument="{\"blockUpload\":{{{blockUpload}}},\"blockShorts\":{{{blockShorts}}},\"blockImmersive\":{{{blockImmersive}}},\"captionLang\":\"{{{captionLang}}}\",\"debug\":{{{debug}}}}"

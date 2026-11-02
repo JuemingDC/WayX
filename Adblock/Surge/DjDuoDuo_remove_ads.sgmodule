@@ -12,7 +12,6 @@
 # Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/DjDuoDuo_remove_ads.lpx
-# Target: Surge
 
 [Script]
 去广告 = type=http-response,pattern=(?i)^https:\/\/api\.dianyinduoduo\.com\/v4\/config\.php\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-35a3b12ec3a7/DjDuoDuo_remove_ads.js,requires-body=true,max-size=-1,timeout=20

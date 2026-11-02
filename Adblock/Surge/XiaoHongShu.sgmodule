@@ -7,10 +7,9 @@
 # Icon: https://rucu6.pages.dev/Icons/app/xiaohongshu.png
 # Updated: 2026-09-14 11:00
 
-# Converted: 2026-11-01 23:22:46 +08:00
+# Converted: 2026-11-03 06:40:00 +08:00
 # Converted by: chance
 # Source: https://rucu6.pages.dev/Plugins/xiaohongshu.lpx
-# Target: Surge
 
 [Rule]
 AND,((DOMAIN-SUFFIX,xiaohongshu.com,extended-matching),(PROTOCOL,UDP)),REJECT

@@ -13,7 +13,6 @@
 # Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/ZhiLianZhaoPin_remove_ads.lpx
-# Target: Surge
 
 [Rule]
 URL-REGEX,^https:\/\/(ask|cgate)\.zhaopin\.com\/operation\/ad\/,REJECT,extended-matching

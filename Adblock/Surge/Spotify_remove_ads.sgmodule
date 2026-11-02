@@ -15,7 +15,6 @@
 # Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Spotify_remove_ads.lpx
-# Target: Surge
 
 [Rule]
 AND,((DOMAIN-SUFFIX,spotify.com,extended-matching),(PROTOCOL,QUIC)),REJECT

@@ -4,11 +4,10 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-08-30 10:10
 
-# Converted: 2026-10-25 17:18:12 +08:00
+# Converted: 2026-11-03 06:40:00 +08:00
 # Converted by: chance
 # Category: 插件
 # Source: https://rucu6.pages.dev/Plugins/youtube_maasea.lpx
-# Target: Quantumult X
 
 # [filter_local]
 #AND, ((DOMAIN, youtubei.googleapis.com), (PROTOCOL, UDP)), REJECT
@@ -20,15 +19,10 @@
 # youtube 短链移除追踪参数
 (^https:\/\/youtu\.be\/[\w-]+)(?:\?si=\w+) url 302 $1
 # youtube_request_init
-# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
-# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://rucu6.pages.dev/Scripts/youtube/request.js
 # youtube_request_log_event
-# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://rucu6.pages.dev/Scripts/youtube/request.js
 # youtube_response
-# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
-# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/youtubei\.googleapis\.com\/(?:youtubei\/v1\/(?:browse|config|log_event|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$ url script-response-body https://rucu6.pages.dev/Scripts/youtube/response.js
 
 # [mitm]

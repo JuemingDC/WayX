@@ -11,7 +11,6 @@
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Weidian_remove_ads.lpx
-# Target: Quantumult X
 
 # [filter_local]
 
@@ -40,11 +39,9 @@
 
 ^https:\/\/thor\.weidian\.com\/ares\/collect\.recommendShop\/ url reject-dict
 # 配置修改
-# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/thor\.weidian\.com\/appconf\/getAppConfig\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-fa4881c9a055/getAppConfig.js
 
 # 精简钱包区
-# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/thor\.weidian\.com\/wgs\/wallet\.query\.order\.entrance\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-99a63d4a727c/wallet.js
 
 # [mitm]

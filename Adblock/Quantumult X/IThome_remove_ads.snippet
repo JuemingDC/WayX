@@ -11,14 +11,12 @@
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/IThome_remove_ads.lpx
-# Target: Quantumult X
 
 # [filter_local]
 
 # [rewrite_local]
 ^https?:\/\/dat\.ruanmei\.com\/ithome\/money\/acd\.json$ url reject
 # IT之家去广告
-# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/napi\.ithome\.com\/api\/(news\/indexv2\/iphone\/\d+|topmenu\/getfeeds\?) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a31b4fde903a/IThome_remove_ads.js
 
 # [mitm]

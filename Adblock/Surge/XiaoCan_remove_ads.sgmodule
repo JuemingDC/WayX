@@ -13,7 +13,6 @@
 # Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/XiaoCan_remove_ads.lpx
-# Target: Surge
 
 [Header Rewrite]
 http-request (?i)^https:\/\/gw\.xiaocantech\.com\/rpc header-replace-regex methodname .*(GetBannerList|IsShowOrderAwardPopup|UserLifeShopList|BrandBannerList|GetPromotionGlobalCfg) null

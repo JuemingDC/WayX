@@ -13,7 +13,6 @@
 # Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/PinDuoDuo_remove_ads.lpx
-# Target: Surge
 
 [Rule]
 AND,((URL-REGEX,^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/d(\d)?,extended-matching),(USER-AGENT,"*com.xunmeng.pinduoduo*")),REJECT

@@ -13,7 +13,6 @@
 # Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/QiDian_remove_ads.lpx
-# Target: Surge
 
 [Body Rewrite]
 http-response-jq (?i)^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ 'setpath(["Data","WolfEye"]; 0) | setpath(["Data","CloudSetting","TeenShowFreq"]; 0)'

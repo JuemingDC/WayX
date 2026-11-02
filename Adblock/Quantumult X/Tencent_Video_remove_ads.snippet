@@ -11,7 +11,6 @@
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Tencent_Video_remove_ads.lpx
-# Target: Quantumult X
 
 # [filter_local]
 host, adsmind.gdtimg.com, reject
@@ -34,7 +33,6 @@ ip-cidr, 47.110.187.87/32, reject
 ^http:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ url reject
 ^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind url reject-dict
 # 移除广告
-# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 ^https?:\/\/vv\.video\.qq\.com\/getvinfo url script-request-body https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js
 
 # [mitm]

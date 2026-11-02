@@ -14,7 +14,6 @@
 # Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weimai_remove_ads.lpx
-# Target: Surge
 
 [Body Rewrite]
 http-response-jq (?i)^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'setpath(["isShowCJAd"]; 0)'

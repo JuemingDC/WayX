@@ -14,7 +14,6 @@
 # Converted: 2026-10-04 18:36:28 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/TelegramRedirect.lpx
-# Target: Surge
 
 [URL Rewrite]
 ^https:\/\/t\.me\/([A-Za-z][A-Za-z0-9_]{3,30}[A-Za-z0-9])\/?$ {{{app}}}://resolve?domain=$1 307

@@ -13,7 +13,6 @@
 # Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/WutaCamera_remove_ads.lpx
-# Target: Surge
 
 [Body Rewrite]
 http-response-jq (?i)^https:\/\/api-release\.wuta-cam\.com\/ad_tree$ 'del(.regular.splash,.big_day,.big_day_overrides,.regular.home_bottom_right_entry_v2,.regular.pic_upload_alert,.regular.retouching_before_icon)'

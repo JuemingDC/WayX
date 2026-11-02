@@ -13,7 +13,6 @@
 # Converted: 2026-10-28 07:44:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/JDWaimai_remove_ads.lpx
-# Target: Surge
 
 [Body Rewrite]
 http-response-jq (?i)^https:\/\/color\.jddj\.com\/client\.action\?functionId=hours_home$ 'del(.result.config.searchFloor.data[].searchWords) | .result.data |= map(if .tnConfigVO?.businessCode == "nearby_HourlyGo_Operation_Tags" then empty else . end)'

@@ -13,7 +13,6 @@
 # Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/MeiShiJie_remove_ads.lpx
-# Target: Surge
 
 [Body Rewrite]
 http-response-jq (?i)^https:\/\/newapi\.meishi\.cc\/indexnew\/home_feeds 'if .data.items then .data.items |= map(select(.type | . != "101" and . != "12")) else . end'

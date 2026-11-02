@@ -13,24 +13,17 @@
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/YouTube_remove_ads.lpx
-# Target: Quantumult X
 
 # [filter_local]
 
 # [rewrite_local]
 # YouTube去广告
-# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
-# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-0e06084d89ad/YouTube_remove_ads_response.js
 
 # 请求初始化
-# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
-# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a8704cadd8f8/YouTube_remove_ads_request.js
 
 # 请求日志事件
-# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
-# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a8704cadd8f8/YouTube_remove_ads_request.js
 
 # [mitm]

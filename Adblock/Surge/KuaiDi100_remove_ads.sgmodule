@@ -13,7 +13,6 @@
 # Converted: 2026-10-28 07:44:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KuaiDi100_remove_ads.lpx
-# Target: Surge
 
 [Body Rewrite]
 http-response-jq (?i)^https?:\/\/p\.kuaidi100\.com\/mobile\/mobileapi\.do$ 'del(.adsplash,.adIsConsumable,.adProductId,.nologin_tips,.index_banner,.me_banner,.index_banner_shadow,.adshongbao,.adsapp_homepage_ticket_pop,.adsoptimizationsend,.adsapp_activity_ad_array,.adbanner,.adposition,.adShowAgainTime)'

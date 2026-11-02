@@ -13,7 +13,6 @@
 # Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/SodaMusic_remove_ads.lpx
-# Target: Surge
 
 [Body Rewrite]
 http-response-jq (?i)^https:\/\/tnc\d-(bjlgy|ali[a-z]{2})\d?\.zijieapi\.com\/get_domains\/v\d\/\? 'setpath(["data","opaque_data_enabled"]; 0) | setpath(["data","ttnet_http_dns_enabled"]; 0) | setpath(["data","ttnet_quic_enabled"]; 0) | setpath(["data","ttnet_tt_http_dns"]; 0)'

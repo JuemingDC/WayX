@@ -12,7 +12,6 @@
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/Tieba_remove_ads.lpx
-# Target: Quantumult X
 
 # [filter_local]
 host, 180.76.76.200, reject
@@ -50,9 +49,6 @@ ip-cidr, 180.76.76.200/32, reject
 # [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
 ^https?:\/\/tiebac\.baidu\.com\/c\/f\/sidebar\/home$ url jsonjq-response-body 'del(.game_center,.tools,.task_list,.vip_banner)'
 # ProtoBuf处理
-# [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
-# [WayX] Source Script timeout ignored for Quantumult X.
-# [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
 ^https?:\/\/tieba(?:c)?\.baidu\.com\/c\/(f\/excellent\/personalized|f\/frs\/page|b\/ad\/adBid|f\/ad\/getFeedAd|f\/pb\/page|f\/frs\/generalTabList)\?cmd=\d+&format=protobuf url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-3a02881f13f2/tieba-proto.js
 
 # [mitm]

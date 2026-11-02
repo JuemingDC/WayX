@@ -13,7 +13,6 @@
 # Converted: 2026-10-28 07:44:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/XunLei_remove_ads.lpx
-# Target: Surge
 
 [Body Rewrite]
 http-response-jq (?i)^https:\/\/conf-m-ssl\.xunlei\.com\/external\/ 'del(.values.me_config.entrance_list_vertical_enable,.values.me_config.common_service_list,.values.me_config.banner_service_list)'

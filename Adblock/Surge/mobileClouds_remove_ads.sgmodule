@@ -12,7 +12,6 @@
 # Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/mobileClouds_remove_ads.lpx
-# Target: Surge
 
 [Script]
 移除开屏广告 = type=http-response,pattern=(?i)^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-9858236b7366/mobileClouds_remove_ads.js,requires-body=true,max-size=-1,timeout=20

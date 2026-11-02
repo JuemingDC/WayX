@@ -209,14 +209,10 @@ return (function(config,host,run){
     getOwnPropertyDescriptor:(target,prop)=>{const d=Reflect.getOwnPropertyDescriptor(target,key(prop));return d&&key(prop)!==prop?Object.assign({},d,{configurable:true}):d;},
   });
 });
-  // Modified: 2026-11-02 (chance). Exact BufferSource views across realms;
-  // ignore shadowed user properties rather than changing the selected bytes.
   const abLength=Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get,typed=Object.getPrototypeOf(Uint8Array.prototype),get=name=>Object.getOwnPropertyDescriptor(typed,name).get,tag=Object.getOwnPropertyDescriptor(typed,Symbol.toStringTag).get;
   const bytes=value=>{let length;try{length=abLength.call(value);}catch{}if(length!==undefined)return new Uint8Array(value,0,length);if(ArrayBuffer.isView(value)){const isTyped=tag.call(value)!==undefined,getter=name=>isTyped?get(name).call(value):Object.getOwnPropertyDescriptor(DataView.prototype,name).get.call(value);return new Uint8Array(getter('buffer'),getter('byteOffset'),getter('byteLength'));}return fail('binary body requires BufferSource');};
   const binary=value=>{if(ArrayBuffer.isView(value))return true;try{abLength.call(value);return true;}catch{return false;}};
   const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
-  // Modified: 2026-11-02 (chance). Validate status lines as well as numeric
-  // values before formatting for QX; strings must not bypass result validation.
   const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&/^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value);if(m)return status(Number(m[1]));return fail('invalid HTTP status');};
   const statusLine=value=>{const code=status(value);return typeof value==='string'?value:'HTTP/1.1 '+code+' '+({200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error'}[code]||'Status');};
   function view(value){
@@ -232,8 +228,6 @@ return (function(config,host,run){
   }
   const request=view(host.request),response=view(host.response);
   let completed=false;
-  // Modified: 2026-11-02 (chance). Validation does not consume completion;
-  // author catch/fallback may retry until a result is submitted to the host.
   const finish=value=>{completed=true;return host.done(value);};
   function message(value,synthetic){
     if(!value||typeof value!=='object'||Array.isArray(value))return fail('completion requires an object');
@@ -244,12 +238,8 @@ return (function(config,host,run){
     if(own(out,'headers')){if(!out.headers||typeof out.headers!=='object'||Array.isArray(out.headers))fail('completion headers require a dictionary');out.headers=Object.assign({},headers(out.headers));}
     if(own(out,'bodyBytes')){out.body=bytes(out.bodyBytes);delete out.bodyBytes;}
     if(binary(out.body)){if(target.binaryField==='bodyBytes'){out.bodyBytes=buffer(out.body);delete out.body;}else out.body=bytes(out.body);}
-    // Modified: 2026-11-02 (chance). User-authorized Surge omissions keep
-    // ordinary completion working when optional source fields lack target APIs.
     if(config.to==='surge')for(const key of ['h2_trailers','node','policy'])delete out[key];
     for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort',...(config.to==='loon'?['h2_trailers']:[])].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
-    // Modified: 2026-11-02 (chance). Undocumented QX completion parameters
-    // follow the user's omission policy, including abort.
     if(target.completion.synthetic==='flat')delete out.abort;
     if(target.completion.synthetic==='flat'&&!synthetic&&config.phase==='response'&&own(out,'headers')&&!own(out,'body')&&!own(out,'bodyBytes')&&config.responseBody)fail('QX response-body requires body with changed headers');
     return out;
@@ -258,7 +248,6 @@ return (function(config,host,run){
     if(completed)return;
     if(value===undefined||value===null)return finish({});
     if(value===response||value===request){
-      // Return actual current fields; mutations made by author code are retained.
       const out={};for(const k of ['url','headers','body','bodyBytes','h2_trailers',source.responseStatus])if(own(value,k))out[k]=value[k];
       value=out;
     }
@@ -270,7 +259,6 @@ return (function(config,host,run){
     if(synthetic){if(target.completion.synthetic==='flat'){if(config.phase!=='echo')fail('QX synthetic response requires an echo declaration');return finish(out);}return finish({response:out});}
     return finish(out);
   }
-  // ScriptHub-style native transport bridge, with complete method/error contracts.
   function transport(input,style,method){
     if(typeof input==='string')input={url:input};
     if(!input||typeof input!=='object'||typeof input.url!=='string')return fail('HTTP request requires url');
@@ -284,8 +272,6 @@ return (function(config,host,run){
     const mapped={};
     for(const semantic of ['redirect','cookie','tls'])mapped[target.http[semantic]]=own(options,http[semantic])?options[http[semantic]]:http.defaults[semantic];
     if(own(options,http.policy))mapped[target.http.policy]=options[http.policy]===http.directPolicy?target.http.directPolicy:options[http.policy];
-    // Modified: 2026-11-02 (chance). Decode the documented source body-base64
-    // value into the target's byte body instead of dropping its meaning.
     if(style==='callback'&&input['body-base64']&&config.from!==config.to){
       if(typeof input.body!=='string')fail('body-base64 requires a String body');
       const raw=host.codecs.atob(input.body),data=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)data[i]=raw.charCodeAt(i);
@@ -297,8 +283,6 @@ return (function(config,host,run){
     }
     Object.assign(req,mapped);
     if(http.timeoutMs!==null&&target.http.timeoutMs!==null&&own(input,'timeout'))req.timeout=input.timeout*http.timeoutMs/target.http.timeoutMs;
-    // Modified: 2026-11-02 (chance). Omit foreign ALPN selection
-    // on Surge under the explicit user policy.
     for(const key of ['binary-mode','body-base64','alpn'])if(style==='callback'&&own(input,key)&&(key!=='body-base64'||config.from===config.to)&&(key!=='alpn'||config.from===config.to))req[key]=input[key];
     if(style==='promise')req['binary-mode']=true;
     return {req,verb};
@@ -344,20 +328,14 @@ return (function(config,host,run){
     key=storageKey(key);if(value===null||(value===undefined&&source.store.undefinedDeletes))return target.store.remove?nativeStore[target.store.remove](key):nativeStore[target.store.write](null,key);
     if(typeof value!=='string')return fail('storage value must be String or deletion marker');return nativeStore[target.store.write](value,key);
   }};
-  // Modified: 2026-11-02 (chance). Loon remove clears all data, never just
-  // this script's default key. User authorizes ignoring this call on Surge.
   store.remove=()=>{if(config.to==='loon')return host.store.remove();if(config.to==='qx'){host.prefs.removeAllValues();return;}return;};
   const prefKey=key=>typeof key==='string'?key:fail('QX storage requires an explicit String key');
   const prefs={valueForKey:key=>store.read(prefKey(key)),setValueForKey:(value,key)=>{key=prefKey(key);if(typeof value!=='string')return fail('QX storage value must be String');return store.write(value,key);},removeValueForKey:key=>target.store.remove?nativeStore[target.store.remove](prefKey(key)):nativeStore[target.store.write](null,prefKey(key))};
-  // Modified: 2026-11-02 (chance). Native QX clear-all is real; other hosts
-  // cannot reproduce it by deleting only keys observed by this adapter.
   if(config.from==='qx'&&config.to==='surge')prefs.removeAllValues=()=>undefined;
   if(config.from==='qx'&&config.to==='qx'&&host.prefs&&typeof host.prefs.removeAllValues==='function')prefs.removeAllValues=host.prefs.removeAllValues.bind(host.prefs);
   function notify(title='',subtitle='',body='',option,delay){
     if(config.apiPlan.omitNotificationOptions)return target.notification.root==='$notify'?host.notifyQx(title,subtitle,body):host.notify.post(title,subtitle,body);
     if(config.from===config.to)return host.notify.post(title,subtitle,body,option,delay);
-    // Modified: 2026-11-02 (chance). Ignore delay and click actions on Surge;
-    // retain notification content and map supported remote/inline image media.
     const raw=typeof option==='object'&&option!==null?option:{},mapped={};
     const media=raw.mediaUrl;
     if(typeof media==='string'){
@@ -379,8 +357,6 @@ return (function(config,host,run){
   const script=config.from==='qx'?undefined:Object.assign({},host.script,{name:config.name||host.script&&host.script.name});
   if(script&&script.startTime!==undefined){const t=script.startTime;script.startTime=t instanceof Date?t:new Date(t*1000);}
   const environment=Object.assign({},host.environment);delete environment['surge-version'];delete environment['surge-build'];delete environment['stash-version'];
-  // Modified: 2026-11-02 (chance). Source software version/path metadata is
-  // intentionally omitted; retain source presence and real available timestamps.
   const overlay={
     $request:request,$response:response,$done:done,$script:script,
     $task:config.from==='qx'?{fetch:taskFetch}:undefined,$httpClient:config.from==='qx'?undefined:http,
@@ -388,12 +364,8 @@ return (function(config,host,run){
     $notify:config.from==='qx'?notify:undefined,$notification:config.from==='qx'?undefined:{post:notify},
     $argument:argument,$environment:environment,$loon:config.from==='loon'?(host.loon||'Loon (WayX API compatibility)'):undefined,
   };
-  // Modified: 2026-11-02 (chance). Loon crypto/compression use pinned providers;
-  // excluded DNS/IP services receive no compatibility bindings.
   if(config.from==='loon'){
     overlay.$utils=(function(host,config){
-  // Modified: 2026-11-02 (chance). A complete native Loon object retains its
-  // own identity, method receivers, descriptors and original parameter errors.
   if(config.from===config.to&&host.utils&&typeof host.utils.gzip==='function'&&typeof host.utils.ungzip==='function')return host.utils;
   let provider;
   const proto=Object.getPrototypeOf(Uint8Array.prototype);
@@ -409,9 +381,6 @@ return (function(config,host,run){
     try{
       if(!provider)provider=host.compression();
       if(method==='gzip')return provider.gzip(input);
-      // Modified: 2026-11-02 (chance). Require gzip and stream completion;
-      // Pako's convenience ungzip also accepts zlib and may return undefined
-      // for a truncated stream. Leave member/CRC/trailer parsing to Pako.
       const inflater=new provider.Inflate({windowBits:31});
       inflater.push(input,true);
       if(inflater.err||!inflater.ended||!inflater.result)throw new Error(inflater.msg||'incomplete gzip stream');
@@ -455,8 +424,6 @@ return (function(config,host,run){
 })(host,config);
   }
   if(config.from==='loon')overlay.setInterval=(fn,delay,...args)=>host.setTimeout(fn,delay,...args);
-  // Modified: 2026-11-02 (chance). Shared codecs prefer native decoding and
-  // provide standard legacy labels; URL classes are initialized together lazily.
   overlay.TextDecoder=host.codecs.TextDecoder;
   let standards;for(const name of ['URL','URLSearchParams']){
     const set=value=>Object.defineProperty(overlay,name,{value,writable:true,enumerable:true,configurable:true});

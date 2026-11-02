@@ -13,7 +13,6 @@
 # Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/KuGou_remove_ads.lpx
-# Target: Surge
 
 # [WayX] 上游错误 / UPSTREAM ERROR CORRECTED [jq-identity-end-whitespace]: inserted missing whitespace; original failed jq compilation, corrected program compiled successfully.
 # Original upstream jq: def namesToRemove:["AI帮唱","长相思2","K歌","小说","游戏"];def removeParentIfNameMatches:if type=="object"then with_entries(select(.value|(type=="object"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else .end;removeParentIfNameMatches

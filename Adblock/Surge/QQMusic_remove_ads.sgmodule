@@ -12,7 +12,6 @@
 # Converted: 2026-10-04 18:36:26 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/QQMusic_remove_ads.lpx
-# Target: Surge
 
 [Rule]
 DOMAIN,adstats.tencentmusic.com,REJECT,extended-matching,pre-matching

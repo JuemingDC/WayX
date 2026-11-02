@@ -13,7 +13,6 @@
 # Converted: 2026-10-25 17:18:11 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Weixin_Official_Accounts_remove_ads.lpx
-# Target: Surge
 
 [Rule]
 DOMAIN-SUFFIX,wxs.qq.com,REJECT,extended-matching,pre-matching

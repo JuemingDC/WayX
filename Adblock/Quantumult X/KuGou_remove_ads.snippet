@@ -11,7 +11,6 @@
 # Converted by: chance
 # Category: 去广告
 # Source: https://kelee.one/Tool/Loon/Lpx/KuGou_remove_ads.lpx
-# Target: Quantumult X
 
 # [WayX] 上游错误 / UPSTREAM ERROR CORRECTED [jq-identity-end-whitespace]: inserted missing whitespace; original failed jq compilation, corrected program compiled successfully.
 # Original upstream jq: def namesToRemove:["AI帮唱","长相思2","K歌","小说","游戏"];def removeParentIfNameMatches:if type=="object"then with_entries(select(.value|(type=="object"and .name as $name|$name|IN(namesToRemove[])|not)))|map_values(removeParentIfNameMatches)else .end;removeParentIfNameMatches

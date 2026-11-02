@@ -12,7 +12,6 @@
 # Converted: 2026-10-25 17:18:10 +08:00
 # Converted by: chance
 # Source: https://kelee.one/Tool/Loon/Lpx/Line_remove_ads.lpx
-# Target: Surge
 
 [Rule]
 URL-REGEX,^https:\/\/a\.line\.me\/er\/lads\/v\d\/ei\?,REJECT-TINYGIF,extended-matching
