@@ -22,19 +22,19 @@
 
 [Script]
 # 设置中心页面 + 漫画查看器 (GET 请求，脚本内联直出 HTML，0ms 离线瞬时秒开)
-Pixiv.Enhanced.SettingsAPI = type=http-request,pattern=^https:\/\/(app-api|www)\.pixiv\.net\/(settings\/Enhanced|manga\/viewer),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c29ecf653b69d224f412b9b4b229eadbc789c8b181950eac0ac70658859b17f6/pixiv_enhanced.js,timeout=10
+Pixiv.Enhanced.SettingsAPI = type=http-request,pattern=^https:\/\/(app-api|www)\.pixiv\.net\/(settings\/Enhanced|manga\/viewer),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c29ecf653b69/pixiv_enhanced.js,timeout=10
 
 # 设置中心 API 存取与测速 (POST 请求，需读取请求体)
-Pixiv.Enhanced.SettingsAPI = type=http-request,pattern=^https:\/\/(app-api|www)\.pixiv\.net\/api\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c29ecf653b69d224f412b9b4b229eadbc789c8b181950eac0ac70658859b17f6/pixiv_enhanced.js,requires-body=true,max-size=-1,timeout=10
+Pixiv.Enhanced.SettingsAPI = type=http-request,pattern=^https:\/\/(app-api|www)\.pixiv\.net\/api\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c29ecf653b69/pixiv_enhanced.js,requires-body=true,max-size=-1,timeout=10
 
 # 全页面 REST API 响应体汉化拦截器（全覆盖首页home/推荐/榜单/详情/评论v3/画师主页/特辑/漫画/小说/冷启动流）
-Pixiv.Enhanced.ApiTranslate = type=http-response,pattern=^https:\/\/app-api\.pixiv\.net\/v[1-3]\/(illust|manga|novel|user|search|trending-tags|spotlight|home|walkthrough),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c29ecf653b69d224f412b9b4b229eadbc789c8b181950eac0ac70658859b17f6/pixiv_enhanced.js,requires-body=true,max-size=-1,timeout=10
+Pixiv.Enhanced.ApiTranslate = type=http-response,pattern=^https:\/\/app-api\.pixiv\.net\/v[1-3]\/(illust|manga|novel|user|search|trending-tags|spotlight|home|walkthrough),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c29ecf653b69/pixiv_enhanced.js,requires-body=true,max-size=-1,timeout=10
 
 # 小说阅读器 & 页面注入 iOS SF Symbols「文/A」悬浮按钮与排版引擎
-Pixiv.Enhanced.WebviewInject = type=http-response,pattern=^https:\/\/app-api\.pixiv\.net\/webview\/v2\/novel,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c29ecf653b69d224f412b9b4b229eadbc789c8b181950eac0ac70658859b17f6/pixiv_enhanced.js,requires-body=true,max-size=-1,timeout=10
+Pixiv.Enhanced.WebviewInject = type=http-response,pattern=^https:\/\/app-api\.pixiv\.net\/webview\/v2\/novel,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c29ecf653b69/pixiv_enhanced.js,requires-body=true,max-size=-1,timeout=10
 
 # 翻译中转网关与 AI 视觉漫翻端点
-Pixiv.Enhanced.Proxy = type=http-request,pattern=^https:\/\/(app-api|www)\.pixiv\.net\/pxtrans,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c29ecf653b69d224f412b9b4b229eadbc789c8b181950eac0ac70658859b17f6/pixiv_enhanced.js,requires-body=true,max-size=-1,timeout=10
+Pixiv.Enhanced.Proxy = type=http-request,pattern=^https:\/\/(app-api|www)\.pixiv\.net\/pxtrans,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c29ecf653b69/pixiv_enhanced.js,requires-body=true,max-size=-1,timeout=10
 
 [MITM]
 hostname = %APPEND% app-api.pixiv.net, app.pixiv.help, policies.pixiv.net, www.pixiv.net

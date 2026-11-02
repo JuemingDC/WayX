@@ -61,7 +61,7 @@ http-response-jq ^https?:\/\/(g-)?acs\.m\.goofish\.com\/gw\/mtop.taobao.idlemtop
 http-response-jq ^https?:\/\/(g-)?acs\.m\.goofish\.com\/gw\/mtop.taobao.idle.item.recommend '.data.cardList |= map(select(.cardData.bizType != "mamaAD"))'
 
 [Script]
-ddgksf2013_goofishads_1 = type=http-response,pattern="^http:\/\/[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){1,4}(:\d+)?\/amdc\/mobileDispatch",script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/ef90ca68bf9216b4289ad0997bf4b0c8bf5b92b79d4e419a1f206cce601dc019/amdc.js,requires-body=true
+ddgksf2013_goofishads_1 = type=http-response,pattern="^http:\/\/[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){1,4}(:\d+)?\/amdc\/mobileDispatch",script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-ef90ca68bf92/amdc.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% acs.m.goofish.com, g-acs.m.goofish.com

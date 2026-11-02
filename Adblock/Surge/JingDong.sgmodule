@@ -27,7 +27,7 @@ http-response-jq (?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart
 [Script]
 #!REQUIREMENT "'{{{Capture}}}'=='true'" manmanbuy_cookies = type=http-request,pattern=(?i)^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$,script-path=https://rucu6.pages.dev/Scripts/manmanbuy_ck.js,requires-body=true,max-size=-1,timeout=20
 jingdong_noad = type=http-response,pattern=(?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-4c456c6aa61a/jingdong.js,requires-body=true,max-size=-1,timeout=20
-jd_price = type=http-response,pattern=(?i)^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c93a9fa5ed13c4398531edbf5b19305907661f85ee5fc0465566111ede6eee36/jd_price.js,requires-body=true,max-size=-1,timeout=20,argument="{\"Cookies\":\"{{{Cookies}}}\"}"
+jd_price = type=http-response,pattern=(?i)^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-c93a9fa5ed13/jd_price.js,requires-body=true,max-size=-1,timeout=20,argument="{\"Cookies\":\"{{{Cookies}}}\"}"
 
 [MITM]
 hostname = %APPEND% apapia-sqk-weblogic.manmanbuy.com, api.m.jd.com, in.m.jd.com

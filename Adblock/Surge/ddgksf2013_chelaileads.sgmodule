@@ -48,7 +48,7 @@
 ^https?:\/\/atrace\.chelaile\.net\.cn\/(wx_preloadAd|adAnalysis) data-type=text data="" status-code=200
 
 [Script]
-ddgksf2013_chelaileads_1 = type=http-response,pattern=^https?:\/\/.*chelaile\.net\.cn\/goocity\/city!,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/e5c5def3fc5ea2b2648759d0a31862b655d9eb650f39d385d5d2a968dcb66717/chelaile.js,requires-body=true
+ddgksf2013_chelaileads_1 = type=http-response,pattern=^https?:\/\/.*chelaile\.net\.cn\/goocity\/city!,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-e5c5def3fc5e/chelaile.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% web.chelaile.net.cn, api.chelaile.net.cn, cdn.api.chelaile.net.cn,cdn.web.chelaile.net.cn, atrace.chelaile.net.cn

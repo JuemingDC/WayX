@@ -60,12 +60,8 @@
     ],
     "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "no provable host branch"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
       "qx": {
@@ -76,9 +72,9 @@
         "analysisSourceSha256": "7a0f7976a4b8f47649684cc382832e425610e924e0fdc11ea2e06b1ebd2cbacf",
         "operations": [
           {
-            "id": "read:53",
-            "rule": "request.header.lookup",
-            "kind": "header",
+            "id": "api:0",
+            "rule": "request.headers",
+            "kind": "context",
             "source": {
               "api": "$request.headers.rpid",
               "start": 53,
@@ -87,23 +83,24 @@
               "column": 12,
               "access": "read",
               "memberPath": [
+                "headers",
                 "rpid"
               ]
             },
-            "canonical": "request.header.lookup",
-            "value": "header String / missing",
+            "canonical": "request.headers",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:78",
-            "rule": "request.header.lookup",
-            "kind": "header",
+            "id": "api:1",
+            "rule": "request.headers",
+            "kind": "context",
             "source": {
               "api": "$request.headers.Rpid",
               "start": 78,
@@ -112,21 +109,22 @@
               "column": 37,
               "access": "read",
               "memberPath": [
+                "headers",
                 "Rpid"
               ]
             },
-            "canonical": "request.header.lookup",
-            "value": "header String / missing",
+            "canonical": "request.headers",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:152",
+            "id": "api:2",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -139,26 +137,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "status",
-                "canonical": "complete.status",
-                "target": "status",
-                "action": "map",
-                "transform": "parse status then format HTTP status line"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:196",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -171,13 +160,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -191,9 +180,9 @@
         "analysisSourceSha256": "7a0f7976a4b8f47649684cc382832e425610e924e0fdc11ea2e06b1ebd2cbacf",
         "operations": [
           {
-            "id": "read:53",
-            "rule": "request.header.lookup",
-            "kind": "header",
+            "id": "api:0",
+            "rule": "request.headers",
+            "kind": "context",
             "source": {
               "api": "$request.headers.rpid",
               "start": 53,
@@ -202,29 +191,24 @@
               "column": 12,
               "access": "read",
               "memberPath": [
+                "headers",
                 "rpid"
               ]
             },
-            "canonical": "request.header.lookup",
-            "value": "header String / missing",
+            "canonical": "request.headers",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:78",
-            "rule": "request.header.lookup",
-            "kind": "header",
+            "id": "api:1",
+            "rule": "request.headers",
+            "kind": "context",
             "source": {
               "api": "$request.headers.Rpid",
               "start": 78,
@@ -233,27 +217,22 @@
               "column": 37,
               "access": "read",
               "memberPath": [
+                "headers",
                 "Rpid"
               ]
             },
-            "canonical": "request.header.lookup",
-            "value": "header String / missing",
+            "canonical": "request.headers",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:152",
+            "id": "api:2",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -266,26 +245,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "status",
-                "canonical": "complete.status",
-                "target": "status",
-                "action": "map",
-                "transform": "parse status to Number"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:196",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -298,31 +268,19 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "headers-shape",
-            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-          }
-        ]
+        "diagnostics": []
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "headers-shape",
-      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-    }
-  ]
+  "diagnostics": []
 }

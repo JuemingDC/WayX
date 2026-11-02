@@ -102,30 +102,10 @@
         ]
       }
     ],
-    "diagnostics": [
-      {
-        "api": "atob",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "atob",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "WebAssembly",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      }
-    ]
+    "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "no provable host branch"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
       "qx": {
@@ -136,7 +116,7 @@
         "analysisSourceSha256": "58668f38684df224e19d4f9c78e37c29c13c151359e1d9ea03f1138d0ab32b02",
         "operations": [
           {
-            "id": "read:280206",
+            "id": "api:0",
             "rule": "codec.atob",
             "kind": "codec",
             "source": {
@@ -149,23 +129,17 @@
               "memberPath": []
             },
             "canonical": "codec.atob",
-            "value": "UTF-8/Base64",
+            "value": "runtime value",
             "target": {
               "api": "atob",
-              "lowering": "shared scoped standard implementation",
-              "proof": "closed-codec-and-pristine-intrinsics-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "atob",
-                "reason": "Direct host/global access bypasses lexical API bindings",
-                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:280284",
+            "id": "api:1",
             "rule": "codec.atob",
             "kind": "codec",
             "source": {
@@ -178,23 +152,17 @@
               "memberPath": []
             },
             "canonical": "codec.atob",
-            "value": "UTF-8/Base64",
+            "value": "runtime value",
             "target": {
               "api": "atob",
-              "lowering": "shared scoped standard implementation",
-              "proof": "closed-codec-and-pristine-intrinsics-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "atob",
-                "reason": "Direct host/global access bypasses lexical API bindings",
-                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:280557",
+            "id": "api:2",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -208,24 +176,18 @@
                 "instantiate"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "WebAssembly",
-                "reason": "Direct host/global access bypasses lexical API bindings",
-                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:281703",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -238,18 +200,18 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:281738",
-            "rule": "response.bytes",
+            "id": "api:4",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -258,21 +220,23 @@
               "line": 66,
               "column": 14,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
-              "api": "$response.bodyBytes",
-              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "api": "$response.body",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:281815",
-            "rule": "response.bytes",
+            "id": "api:5",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -281,21 +245,23 @@
               "line": 67,
               "column": 41,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
-              "api": "$response.bodyBytes",
-              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "api": "$response.body",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:281862",
-            "rule": "response.bytes",
+            "id": "api:6",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -304,20 +270,22 @@
               "line": 68,
               "column": 31,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
-              "api": "$response.bodyBytes",
-              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "api": "$response.body",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:282017",
+            "id": "api:7",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -330,48 +298,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "bodyBytes",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "atob",
-            "reason": "Direct host/global access bypasses lexical API bindings",
-            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-          },
-          {
-            "api": "WebAssembly",
-            "reason": "Direct host/global access bypasses lexical API bindings",
-            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-          }
-        ]
+        "diagnostics": []
       },
       "surge": {
         "version": 1,
@@ -381,7 +318,7 @@
         "analysisSourceSha256": "58668f38684df224e19d4f9c78e37c29c13c151359e1d9ea03f1138d0ab32b02",
         "operations": [
           {
-            "id": "read:280206",
+            "id": "api:0",
             "rule": "codec.atob",
             "kind": "codec",
             "source": {
@@ -394,23 +331,17 @@
               "memberPath": []
             },
             "canonical": "codec.atob",
-            "value": "UTF-8/Base64",
+            "value": "runtime value",
             "target": {
               "api": "atob",
-              "lowering": "shared scoped standard implementation",
-              "proof": "closed-codec-and-pristine-intrinsics-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "atob",
-                "reason": "Direct host/global access bypasses lexical API bindings",
-                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:280284",
+            "id": "api:1",
             "rule": "codec.atob",
             "kind": "codec",
             "source": {
@@ -423,23 +354,17 @@
               "memberPath": []
             },
             "canonical": "codec.atob",
-            "value": "UTF-8/Base64",
+            "value": "runtime value",
             "target": {
               "api": "atob",
-              "lowering": "shared scoped standard implementation",
-              "proof": "closed-codec-and-pristine-intrinsics-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "atob",
-                "reason": "Direct host/global access bypasses lexical API bindings",
-                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:280557",
+            "id": "api:2",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -453,24 +378,18 @@
                 "instantiate"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "WebAssembly",
-                "reason": "Direct host/global access bypasses lexical API bindings",
-                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:281703",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -483,18 +402,18 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:281738",
-            "rule": "response.bytes",
+            "id": "api:4",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -503,21 +422,23 @@
               "line": 66,
               "column": 14,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:281815",
-            "rule": "response.bytes",
+            "id": "api:5",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -526,21 +447,23 @@
               "line": 67,
               "column": 41,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:281862",
-            "rule": "response.bytes",
+            "id": "api:6",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -549,20 +472,22 @@
               "line": 68,
               "column": 31,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:282017",
+            "id": "api:7",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -575,48 +500,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "body",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "atob",
-            "reason": "Direct host/global access bypasses lexical API bindings",
-            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-          },
-          {
-            "api": "WebAssembly",
-            "reason": "Direct host/global access bypasses lexical API bindings",
-            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-          }
-        ]
+        "diagnostics": []
       },
       "loon": {
         "version": 1,
@@ -626,7 +520,7 @@
         "analysisSourceSha256": "58668f38684df224e19d4f9c78e37c29c13c151359e1d9ea03f1138d0ab32b02",
         "operations": [
           {
-            "id": "read:280206",
+            "id": "api:0",
             "rule": "codec.atob",
             "kind": "codec",
             "source": {
@@ -639,17 +533,17 @@
               "memberPath": []
             },
             "canonical": "codec.atob",
-            "value": "UTF-8/Base64",
+            "value": "runtime value",
             "target": {
               "api": "atob",
-              "lowering": "shared scoped standard implementation",
-              "proof": "closed-codec-and-pristine-intrinsics-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:280284",
+            "id": "api:1",
             "rule": "codec.atob",
             "kind": "codec",
             "source": {
@@ -662,17 +556,17 @@
               "memberPath": []
             },
             "canonical": "codec.atob",
-            "value": "UTF-8/Base64",
+            "value": "runtime value",
             "target": {
               "api": "atob",
-              "lowering": "shared scoped standard implementation",
-              "proof": "closed-codec-and-pristine-intrinsics-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:280557",
+            "id": "api:2",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -686,18 +580,18 @@
                 "instantiate"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:281703",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -710,18 +604,18 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:281738",
-            "rule": "response.bytes",
+            "id": "api:4",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -730,21 +624,23 @@
               "line": 66,
               "column": 14,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:281815",
-            "rule": "response.bytes",
+            "id": "api:5",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -753,21 +649,23 @@
               "line": 67,
               "column": 41,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:281862",
-            "rule": "response.bytes",
+            "id": "api:6",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -776,20 +674,22 @@
               "line": 68,
               "column": 31,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:282017",
+            "id": "api:7",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -802,33 +702,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "body",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -836,26 +716,5 @@
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "atob",
-      "reason": "qx: Direct host/global access bypasses lexical API bindings",
-      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-    },
-    {
-      "api": "WebAssembly",
-      "reason": "qx: Direct host/global access bypasses lexical API bindings",
-      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-    },
-    {
-      "api": "atob",
-      "reason": "surge: Direct host/global access bypasses lexical API bindings",
-      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-    },
-    {
-      "api": "WebAssembly",
-      "reason": "surge: Direct host/global access bypasses lexical API bindings",
-      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-    }
-  ]
+  "diagnostics": []
 }

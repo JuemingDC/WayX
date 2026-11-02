@@ -35,7 +35,7 @@
       },
       {
         "api": "URLSearchParams",
-        "access": "construct",
+        "access": "call",
         "start": 140,
         "end": 168,
         "line": 7,
@@ -80,20 +80,10 @@
         ]
       }
     ],
-    "diagnostics": [
-      {
-        "api": "URLSearchParams",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      }
-    ]
+    "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "no provable host branch"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
       "qx": {
@@ -104,7 +94,7 @@
         "analysisSourceSha256": "3b6deac141eb59cee95aec3bfec295bcfc33b60c8a9710975643f40f97c358d9",
         "operations": [
           {
-            "id": "read:33",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -114,20 +104,22 @@
               "line": 3,
               "column": 13,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:63",
+            "id": "api:1",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -137,20 +129,22 @@
               "line": 4,
               "column": 17,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "request.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.body",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "construct:140",
+            "id": "api:2",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -159,27 +153,21 @@
               "end": 168,
               "line": 7,
               "column": 18,
-              "access": "construct",
+              "access": "call",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "URLSearchParams",
-                "reason": "Direct host/global access bypasses lexical API bindings",
-                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:301",
+            "id": "api:3",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -189,46 +177,22 @@
               "line": 14,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "post"
+              ]
             },
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
-            "value": "notification request; delivery is not guaranteed",
+            "value": "runtime value",
             "target": {
               "api": "$notify",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
-              "proof": "notification-option-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "notify.title",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "notify.subtitle",
-                "target": "argument1",
-                "action": "map"
-              },
-              {
-                "source": "argument2",
-                "canonical": "notify.body",
-                "target": "argument2",
-                "action": "map"
-              },
-              {
-                "source": "argument3",
-                "canonical": "notify.options",
-                "target": null,
-                "action": "omit"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:384",
+            "id": "api:4",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -238,46 +202,22 @@
               "line": 16,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "post"
+              ]
             },
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
-            "value": "notification request; delivery is not guaranteed",
+            "value": "runtime value",
             "target": {
               "api": "$notify",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
-              "proof": "notification-option-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "notify.title",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "notify.subtitle",
-                "target": "argument1",
-                "action": "map"
-              },
-              {
-                "source": "argument2",
-                "canonical": "notify.body",
-                "target": "argument2",
-                "action": "map"
-              },
-              {
-                "source": "argument3",
-                "canonical": "notify.options",
-                "target": null,
-                "action": "omit"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:472",
+            "id": "api:5",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -290,23 +230,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "URLSearchParams",
-            "reason": "Direct host/global access bypasses lexical API bindings",
-            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-          }
-        ]
+        "diagnostics": []
       },
       "surge": {
         "version": 1,
@@ -316,7 +250,7 @@
         "analysisSourceSha256": "3b6deac141eb59cee95aec3bfec295bcfc33b60c8a9710975643f40f97c358d9",
         "operations": [
           {
-            "id": "read:33",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -326,20 +260,22 @@
               "line": 3,
               "column": 13,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:63",
+            "id": "api:1",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -349,20 +285,22 @@
               "line": 4,
               "column": 17,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "request.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.body",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "construct:140",
+            "id": "api:2",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -371,27 +309,21 @@
               "end": 168,
               "line": 7,
               "column": 18,
-              "access": "construct",
+              "access": "call",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "URLSearchParams",
-                "reason": "Direct host/global access bypasses lexical API bindings",
-                "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:301",
+            "id": "api:3",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -401,58 +333,22 @@
               "line": 14,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "post"
+              ]
             },
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
-            "value": "notification request; delivery is not guaranteed",
+            "value": "runtime value",
             "target": {
               "api": "$notification.post",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
-              "proof": "notification-option-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "notify.title",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "notify.subtitle",
-                "target": "argument1",
-                "action": "map"
-              },
-              {
-                "source": "argument2",
-                "canonical": "notify.body",
-                "target": "argument2",
-                "action": "map"
-              },
-              {
-                "source": "argument3.openUrl",
-                "canonical": "notify.openURL",
-                "target": "argument3.url",
-                "action": "map"
-              },
-              {
-                "source": "argument3.clipboard",
-                "canonical": "notify.unknown",
-                "target": null,
-                "action": "unresolved"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:384",
+            "id": "api:4",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -462,52 +358,22 @@
               "line": 16,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "post"
+              ]
             },
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
-            "value": "notification request; delivery is not guaranteed",
+            "value": "runtime value",
             "target": {
               "api": "$notification.post",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
-              "proof": "notification-option-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "notify.title",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "notify.subtitle",
-                "target": "argument1",
-                "action": "map"
-              },
-              {
-                "source": "argument2",
-                "canonical": "notify.body",
-                "target": "argument2",
-                "action": "map"
-              },
-              {
-                "source": "argument3",
-                "canonical": "notify.options",
-                "target": null,
-                "action": "unresolved"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$notification.post",
-                "reason": "Notification attachments/actions/delay differ across clients",
-                "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:472",
+            "id": "api:5",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -520,28 +386,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "URLSearchParams",
-            "reason": "Direct host/global access bypasses lexical API bindings",
-            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-          },
-          {
-            "api": "$notification.post",
-            "reason": "Notification attachments/actions/delay differ across clients",
-            "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-          }
-        ]
+        "diagnostics": []
       },
       "loon": {
         "version": 1,
@@ -551,7 +406,7 @@
         "analysisSourceSha256": "3b6deac141eb59cee95aec3bfec295bcfc33b60c8a9710975643f40f97c358d9",
         "operations": [
           {
-            "id": "read:33",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -561,20 +416,22 @@
               "line": 3,
               "column": 13,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:63",
+            "id": "api:1",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -584,20 +441,22 @@
               "line": 4,
               "column": 17,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "request.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.body",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "construct:140",
+            "id": "api:2",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -606,21 +465,21 @@
               "end": 168,
               "line": 7,
               "column": 18,
-              "access": "construct",
+              "access": "call",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:301",
+            "id": "api:3",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -630,52 +489,22 @@
               "line": 14,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "post"
+              ]
             },
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
-            "value": "notification request; delivery is not guaranteed",
+            "value": "runtime value",
             "target": {
               "api": "$notification.post",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
-              "proof": "notification-option-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "notify.title",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "notify.subtitle",
-                "target": "argument1",
-                "action": "map"
-              },
-              {
-                "source": "argument2",
-                "canonical": "notify.body",
-                "target": "argument2",
-                "action": "map"
-              },
-              {
-                "source": "argument3.openUrl",
-                "canonical": "notify.openURL",
-                "target": "argument3.openUrl",
-                "action": "map"
-              },
-              {
-                "source": "argument3.clipboard",
-                "canonical": "notify.unknown",
-                "target": null,
-                "action": "unresolved"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:384",
+            "id": "api:4",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -685,46 +514,22 @@
               "line": 16,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "post"
+              ]
             },
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
-            "value": "notification request; delivery is not guaranteed",
+            "value": "runtime value",
             "target": {
               "api": "$notification.post",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
-              "proof": "notification-option-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "notify.title",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "notify.subtitle",
-                "target": "argument1",
-                "action": "map"
-              },
-              {
-                "source": "argument2",
-                "canonical": "notify.body",
-                "target": "argument2",
-                "action": "map"
-              },
-              {
-                "source": "argument3",
-                "canonical": "notify.options",
-                "target": null,
-                "action": "unresolved"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:472",
+            "id": "api:5",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -737,13 +542,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -751,21 +556,5 @@
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "URLSearchParams",
-      "reason": "qx: Direct host/global access bypasses lexical API bindings",
-      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-    },
-    {
-      "api": "URLSearchParams",
-      "reason": "surge: Direct host/global access bypasses lexical API bindings",
-      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-    },
-    {
-      "api": "$notification.post",
-      "reason": "surge: Notification attachments/actions/delay differ across clients",
-      "solution": "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof"
-    }
-  ]
+  "diagnostics": []
 }

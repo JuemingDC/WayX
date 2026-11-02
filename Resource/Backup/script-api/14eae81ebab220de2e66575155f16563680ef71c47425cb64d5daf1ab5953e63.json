@@ -249,12 +249,8 @@
     ],
     "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "no provable host branch"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
       "qx": {
@@ -265,7 +261,7 @@
         "analysisSourceSha256": "c38d1edb0b923f15149741591a818e750e201be38994efcf897a7d52239bff97",
         "operations": [
           {
-            "id": "read:33",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -275,20 +271,22 @@
               "line": 3,
               "column": 13,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:52",
+            "id": "api:1",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -298,20 +296,22 @@
               "line": 4,
               "column": 6,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:68",
+            "id": "api:2",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -324,17 +324,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:100",
+            "id": "api:3",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -344,20 +344,22 @@
               "line": 5,
               "column": 22,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:228",
+            "id": "api:4",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -367,34 +369,22 @@
               "line": 9,
               "column": 33,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:637",
+            "id": "api:5",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -404,34 +394,22 @@
               "line": 19,
               "column": 39,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:3501",
+            "id": "api:6",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -441,34 +419,22 @@
               "line": 93,
               "column": 13,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.setValueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:3720",
+            "id": "api:7",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -478,34 +444,22 @@
               "line": 101,
               "column": 30,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:9125",
+            "id": "api:8",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -515,34 +469,22 @@
               "line": 246,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.setValueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:9250",
+            "id": "api:9",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -552,34 +494,22 @@
               "line": 248,
               "column": 36,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:9712",
+            "id": "api:10",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -589,34 +519,22 @@
               "line": 261,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.setValueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:14078",
+            "id": "api:11",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -626,34 +544,22 @@
               "line": 376,
               "column": 35,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:14457",
+            "id": "api:12",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -663,34 +569,22 @@
               "line": 385,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.setValueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:14703",
+            "id": "api:13",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -700,34 +594,22 @@
               "line": 390,
               "column": 34,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:14817",
+            "id": "api:14",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -737,34 +619,22 @@
               "line": 392,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.setValueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:16024",
+            "id": "api:15",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -774,34 +644,22 @@
               "line": 433,
               "column": 30,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:16119",
+            "id": "api:16",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -811,34 +669,22 @@
               "line": 434,
               "column": 36,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:16813",
+            "id": "api:17",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -848,34 +694,22 @@
               "line": 456,
               "column": 3,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.setValueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:17084",
+            "id": "api:18",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -888,17 +722,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:17098",
+            "id": "api:19",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -911,43 +745,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "bodyBytes",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "$persistentStore.read",
-            "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-            "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-          }
-        ]
+        "diagnostics": []
       },
       "surge": {
         "version": 1,
@@ -957,7 +765,7 @@
         "analysisSourceSha256": "c38d1edb0b923f15149741591a818e750e201be38994efcf897a7d52239bff97",
         "operations": [
           {
-            "id": "read:33",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -967,20 +775,22 @@
               "line": 3,
               "column": 13,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:52",
+            "id": "api:1",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -990,20 +800,22 @@
               "line": 4,
               "column": 6,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:68",
+            "id": "api:2",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1016,17 +828,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:100",
+            "id": "api:3",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -1036,20 +848,22 @@
               "line": 5,
               "column": 22,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:228",
+            "id": "api:4",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1059,34 +873,22 @@
               "line": 9,
               "column": 33,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:637",
+            "id": "api:5",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1096,34 +898,22 @@
               "line": 19,
               "column": 39,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:3501",
+            "id": "api:6",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1133,34 +923,22 @@
               "line": 93,
               "column": 13,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:3720",
+            "id": "api:7",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1170,34 +948,22 @@
               "line": 101,
               "column": 30,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:9125",
+            "id": "api:8",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1207,34 +973,22 @@
               "line": 246,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:9250",
+            "id": "api:9",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1244,34 +998,22 @@
               "line": 248,
               "column": 36,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:9712",
+            "id": "api:10",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1281,34 +1023,22 @@
               "line": 261,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:14078",
+            "id": "api:11",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1318,34 +1048,22 @@
               "line": 376,
               "column": 35,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:14457",
+            "id": "api:12",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1355,34 +1073,22 @@
               "line": 385,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:14703",
+            "id": "api:13",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1392,34 +1098,22 @@
               "line": 390,
               "column": 34,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:14817",
+            "id": "api:14",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1429,34 +1123,22 @@
               "line": 392,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:16024",
+            "id": "api:15",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1466,34 +1148,22 @@
               "line": 433,
               "column": 30,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:16119",
+            "id": "api:16",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1503,34 +1173,22 @@
               "line": 434,
               "column": 36,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:16813",
+            "id": "api:17",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1540,34 +1198,22 @@
               "line": 456,
               "column": 3,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:17084",
+            "id": "api:18",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1580,17 +1226,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:17098",
+            "id": "api:19",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1603,43 +1249,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "body",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "$persistentStore.read",
-            "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-            "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-          }
-        ]
+        "diagnostics": []
       },
       "loon": {
         "version": 1,
@@ -1649,7 +1269,7 @@
         "analysisSourceSha256": "c38d1edb0b923f15149741591a818e750e201be38994efcf897a7d52239bff97",
         "operations": [
           {
-            "id": "read:33",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -1659,20 +1279,22 @@
               "line": 3,
               "column": 13,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:52",
+            "id": "api:1",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -1682,20 +1304,22 @@
               "line": 4,
               "column": 6,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:68",
+            "id": "api:2",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1708,17 +1332,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:100",
+            "id": "api:3",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -1728,20 +1352,22 @@
               "line": 5,
               "column": 22,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:228",
+            "id": "api:4",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1751,28 +1377,22 @@
               "line": 9,
               "column": 33,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:637",
+            "id": "api:5",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1782,28 +1402,22 @@
               "line": 19,
               "column": 39,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:3501",
+            "id": "api:6",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1813,34 +1427,22 @@
               "line": 93,
               "column": 13,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:3720",
+            "id": "api:7",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1850,28 +1452,22 @@
               "line": 101,
               "column": 30,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:9125",
+            "id": "api:8",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1881,34 +1477,22 @@
               "line": 246,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:9250",
+            "id": "api:9",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1918,28 +1502,22 @@
               "line": 248,
               "column": 36,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:9712",
+            "id": "api:10",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1949,34 +1527,22 @@
               "line": 261,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:14078",
+            "id": "api:11",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1986,28 +1552,22 @@
               "line": 376,
               "column": 35,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:14457",
+            "id": "api:12",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -2017,34 +1577,22 @@
               "line": 385,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:14703",
+            "id": "api:13",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -2054,28 +1602,22 @@
               "line": 390,
               "column": 34,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:14817",
+            "id": "api:14",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -2085,34 +1627,22 @@
               "line": 392,
               "column": 5,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:16024",
+            "id": "api:15",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -2122,28 +1652,22 @@
               "line": 433,
               "column": 30,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:16119",
+            "id": "api:16",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -2153,28 +1677,22 @@
               "line": 434,
               "column": 36,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:16813",
+            "id": "api:17",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -2184,34 +1702,22 @@
               "line": 456,
               "column": 3,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:17084",
+            "id": "api:18",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -2224,17 +1730,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:17098",
+            "id": "api:19",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -2247,33 +1753,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "body",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -2281,16 +1767,5 @@
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "$persistentStore.read",
-      "reason": "qx: The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-      "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-    },
-    {
-      "api": "$persistentStore.read",
-      "reason": "surge: The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-      "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-    }
-  ]
+  "diagnostics": []
 }

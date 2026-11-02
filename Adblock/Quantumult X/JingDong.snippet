@@ -22,12 +22,12 @@
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart url jsonjq-response-body 'del(.cartLocationMap.loc_emptyCartFloor2,.emptyCartRecommendFloor)'
 # manmanbuy_cookies
 # [WayX] Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.
-^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/7db6b6fea9984e314a544a7b2072db18d5a23edf19443f4e677abf3ac1b4f829/manmanbuy_ck.js
+^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-7db6b6fea998/manmanbuy_ck.js
 # jingdong_noad
 ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-4c456c6aa61a/jingdong.js
 # jd_price
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
-^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/c93a9fa5ed13c4398531edbf5b19305907661f85ee5fc0465566111ede6eee36/jd_price.js
+^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-c93a9fa5ed13/jd_price.js
 
 # [mitm]
 hostname = apapia-sqk-weblogic.manmanbuy.com, api.m.jd.com, in.m.jd.com

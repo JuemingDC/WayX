@@ -21,17 +21,17 @@
 # YouTube去广告
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/0e06084d89adaf0d3f92e233b0f9f95d1aae4c373095783b586b5128c12dc025/YouTube_remove_ads_response.js
+^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-0e06084d89ad/YouTube_remove_ads_response.js
 
 # 请求初始化
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a8704cadd8f8f0361df0ffede9fed6cd8f1ac17fa5759aba929a79e44564dbca/YouTube_remove_ads_request.js
+^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a8704cadd8f8/YouTube_remove_ads_request.js
 
 # 请求日志事件
 # [WayX] Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.
 # [WayX] Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.
-^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a8704cadd8f8f0361df0ffede9fed6cd8f1ac17fa5759aba929a79e44564dbca/YouTube_remove_ads_request.js
+^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a8704cadd8f8/YouTube_remove_ads_request.js
 
 # [mitm]
 hostname = *.googlevideo.com, youtubei.googleapis.com

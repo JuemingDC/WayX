@@ -35,56 +35,6 @@
         ]
       },
       {
-        "api": "$request.headers",
-        "access": "read",
-        "start": 667,
-        "end": 673,
-        "line": 17,
-        "column": 33,
-        "members": [
-          "$request",
-          "headers"
-        ]
-      },
-      {
-        "api": "$request.headers",
-        "access": "read",
-        "start": 755,
-        "end": 761,
-        "line": 18,
-        "column": 33,
-        "members": [
-          "$request",
-          "headers"
-        ]
-      },
-      {
-        "api": "$request.headers[<computed>]",
-        "access": "read",
-        "start": 836,
-        "end": 853,
-        "line": 19,
-        "column": 32,
-        "members": [
-          "$request",
-          "headers",
-          "<computed:traceKey1>"
-        ]
-      },
-      {
-        "api": "$request.headers[<computed>]",
-        "access": "read",
-        "start": 893,
-        "end": 910,
-        "line": 20,
-        "column": 32,
-        "members": [
-          "$request",
-          "headers",
-          "<computed:traceKey2>"
-        ]
-      },
-      {
         "api": "$done",
         "access": "call",
         "start": 954,
@@ -166,8 +116,8 @@
     ],
     "diagnostics": []
   },
-  "specialization": null,
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {},
   "diagnostics": [
     {

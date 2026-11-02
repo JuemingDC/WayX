@@ -10,7 +10,7 @@
     "sha256": "9fba62bb23f38607739e135376c88c8276d4f26d7e1cac478ad7467cedd0590e",
     "operations": [
       {
-        "api": "$request?.[_0xc3dd0a(0xeb,'1D%(')]?.[_0xc3dd0a(0xe3,'r@dH')]",
+        "api": "$request.<runtime-key>.<runtime-key>",
         "access": "read",
         "start": 1937,
         "end": 1997,
@@ -18,8 +18,8 @@
         "column": 1623,
         "members": [
           "$request",
-          "<computed:_0xc3dd0a(0xeb,'1D%(')>",
-          "<computed:_0xc3dd0a(0xe3,'r@dH')>"
+          "<runtime-key>",
+          "<runtime-key>"
         ]
       },
       {
@@ -34,15 +34,15 @@
         ]
       },
       {
-        "api": "$response[_0xc3dd0a(0x10e,'Ludd')]['replace']",
-        "access": "read",
+        "api": "$response.<runtime-key>.replace",
+        "access": "call",
         "start": 4278,
-        "end": 4323,
+        "end": 4376,
         "line": 14,
         "column": 3964,
         "members": [
           "$response",
-          "<computed:_0xc3dd0a(0x10e,'Ludd')>",
+          "<runtime-key>",
           "replace"
         ]
       },
@@ -58,25 +58,10 @@
         ]
       }
     ],
-    "diagnostics": [
-      {
-        "api": "$request",
-        "reason": "Computed API property cannot be resolved statically",
-        "solution": "Use a static property name or retain the native script"
-      },
-      {
-        "api": "$response",
-        "reason": "Computed API property cannot be resolved statically",
-        "solution": "Use a static property name or retain the native script"
-      }
-    ]
+    "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "no provable host branch"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
       "qx": {
@@ -87,33 +72,33 @@
         "analysisSourceSha256": "9fba62bb23f38607739e135376c88c8276d4f26d7e1cac478ad7467cedd0590e",
         "operations": [
           {
-            "id": "read:1937",
-            "rule": null,
-            "kind": "unmapped",
+            "id": "api:0",
+            "rule": "request.context",
+            "kind": "context",
             "source": {
-              "api": "$request?.[_0xc3dd0a(0xeb,'1D%(')]?.[_0xc3dd0a(0xe3,'r@dH')]",
+              "api": "$request.<runtime-key>.<runtime-key>",
               "start": 1937,
               "end": 1997,
               "line": 14,
               "column": 1623,
               "access": "read",
               "memberPath": [
-                "<computed:_0xc3dd0a(0xeb,'1D%(')>",
-                "<computed:_0xc3dd0a(0xe3,'r@dH')>"
+                "<runtime-key>",
+                "<runtime-key>"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "request.context",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "$request",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:4213",
+            "id": "api:1",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -126,63 +111,43 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "bodyBytes",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4278",
-            "rule": null,
-            "kind": "unmapped",
+            "id": "api:2",
+            "rule": "response.context",
+            "kind": "context",
             "source": {
-              "api": "$response[_0xc3dd0a(0x10e,'Ludd')]['replace']",
+              "api": "$response.<runtime-key>.replace",
               "start": 4278,
-              "end": 4323,
+              "end": 4376,
               "line": 14,
               "column": 3964,
-              "access": "read",
+              "access": "call",
               "memberPath": [
-                "<computed:_0xc3dd0a(0x10e,'Ludd')>",
+                "<runtime-key>",
                 "replace"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "response.context",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "$response",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:6212",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -195,33 +160,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "bodyBytes",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -235,33 +180,33 @@
         "analysisSourceSha256": "9fba62bb23f38607739e135376c88c8276d4f26d7e1cac478ad7467cedd0590e",
         "operations": [
           {
-            "id": "read:1937",
-            "rule": null,
-            "kind": "unmapped",
+            "id": "api:0",
+            "rule": "request.context",
+            "kind": "context",
             "source": {
-              "api": "$request?.[_0xc3dd0a(0xeb,'1D%(')]?.[_0xc3dd0a(0xe3,'r@dH')]",
+              "api": "$request.<runtime-key>.<runtime-key>",
               "start": 1937,
               "end": 1997,
               "line": 14,
               "column": 1623,
               "access": "read",
               "memberPath": [
-                "<computed:_0xc3dd0a(0xeb,'1D%(')>",
-                "<computed:_0xc3dd0a(0xe3,'r@dH')>"
+                "<runtime-key>",
+                "<runtime-key>"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "request.context",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "$request",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "unmapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:4213",
+            "id": "api:1",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -274,69 +219,43 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "body",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4278",
-            "rule": null,
-            "kind": "unmapped",
+            "id": "api:2",
+            "rule": "response.context",
+            "kind": "context",
             "source": {
-              "api": "$response[_0xc3dd0a(0x10e,'Ludd')]['replace']",
+              "api": "$response.<runtime-key>.replace",
               "start": 4278,
-              "end": 4323,
+              "end": 4376,
               "line": 14,
               "column": 3964,
-              "access": "read",
+              "access": "call",
               "memberPath": [
-                "<computed:_0xc3dd0a(0x10e,'Ludd')>",
+                "<runtime-key>",
                 "replace"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "response.context",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "$response",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response",
-                "reason": "Computed API property cannot be resolved statically",
-                "solution": "Use a static property name or retain the native script"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:6212",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -349,61 +268,19 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "body",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "$request",
-            "reason": "Computed API property cannot be resolved statically",
-            "solution": "Use a static property name or retain the native script"
-          },
-          {
-            "api": "$response",
-            "reason": "Computed API property cannot be resolved statically",
-            "solution": "Use a static property name or retain the native script"
-          }
-        ]
+        "diagnostics": []
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "$request",
-      "reason": "surge: Computed API property cannot be resolved statically",
-      "solution": "Use a static property name or retain the native script"
-    },
-    {
-      "api": "$response",
-      "reason": "surge: Computed API property cannot be resolved statically",
-      "solution": "Use a static property name or retain the native script"
-    }
-  ]
+  "diagnostics": []
 }

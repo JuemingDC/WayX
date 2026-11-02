@@ -127,20 +127,10 @@
         ]
       }
     ],
-    "diagnostics": [
-      {
-        "api": "$request",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      }
-    ]
+    "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "no provable host branch"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
       "qx": {
@@ -151,7 +141,7 @@
         "analysisSourceSha256": "39e3f12a9e31ff74c2768cc467bb989188c212b5dbd5cbb8743f62d961922ea1",
         "operations": [
           {
-            "id": "call:336",
+            "id": "api:0",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -161,34 +151,22 @@
               "line": 7,
               "column": 20,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "Default/dynamic key namespaces differ across clients",
-                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:684",
+            "id": "api:1",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -198,40 +176,22 @@
               "line": 17,
               "column": 12,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.setValueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.write",
-                "reason": "Only explicit plain string keys are proven portable",
-                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:3832",
+            "id": "api:2",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -242,33 +202,23 @@
               "column": 24,
               "access": "call",
               "memberPath": [
+                "url",
                 "split"
               ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$request",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$request",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:3952",
-            "rule": "response.bytes",
+            "id": "api:3",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body.length",
@@ -278,21 +228,22 @@
               "column": 67,
               "access": "read",
               "memberPath": [
+                "body",
                 "length"
               ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
-              "api": "$response.bodyBytes",
-              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "api": "$response.body",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:3983",
+            "id": "api:4",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -305,18 +256,18 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4010",
-            "rule": "response.bytes",
+            "id": "api:5",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -325,20 +276,22 @@
               "line": 119,
               "column": 19,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
-              "api": "$response.bodyBytes",
-              "lowering": "read target bodyBytes; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "api": "$response.body",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:4157",
+            "id": "api:6",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -351,17 +304,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4422",
+            "id": "api:7",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -374,28 +327,17 @@
               "memberPath": []
             },
             "canonical": "request.context",
-            "value": "closed context / presence",
+            "value": "runtime value",
             "target": {
               "api": "$request",
-              "lowering": "source-shaped context view; no object escape",
-              "proof": "closed-context-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$request",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$request",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:5209",
+            "id": "api:8",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -408,17 +350,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:5291",
+            "id": "api:9",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -431,38 +373,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "$request",
-            "reason": "Bare platform-object aliases require data-flow proof",
-            "solution": "Access the documented member directly or keep this program native"
-          },
-          {
-            "api": "$request",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$persistentStore.read",
-            "reason": "Default/dynamic key namespaces differ across clients",
-            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-          },
-          {
-            "api": "$persistentStore.write",
-            "reason": "Only explicit plain string keys are proven portable",
-            "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-          }
-        ]
+        "diagnostics": []
       },
       "surge": {
         "version": 1,
@@ -472,7 +393,7 @@
         "analysisSourceSha256": "39e3f12a9e31ff74c2768cc467bb989188c212b5dbd5cbb8743f62d961922ea1",
         "operations": [
           {
-            "id": "call:336",
+            "id": "api:0",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -482,34 +403,22 @@
               "line": 7,
               "column": 20,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "Default/dynamic key namespaces differ across clients",
-                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:684",
+            "id": "api:1",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -519,40 +428,22 @@
               "line": 17,
               "column": 12,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.write",
-                "reason": "Only explicit plain string keys are proven portable",
-                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:3832",
+            "id": "api:2",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -563,33 +454,23 @@
               "column": 24,
               "access": "call",
               "memberPath": [
+                "url",
                 "split"
               ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$request",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$request",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:3952",
-            "rule": "response.bytes",
+            "id": "api:3",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body.length",
@@ -599,21 +480,22 @@
               "column": 67,
               "access": "read",
               "memberPath": [
+                "body",
                 "length"
               ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:3983",
+            "id": "api:4",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -626,18 +508,18 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4010",
-            "rule": "response.bytes",
+            "id": "api:5",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -646,20 +528,22 @@
               "line": 119,
               "column": 19,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:4157",
+            "id": "api:6",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -672,17 +556,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4422",
+            "id": "api:7",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -695,28 +579,17 @@
               "memberPath": []
             },
             "canonical": "request.context",
-            "value": "closed context / presence",
+            "value": "runtime value",
             "target": {
               "api": "$request",
-              "lowering": "source-shaped context view; no object escape",
-              "proof": "closed-context-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$request",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$request",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:5209",
+            "id": "api:8",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -729,17 +602,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:5291",
+            "id": "api:9",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -752,38 +625,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "$request",
-            "reason": "Bare platform-object aliases require data-flow proof",
-            "solution": "Access the documented member directly or keep this program native"
-          },
-          {
-            "api": "$request",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$persistentStore.read",
-            "reason": "Default/dynamic key namespaces differ across clients",
-            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-          },
-          {
-            "api": "$persistentStore.write",
-            "reason": "Only explicit plain string keys are proven portable",
-            "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-          }
-        ]
+        "diagnostics": []
       },
       "loon": {
         "version": 1,
@@ -793,7 +645,7 @@
         "analysisSourceSha256": "39e3f12a9e31ff74c2768cc467bb989188c212b5dbd5cbb8743f62d961922ea1",
         "operations": [
           {
-            "id": "call:336",
+            "id": "api:0",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -803,28 +655,22 @@
               "line": 7,
               "column": 20,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "read"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:684",
+            "id": "api:1",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -834,34 +680,22 @@
               "line": 17,
               "column": 12,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "write"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:3832",
+            "id": "api:2",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -872,22 +706,23 @@
               "column": 24,
               "access": "call",
               "memberPath": [
+                "url",
                 "split"
               ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3952",
-            "rule": "response.bytes",
+            "id": "api:3",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body.length",
@@ -897,21 +732,22 @@
               "column": 67,
               "access": "read",
               "memberPath": [
+                "body",
                 "length"
               ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:3983",
+            "id": "api:4",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -924,18 +760,18 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4010",
-            "rule": "response.bytes",
+            "id": "api:5",
+            "rule": "response.body",
             "kind": "context",
             "source": {
               "api": "$response.body",
@@ -944,20 +780,22 @@
               "line": 119,
               "column": 19,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
-            "canonical": "response.bytes",
-            "value": "exact byte view",
+            "canonical": "response.body",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "read target body; expose source body as Uint8Array with exact byte view, then run original memberPath",
-              "proof": "explicit-binary-declaration"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:4157",
+            "id": "api:6",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -970,17 +808,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4422",
+            "id": "api:7",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -993,17 +831,17 @@
               "memberPath": []
             },
             "canonical": "request.context",
-            "value": "closed context / presence",
+            "value": "runtime value",
             "target": {
               "api": "$request",
-              "lowering": "source-shaped context view; no object escape",
-              "proof": "closed-context-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:5209",
+            "id": "api:8",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1016,17 +854,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:5291",
+            "id": "api:9",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1039,13 +877,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -1053,46 +891,5 @@
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "$request",
-      "reason": "qx: Bare platform-object aliases require data-flow proof",
-      "solution": "Access the documented member directly or keep this program native"
-    },
-    {
-      "api": "$request",
-      "reason": "qx: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$persistentStore.read",
-      "reason": "qx: Default/dynamic key namespaces differ across clients",
-      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-    },
-    {
-      "api": "$persistentStore.write",
-      "reason": "qx: Only explicit plain string keys are proven portable",
-      "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-    },
-    {
-      "api": "$request",
-      "reason": "surge: Bare platform-object aliases require data-flow proof",
-      "solution": "Access the documented member directly or keep this program native"
-    },
-    {
-      "api": "$request",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$persistentStore.read",
-      "reason": "surge: Default/dynamic key namespaces differ across clients",
-      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-    },
-    {
-      "api": "$persistentStore.write",
-      "reason": "surge: Only explicit plain string keys are proven portable",
-      "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-    }
-  ]
+  "diagnostics": []
 }

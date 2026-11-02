@@ -50,7 +50,7 @@
 ^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.cainiao\.nbmensa\.research\.researchservice\.consultmerge data-type=text data="" status-code=200
 
 [Script]
-ddgksf2013_cainiaoads_1 = type=http-response,pattern=^http:\/\/amdc\.m\.taobao\.com,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/ef90ca68bf9216b4289ad0997bf4b0c8bf5b92b79d4e419a1f206cce601dc019/amdc.js,requires-body=true
+ddgksf2013_cainiaoads_1 = type=http-response,pattern=^http:\/\/amdc\.m\.taobao\.com,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-ef90ca68bf92/amdc.js,requires-body=true
 ddgksf2013_cainiaoads_2 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c53fa988e9de/cainiao_json.js,requires-body=true
 ddgksf2013_cainiaoads_3 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.homepage\.merge\.get\.cn,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c53fa988e9de/cainiao_json.js,requires-body=true
 ddgksf2013_cainiaoads_4 = type=http-response,pattern=^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.protocol\.homepage\.get\.cn,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-c53fa988e9de/cainiao_json.js,requires-body=true

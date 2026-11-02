@@ -62,7 +62,7 @@ http-response (?i)https:\/\/(rule\.)?kelee\.one\/ header-add content-type text/p
 [Script]
 # ======= 普通网页 ======= #
 # 百度 //boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com
-baidu_boxer = type=http-request,pattern=(?i)^https:\/\/boxer\.baidu\.com\/scheme\?scheme,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/bbc2d768f38a841840d4729b5086ac803121a5730637f841316ba2f08c3e18a6/baiduNoRedirect.js,requires-body=true,max-size=-1,timeout=20
+baidu_boxer = type=http-request,pattern=(?i)^https:\/\/boxer\.baidu\.com\/scheme\?scheme,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-bbc2d768f38a/baiduNoRedirect.js,requires-body=true,max-size=-1,timeout=20
 baidu_home = type=http-response,pattern=(?i)^https:\/\/(?:www|m)\.baidu\.com(\/|\/\?(tn=&)?from=\d+\w)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-c976b51fb013/baidu-index.js,requires-body=true,max-size=-1,timeout=20
 baidu_zhidao = type=http-response,pattern=(?i)^https:\/\/zhidao\.baidu\.com\/(?:question|index|\?fr|\?word),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-12e96fd6df84/baidu-zhidao.js,requires-body=true,max-size=-1,timeout=20
 
@@ -81,22 +81,22 @@ yihuagong_search_ads = type=http-response,pattern=(?i)^https:\/\/(?:yhg007\.com|
 javrk_web_ads = type=http-response,pattern=(?i)^https:\/\/javranking\.cc\/(?:zh-hans|en)\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-75448e274a79/myblockads.js,requires-body=true,max-size=-1,timeout=20
 
 # 夜未央 //miniapp2.52ywy.com
-52ywy_web_ads = type=http-response,pattern=(?i)^https:\/\/miniapp2\.52ywy\.com\/(?:ywyminiappbot\/(?:getLatest|getLatestAll|getCategoryVideos|getSearch|series|movies|tv|av|getbloger)|player\/getPlayer)(\?|$),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/24bc13763e144e10fa2864b8c0239419987b1d1adbe8cd3ed6abbf7624ca0b19/52ywy.js,requires-body=true,max-size=-1,timeout=20
+52ywy_web_ads = type=http-response,pattern=(?i)^https:\/\/miniapp2\.52ywy\.com\/(?:ywyminiappbot\/(?:getLatest|getLatestAll|getCategoryVideos|getSearch|series|movies|tv|av|getbloger)|player\/getPlayer)(\?|$),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-24bc13763e14/52ywy.js,requires-body=true,max-size=-1,timeout=20
 
 # 字母圈 //*.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com
-zmq_web_ads = type=http-response,pattern=(?i)^https?:\/\/[^\/]*zimuquan[^\/]*\/index\.php\/vod\/play\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/20f454d55c70ecb70ff6bfcf2b6a47583df9fd0fd6ce1e3e4b4a9ed7872b19d4/zimuquan.js,requires-body=true,max-size=-1,timeout=20
+zmq_web_ads = type=http-response,pattern=(?i)^https?:\/\/[^\/]*zimuquan[^\/]*\/index\.php\/vod\/play\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-20f454d55c70/zimuquan.js,requires-body=true,max-size=-1,timeout=20
 
 # E-Hentai //e-hentai.org
-ehentai_web_ads = type=http-response,pattern=(?i)^https:\/\/e-hentai\.org\/g\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/0ff77e6a08bcc0a1faa6cdde63dec8da3c3c46cf097b6f1e9df778b111f37ec3/ehentai.js,requires-body=true,max-size=-1,timeout=20
+ehentai_web_ads = type=http-response,pattern=(?i)^https:\/\/e-hentai\.org\/g\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-0ff77e6a08bc/ehentai.js,requires-body=true,max-size=-1,timeout=20
 
 # Hanime1 //hanime1.me
-hanime_web_ads = type=http-response,pattern=(?i)^https:\/\/hanime1\.me\/(?!(favicon|css|js|cdn-cgi|load)),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/ceb4bbfde63b333edd46f20884f99c7dff7bdfd7ed5acbb49a8faebb76a9ec7d/hanime.js,requires-body=true,max-size=-1,timeout=20
+hanime_web_ads = type=http-response,pattern=(?i)^https:\/\/hanime1\.me\/(?!(favicon|css|js|cdn-cgi|load)),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-ceb4bbfde63b/hanime.js,requires-body=true,max-size=-1,timeout=20
 
 # JavDB //javdb.com
 javdb_web_ads = type=http-response,pattern=(?i)^https:\/\/javdb\.com\/(?!over18\?),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-75448e274a79/myblockads.js,requires-body=true,max-size=-1,timeout=20
 
 # MissAV //missav.ai, missav.fans, missav.ws
-missav_web_ads = type=http-response,pattern=(?i)^https:\/\/missav\.(?:ai|fans|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/).,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160/missav.js,requires-body=true,max-size=-1,timeout=20
+missav_web_ads = type=http-response,pattern=(?i)^https:\/\/missav\.(?:ai|fans|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/).,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-a7046a06dbbc/missav.js,requires-body=true,max-size=-1,timeout=20
 
 # PornHub //*.pornhub.com
 pornhub_web_ads = type=http-response,pattern=(?i)^https:\/\/cn\.pornhub\.com\/(?!api\/|front\/|get-allowed-cookies\?|manifest\.|svvt\/|user\/|utils\/),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-a8d59ed8d2ba/pornhub.js,requires-body=true,max-size=-1,timeout=20

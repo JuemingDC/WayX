@@ -28,7 +28,7 @@
 ^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext data-type=text data="" status-code=200
 
 [Script]
-zenmofeishi_youtube_1 = type=http-response,pattern=^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/fa5f41822e443a9b0f0b3b7ed54bd4d0b23da8806a9c86021ba1eb7b02fa6ddc/youtube.response.js,requires-body=true
+zenmofeishi_youtube_1 = type=http-response,pattern=^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-fa5f41822e44/youtube.response.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% *.googlevideo.com, redirector*.googlevideo.com, www.youtube.com, s.youtube.com, youtubei.googleapis.com

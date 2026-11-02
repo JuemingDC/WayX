@@ -14,11 +14,11 @@
 host, iacc.stgw.qq.com, reject
 host, tacc.video.qq.com, reject
 # [rewrite_local]
-^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
-^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
-^https?:\/\/iacc\.qq\.com\/(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
-^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
-^https:\/\/rdelivery\.qq\.com\/v1\/sdkconfig\/get(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc/Txvideoad.js
+^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-32b2671fd33f/Txvideoad.js
+^https?:\/\/i\.video\.qq\.com\/(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-32b2671fd33f/Txvideoad.js
+^https?:\/\/iacc\.qq\.com\/(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-32b2671fd33f/Txvideoad.js
+^https?:\/\/config\.ab\.qq\.com\/tab\/GetTabRemoteConfig(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-32b2671fd33f/Txvideoad.js
+^https:\/\/rdelivery\.qq\.com\/v1\/sdkconfig\/get(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-32b2671fd33f/Txvideoad.js
 
 # [mitm]
 hostname = i.video.qq.com, iacc.qq.com, config.ab.qq.com, rdelivery.qq.com

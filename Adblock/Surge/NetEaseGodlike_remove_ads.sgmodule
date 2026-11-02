@@ -19,7 +19,7 @@
 (?i)^https:\/\/god\.gameyw\.netease\.com\/v\d\/ad _ reject
 
 [Script]
-网易大神去广告 = type=http-response,pattern=(?i)^https:\/\/app-conf\.ds\.163\.com\/v1\/app\/base\/conf\/static\/start-config\?os=ios,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/57cfa1b30d9eed78bbe33fe52171c80a4071e3aa1a0fb99dab3be0eaa2ae64fb/NetEaseGodlike_remove_ads.js,requires-body=true,max-size=-1,timeout=10
+网易大神去广告 = type=http-response,pattern=(?i)^https:\/\/app-conf\.ds\.163\.com\/v1\/app\/base\/conf\/static\/start-config\?os=ios,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-57cfa1b30d9e/NetEaseGodlike_remove_ads.js,requires-body=true,max-size=-1,timeout=10
 
 [MITM]
 hostname = %APPEND% god.gameyw.netease.com, app-conf.ds.163.com

@@ -23,7 +23,7 @@ http-response-jq (?i)^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList$ 'del(.materia
 
 [Script]
 
-移除12306应用内广告 = type=http-request,pattern=(?i)^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/e4e07d3c1af75bf2a2ab10a83e85a60ec8943d61ae4b9d9266dfce49b7fa70e7/12306_remove_ads.js,timeout=20
+移除12306应用内广告 = type=http-request,pattern=(?i)^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\/mgw\.htm$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-e4e07d3c1af7/12306_remove_ads.js,timeout=20
 
 [MITM]
 hostname = %APPEND% ad.12306.cn, mobile.12306.cn

@@ -56,33 +56,6 @@
         ]
       },
       {
-        "api": "this",
-        "access": "read",
-        "start": 1198,
-        "end": 1202,
-        "line": 41,
-        "column": 177,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 1672,
-        "end": 1676,
-        "line": 41,
-        "column": 651,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 1862,
-        "end": 1866,
-        "line": 41,
-        "column": 841,
-        "members": []
-      },
-      {
         "api": "$environment",
         "access": "read",
         "start": 1940,
@@ -234,15 +207,15 @@
         ]
       },
       {
-        "api": "$httpClient[s]",
-        "access": "read",
+        "api": "$httpClient.<runtime-key>",
+        "access": "call",
         "start": 8085,
-        "end": 8099,
+        "end": 8208,
         "line": 41,
         "column": 7064,
         "members": [
           "$httpClient",
-          "<computed:s>"
+          "<runtime-key>"
         ]
       },
       {
@@ -336,100 +309,10 @@
         ]
       }
     ],
-    "diagnostics": [
-      {
-        "api": "$response",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "require",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "require",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "require",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "require",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "require",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "require",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "require",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "$httpClient",
-        "reason": "Computed API property cannot be resolved statically",
-        "solution": "Use a static property name or retain the native script"
-      },
-      {
-        "api": "require",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "$open",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      },
-      {
-        "api": "$copy",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      },
-      {
-        "api": "$media",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      },
-      {
-        "api": "$mediaMime",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      }
-    ]
+    "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "source/text observations retained"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
       "qx": {
@@ -440,7 +323,7 @@
         "analysisSourceSha256": "869200a4759c7a9f3f89359fb36275121b0de0ae9772c5f0ce9765a5fcbec999",
         "operations": [
           {
-            "id": "read:121",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -450,20 +333,22 @@
               "line": 8,
               "column": 15,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:167",
+            "id": "api:1",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -476,17 +361,17 @@
               "memberPath": []
             },
             "canonical": "response.context",
-            "value": "closed context / presence",
+            "value": "runtime value",
             "target": {
               "api": "$response",
-              "lowering": "source-shaped context view; no object escape",
-              "proof": "closed-context-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:196",
+            "id": "api:2",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -499,17 +384,17 @@
               "memberPath": []
             },
             "canonical": "response.context",
-            "value": "closed context / presence",
+            "value": "runtime value",
             "target": {
               "api": "$response",
-              "lowering": "source-shaped context view; no object escape",
-              "proof": "closed-context-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:231",
+            "id": "api:3",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -519,89 +404,22 @@
               "line": 11,
               "column": 14,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:1198",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "this",
-              "start": 1198,
-              "end": 1202,
-              "line": 41,
-              "column": 177,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": null,
-            "value": null,
-            "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
-            },
-            "decision": "native",
-            "diagnostics": []
-          },
-          {
-            "id": "read:1672",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "this",
-              "start": 1672,
-              "end": 1676,
-              "line": 41,
-              "column": 651,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": null,
-            "value": null,
-            "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
-            },
-            "decision": "native",
-            "diagnostics": []
-          },
-          {
-            "id": "read:1862",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "this",
-              "start": 1862,
-              "end": 1866,
-              "line": 41,
-              "column": 841,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": null,
-            "value": null,
-            "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
-            },
-            "decision": "native",
-            "diagnostics": []
-          },
-          {
-            "id": "read:1940",
+            "id": "api:4",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -613,18 +431,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:1954",
+            "id": "api:5",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -638,18 +456,18 @@
                 "surge-version"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:2012",
+            "id": "api:6",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -661,18 +479,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:2026",
+            "id": "api:7",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -686,18 +504,18 @@
                 "stash-version"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:2137",
+            "id": "api:8",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -709,18 +527,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:2178",
+            "id": "api:9",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -732,18 +550,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:2211",
+            "id": "api:10",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -755,20 +573,20 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:5028",
-            "rule": "source.absent.persistentStore",
-            "kind": "environment",
+            "id": "api:11",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
               "api": "$persistentStore.read",
               "start": 5028,
@@ -780,18 +598,18 @@
                 "read"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:5079",
+            "id": "api:12",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -801,30 +619,24 @@
               "line": 41,
               "column": 4058,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "valueForKey"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.valueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:5302",
-            "rule": "source.absent.persistentStore",
-            "kind": "environment",
+            "id": "api:13",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
               "api": "$persistentStore.write",
               "start": 5302,
@@ -836,18 +648,18 @@
                 "write"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:5356",
+            "id": "api:14",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -857,36 +669,24 @@
               "line": 41,
               "column": 4335,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "setValueForKey"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$prefs.setValueForKey",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:6457",
-            "rule": "source.absent.httpClient",
-            "kind": "environment",
+            "id": "api:15",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
               "api": "$httpClient.get",
               "start": 6457,
@@ -898,18 +698,18 @@
                 "get"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:6680",
+            "id": "api:16",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -919,45 +719,47 @@
               "line": 41,
               "column": 5659,
               "access": "call",
-              "memberPath": []
-            },
-            "canonical": "http.request -> success(status,body)|failure",
-            "value": "Promise or callback",
-            "target": {
-              "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
-              "proof": "request-response-error-flow-proof"
-            },
-            "decision": "native",
-            "diagnostics": []
-          },
-          {
-            "id": "read:8085",
-            "rule": "source.absent.httpClient",
-            "kind": "environment",
-            "source": {
-              "api": "$httpClient[s]",
-              "start": 8085,
-              "end": 8099,
-              "line": 41,
-              "column": 7064,
-              "access": "read",
               "memberPath": [
-                "<computed:s>"
+                "fetch"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "$task.fetch",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:8318",
+            "id": "api:17",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$httpClient.<runtime-key>",
+              "start": 8085,
+              "end": 8208,
+              "line": 41,
+              "column": 7064,
+              "access": "call",
+              "memberPath": [
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:18",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -967,20 +769,22 @@
               "line": 41,
               "column": 7297,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "fetch"
+              ]
             },
             "canonical": "http.request -> success(status,body)|failure",
-            "value": "Promise or callback",
+            "value": "runtime value",
             "target": {
               "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
-              "proof": "request-response-error-flow-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:9505",
+            "id": "api:19",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -992,18 +796,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:9513",
+            "id": "api:20",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1015,18 +819,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:9521",
+            "id": "api:21",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1038,18 +842,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:9530",
+            "id": "api:22",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1061,20 +865,20 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:11254",
-            "rule": "source.absent.notification",
-            "kind": "environment",
+            "id": "api:23",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
               "api": "$notification.post",
               "start": 11254,
@@ -1086,18 +890,18 @@
                 "post"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:11310",
+            "id": "api:24",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -1110,43 +914,17 @@
               "memberPath": []
             },
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
-            "value": "notification request; delivery is not guaranteed",
+            "value": "runtime value",
             "target": {
               "api": "$notify",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
-              "proof": "notification-option-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "notify.title",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "notify.subtitle",
-                "target": "argument1",
-                "action": "map"
-              },
-              {
-                "source": "argument2",
-                "canonical": "notify.body",
-                "target": "argument2",
-                "action": "map"
-              },
-              {
-                "source": "argument3",
-                "canonical": "notify.options",
-                "target": null,
-                "action": "omit"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:12983",
+            "id": "api:25",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1159,13 +937,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -1179,7 +957,7 @@
         "analysisSourceSha256": "869200a4759c7a9f3f89359fb36275121b0de0ae9772c5f0ce9765a5fcbec999",
         "operations": [
           {
-            "id": "read:121",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -1189,20 +967,22 @@
               "line": 8,
               "column": 15,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:167",
+            "id": "api:1",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -1215,28 +995,17 @@
               "memberPath": []
             },
             "canonical": "response.context",
-            "value": "closed context / presence",
+            "value": "runtime value",
             "target": {
               "api": "$response",
-              "lowering": "source-shaped context view; no object escape",
-              "proof": "closed-context-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$response",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:196",
+            "id": "api:2",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -1249,28 +1018,17 @@
               "memberPath": []
             },
             "canonical": "response.context",
-            "value": "closed context / presence",
+            "value": "runtime value",
             "target": {
               "api": "$response",
-              "lowering": "source-shaped context view; no object escape",
-              "proof": "closed-context-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$response",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:231",
+            "id": "api:3",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -1280,118 +1038,22 @@
               "line": 11,
               "column": 14,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$response",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$response",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:1198",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "this",
-              "start": 1198,
-              "end": 1202,
-              "line": 41,
-              "column": 177,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": null,
-            "value": null,
-            "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
-            },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "this",
-                "reason": "Dynamic receiver access requires scope/data-flow proof",
-                "solution": "Keep native or resolve the receiver before adaptation"
-              }
-            ]
-          },
-          {
-            "id": "read:1672",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "this",
-              "start": 1672,
-              "end": 1676,
-              "line": 41,
-              "column": 651,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": null,
-            "value": null,
-            "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
-            },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "this",
-                "reason": "Dynamic receiver access requires scope/data-flow proof",
-                "solution": "Keep native or resolve the receiver before adaptation"
-              }
-            ]
-          },
-          {
-            "id": "read:1862",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "this",
-              "start": 1862,
-              "end": 1866,
-              "line": 41,
-              "column": 841,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": null,
-            "value": null,
-            "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
-            },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "this",
-                "reason": "Dynamic receiver access requires scope/data-flow proof",
-                "solution": "Keep native or resolve the receiver before adaptation"
-              }
-            ]
-          },
-          {
-            "id": "read:1940",
+            "id": "api:4",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1403,24 +1065,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$environment",
-                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
-                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:1954",
+            "id": "api:5",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1434,24 +1090,18 @@
                 "surge-version"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$environment",
-                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
-                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:2012",
+            "id": "api:6",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1463,24 +1113,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$environment",
-                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
-                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:2026",
+            "id": "api:7",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1494,24 +1138,18 @@
                 "stash-version"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$environment",
-                "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
-                "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:2137",
+            "id": "api:8",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1523,24 +1161,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$task",
-                "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
-                "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:2178",
+            "id": "api:9",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1552,24 +1184,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$loon",
-                "reason": "Loon runtime identity string cannot be inferred from another application's version",
-                "solution": "Keep environment branches native or resolve them with verified source/target branches"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:2211",
+            "id": "api:10",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1581,26 +1207,20 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$rocket",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:5028",
-            "rule": "source.absent.persistentStore",
-            "kind": "environment",
+            "id": "api:11",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
               "api": "$persistentStore.read",
               "start": 5028,
@@ -1612,29 +1232,18 @@
                 "read"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.read",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              },
-              {
-                "api": "$persistentStore.read",
-                "reason": "Default/dynamic key namespaces differ across clients",
-                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:5079",
+            "id": "api:12",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1644,41 +1253,24 @@
               "line": 41,
               "column": 4058,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "valueForKey"
+              ]
             },
             "canonical": "storage.read",
-            "value": "String or source absence",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.key",
-                "target": "argument0",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$prefs.valueForKey",
-                "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-                "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-              },
-              {
-                "api": "$prefs.valueForKey",
-                "reason": "Default/dynamic key namespaces differ across clients",
-                "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:5302",
-            "rule": "source.absent.persistentStore",
-            "kind": "environment",
+            "id": "api:13",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
               "api": "$persistentStore.write",
               "start": 5302,
@@ -1690,29 +1282,18 @@
                 "write"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$persistentStore.write",
-                "reason": "Only explicit plain string keys are proven portable",
-                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-              },
-              {
-                "api": "$persistentStore.write",
-                "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
-                "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:5356",
+            "id": "api:14",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1722,47 +1303,24 @@
               "line": 41,
               "column": 4335,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "setValueForKey"
+              ]
             },
             "canonical": "storage.write",
-            "value": "String / explicit deletion; Boolean result",
+            "value": "runtime value",
             "target": {
               "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "explicit-key-value-and-observation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "storage.value",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "storage.key",
-                "target": "argument1",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$prefs.setValueForKey",
-                "reason": "Only explicit plain string keys are proven portable",
-                "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-              },
-              {
-                "api": "$prefs.setValueForKey",
-                "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
-                "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:6457",
-            "rule": "source.absent.httpClient",
-            "kind": "environment",
+            "id": "api:15",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
               "api": "$httpClient.get",
               "start": 6457,
@@ -1774,29 +1332,18 @@
                 "get"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$httpClient",
-                "reason": "Computed API property cannot be resolved statically",
-                "solution": "Use a static property name or retain the native script"
-              },
-              {
-                "api": "$httpClient",
-                "reason": "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
-                "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:6680",
+            "id": "api:16",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -1806,72 +1353,47 @@
               "line": 41,
               "column": 5659,
               "access": "call",
-              "memberPath": []
-            },
-            "canonical": "http.request -> success(status,body)|failure",
-            "value": "Promise or callback",
-            "target": {
-              "api": "$httpClient.<request-method>",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
-              "proof": "request-response-error-flow-proof"
-            },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$httpClient",
-                "reason": "Computed API property cannot be resolved statically",
-                "solution": "Use a static property name or retain the native script"
-              },
-              {
-                "api": "$httpClient",
-                "reason": "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
-                "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
-              },
-              {
-                "api": "$task",
-                "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
-                "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
-              }
-            ]
-          },
-          {
-            "id": "read:8085",
-            "rule": "source.absent.httpClient",
-            "kind": "environment",
-            "source": {
-              "api": "$httpClient[s]",
-              "start": 8085,
-              "end": 8099,
-              "line": 41,
-              "column": 7064,
-              "access": "read",
               "memberPath": [
-                "<computed:s>"
+                "fetch"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "$httpClient",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$httpClient",
-                "reason": "Computed API property cannot be resolved statically",
-                "solution": "Use a static property name or retain the native script"
-              },
-              {
-                "api": "$httpClient",
-                "reason": "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
-                "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:8318",
+            "id": "api:17",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$httpClient.<runtime-key>",
+              "start": 8085,
+              "end": 8208,
+              "line": 41,
+              "column": 7064,
+              "access": "call",
+              "memberPath": [
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:18",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -1881,36 +1403,22 @@
               "line": 41,
               "column": 7297,
               "access": "call",
-              "memberPath": []
+              "memberPath": [
+                "fetch"
+              ]
             },
             "canonical": "http.request -> success(status,body)|failure",
-            "value": "Promise or callback",
+            "value": "runtime value",
             "target": {
-              "api": "$httpClient.<request-method>",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
-              "proof": "request-response-error-flow-proof"
+              "api": "$httpClient",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$httpClient",
-                "reason": "Computed API property cannot be resolved statically",
-                "solution": "Use a static property name or retain the native script"
-              },
-              {
-                "api": "$httpClient",
-                "reason": "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
-                "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
-              },
-              {
-                "api": "$task",
-                "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
-                "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:9505",
+            "id": "api:19",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1922,29 +1430,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$open",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$open",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:9513",
+            "id": "api:20",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1956,29 +1453,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$copy",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$copy",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:9521",
+            "id": "api:21",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1990,29 +1476,18 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$media",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$media",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:9530",
+            "id": "api:22",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2024,31 +1499,20 @@
               "access": "read",
               "memberPath": []
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$mediaMime",
-                "reason": "Bare platform-object aliases require data-flow proof",
-                "solution": "Access the documented member directly or keep this program native"
-              },
-              {
-                "api": "$mediaMime",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:11254",
-            "rule": "source.absent.notification",
-            "kind": "environment",
+            "id": "api:23",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
               "api": "$notification.post",
               "start": 11254,
@@ -2060,18 +1524,18 @@
                 "post"
               ]
             },
-            "canonical": "source.unavailable-binding",
-            "value": "undefined source SDK binding; original member access is not implemented",
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
             "target": {
-              "api": "undefined",
-              "lowering": "preserve absent source binding and original branch/evaluation; never call destination SDK",
-              "proof": "source-host-presence-layout; not foreign-API support"
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:11310",
+            "id": "api:24",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -2084,43 +1548,17 @@
               "memberPath": []
             },
             "canonical": "notify(title,subtitle,body,openURL?,mediaURL?)",
-            "value": "notification request; delivery is not guaranteed",
+            "value": "runtime value",
             "target": {
               "api": "$notification.post",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
-              "proof": "notification-option-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "argument0",
-                "canonical": "notify.title",
-                "target": "argument0",
-                "action": "map"
-              },
-              {
-                "source": "argument1",
-                "canonical": "notify.subtitle",
-                "target": "argument1",
-                "action": "map"
-              },
-              {
-                "source": "argument2",
-                "canonical": "notify.body",
-                "target": "argument2",
-                "action": "map"
-              },
-              {
-                "source": "argument3",
-                "canonical": "notify.options",
-                "target": null,
-                "action": "omit"
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:12983",
+            "id": "api:25",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -2133,297 +1571,19 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$done",
-                "reason": "Dynamic completion object needs field/data-flow proof",
-                "solution": "Use explicit result fields or add a verified program-specific plan"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "$response",
-            "reason": "Bare platform-object aliases require data-flow proof",
-            "solution": "Access the documented member directly or keep this program native"
-          },
-          {
-            "api": "this",
-            "reason": "Dynamic receiver access requires scope/data-flow proof",
-            "solution": "Keep native or resolve the receiver before adaptation"
-          },
-          {
-            "api": "require",
-            "reason": "Direct host/global access bypasses lexical API bindings",
-            "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-          },
-          {
-            "api": "$httpClient",
-            "reason": "Computed API property cannot be resolved statically",
-            "solution": "Use a static property name or retain the native script"
-          },
-          {
-            "api": "$open",
-            "reason": "Bare platform-object aliases require data-flow proof",
-            "solution": "Access the documented member directly or keep this program native"
-          },
-          {
-            "api": "$copy",
-            "reason": "Bare platform-object aliases require data-flow proof",
-            "solution": "Access the documented member directly or keep this program native"
-          },
-          {
-            "api": "$media",
-            "reason": "Bare platform-object aliases require data-flow proof",
-            "solution": "Access the documented member directly or keep this program native"
-          },
-          {
-            "api": "$mediaMime",
-            "reason": "Bare platform-object aliases require data-flow proof",
-            "solution": "Access the documented member directly or keep this program native"
-          },
-          {
-            "api": "$copy",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$environment",
-            "reason": "Device metadata, sourcePath, parameters and configuration fields differ by host",
-            "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
-          },
-          {
-            "api": "$httpClient",
-            "reason": "HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
-            "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
-          },
-          {
-            "api": "$loon",
-            "reason": "Loon runtime identity string cannot be inferred from another application's version",
-            "solution": "Keep environment branches native or resolve them with verified source/target branches"
-          },
-          {
-            "api": "$media",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$mediaMime",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$open",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$response",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$rocket",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "$task",
-            "reason": "QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
-            "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
-          },
-          {
-            "api": "$persistentStore.read",
-            "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-            "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-          },
-          {
-            "api": "$persistentStore.read",
-            "reason": "Default/dynamic key namespaces differ across clients",
-            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-          },
-          {
-            "api": "$prefs.valueForKey",
-            "reason": "The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-            "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-          },
-          {
-            "api": "$prefs.valueForKey",
-            "reason": "Default/dynamic key namespaces differ across clients",
-            "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-          },
-          {
-            "api": "$persistentStore.write",
-            "reason": "Only explicit plain string keys are proven portable",
-            "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-          },
-          {
-            "api": "$persistentStore.write",
-            "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
-            "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-          },
-          {
-            "api": "$prefs.setValueForKey",
-            "reason": "Only explicit plain string keys are proven portable",
-            "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-          },
-          {
-            "api": "$prefs.setValueForKey",
-            "reason": "Value coercion/deletion of dynamic non-string values is not proven equivalent",
-            "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-          },
-          {
-            "api": "$done",
-            "reason": "Dynamic completion object needs field/data-flow proof",
-            "solution": "Use explicit result fields or add a verified program-specific plan"
-          }
-        ]
+        "diagnostics": []
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "$response",
-      "reason": "surge: Bare platform-object aliases require data-flow proof",
-      "solution": "Access the documented member directly or keep this program native"
-    },
-    {
-      "api": "this",
-      "reason": "surge: Dynamic receiver access requires scope/data-flow proof",
-      "solution": "Keep native or resolve the receiver before adaptation"
-    },
-    {
-      "api": "require",
-      "reason": "surge: Direct host/global access bypasses lexical API bindings",
-      "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-    },
-    {
-      "api": "$httpClient",
-      "reason": "surge: Computed API property cannot be resolved statically",
-      "solution": "Use a static property name or retain the native script"
-    },
-    {
-      "api": "$open",
-      "reason": "surge: Bare platform-object aliases require data-flow proof",
-      "solution": "Access the documented member directly or keep this program native"
-    },
-    {
-      "api": "$copy",
-      "reason": "surge: Bare platform-object aliases require data-flow proof",
-      "solution": "Access the documented member directly or keep this program native"
-    },
-    {
-      "api": "$media",
-      "reason": "surge: Bare platform-object aliases require data-flow proof",
-      "solution": "Access the documented member directly or keep this program native"
-    },
-    {
-      "api": "$mediaMime",
-      "reason": "surge: Bare platform-object aliases require data-flow proof",
-      "solution": "Access the documented member directly or keep this program native"
-    },
-    {
-      "api": "$copy",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$environment",
-      "reason": "surge: Device metadata, sourcePath, parameters and configuration fields differ by host",
-      "solution": "Map fields individually with the original source URL and actual host context; never fabricate another client's version/device data"
-    },
-    {
-      "api": "$httpClient",
-      "reason": "surge: HTTP request/callback/error/header or binary data flow is outside the currently proven subset",
-      "solution": "Use literal verified request/result shapes; target QX omits undocumented request options without errors, preserves all seven methods and never fakes cancellation"
-    },
-    {
-      "api": "$loon",
-      "reason": "surge: Loon runtime identity string cannot be inferred from another application's version",
-      "solution": "Keep environment branches native or resolve them with verified source/target branches"
-    },
-    {
-      "api": "$media",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$mediaMime",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$open",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$response",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$rocket",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "$task",
-      "reason": "surge: QX fetch input/Promise/await response or error data flow is outside the proven closed-field subset",
-      "solution": "Use a proven literal or closed-const request, closed response fields and Boolean-only failures; undocumented QX parameters are omitted without errors on every host"
-    },
-    {
-      "api": "$persistentStore.read",
-      "reason": "surge: The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-      "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-    },
-    {
-      "api": "$persistentStore.read",
-      "reason": "surge: Default/dynamic key namespaces differ across clients",
-      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-    },
-    {
-      "api": "$prefs.valueForKey",
-      "reason": "surge: The documented source missing-value contract does not identify null vs undefined precisely enough for strict conversion",
-      "solution": "Verify missing/empty/string values in the real source client; never silently coerce storage absence"
-    },
-    {
-      "api": "$prefs.valueForKey",
-      "reason": "surge: Default/dynamic key namespaces differ across clients",
-      "solution": "Use an explicit plain string key or bind source identity with a verified namespace strategy"
-    },
-    {
-      "api": "$persistentStore.write",
-      "reason": "surge: Only explicit plain string keys are proven portable",
-      "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-    },
-    {
-      "api": "$persistentStore.write",
-      "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
-      "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-    },
-    {
-      "api": "$prefs.setValueForKey",
-      "reason": "surge: Only explicit plain string keys are proven portable",
-      "solution": "Resolve a stable explicit key; do not map the source's implicit key to the adapter path"
-    },
-    {
-      "api": "$prefs.setValueForKey",
-      "reason": "surge: Value coercion/deletion of dynamic non-string values is not proven equivalent",
-      "solution": "Pass a known String or a documented deletion value; validate the broader domain on real clients"
-    },
-    {
-      "api": "$done",
-      "reason": "surge: Dynamic completion object needs field/data-flow proof",
-      "solution": "Use explicit result fields or add a verified program-specific plan"
-    }
-  ]
+  "diagnostics": []
 }

@@ -21,11 +21,11 @@
 (?i)^https:\/\/api\.fzxhmy\.com\/tone\/trending\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-移除首页广告配置 = type=http-response,pattern=(?i)^https:\/\/api\.fzxhmy\.com\/core\/initialize\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/5ffbbbd1d719e1d10dec1c80996b6a44a25b88f2eb4289ddb72b1723beadcfca/core_initialize.js,requires-body=true,max-size=-1,timeout=20
+移除首页广告配置 = type=http-response,pattern=(?i)^https:\/\/api\.fzxhmy\.com\/core\/initialize\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-5ffbbbd1d719/core_initialize.js,requires-body=true,max-size=-1,timeout=20
 
-移除首页轮播图广告 = type=http-response,pattern=(?i)^https:\/\/api\.fzxhmy\.com\/landing\/initialize\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/0aa34c5fc1ee3d8635e2020eae6fcdf66c8bf55a31fc40a80c162e1f8c8991d8/landing_initialize.js,requires-body=true,max-size=-1,timeout=20
+移除首页轮播图广告 = type=http-response,pattern=(?i)^https:\/\/api\.fzxhmy\.com\/landing\/initialize\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-0aa34c5fc1ee/landing_initialize.js,requires-body=true,max-size=-1,timeout=20
 
-移除头像页横幅跳转 = type=http-response,pattern=(?i)^https:\/\/api\.fzxhmy\.com\/avatar\/landing\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/d0482cab4b27d6d6f40e6801399b6e4fadfd96a58c79699c1afb50e330e83297/landing.js,requires-body=true,max-size=-1,timeout=20
+移除头像页横幅跳转 = type=http-response,pattern=(?i)^https:\/\/api\.fzxhmy\.com\/avatar\/landing\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-d0482cab4b27/landing.js,requires-body=true,max-size=-1,timeout=20
 
 [MITM]
 hostname = %APPEND% api.fzxhmy.com

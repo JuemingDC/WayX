@@ -10,15 +10,6 @@
     "sha256": "dbd6c116bf2540554ae3b452b1483c2ce3cc9ceee896ffb56f6f0372ff0089d2",
     "operations": [
       {
-        "api": "this.message",
-        "access": "read",
-        "start": 182,
-        "end": 194,
-        "line": 4,
-        "column": 38,
-        "members": []
-      },
-      {
         "api": "$request.url",
         "access": "read",
         "start": 2989,
@@ -150,20 +141,10 @@
         ]
       }
     ],
-    "diagnostics": [
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      }
-    ]
+    "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "source/text observations retained"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
       "qx": {
@@ -174,36 +155,7 @@
         "analysisSourceSha256": "dbd6c116bf2540554ae3b452b1483c2ce3cc9ceee896ffb56f6f0372ff0089d2",
         "operations": [
           {
-            "id": "read:182",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "this.message",
-              "start": 182,
-              "end": 194,
-              "line": 4,
-              "column": 38,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": null,
-            "value": null,
-            "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
-            },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "this",
-                "reason": "Dynamic receiver access requires scope/data-flow proof",
-                "solution": "Keep native or resolve the receiver before adaptation"
-              }
-            ]
-          },
-          {
-            "id": "read:2989",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -213,20 +165,22 @@
               "line": 9,
               "column": 60,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3024",
+            "id": "api:1",
             "rule": "response.status",
             "kind": "context",
             "source": {
@@ -236,22 +190,24 @@
               "line": 10,
               "column": 16,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "status"
+              ]
             },
             "canonical": "response.status",
-            "value": "HTTP status Number",
+            "value": "runtime value",
             "target": {
               "api": "$response.statusCode",
-              "lowering": "source/target responseStatus field from host layout",
-              "proof": "numeric-status-contract"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3044",
-            "rule": null,
-            "kind": "unmapped",
+            "id": "api:2",
+            "rule": "request.context",
+            "kind": "context",
             "source": {
               "api": "$request.statusCode",
               "start": 3044,
@@ -263,24 +219,18 @@
                 "statusCode"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "request.context",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "$request",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$request.statusCode",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:3135",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -293,19 +243,19 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3179",
-            "rule": "response.header.lookup",
-            "kind": "header",
+            "id": "api:4",
+            "rule": "response.headers",
+            "kind": "context",
             "source": {
               "api": "$response.headers.reqentryption",
               "start": 3179,
@@ -314,34 +264,24 @@
               "column": 8,
               "access": "read",
               "memberPath": [
+                "headers",
                 "reqentryption"
               ]
             },
-            "canonical": "response.header.lookup",
-            "value": "header String / missing",
+            "canonical": "response.headers",
+            "value": "runtime value",
             "target": {
               "api": "$response.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              },
-              {
-                "api": "headers",
-                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
-                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:3217",
-            "rule": "response.header.lookup",
-            "kind": "header",
+            "id": "api:5",
+            "rule": "response.headers",
+            "kind": "context",
             "source": {
               "api": "$response.headers.reqEntryption",
               "start": 3217,
@@ -350,32 +290,22 @@
               "column": 46,
               "access": "read",
               "memberPath": [
+                "headers",
                 "reqEntryption"
               ]
             },
-            "canonical": "response.header.lookup",
-            "value": "header String / missing",
+            "canonical": "response.headers",
+            "value": "runtime value",
             "target": {
               "api": "$response.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              },
-              {
-                "api": "headers",
-                "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
-                "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:4164",
+            "id": "api:6",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -385,20 +315,22 @@
               "line": 46,
               "column": 49,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4183",
+            "id": "api:7",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -408,20 +340,22 @@
               "line": 46,
               "column": 68,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4269",
+            "id": "api:8",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -431,20 +365,22 @@
               "line": 50,
               "column": 31,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:4290",
+            "id": "api:9",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -457,17 +393,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:6761",
+            "id": "api:10",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -480,58 +416,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "bodyBytes",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "this",
-            "reason": "Dynamic receiver access requires scope/data-flow proof",
-            "solution": "Keep native or resolve the receiver before adaptation"
-          },
-          {
-            "api": "$request.statusCode",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "headers-shape",
-            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-          },
-          {
-            "api": "headers",
-            "reason": "QX body-script framing/header restrictions need a declaration-specific proof",
-            "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
-          }
-        ]
+        "diagnostics": []
       },
       "surge": {
         "version": 1,
@@ -541,36 +436,7 @@
         "analysisSourceSha256": "dbd6c116bf2540554ae3b452b1483c2ce3cc9ceee896ffb56f6f0372ff0089d2",
         "operations": [
           {
-            "id": "read:182",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "this.message",
-              "start": 182,
-              "end": 194,
-              "line": 4,
-              "column": 38,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": null,
-            "value": null,
-            "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
-            },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "this",
-                "reason": "Dynamic receiver access requires scope/data-flow proof",
-                "solution": "Keep native or resolve the receiver before adaptation"
-              }
-            ]
-          },
-          {
-            "id": "read:2989",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -580,20 +446,22 @@
               "line": 9,
               "column": 60,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3024",
+            "id": "api:1",
             "rule": "response.status",
             "kind": "context",
             "source": {
@@ -603,22 +471,24 @@
               "line": 10,
               "column": 16,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "status"
+              ]
             },
             "canonical": "response.status",
-            "value": "HTTP status Number",
+            "value": "runtime value",
             "target": {
               "api": "$response.status",
-              "lowering": "source/target responseStatus field from host layout",
-              "proof": "numeric-status-contract"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3044",
-            "rule": null,
-            "kind": "unmapped",
+            "id": "api:2",
+            "rule": "request.context",
+            "kind": "context",
             "source": {
               "api": "$request.statusCode",
               "start": 3044,
@@ -630,24 +500,18 @@
                 "statusCode"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "request.context",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "$request",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$request.statusCode",
-                "reason": "API/member is outside the documented portable subset",
-                "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:3135",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -660,19 +524,19 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3179",
-            "rule": "response.header.lookup",
-            "kind": "header",
+            "id": "api:4",
+            "rule": "response.headers",
+            "kind": "context",
             "source": {
               "api": "$response.headers.reqentryption",
               "start": 3179,
@@ -681,29 +545,24 @@
               "column": 8,
               "access": "read",
               "memberPath": [
+                "headers",
                 "reqentryption"
               ]
             },
-            "canonical": "response.header.lookup",
-            "value": "header String / missing",
+            "canonical": "response.headers",
+            "value": "runtime value",
             "target": {
               "api": "$response.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:3217",
-            "rule": "response.header.lookup",
-            "kind": "header",
+            "id": "api:5",
+            "rule": "response.headers",
+            "kind": "context",
             "source": {
               "api": "$response.headers.reqEntryption",
               "start": 3217,
@@ -712,27 +571,22 @@
               "column": 46,
               "access": "read",
               "memberPath": [
+                "headers",
                 "reqEntryption"
               ]
             },
-            "canonical": "response.header.lookup",
-            "value": "header String / missing",
+            "canonical": "response.headers",
+            "value": "runtime value",
             "target": {
               "api": "$response.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:4164",
+            "id": "api:6",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -742,20 +596,22 @@
               "line": 46,
               "column": 49,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4183",
+            "id": "api:7",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -765,20 +621,22 @@
               "line": 46,
               "column": 68,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4269",
+            "id": "api:8",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -788,20 +646,22 @@
               "line": 50,
               "column": 31,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:4290",
+            "id": "api:9",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -814,17 +674,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:6761",
+            "id": "api:10",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -837,53 +697,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "body",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "this",
-            "reason": "Dynamic receiver access requires scope/data-flow proof",
-            "solution": "Keep native or resolve the receiver before adaptation"
-          },
-          {
-            "api": "$request.statusCode",
-            "reason": "API/member is outside the documented portable subset",
-            "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-          },
-          {
-            "api": "headers-shape",
-            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-          }
-        ]
+        "diagnostics": []
       },
       "loon": {
         "version": 1,
@@ -893,30 +717,7 @@
         "analysisSourceSha256": "dbd6c116bf2540554ae3b452b1483c2ce3cc9ceee896ffb56f6f0372ff0089d2",
         "operations": [
           {
-            "id": "read:182",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "this.message",
-              "start": 182,
-              "end": 194,
-              "line": 4,
-              "column": 38,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": null,
-            "value": null,
-            "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
-            },
-            "decision": "native",
-            "diagnostics": []
-          },
-          {
-            "id": "read:2989",
+            "id": "api:0",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -926,20 +727,22 @@
               "line": 9,
               "column": 60,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "url"
+              ]
             },
             "canonical": "request.url",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "context-field-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3024",
+            "id": "api:1",
             "rule": "response.status",
             "kind": "context",
             "source": {
@@ -949,22 +752,24 @@
               "line": 10,
               "column": 16,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "status"
+              ]
             },
             "canonical": "response.status",
-            "value": "HTTP status Number",
+            "value": "runtime value",
             "target": {
               "api": "$response.status",
-              "lowering": "source/target responseStatus field from host layout",
-              "proof": "numeric-status-contract"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3044",
-            "rule": null,
-            "kind": "unmapped",
+            "id": "api:2",
+            "rule": "request.context",
+            "kind": "context",
             "source": {
               "api": "$request.statusCode",
               "start": 3044,
@@ -976,18 +781,18 @@
                 "statusCode"
               ]
             },
-            "canonical": null,
-            "value": null,
+            "canonical": "request.context",
+            "value": "runtime value",
             "target": {
-              "api": null,
-              "lowering": "No semantic mapping is registered for this source operation",
-              "proof": "add-explicit-source-and-target-contract"
+              "api": "$request",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:3135",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1000,19 +805,19 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3179",
-            "rule": "response.header.lookup",
-            "kind": "header",
+            "id": "api:4",
+            "rule": "response.headers",
+            "kind": "context",
             "source": {
               "api": "$response.headers.reqentryption",
               "start": 3179,
@@ -1021,23 +826,24 @@
               "column": 8,
               "access": "read",
               "memberPath": [
+                "headers",
                 "reqentryption"
               ]
             },
-            "canonical": "response.header.lookup",
-            "value": "header String / missing",
+            "canonical": "response.headers",
+            "value": "runtime value",
             "target": {
               "api": "$response.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:3217",
-            "rule": "response.header.lookup",
-            "kind": "header",
+            "id": "api:5",
+            "rule": "response.headers",
+            "kind": "context",
             "source": {
               "api": "$response.headers.reqEntryption",
               "start": 3217,
@@ -1046,21 +852,22 @@
               "column": 46,
               "access": "read",
               "memberPath": [
+                "headers",
                 "reqEntryption"
               ]
             },
-            "canonical": "response.header.lookup",
-            "value": "header String / missing",
+            "canonical": "response.headers",
+            "value": "runtime value",
             "target": {
               "api": "$response.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4164",
+            "id": "api:6",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -1070,20 +877,22 @@
               "line": 46,
               "column": 49,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4183",
+            "id": "api:7",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -1093,20 +902,22 @@
               "line": 46,
               "column": 68,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:4269",
+            "id": "api:8",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -1116,20 +927,22 @@
               "line": 50,
               "column": 31,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "body"
+              ]
             },
             "canonical": "response.body",
-            "value": "String",
+            "value": "runtime value",
             "target": {
               "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "body-mode-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:4290",
+            "id": "api:9",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1142,17 +955,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:6761",
+            "id": "api:10",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1165,33 +978,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "body",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -1199,41 +992,5 @@
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "this",
-      "reason": "qx: Dynamic receiver access requires scope/data-flow proof",
-      "solution": "Keep native or resolve the receiver before adaptation"
-    },
-    {
-      "api": "$request.statusCode",
-      "reason": "qx: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "headers-shape",
-      "reason": "qx: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-    },
-    {
-      "api": "headers",
-      "reason": "qx: QX body-script framing/header restrictions need a declaration-specific proof",
-      "solution": "Use header actions when possible; retain Content-Type/Length/Encoding restrictions and test duplicate headers"
-    },
-    {
-      "api": "this",
-      "reason": "surge: Dynamic receiver access requires scope/data-flow proof",
-      "solution": "Keep native or resolve the receiver before adaptation"
-    },
-    {
-      "api": "$request.statusCode",
-      "reason": "surge: API/member is outside the documented portable subset",
-      "solution": "Add an explicit contract and independent tests; retain the raw backup meanwhile"
-    },
-    {
-      "api": "headers-shape",
-      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-    }
-  ]
+  "diagnostics": []
 }

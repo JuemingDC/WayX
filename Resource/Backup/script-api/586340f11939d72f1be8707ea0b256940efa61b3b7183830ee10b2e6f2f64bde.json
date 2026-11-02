@@ -35,12 +35,8 @@
     ],
     "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "no provable host branch"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
       "qx": {
@@ -51,7 +47,7 @@
         "analysisSourceSha256": "45bffb0cdf55bddd894070ca542f908e995b552fea4ed20ad30ae612fa8c67f4",
         "operations": [
           {
-            "id": "read:34",
+            "id": "api:0",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -61,20 +57,22 @@
               "line": 3,
               "column": 33,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "headers"
+              ]
             },
             "canonical": "request.headers",
-            "value": "header-dictionary",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:105",
+            "id": "api:1",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -87,21 +85,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "headers",
-                "canonical": "complete.headers",
-                "target": "headers",
-                "action": "map"
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -115,7 +105,7 @@
         "analysisSourceSha256": "45bffb0cdf55bddd894070ca542f908e995b552fea4ed20ad30ae612fa8c67f4",
         "operations": [
           {
-            "id": "read:34",
+            "id": "api:0",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -125,31 +115,22 @@
               "line": 3,
               "column": 33,
               "access": "read",
-              "memberPath": []
+              "memberPath": [
+                "headers"
+              ]
             },
             "canonical": "request.headers",
-            "value": "header-dictionary",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              },
-              {
-                "api": "$done.headers",
-                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
-                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:105",
+            "id": "api:1",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -162,55 +143,19 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "headers",
-                "canonical": "complete.headers",
-                "target": "headers",
-                "action": "map"
-              }
-            ],
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "$done.headers",
-                "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
-                "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "headers-shape",
-            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-          },
-          {
-            "api": "$done.headers",
-            "reason": "Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
-            "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
-          }
-        ]
+        "diagnostics": []
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "headers-shape",
-      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-    },
-    {
-      "api": "$done.headers",
-      "reason": "surge: Output headers require an explicit object dictionary; String/unknown header results are not a portable contract",
-      "solution": "Preserve the source diagnostic; prove output fields separately from readonly input queries"
-    }
-  ]
+  "diagnostics": []
 }

@@ -45,1005 +45,6 @@
         ]
       },
       {
-        "api": "this",
-        "access": "read",
-        "start": 896,
-        "end": 900,
-        "line": 5,
-        "column": 771,
-        "members": []
-      },
-      {
-        "api": "this.init",
-        "access": "read",
-        "start": 949,
-        "end": 958,
-        "line": 5,
-        "column": 824,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 1008,
-        "end": 1012,
-        "line": 5,
-        "column": 883,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 1054,
-        "end": 1058,
-        "line": 5,
-        "column": 929,
-        "members": []
-      },
-      {
-        "api": "this.extend",
-        "access": "call",
-        "start": 1086,
-        "end": 1099,
-        "line": 5,
-        "column": 961,
-        "members": []
-      },
-      {
-        "api": "this[e]",
-        "access": "read",
-        "start": 1209,
-        "end": 1216,
-        "line": 5,
-        "column": 1084,
-        "members": []
-      },
-      {
-        "api": "this.toString",
-        "access": "read",
-        "start": 1254,
-        "end": 1267,
-        "line": 5,
-        "column": 1129,
-        "members": []
-      },
-      {
-        "api": "this.init.prototype.extend",
-        "access": "call",
-        "start": 1305,
-        "end": 1337,
-        "line": 5,
-        "column": 1180,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 1332,
-        "end": 1336,
-        "line": 5,
-        "column": 1207,
-        "members": []
-      },
-      {
-        "api": "this.words",
-        "access": "read",
-        "start": 1388,
-        "end": 1398,
-        "line": 5,
-        "column": 1263,
-        "members": []
-      },
-      {
-        "api": "this.sigBytes",
-        "access": "read",
-        "start": 1405,
-        "end": 1418,
-        "line": 5,
-        "column": 1280,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 1482,
-        "end": 1486,
-        "line": 5,
-        "column": 1357,
-        "members": []
-      },
-      {
-        "api": "this.words",
-        "access": "read",
-        "start": 1514,
-        "end": 1524,
-        "line": 5,
-        "column": 1389,
-        "members": []
-      },
-      {
-        "api": "this.sigBytes",
-        "access": "read",
-        "start": 1537,
-        "end": 1550,
-        "line": 5,
-        "column": 1412,
-        "members": []
-      },
-      {
-        "api": "this.clamp",
-        "access": "call",
-        "start": 1567,
-        "end": 1579,
-        "line": 5,
-        "column": 1442,
-        "members": []
-      },
-      {
-        "api": "this.sigBytes",
-        "access": "read",
-        "start": 1716,
-        "end": 1729,
-        "line": 5,
-        "column": 1591,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 1733,
-        "end": 1737,
-        "line": 5,
-        "column": 1608,
-        "members": []
-      },
-      {
-        "api": "this.words",
-        "access": "read",
-        "start": 1762,
-        "end": 1772,
-        "line": 5,
-        "column": 1637,
-        "members": []
-      },
-      {
-        "api": "this.sigBytes",
-        "access": "read",
-        "start": 1775,
-        "end": 1788,
-        "line": 5,
-        "column": 1650,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 1878,
-        "end": 1882,
-        "line": 5,
-        "column": 1753,
-        "members": []
-      },
-      {
-        "api": "this.words.slice",
-        "access": "call",
-        "start": 1899,
-        "end": 1918,
-        "line": 5,
-        "column": 1774,
-        "members": []
-      },
-      {
-        "api": "this._data",
-        "access": "read",
-        "start": 2854,
-        "end": 2864,
-        "line": 5,
-        "column": 2729,
-        "members": []
-      },
-      {
-        "api": "this._nDataBytes",
-        "access": "read",
-        "start": 2876,
-        "end": 2892,
-        "line": 5,
-        "column": 2751,
-        "members": []
-      },
-      {
-        "api": "this._data.concat",
-        "access": "call",
-        "start": 2951,
-        "end": 2971,
-        "line": 5,
-        "column": 2826,
-        "members": []
-      },
-      {
-        "api": "this._nDataBytes",
-        "access": "read",
-        "start": 2972,
-        "end": 2988,
-        "line": 5,
-        "column": 2847,
-        "members": []
-      },
-      {
-        "api": "this._data",
-        "access": "read",
-        "start": 3031,
-        "end": 3041,
-        "line": 5,
-        "column": 2906,
-        "members": []
-      },
-      {
-        "api": "this.blockSize",
-        "access": "read",
-        "start": 3067,
-        "end": 3081,
-        "line": 5,
-        "column": 2942,
-        "members": []
-      },
-      {
-        "api": "this._minBufferSize",
-        "access": "read",
-        "start": 3121,
-        "end": 3140,
-        "line": 5,
-        "column": 2996,
-        "members": []
-      },
-      {
-        "api": "this._doProcessBlock",
-        "access": "call",
-        "start": 3189,
-        "end": 3214,
-        "line": 5,
-        "column": 3064,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 3305,
-        "end": 3309,
-        "line": 5,
-        "column": 3180,
-        "members": []
-      },
-      {
-        "api": "this._data.clone",
-        "access": "call",
-        "start": 3326,
-        "end": 3344,
-        "line": 5,
-        "column": 3201,
-        "members": []
-      },
-      {
-        "api": "this.cfg",
-        "access": "read",
-        "start": 3418,
-        "end": 3426,
-        "line": 5,
-        "column": 3293,
-        "members": []
-      },
-      {
-        "api": "this.cfg.extend",
-        "access": "call",
-        "start": 3427,
-        "end": 3445,
-        "line": 5,
-        "column": 3302,
-        "members": []
-      },
-      {
-        "api": "this.reset",
-        "access": "call",
-        "start": 3446,
-        "end": 3458,
-        "line": 5,
-        "column": 3321,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 3490,
-        "end": 3494,
-        "line": 5,
-        "column": 3365,
-        "members": []
-      },
-      {
-        "api": "this._doReset",
-        "access": "call",
-        "start": 3496,
-        "end": 3511,
-        "line": 5,
-        "column": 3371,
-        "members": []
-      },
-      {
-        "api": "this._append",
-        "access": "call",
-        "start": 3539,
-        "end": 3554,
-        "line": 5,
-        "column": 3414,
-        "members": []
-      },
-      {
-        "api": "this._process",
-        "access": "call",
-        "start": 3555,
-        "end": 3570,
-        "line": 5,
-        "column": 3430,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 3571,
-        "end": 3575,
-        "line": 5,
-        "column": 3446,
-        "members": []
-      },
-      {
-        "api": "this._append",
-        "access": "call",
-        "start": 3608,
-        "end": 3623,
-        "line": 5,
-        "column": 3483,
-        "members": []
-      },
-      {
-        "api": "this._doFinalize",
-        "access": "call",
-        "start": 3624,
-        "end": 3642,
-        "line": 5,
-        "column": 3499,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 4498,
-        "end": 4502,
-        "line": 5,
-        "column": 4373,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 4521,
-        "end": 4525,
-        "line": 5,
-        "column": 4396,
-        "members": []
-      },
-      {
-        "api": "this.create",
-        "access": "call",
-        "start": 4874,
-        "end": 4911,
-        "line": 5,
-        "column": 4749,
-        "members": []
-      },
-      {
-        "api": "this._ENC_XFORM_MODE",
-        "access": "read",
-        "start": 4886,
-        "end": 4906,
-        "line": 5,
-        "column": 4761,
-        "members": []
-      },
-      {
-        "api": "this.create",
-        "access": "call",
-        "start": 4950,
-        "end": 4987,
-        "line": 5,
-        "column": 4825,
-        "members": []
-      },
-      {
-        "api": "this._DEC_XFORM_MODE",
-        "access": "read",
-        "start": 4962,
-        "end": 4982,
-        "line": 5,
-        "column": 4837,
-        "members": []
-      },
-      {
-        "api": "this.cfg",
-        "access": "read",
-        "start": 5010,
-        "end": 5018,
-        "line": 5,
-        "column": 4885,
-        "members": []
-      },
-      {
-        "api": "this.cfg.extend",
-        "access": "call",
-        "start": 5019,
-        "end": 5037,
-        "line": 5,
-        "column": 4894,
-        "members": []
-      },
-      {
-        "api": "this._xformMode",
-        "access": "read",
-        "start": 5038,
-        "end": 5053,
-        "line": 5,
-        "column": 4913,
-        "members": []
-      },
-      {
-        "api": "this._key",
-        "access": "read",
-        "start": 5056,
-        "end": 5065,
-        "line": 5,
-        "column": 4931,
-        "members": []
-      },
-      {
-        "api": "this.reset",
-        "access": "call",
-        "start": 5068,
-        "end": 5080,
-        "line": 5,
-        "column": 4943,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 5112,
-        "end": 5116,
-        "line": 5,
-        "column": 4987,
-        "members": []
-      },
-      {
-        "api": "this._doReset",
-        "access": "call",
-        "start": 5118,
-        "end": 5133,
-        "line": 5,
-        "column": 4993,
-        "members": []
-      },
-      {
-        "api": "this._append",
-        "access": "call",
-        "start": 5162,
-        "end": 5177,
-        "line": 5,
-        "column": 5037,
-        "members": []
-      },
-      {
-        "api": "this._process",
-        "access": "call",
-        "start": 5178,
-        "end": 5193,
-        "line": 5,
-        "column": 5053,
-        "members": []
-      },
-      {
-        "api": "this._append",
-        "access": "call",
-        "start": 5226,
-        "end": 5241,
-        "line": 5,
-        "column": 5101,
-        "members": []
-      },
-      {
-        "api": "this._doFinalize",
-        "access": "call",
-        "start": 5242,
-        "end": 5260,
-        "line": 5,
-        "column": 5117,
-        "members": []
-      },
-      {
-        "api": "this._process",
-        "access": "call",
-        "start": 5582,
-        "end": 5599,
-        "line": 5,
-        "column": 5457,
-        "members": []
-      },
-      {
-        "api": "this.Encryptor.create",
-        "access": "call",
-        "start": 5698,
-        "end": 5724,
-        "line": 5,
-        "column": 5573,
-        "members": []
-      },
-      {
-        "api": "this.Decryptor.create",
-        "access": "call",
-        "start": 5763,
-        "end": 5789,
-        "line": 5,
-        "column": 5638,
-        "members": []
-      },
-      {
-        "api": "this._cipher",
-        "access": "read",
-        "start": 5810,
-        "end": 5822,
-        "line": 5,
-        "column": 5685,
-        "members": []
-      },
-      {
-        "api": "this._iv",
-        "access": "read",
-        "start": 5825,
-        "end": 5833,
-        "line": 5,
-        "column": 5700,
-        "members": []
-      },
-      {
-        "api": "this._cipher",
-        "access": "read",
-        "start": 5937,
-        "end": 5949,
-        "line": 5,
-        "column": 5812,
-        "members": []
-      },
-      {
-        "api": "this._prevBlock",
-        "access": "read",
-        "start": 5984,
-        "end": 5999,
-        "line": 5,
-        "column": 5859,
-        "members": []
-      },
-      {
-        "api": "this._cipher",
-        "access": "read",
-        "start": 6073,
-        "end": 6085,
-        "line": 5,
-        "column": 5948,
-        "members": []
-      },
-      {
-        "api": "this._prevBlock",
-        "access": "read",
-        "start": 6137,
-        "end": 6152,
-        "line": 5,
-        "column": 6012,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 6479,
-        "end": 6483,
-        "line": 5,
-        "column": 6354,
-        "members": []
-      },
-      {
-        "api": "this.cfg",
-        "access": "read",
-        "start": 6491,
-        "end": 6499,
-        "line": 5,
-        "column": 6366,
-        "members": []
-      },
-      {
-        "api": "this._xformMode",
-        "access": "read",
-        "start": 6516,
-        "end": 6531,
-        "line": 5,
-        "column": 6391,
-        "members": []
-      },
-      {
-        "api": "this._ENC_XFORM_MODE",
-        "access": "read",
-        "start": 6533,
-        "end": 6553,
-        "line": 5,
-        "column": 6408,
-        "members": []
-      },
-      {
-        "api": "this._minBufferSize",
-        "access": "read",
-        "start": 6595,
-        "end": 6614,
-        "line": 5,
-        "column": 6470,
-        "members": []
-      },
-      {
-        "api": "this._mode",
-        "access": "read",
-        "start": 6618,
-        "end": 6628,
-        "line": 5,
-        "column": 6493,
-        "members": []
-      },
-      {
-        "api": "this._mode.__creator",
-        "access": "read",
-        "start": 6630,
-        "end": 6650,
-        "line": 5,
-        "column": 6505,
-        "members": []
-      },
-      {
-        "api": "this._mode.init",
-        "access": "call",
-        "start": 6654,
-        "end": 6686,
-        "line": 5,
-        "column": 6529,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 6670,
-        "end": 6674,
-        "line": 5,
-        "column": 6545,
-        "members": []
-      },
-      {
-        "api": "this._mode",
-        "access": "read",
-        "start": 6688,
-        "end": 6698,
-        "line": 5,
-        "column": 6563,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 6708,
-        "end": 6712,
-        "line": 5,
-        "column": 6583,
-        "members": []
-      },
-      {
-        "api": "this._mode.__creator",
-        "access": "read",
-        "start": 6725,
-        "end": 6745,
-        "line": 5,
-        "column": 6600,
-        "members": []
-      },
-      {
-        "api": "this._mode.processBlock",
-        "access": "call",
-        "start": 6780,
-        "end": 6808,
-        "line": 5,
-        "column": 6655,
-        "members": []
-      },
-      {
-        "api": "this.cfg.padding",
-        "access": "read",
-        "start": 6841,
-        "end": 6857,
-        "line": 5,
-        "column": 6716,
-        "members": []
-      },
-      {
-        "api": "this._xformMode",
-        "access": "read",
-        "start": 6865,
-        "end": 6880,
-        "line": 5,
-        "column": 6740,
-        "members": []
-      },
-      {
-        "api": "this._ENC_XFORM_MODE",
-        "access": "read",
-        "start": 6882,
-        "end": 6902,
-        "line": 5,
-        "column": 6757,
-        "members": []
-      },
-      {
-        "api": "this._data",
-        "access": "read",
-        "start": 6910,
-        "end": 6920,
-        "line": 5,
-        "column": 6785,
-        "members": []
-      },
-      {
-        "api": "this.blockSize",
-        "access": "read",
-        "start": 6921,
-        "end": 6935,
-        "line": 5,
-        "column": 6796,
-        "members": []
-      },
-      {
-        "api": "this._process",
-        "access": "call",
-        "start": 6939,
-        "end": 6956,
-        "line": 5,
-        "column": 6814,
-        "members": []
-      },
-      {
-        "api": "this._process",
-        "access": "call",
-        "start": 6961,
-        "end": 6978,
-        "line": 5,
-        "column": 6836,
-        "members": []
-      },
-      {
-        "api": "this.mixIn",
-        "access": "call",
-        "start": 7056,
-        "end": 7069,
-        "line": 5,
-        "column": 6931,
-        "members": []
-      },
-      {
-        "api": "this.formatter",
-        "access": "read",
-        "start": 7102,
-        "end": 7116,
-        "line": 5,
-        "column": 6977,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 7128,
-        "end": 7132,
-        "line": 5,
-        "column": 7003,
-        "members": []
-      },
-      {
-        "api": "this.cfg.extend",
-        "access": "call",
-        "start": 7624,
-        "end": 7642,
-        "line": 5,
-        "column": 7499,
-        "members": []
-      },
-      {
-        "api": "this.nes",
-        "access": "read",
-        "start": 7757,
-        "end": 7765,
-        "line": 5,
-        "column": 7632,
-        "members": []
-      },
-      {
-        "api": "this.kos",
-        "access": "read",
-        "start": 7774,
-        "end": 7782,
-        "line": 5,
-        "column": 7649,
-        "members": []
-      },
-      {
-        "api": "this.cfg.extend",
-        "access": "call",
-        "start": 7862,
-        "end": 7880,
-        "line": 5,
-        "column": 7737,
-        "members": []
-      },
-      {
-        "api": "this._parse",
-        "access": "call",
-        "start": 7883,
-        "end": 7906,
-        "line": 5,
-        "column": 7758,
-        "members": []
-      },
-      {
-        "api": "this",
-        "access": "read",
-        "start": 8000,
-        "end": 8004,
-        "line": 5,
-        "column": 7875,
-        "members": []
-      },
-      {
-        "api": "this._cipher.encryptBlock",
-        "access": "call",
-        "start": 8195,
-        "end": 8225,
-        "line": 5,
-        "column": 8070,
-        "members": []
-      },
-      {
-        "api": "this._cipher.decryptBlock",
-        "access": "call",
-        "start": 8278,
-        "end": 8308,
-        "line": 5,
-        "column": 8153,
-        "members": []
-      },
-      {
-        "api": "this._nRounds",
-        "access": "read",
-        "start": 8957,
-        "end": 8970,
-        "line": 5,
-        "column": 8832,
-        "members": []
-      },
-      {
-        "api": "this._keyPriorReset",
-        "access": "read",
-        "start": 8972,
-        "end": 8991,
-        "line": 5,
-        "column": 8847,
-        "members": []
-      },
-      {
-        "api": "this._key",
-        "access": "read",
-        "start": 8994,
-        "end": 9003,
-        "line": 5,
-        "column": 8869,
-        "members": []
-      },
-      {
-        "api": "this._keyPriorReset",
-        "access": "read",
-        "start": 9015,
-        "end": 9034,
-        "line": 5,
-        "column": 8890,
-        "members": []
-      },
-      {
-        "api": "this._key",
-        "access": "read",
-        "start": 9035,
-        "end": 9044,
-        "line": 5,
-        "column": 8910,
-        "members": []
-      },
-      {
-        "api": "this._nRounds",
-        "access": "read",
-        "start": 9076,
-        "end": 9089,
-        "line": 5,
-        "column": 8951,
-        "members": []
-      },
-      {
-        "api": "this._keySchedule",
-        "access": "read",
-        "start": 9100,
-        "end": 9117,
-        "line": 5,
-        "column": 8975,
-        "members": []
-      },
-      {
-        "api": "this._invKeySchedule",
-        "access": "read",
-        "start": 9351,
-        "end": 9371,
-        "line": 5,
-        "column": 9226,
-        "members": []
-      },
-      {
-        "api": "this._doCryptBlock",
-        "access": "call",
-        "start": 9531,
-        "end": 9582,
-        "line": 5,
-        "column": 9406,
-        "members": []
-      },
-      {
-        "api": "this._keySchedule",
-        "access": "read",
-        "start": 9554,
-        "end": 9571,
-        "line": 5,
-        "column": 9429,
-        "members": []
-      },
-      {
-        "api": "this._doCryptBlock",
-        "access": "call",
-        "start": 9647,
-        "end": 9701,
-        "line": 5,
-        "column": 9522,
-        "members": []
-      },
-      {
-        "api": "this._invKeySchedule",
-        "access": "read",
-        "start": 9670,
-        "end": 9690,
-        "line": 5,
-        "column": 9545,
-        "members": []
-      },
-      {
-        "api": "this._nRounds",
-        "access": "read",
-        "start": 9785,
-        "end": 9798,
-        "line": 5,
-        "column": 9660,
-        "members": []
-      },
-      {
         "api": "$request",
         "access": "read",
         "start": 10469,
@@ -1080,7 +81,7 @@
       },
       {
         "api": "TextDecoder",
-        "access": "construct",
+        "access": "call",
         "start": 10718,
         "end": 10742,
         "line": 5,
@@ -1225,651 +226,1393 @@
         ]
       }
     ],
-    "diagnostics": [
-      {
-        "api": "globalThis",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "globalThis",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "window",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "window",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "window",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "globalThis",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "globalThis",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "globalThis",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "this",
-        "reason": "Dynamic receiver access requires scope/data-flow proof",
-        "solution": "Keep native or resolve the receiver before adaptation"
-      },
-      {
-        "api": "$request",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      },
-      {
-        "api": "TextDecoder",
-        "reason": "Direct host/global access bypasses lexical API bindings",
-        "solution": "Keep native or build a verified host-specific adapter; do not perform textual replacement"
-      },
-      {
-        "api": "$argument",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      },
-      {
-        "api": "$argument",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      },
-      {
-        "api": "$argument",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      },
-      {
-        "api": "$argument",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
-      },
-      {
-        "api": "$argument",
-        "reason": "Bare platform-object aliases require data-flow proof",
-        "solution": "Access the documented member directly or keep this program native"
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "20c13c7c598b8e59058493e2143d5c62d27ce6ac2917d04c400fa16caa092528",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 265,
+              "end": 271,
+              "line": 5,
+              "column": 140,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window.crypto",
+              "start": 277,
+              "end": 290,
+              "line": 5,
+              "column": 152,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window.crypto",
+              "start": 295,
+              "end": 308,
+              "line": 5,
+              "column": 170,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 10469,
+              "end": 10477,
+              "line": 5,
+              "column": 10344,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "api": "$request",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 10479,
+              "end": 10488,
+              "line": 5,
+              "column": 10354,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers.x-aeapi",
+              "start": 10496,
+              "end": 10525,
+              "line": 5,
+              "column": 10371,
+              "access": "read",
+              "memberPath": [
+                "headers",
+                "x-aeapi"
+              ]
+            },
+            "canonical": "request.headers",
+            "value": "runtime value",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 10718,
+              "end": 10742,
+              "line": 5,
+              "column": 10593,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "runtime value",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$utils.ungzip",
+              "start": 10750,
+              "end": 10766,
+              "line": 5,
+              "column": 10625,
+              "access": "call",
+              "memberPath": [
+                "ungzip"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 11030,
+              "end": 11042,
+              "line": 5,
+              "column": 10905,
+              "access": "read",
+              "memberPath": [
+                "url"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "runtime value",
+            "target": {
+              "api": "$request.url",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11131,
+              "end": 11140,
+              "line": 5,
+              "column": 11006,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 11146,
+              "end": 11160,
+              "line": 5,
+              "column": 11021,
+              "access": "read",
+              "memberPath": [
+                "body"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "api": "$response.body",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 11709,
+              "end": 11718,
+              "line": 5,
+              "column": 11584,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 11728,
+              "end": 11737,
+              "line": 5,
+              "column": 11603,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 14365,
+              "end": 14374,
+              "line": 5,
+              "column": 14240,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 14384,
+              "end": 14393,
+              "line": 5,
+              "column": 14259,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:15",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 17229,
+              "end": 17238,
+              "line": 5,
+              "column": 17104,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 17310,
+              "end": 17319,
+              "line": 5,
+              "column": 17185,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:17",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 17348,
+              "end": 17357,
+              "line": 5,
+              "column": 17223,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:18",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 17363,
+              "end": 17372,
+              "line": 5,
+              "column": 17238,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "20c13c7c598b8e59058493e2143d5c62d27ce6ac2917d04c400fa16caa092528",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 265,
+              "end": 271,
+              "line": 5,
+              "column": 140,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window.crypto",
+              "start": 277,
+              "end": 290,
+              "line": 5,
+              "column": 152,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window.crypto",
+              "start": 295,
+              "end": 308,
+              "line": 5,
+              "column": 170,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 10469,
+              "end": 10477,
+              "line": 5,
+              "column": 10344,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "api": "$request",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 10479,
+              "end": 10488,
+              "line": 5,
+              "column": 10354,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers.x-aeapi",
+              "start": 10496,
+              "end": 10525,
+              "line": 5,
+              "column": 10371,
+              "access": "read",
+              "memberPath": [
+                "headers",
+                "x-aeapi"
+              ]
+            },
+            "canonical": "request.headers",
+            "value": "runtime value",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 10718,
+              "end": 10742,
+              "line": 5,
+              "column": 10593,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "runtime value",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$utils.ungzip",
+              "start": 10750,
+              "end": 10766,
+              "line": 5,
+              "column": 10625,
+              "access": "call",
+              "memberPath": [
+                "ungzip"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 11030,
+              "end": 11042,
+              "line": 5,
+              "column": 10905,
+              "access": "read",
+              "memberPath": [
+                "url"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "runtime value",
+            "target": {
+              "api": "$request.url",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11131,
+              "end": 11140,
+              "line": 5,
+              "column": 11006,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 11146,
+              "end": 11160,
+              "line": 5,
+              "column": 11021,
+              "access": "read",
+              "memberPath": [
+                "body"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "api": "$response.body",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 11709,
+              "end": 11718,
+              "line": 5,
+              "column": 11584,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 11728,
+              "end": 11737,
+              "line": 5,
+              "column": 11603,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 14365,
+              "end": 14374,
+              "line": 5,
+              "column": 14240,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 14384,
+              "end": 14393,
+              "line": 5,
+              "column": 14259,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:15",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 17229,
+              "end": 17238,
+              "line": 5,
+              "column": 17104,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 17310,
+              "end": 17319,
+              "line": 5,
+              "column": 17185,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:17",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 17348,
+              "end": 17357,
+              "line": 5,
+              "column": 17223,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:18",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 17363,
+              "end": 17372,
+              "line": 5,
+              "column": 17238,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "20c13c7c598b8e59058493e2143d5c62d27ce6ac2917d04c400fa16caa092528",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window",
+              "start": 265,
+              "end": 271,
+              "line": 5,
+              "column": 140,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window.crypto",
+              "start": 277,
+              "end": 290,
+              "line": 5,
+              "column": 152,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "window.crypto",
+              "start": 295,
+              "end": 308,
+              "line": 5,
+              "column": 170,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 10469,
+              "end": 10477,
+              "line": 5,
+              "column": 10344,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "api": "$request",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 10479,
+              "end": 10488,
+              "line": 5,
+              "column": 10354,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers.x-aeapi",
+              "start": 10496,
+              "end": 10525,
+              "line": 5,
+              "column": 10371,
+              "access": "read",
+              "memberPath": [
+                "headers",
+                "x-aeapi"
+              ]
+            },
+            "canonical": "request.headers",
+            "value": "runtime value",
+            "target": {
+              "api": "$request.headers",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 10718,
+              "end": 10742,
+              "line": 5,
+              "column": 10593,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "runtime value",
+            "target": {
+              "api": "TextDecoder",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$utils.ungzip",
+              "start": 10750,
+              "end": 10766,
+              "line": 5,
+              "column": 10625,
+              "access": "call",
+              "memberPath": [
+                "ungzip"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "api": "native engine / runtime capability",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 11030,
+              "end": 11042,
+              "line": 5,
+              "column": 10905,
+              "access": "read",
+              "memberPath": [
+                "url"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "runtime value",
+            "target": {
+              "api": "$request.url",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11131,
+              "end": 11140,
+              "line": 5,
+              "column": 11006,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 11146,
+              "end": 11160,
+              "line": 5,
+              "column": 11021,
+              "access": "read",
+              "memberPath": [
+                "body"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "api": "$response.body",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 11709,
+              "end": 11718,
+              "line": 5,
+              "column": 11584,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 11728,
+              "end": 11737,
+              "line": 5,
+              "column": 11603,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 14365,
+              "end": 14374,
+              "line": 5,
+              "column": 14240,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 14384,
+              "end": 14393,
+              "line": 5,
+              "column": 14259,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:15",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 17229,
+              "end": 17238,
+              "line": 5,
+              "column": 17104,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 17310,
+              "end": 17319,
+              "line": 5,
+              "column": 17185,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "api": "$done",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:17",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 17348,
+              "end": 17357,
+              "line": 5,
+              "column": 17223,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:18",
+            "rule": "argument",
+            "kind": "argument",
+            "source": {
+              "api": "$argument",
+              "start": 17363,
+              "end": 17372,
+              "line": 5,
+              "column": 17238,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "script.argument",
+            "value": "runtime value",
+            "target": {
+              "api": "$argument",
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
       }
-    ]
-  },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "source/text observations retained"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
-  "plans": {},
-  "diagnostics": [
-    {
-      "api": "source-profile",
-      "reason": "The same script has indistinguishable HTTP contexts with different echo/binary/observable source names",
-      "solution": "Keep one shared file only after the declaration identity can be determined at runtime; never choose the last profile"
     }
-  ]
+  },
+  "diagnostics": []
 }

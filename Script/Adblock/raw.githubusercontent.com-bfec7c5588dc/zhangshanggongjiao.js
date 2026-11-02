@@ -1,11 +1,237 @@
+/* Adapter: GPL-3.0-only; derived from ScriptHub b943361f11be5795b3eb10f9cc4e5497642922fc. See vendor/script-hub/NOTICE.md. */
 (function(){
 const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
-if(!__wayxTarget)throw new Error('Unsupported adblock script host');
-const __wayxCodecs=undefined;
-const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task,argument:typeof $argument==='undefined'?undefined:$argument,codecs:__wayxCodecs};
-const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false,"responseBody":true,"apiPlan":{"version":1,"omitNotificationOptions":true,"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"},"target":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"}}},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"responseBody":true,"apiPlan":{"version":1,"omitNotificationOptions":true,"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"},"target":{"responseStatus":"status","scriptStartTime":"epoch-seconds","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":false},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1000,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":false}},"notification":{"root":"$notification.post","open":"url","media":"media-url","action":"action","openAction":"open-url","stringLink":false,"delay":false},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"string"}},"headerReads":{},"headerPrefixes":{},"binaryReads":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
-if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
-const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
+const __wayxHost={global:globalThis,request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,task:typeof $task==='undefined'?undefined:$task,http:typeof $httpClient==='undefined'?undefined:$httpClient,prefs:typeof $prefs==='undefined'?undefined:$prefs,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,notifyQx:typeof $notify==='undefined'?undefined:$notify,notify:typeof $notification==='undefined'?undefined:$notification,script:typeof $script==='undefined'?undefined:$script,argument:typeof $argument==='undefined'?undefined:$argument,environment:typeof $environment==='undefined'?undefined:$environment,loon:typeof $loon==='undefined'?undefined:$loon,setTimeout:typeof setTimeout==='undefined'?undefined:setTimeout,codecs:(function(){
+  const text=value=>{if(typeof value==='symbol')throw new TypeError('Cannot convert a Symbol to a string');return String(value);};
+  const dictionary=value=>{if(value===undefined||value===null)return {};if(typeof value!=='object'&&typeof value!=='function')throw new TypeError('Options must be an object');return value;};
+  const arrayBufferLength=Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get;
+  const typedPrototype=Object.getPrototypeOf(Uint8Array.prototype),typedGet=name=>Object.getOwnPropertyDescriptor(typedPrototype,name).get,dataGet=name=>Object.getOwnPropertyDescriptor(DataView.prototype,name).get;
+  const typedName=Object.getOwnPropertyDescriptor(typedPrototype,Symbol.toStringTag).get,typedLength=typedGet('length'),typedBuffer=typedGet('buffer'),typedOffset=typedGet('byteOffset'),typedBytes=typedGet('byteLength'),dataBuffer=dataGet('buffer'),dataOffset=dataGet('byteOffset'),dataBytes=dataGet('byteLength'),setBytes=Uint8Array.prototype.set;
+  const inputBytes=value=>{
+    if(value===undefined)return new Uint8Array(0);
+    let length;try{length=arrayBufferLength.call(value);}catch{}
+    if(length!==undefined)return new Uint8Array(value,0,length);
+    if(ArrayBuffer.isView(value)){
+      const typed=typedName.call(value)!==undefined,buffer=(typed?typedBuffer:dataBuffer).call(value),offset=(typed?typedOffset:dataOffset).call(value),size=(typed?typedBytes:dataBytes).call(value);
+      arrayBufferLength.call(buffer);return new Uint8Array(buffer,offset,size);
+    }
+    throw new TypeError('Expected an ArrayBuffer or view');
+  };
+  const scalar=(s,index)=>{let cp=s.charCodeAt(index),read=1;if(cp>=0xd800&&cp<=0xdbff){const low=s.charCodeAt(index+1);if(low>=0xdc00&&low<=0xdfff){cp=0x10000+((cp-0xd800)<<10)+(low-0xdc00);read=2;}else cp=0xfffd;}else if(cp>=0xdc00&&cp<=0xdfff)cp=0xfffd;return {cp,read};};
+  const sequence=cp=>cp<=0x7f?[cp]:cp<=0x7ff?[0xc0|(cp>>6),0x80|(cp&63)]:cp<=0xffff?[0xe0|(cp>>12),0x80|((cp>>6)&63),0x80|(cp&63)]:[0xf0|(cp>>18),0x80|((cp>>12)&63),0x80|((cp>>6)&63),0x80|(cp&63)];
+  const encoderInstances=new WeakSet();
+  const encoderBrand=value=>{if(!encoderInstances.has(value))throw new TypeError('Illegal TextEncoder receiver');};
+  class TextEncoder{
+    constructor(){encoderInstances.add(this);}
+    get encoding(){encoderBrand(this);return 'utf-8';}
+    encode(input=undefined){encoderBrand(this);const s=input===undefined?'':text(input),out=[];for(let i=0;i<s.length;){const point=scalar(s,i);out.push(...sequence(point.cp));i+=point.read;}return new Uint8Array(out);}
+    encodeInto(input,destination){encoderBrand(this);if(arguments.length<2)throw new TypeError('Two arguments required');const s=text(input);if(typedName.call(destination)!=='Uint8Array')throw new TypeError('Uint8Array destination required');const capacity=typedLength.call(destination);let read=0,written=0;while(read<s.length){const point=scalar(s,read),bytes=sequence(point.cp);if(written+bytes.length>capacity)break;setBytes.call(destination,bytes,written);written+=bytes.length;read+=point.read;}return {read,written};}
+  }
+  const decoders=new WeakMap(),decoderState=value=>{const state=decoders.get(value);if(!state)throw new TypeError('Illegal TextDecoder receiver');return state;};
+  const reset=state=>{state.point=0;state.seen=0;state.need=0;state.lower=0x80;state.upper=0xbf;};
+  class TextDecoder{
+    constructor(label='utf-8',options=undefined){
+      const encoding=text(label).replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/g,'').toLowerCase(),opts=dictionary(options),fatal=!!opts.fatal,ignoreBOM=!!opts.ignoreBOM;
+      if(!['utf-8','utf8','unicode-1-1-utf-8','unicode11utf8','unicode20utf8','x-unicode20utf8'].includes(encoding))throw new RangeError('Only UTF-8 labels are supported');
+      const state={fatal,ignoreBOM,stream:false,bom:false};reset(state);decoders.set(this,state);
+    }
+    get encoding(){decoderState(this);return 'utf-8';}
+    get fatal(){return decoderState(this).fatal;}
+    get ignoreBOM(){return decoderState(this).ignoreBOM;}
+    decode(input=undefined,options=undefined){
+      const state=decoderState(this),bytes=inputBytes(input),opts=dictionary(options),stream=!!opts.stream,out=[];
+      if(!state.stream){reset(state);state.bom=false;}state.stream=stream;
+      const emit=cp=>{if(!state.bom){state.bom=true;if(cp===0xfeff&&!state.ignoreBOM)return;}out.push(cp<=0xffff?String.fromCharCode(cp):String.fromCharCode(0xd800+((cp-0x10000)>>10),0xdc00+((cp-0x10000)&1023)));};
+      const error=()=>{reset(state);if(state.fatal)throw new TypeError('Invalid UTF-8 data');emit(0xfffd);};
+      for(let i=0;i<bytes.length;i++){
+        const b=bytes[i];
+        if(!state.need){
+          if(b<=0x7f){emit(b);continue;}
+          if(b>=0xc2&&b<=0xdf){state.need=1;state.point=b&31;continue;}
+          if(b>=0xe0&&b<=0xef){state.need=2;state.point=b&15;if(b===0xe0)state.lower=0xa0;if(b===0xed)state.upper=0x9f;continue;}
+          if(b>=0xf0&&b<=0xf4){state.need=3;state.point=b&7;if(b===0xf0)state.lower=0x90;if(b===0xf4)state.upper=0x8f;continue;}
+          error();continue;
+        }
+        if(b<state.lower||b>state.upper){error();i--;continue;}
+        state.lower=0x80;state.upper=0xbf;state.point=(state.point<<6)|(b&63);state.seen++;
+        if(state.seen===state.need){const cp=state.point;reset(state);emit(cp);}
+      }
+      if(!stream&&state.need)error();return out.join('');
+    }
+  }
+  const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  class PortableInvalidCharacterError extends Error{get name(){return 'InvalidCharacterError';}get code(){return 5;}get [Symbol.toStringTag](){return 'DOMException';}}
+  const invalid=()=>{throw typeof DOMException==='function'?new DOMException('Invalid Base64 character','InvalidCharacterError'):new PortableInvalidCharacterError('Invalid Base64 character');};
+  function atob(value){if(!arguments.length)throw new TypeError('One argument required');let s=text(value).replace(/[\t\n\f\r ]/g,'');if(s.length%4===0)s=s.replace(/==?$/,'');if(s.length%4===1||/[^A-Za-z0-9+/]/.test(s))invalid();let bits=0,buffer=0,out='';for(let i=0;i<s.length;i++){buffer=(buffer<<6)|alphabet.indexOf(s[i]);bits+=6;if(bits>=8){bits-=8;out+=String.fromCharCode((buffer>>bits)&255);}}return out;}
+  function btoa(value){if(!arguments.length)throw new TypeError('One argument required');const s=text(value);let out='';for(let i=0;i<s.length;i+=3){const a=s.charCodeAt(i),b=s.charCodeAt(i+1),c=s.charCodeAt(i+2);if(a>255||b>255||c>255)invalid();const word=(a<<16)|((b||0)<<8)|(c||0);out+=alphabet[(word>>>18)&63]+alphabet[(word>>>12)&63]+(i+1<s.length?alphabet[(word>>>6)&63]:'=')+(i+2<s.length?alphabet[word&63]:'=');}return out;}
+  return {TextEncoder,TextDecoder,atob,btoa};
+})()};
+const __wayxContexts={"response":{"qx":{"phase":"response","binary":false,"responseBody":true,"from":"qx","to":"qx","apiPlan":{"version":1,"omitNotificationOptions":true,"qxHttp":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"},"target":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"}},"runtimePolicyVersion":2,"omittedParameters":["undocumented-qx-parameters"]},"surge":{"phase":"response","binary":false,"responseBody":true,"from":"qx","to":"surge","apiPlan":{"version":1,"omitNotificationOptions":true,"qxHttp":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"},"target":{"responseStatus":"status","scriptStartTime":"epoch-seconds","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":false},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1000,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":false}},"notification":{"root":"$notification.post","open":"url","media":"media-url","action":"action","openAction":"open-url","stringLink":false,"delay":false},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"string"}},"runtimePolicyVersion":2,"omittedParameters":[]}}},__wayxConfig=__wayxContexts[__wayxHost.response===undefined?'request':'response']?.[__wayxTarget];
+if(!__wayxConfig)throw new Error('Unregistered HTTP source/target declaration');
+return (function(config,host,run){
+  const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+  const fail=message=>{throw new TypeError('WayX API: '+message);};
+  const source=config.apiPlan.source,target=config.apiPlan.target;
+  const headers=(function(headers){
+  if(headers===undefined||headers===null)return headers;
+  if(typeof headers!=='object'||Array.isArray(headers))throw new TypeError('Header dictionary required');
+  const lowerCaseHeaders=Object.fromEntries(Object.entries(headers).map(([k,v])=>[k.toLowerCase(),v]));
+  const key=prop=>typeof prop==='string'?prop.toLowerCase():prop;
+  return new Proxy(lowerCaseHeaders,{
+    get:(target,prop,receiver)=>{
+      if(prop==='hasOwnProperty')return name=>Object.prototype.hasOwnProperty.call(target,key(name));
+      if(prop==='propertyIsEnumerable')return name=>Object.prototype.propertyIsEnumerable.call(target,key(name));
+      if(typeof prop==='string'&&!Object.prototype.hasOwnProperty.call(target,key(prop))&&['toString','toLocaleString','valueOf','constructor'].includes(prop))return Reflect.get(target,prop,receiver);
+      return Reflect.get(target,key(prop),receiver);
+    },
+    set:(target,prop,value)=>Reflect.defineProperty(target,key(prop),{value,writable:true,enumerable:true,configurable:true}),
+    deleteProperty:(target,prop)=>Reflect.deleteProperty(target,key(prop)),
+    has:(target,prop)=>Reflect.has(target,key(prop)),
+    defineProperty:(target,prop,descriptor)=>{
+      if(key(prop)!==prop&&!descriptor.configurable)throw new TypeError('Case-insensitive Header descriptors must be configurable');
+      return Reflect.defineProperty(target,key(prop),descriptor);
+    },
+    getOwnPropertyDescriptor:(target,prop)=>{const d=Reflect.getOwnPropertyDescriptor(target,key(prop));return d&&key(prop)!==prop?Object.assign({},d,{configurable:true}):d;},
+  });
+});
+  const bytes=value=>ArrayBuffer.isView(value)?new Uint8Array(value.buffer,value.byteOffset,value.byteLength):value instanceof ArrayBuffer?new Uint8Array(value):fail('binary body requires BufferSource');
+  const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
+  const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&/^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value);if(m)return Number(m[1]);return fail('invalid HTTP status');};
+  const statusLine=value=>typeof value==='string'?value:'HTTP/1.1 '+status(value)+' '+({200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error'}[status(value)]||'Status');
+  function view(value){
+    if(value===undefined)return undefined;
+    const result=Object.assign({},value);
+    if(value.headers!==undefined)result.headers=headers(value.headers);
+    if(own(value,target.responseStatus)){result[source.responseStatus]=status(value[target.responseStatus]);if(source.responseStatus!==target.responseStatus)delete result[target.responseStatus];}
+    if(config.binary){
+      const valueBytes=target.binaryField==='bodyBytes'?value.bodyBytes:value.body;
+      if(valueBytes!==undefined){const b=bytes(valueBytes);if(source.binaryField==='bodyBytes'){result.bodyBytes=buffer(b);delete result.body;}else{result.body=b;delete result.bodyBytes;}}
+    }
+    return result;
+  }
+  const request=view(host.request),response=view(host.response);
+  let completed=false;
+  function message(value,synthetic){
+    if(!value||typeof value!=='object'||Array.isArray(value))return fail('completion requires an object');
+    const out=Object.assign({},value);
+    if(own(out,'statusCode')&&!own(out,'status'))out.status=out.statusCode;
+    delete out.statusCode;
+    if(own(out,'status'))out.status=target.completion.statusEncoding==='line'?statusLine(out.status):status(out.status);
+    if(own(out,'headers')){if(!out.headers||typeof out.headers!=='object'||Array.isArray(out.headers))fail('completion headers require a dictionary');out.headers=Object.assign({},headers(out.headers));}
+    if(own(out,'bodyBytes')){out.body=bytes(out.bodyBytes);delete out.bodyBytes;}
+    if(out.body instanceof ArrayBuffer||ArrayBuffer.isView(out.body)){if(target.binaryField==='bodyBytes'){out.bodyBytes=buffer(out.body);delete out.body;}else out.body=bytes(out.body);}
+    for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort'].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
+    if(target.completion.synthetic==='flat'&&out.abort)fail('target abort API unavailable');
+    if(target.completion.synthetic==='flat'&&!synthetic&&config.phase==='response'&&own(out,'headers')&&!own(out,'body')&&!own(out,'bodyBytes')&&config.responseBody)fail('QX response-body requires body with changed headers');
+    return out;
+  }
+  function done(value){
+    if(completed)return;completed=true;
+    if(value===undefined||value===null)return host.done({});
+    if(value===response||value===request){
+      // Return actual current fields; mutations made by author code are retained.
+      const current=value===response?host.response:host.request;
+      const out={};for(const k of ['url','headers','body','bodyBytes',source.responseStatus])if(own(value,k))out[k]=value[k];
+      value=out;
+    }
+    if(typeof value==='string')value={body:value};
+    let synthetic=false,payload=value;
+    if(value&&typeof value==='object'&&own(value,'response')){synthetic=true;payload=value.response;}
+    else if(config.from==='qx'&&config.phase==='echo')synthetic=true;
+    const out=message(payload,synthetic);
+    if(synthetic){if(target.completion.synthetic==='flat'){if(config.phase!=='echo')fail('QX synthetic response requires an echo declaration');return host.done(out);}return host.done({response:out});}
+    return host.done(out);
+  }
+  // ScriptHub-style native transport bridge, with complete method/error contracts.
+  function transport(input,style,method){
+    if(typeof input==='string')input={url:input};
+    if(!input||typeof input!=='object'||typeof input.url!=='string')return fail('HTTP request requires url');
+    const http=style==='promise'?config.apiPlan.qxHttp:source.http;
+    const options=style==='promise'?(input.opts||{}):input;
+    const verb=String(method||input.method||'GET').toLowerCase();
+    if(!config.apiPlan.methods.includes(verb))return fail('HTTP method unavailable: '+verb);
+    const req={url:input.url};
+    if(own(input,'headers'))req.headers=Object.assign({},input.headers);
+    if(own(input,'body'))req.body=input.body instanceof ArrayBuffer||ArrayBuffer.isView(input.body)?(target.http.style==='promise'?buffer(input.body):bytes(input.body)):input.body;
+    if(own(input,'bodyBytes'))req.bodyBytes=buffer(input.bodyBytes);
+    const mapped={};
+    for(const semantic of ['redirect','cookie','tls'])mapped[target.http[semantic]]=own(options,http[semantic])?options[http[semantic]]:http.defaults[semantic];
+    if(own(options,http.policy))mapped[target.http.policy]=options[http.policy]===http.directPolicy?target.http.directPolicy:options[http.policy];
+    if(target.http.style==='promise'){
+      req.method=verb.toUpperCase();req.opts=mapped;
+      return {req,verb};
+    }
+    Object.assign(req,mapped);
+    if(http.timeoutMs!==null&&target.http.timeoutMs!==null&&own(input,'timeout'))req.timeout=input.timeout*http.timeoutMs/target.http.timeoutMs;
+    for(const key of ['binary-mode','body-base64','alpn'])if(style==='callback'&&own(input,key))req[key]=input[key];
+    if(own(req,'bodyBytes')){req.body=bytes(req.bodyBytes);delete req.bodyBytes;req['binary-mode']=true;}
+    if(style==='promise')req['binary-mode']=true;
+    return {req,verb};
+  }
+  function taskFetch(input){
+    return new Promise((resolve,reject)=>{
+      let plan;try{plan=transport(input,'promise');}catch(error){reject(error);return;}
+      const normalize=(native,data)=>{
+        if(!native)return reject({error:'HTTP transport returned no response'});
+        const out={statusCode:status(native[target.responseStatus]),headers:headers(native.headers||{})};
+        if(data instanceof ArrayBuffer||ArrayBuffer.isView(data)){out.bodyBytes=buffer(data);out.body=new host.codecs.TextDecoder().decode(bytes(data));}else out.body=data;
+        resolve(out);
+      };
+      if(target.http.style==='promise'){
+        let promise;try{promise=host.task.fetch(plan.req);}catch(error){reject(error);return;}
+        Promise.resolve(promise).then(r=>{try{normalize(r,r&&(own(r,'bodyBytes')?r.bodyBytes:r.body));}catch(error){reject(error);}},reject);
+      }else{
+        const fn=host.http&&host.http[plan.verb];if(typeof fn!=='function'){reject(new TypeError('Native HTTP method unavailable'));return;}
+        try{fn.call(host.http,plan.req,(error,r,data)=>{if(error){reject({error});return;}try{normalize(r,data);}catch(e){reject(e);}});}catch(error){reject(error);}
+      }
+    });
+  }
+  const http={};for(const method of config.apiPlan.methods)http[method]=(input,callback)=>{
+    if(typeof callback!=='function')return fail('HTTP callback required');
+    const plan=transport(input,'callback',method);
+    if(target.http.style==='callback'){
+      const fn=host.http&&host.http[method];if(typeof fn!=='function')return fail('native HTTP method unavailable');
+      return fn.call(host.http,plan.req,(error,r,data)=>{if(error)return callback(error,r,data);if(!r)return callback('HTTP transport returned no response',r,data);const result=Object.assign({},r,{headers:headers(r.headers||{})});result.status=status(r[target.responseStatus]);return callback(null,result,data);});
+    }
+    return host.task.fetch(plan.req).then(r=>{if(!r)return callback('HTTP transport returned no response',undefined,undefined);return callback(null,{status:status(r.statusCode),headers:headers(r.headers||{})},input&&input['binary-mode']&&own(r,'bodyBytes')?bytes(r.bodyBytes):r.body);},e=>callback(e&&e.error||e,undefined,undefined));
+  };
+  const nativeStore=target.store.style==='prefs'?host.prefs:host.store;
+  const storageKey=key=>{if(key===undefined){const name=config.name||(config.from===config.to&&host.script&&host.script.name);if(!name)return fail('source storage default key needs source script name');return name;}if(typeof key!=='string')return fail('storage key must be String');return key;};
+  const store={read:key=>nativeStore[target.store.read](storageKey(key)),write:(value,key)=>{
+    key=storageKey(key);if(value===null||(value===undefined&&source.store.undefinedDeletes))return target.store.remove?nativeStore[target.store.remove](key):nativeStore[target.store.write](null,key);
+    if(typeof value!=='string')return fail('storage value must be String or deletion marker');return nativeStore[target.store.write](value,key);
+  }};
+  const prefKey=key=>typeof key==='string'?key:fail('QX storage requires an explicit String key');
+  const prefs={valueForKey:key=>store.read(prefKey(key)),setValueForKey:(value,key)=>{key=prefKey(key);if(typeof value!=='string')return fail('QX storage value must be String');return store.write(value,key);},removeValueForKey:key=>target.store.remove?nativeStore[target.store.remove](prefKey(key)):nativeStore[target.store.write](null,prefKey(key))};
+  function notify(title='',subtitle='',body='',option,delay){
+    if(config.apiPlan.omitNotificationOptions)return target.notification.root==='$notify'?host.notifyQx(title,subtitle,body):host.notify.post(title,subtitle,body);
+    if(delay!==undefined&&delay!==0&&config.from!==config.to)return fail('notification delay has no target API');
+    if(config.from===config.to)return host.notify.post(title,subtitle,body,option,delay);
+    const raw=typeof option==='string'?{url:option}:option||{};
+    const open=raw.openUrl||raw.url||raw['open-url'],media=raw.mediaUrl||raw['media-url'];
+    const mapped={};if(open!==undefined)mapped[target.notification.open]=open;if(media!==undefined)mapped[target.notification.media]=media;
+    for(const key of Object.keys(raw))if(!['url','openUrl','open-url','mediaUrl','media-url','action'].includes(key))fail('notification option unavailable: '+key);
+    return host.notify.post(title,subtitle,body,mapped);
+  }
+  let argument=config.from==='qx'||target.argument==='absent'?undefined:host.argument;
+  if(config.argumentSchema&&config.argumentSchema.kind==='object'&&typeof argument==='string')argument=JSON.parse(argument);
+  const script=config.from==='qx'?undefined:Object.assign({},host.script,{name:config.name||host.script&&host.script.name});
+  if(script&&script.startTime!==undefined){const t=script.startTime;script.startTime=t instanceof Date?t:new Date(t*1000);}
+  const environment=Object.assign({},host.environment);delete environment['surge-version'];delete environment['stash-version'];
+  const overlay={
+    $request:request,$response:response,$done:done,$script:script,
+    $task:config.from==='qx'?{fetch:taskFetch}:undefined,$httpClient:config.from==='qx'?undefined:http,
+    $prefs:config.from==='qx'?prefs:undefined,$persistentStore:config.from==='qx'?undefined:store,
+    $notify:config.from==='qx'?notify:undefined,$notification:config.from==='qx'?undefined:{post:notify},
+    $argument:argument,$environment:environment,$loon:config.from==='loon'?(host.loon||'Loon (WayX API compatibility)'):undefined,
+  };
+  if(config.from==='loon')overlay.setInterval=(fn,delay,...args)=>host.setTimeout(fn,delay,...args);
+  for(const name of ['TextEncoder','TextDecoder','atob','btoa'])if(typeof host.global[name]==='undefined')overlay[name]=host.codecs[name];
+  const scope=new Proxy(overlay,{has:(t,key)=>own(t,key),get:(t,key)=>key===Symbol.unscopables?undefined:Reflect.get(t,key),set:(t,key,value)=>Reflect.set(t,key,value)});
+  const global=new Proxy(host.global,{get:(t,key)=>own(overlay,key)?overlay[key]:Reflect.get(t,key),set:(t,key,value)=>own(overlay,key)?Reflect.set(overlay,key,value):Reflect.set(t,key,value),has:(t,key)=>own(overlay,key)||Reflect.has(t,key)});
+  overlay.globalThis=global;overlay.window=global;overlay.global=global;
+  return run.call(global,scope);
+})(__wayxConfig,__wayxHost,function(__wayxScope){with(__wayxScope){return (function(){
 /***********************************
  > 應用名稱：掌上公交（微信小程序）
  > 軟件版本：0.0.0
@@ -25,250 +251,5 @@ const __wayxRun=function($request,$response,$done,$script,$persistentStore,$pref
 var body = $response.body.replace(/Ad":1/g, 'Ad":0').replace(/Ad_ab":1/g, 'Ad_ab":0')
 $done({body});
 
-};
-// Modified: 2026-11-02 (chance). Apply the documented QX notification subset
-// on the native branch too; all original optional expressions still evaluate.
-const __wayxNativeNotify=__wayxConfig.apiPlan.omitNotificationOptions&&__wayxConfig.omittedParameters&&__wayxConfig.omittedParameters.some(p=>p.startsWith('notification.argument'))&&typeof __wayxHost.notifyQx==='function'?((title,subtitle,body)=>__wayxHost.notifyQx(title,subtitle,body)):__wayxHost.notifyQx;
-if(__wayxTarget==="qx"&&!__wayxConfig.httpTask)return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxNativeNotify,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,__wayxHost.http,__wayxHost.task,__wayxHost.argument,__wayxCodecs&&__wayxCodecs.TextEncoder,__wayxCodecs&&__wayxCodecs.TextDecoder,__wayxCodecs&&__wayxCodecs.atob,__wayxCodecs&&__wayxCodecs.btoa);
-return (function(config,host,run){
-  const fail=message=>{throw new Error('WayX API contract: '+message);};
-  const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
-  // Modified: 2026-11-02 (chance). All client spellings/defaults below come
-  // from the semantic target plan, shared with parser validation and reports.
-  const sourceLayout=config.apiPlan.source,targetLayout=config.apiPlan.target;
-  const sourceHttp=sourceLayout.http,targetHttp=targetLayout.http;
-  const targetStore=targetLayout.store.style==='prefs'?host.prefs:host.store;
-  const bytes=value=>value instanceof Uint8Array?new Uint8Array(value.buffer,value.byteOffset,value.byteLength):value instanceof ArrayBuffer?new Uint8Array(value):fail('expected Uint8Array or ArrayBuffer');
-  const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
-  const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&value.match(/^HTTP\/\d(?:\.\d)?\s+(\d{3})(?:\s.*)?$/);return m?Number(m[1]):fail('unsupported HTTP status');};
-  const reasons={200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',307:'Temporary Redirect',308:'Permanent Redirect',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error',502:'Bad Gateway',503:'Service Unavailable'};
-  // Modified: 2026-11-02 (chance). Validate only queried singleton fields;
-  // preserve the author's dictionary and case-insensitive lookup unchanged.
-  function view(value,role){
-    if(value===undefined)return undefined;
-    const names=config.headerReads&&config.headerReads[role]||[];
-    // Modified: 2026-11-02 (chance). Prefix-find input requires at most one
-    // matching field, so dictionary enumeration order cannot alter the result.
-    const prefixes=config.headerPrefixes&&config.headerPrefixes[role]||[];
-    if(names.length||prefixes.length){
-      if(!value.headers||typeof value.headers!=='object'||Array.isArray(value.headers))fail('header dictionary required');
-      for(const prefix of prefixes){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase().startsWith(prefix));if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header prefix lookup requires a singleton string field: '+prefix);}
-      for(const name of names){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase()===name);if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header lookup requires a singleton string field: '+name);}
-    }
-    const result=Object.assign({},value);
-    // Modified: 2026-11-02 (chance). Closed request-header mutations operate
-    // on a detached singleton String dictionary; no host-object mutation leaks.
-    if(config.headerDeletion&&role==='request'){
-      if(!value.headers||typeof value.headers!=='object'||Array.isArray(value.headers))fail('header dictionary required');
-      const seen=new Set();for(const key of Object.keys(value.headers)){const lower=key.toLowerCase();if(seen.has(lower)||typeof value.headers[key]!=='string')fail('header deletion requires singleton String fields');seen.add(lower);}
-      result.headers=Object.assign({},value.headers);
-    }
-    // Modified: 2026-11-02 (chance). The declaration identifies the principal
-    // binary input; never silently feed text into a byte-only source program.
-    if(config.binaryReads&&role===(config.phase==='response'?'response':'request')){
-      if(targetLayout.binaryField==='bodyBytes'){
-        if(!(value.bodyBytes instanceof ArrayBuffer))fail('binary trigger requires QX ArrayBuffer bodyBytes');
-        if(sourceLayout.binaryField!=='bodyBytes'){result.body=new Uint8Array(value.bodyBytes);delete result.bodyBytes;}
-      }else{
-        const input=bytes(value.body);
-        if(sourceLayout.binaryField==='bodyBytes'){result.bodyBytes=buffer(input);delete result.body;}
-        else result.body=input;
-      }
-    }
-    if(sourceLayout.responseStatus!==targetLayout.responseStatus&&own(result,targetLayout.responseStatus)){
-      result[sourceLayout.responseStatus]=status(result[targetLayout.responseStatus]);delete result[targetLayout.responseStatus];
-    }
-    if(sourceLayout.binaryField==='bodyBytes'){
-      if(result.body instanceof Uint8Array||result.body instanceof ArrayBuffer){result[sourceLayout.binaryField]=buffer(result.body);delete result.body;}
-    }else if(own(result,'bodyBytes')){
-      if(config.binaryReads&&role===(config.phase==='response'?'response':'request'))result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;
-    }
-    return result;
-  }
-  const sourceStore={
-    read:key=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');const v=targetStore[targetLayout.store.read](key);return v==null?null:v;},
-    write:(value,key)=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');if(value===undefined&&sourceLayout.store.undefinedDeletes)value=null;if(value!==null&&typeof value!=='string')fail('unsupported storage coercion');return value===null&&targetLayout.store.remove?targetStore[targetLayout.store.remove](key):targetStore[targetLayout.store.write](value,key);}
-  };
-  const sourcePrefs={valueForKey:key=>sourceStore.read(key),setValueForKey:(value,key)=>sourceStore.write(value,key),removeValueForKey:key=>sourceStore.write(null,key)};
-  // Modified: 2026-11-02 (chance). Only explicit URL/HTTP media fields map;
-  // no fake notification delay, clipboard action or undocumented QX options.
-  function notify(title,subtitle,body,option,delay){
-    if(config.to==='egern'){if(arguments.length>3)fail('notification options unavailable');return host.ctx.notify({title,subtitle,body});}
-    // Modified: 2026-11-02 (chance). Omit QX-undocumented source options
-    // before optional-field validation; argument construction already occurred.
-    if(targetLayout.notification.open===null)return host.notifyQx(title,subtitle,body);
-    if(config.apiPlan.omitNotificationOptions)return host.notify.post(title,subtitle,body);
-    if(arguments.length<=3)return host.notify.post(title,subtitle,body);
-    if(delay!==undefined&&delay!==0)fail('notification delay has no verified target mapping');
-    let url,media;const notification=sourceLayout.notification;
-    if(notification.stringLink&&typeof option==='string')url=option;
-    else if(notification.open){
-      if(!option||typeof option!=='object'||Array.isArray(option))fail('notification options require a dictionary');
-      if(notification.action&&option[notification.action]!==undefined&&option[notification.action]!==notification.openAction)fail('notification action needs an explicit mapping');
-      url=option[notification.open];media=option[notification.media];
-    }else if(option&&typeof option==='object'&&!Object.keys(option).length)return host.notify.post(title,subtitle,body);
-    else fail('source notification options have no verified mapping');
-    if(url!==undefined&&typeof url!=='string')fail('notification URL requires String');
-    if(media!==undefined&&(typeof media!=='string'||!/^https?:\/\//i.test(media)))fail('notification media requires HTTP(S) URL');
-    const mapped={};
-    if(url!==undefined)mapped[targetLayout.notification.open]=url;
-    if(media!==undefined)mapped[targetLayout.notification.media]=media;
-    return host.notify.post(title,subtitle,body,mapped);
-  }
-  function headersView(headers){
-    const object=Object.assign({},headers||{});
-    const key=name=>Object.keys(object).find(k=>k.toLowerCase()===String(name).toLowerCase());
-    return new Proxy(object,{get:(target,name)=>{
-      if(name==='get')return n=>{const k=key(n);return k===undefined?null:target[k];};
-      if(name==='has')return n=>key(n)!==undefined;
-      const k=typeof name==='string'?key(name):name;return k===undefined?undefined:target[k];
-    }});
-  }
-  function ctxMessage(value){
-    if(value===undefined)return undefined;
-    let consumed=false;
-    const consume=()=>{if(consumed)throw new TypeError('Body has already been consumed');consumed=true;return value.body;};
-    return {url:value.url,method:value.method,status:value.status??value.statusCode,headers:headersView(value.headers),text:async()=>{const v=consume();if(v===undefined||v===null)return '';if(typeof v!=='string')fail('binary-to-text decoding needs an explicit codec');return v;},json:async()=>{const v=consume();if(typeof v!=='string')fail('JSON requires the text-body contract');return JSON.parse(v);},arrayBuffer:async()=>{const v=consume();return v===undefined||v===null?new ArrayBuffer(0):buffer(v);}};
-  }
-  // Modified: 2026-11-02 (chance). Only a proven untouched source context
-  // identity becomes pass-through; arbitrary/modified objects follow normal rules.
-  let originalResponse;
-  function canonical(value){
-    if(config.contextPassThrough&&value===originalResponse&&value!==undefined)return {};
-    if(value===undefined||value===null)return {};
-    if(typeof value==='string'){if(config.from!=='qx')fail('non-QX string completion');return config.phase==='echo'?{response:{status:200,body:value}}:{body:value};}
-    if(typeof value!=='object'||Array.isArray(value))fail('unsupported completion result');
-    if(sourceLayout.completion.synthetic==='flat'&&config.phase==='echo')value={response:value};
-    const result=Object.assign({},value);
-    if(own(result,'statusCode')){result.status=result.statusCode;delete result.statusCode;}
-    if(own(result,'status'))result.status=status(result.status);
-    if(own(result,'bodyBytes')){result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;}
-    if(result.response){result.response=Object.assign({},result.response);if(own(result.response,'status'))result.response.status=status(result.response.status);if(own(result.response,'bodyBytes')){result.response.body=new Uint8Array(result.response.bodyBytes);delete result.response.bodyBytes;}}
-    for(const k of Object.keys(result))if(!['url','headers','body','status','response','abort'].includes(k))fail('unmapped completion field: '+k);
-    return result;
-  }
-  let completed=false,resolveDone;
-  const completion=config.to==='egern'?new Promise(resolve=>resolveDone=resolve):null;
-  function done(value){
-    if(completed)return;completed=true;
-    const result=canonical(value);
-    if(config.to==='egern'){
-      const response=result.response?host.ctx.respond(result.response):result.abort?host.ctx.abort():result;
-      resolveDone(Object.keys(result).length?response:undefined);return;
-    }
-    if(targetLayout.completion.synthetic==='flat'){
-      if(result.abort)fail('target abort semantics are not proven');
-      let output=result;
-      if(result.response){if(config.phase!=='echo')fail('direct response requires a QX echo declaration');output=result.response;}
-      if(own(output,'status'))output.status='HTTP/1.1 '+status(output.status)+' '+(reasons[status(output.status)]||'Status');
-      if(output.body instanceof Uint8Array||output.body instanceof ArrayBuffer){output.bodyBytes=buffer(output.body);delete output.body;}
-      return host.done(output);
-    }
-    if(config.to==='loon'&&result.abort)fail('Loon abort result is not documented');
-    return host.done(result);
-  }
-  // Modified: 2026-11-02 (chance). Callback-only HTTP mapping keeps explicit
-  // cookies/redirects and native cancellation; no fake Promise timeout or null success.
-  function callbackHttp(){
-    if(!config.httpCallback)return undefined;
-    if(targetHttp.style==='promise'?!host.task:!host.http)fail('native HTTP transport unavailable');
-    const client={};let active=false;
-    for(const method of config.apiPlan.methods)client[method]=(input,callback)=>{
-      if(active)fail('callback HTTP subset permits one active request');active=true;
-      // Modified: 2026-11-02 (chance). QX author-documented fields only;
-      // unsupported timeout/ALPN/etc. are omitted by user instruction, never faked.
-      if(targetHttp.style==='promise'){
-        const request={url:input.url,method:method.toUpperCase(),headers:Object.assign({},input.headers),opts:{[targetHttp.redirect]:input[sourceHttp.redirect]===undefined?sourceHttp.defaults.redirect:input[sourceHttp.redirect],[targetHttp.cookie]:input[sourceHttp.cookie]===undefined?sourceHttp.defaults.cookie:input[sourceHttp.cookie],[targetHttp.tls]:input[sourceHttp.tls]===undefined?sourceHttp.defaults.tls:input[sourceHttp.tls]}};
-        if(own(input,'body'))request.body=input.body;
-        if(own(input,sourceHttp.policy))request.opts[targetHttp.policy]=input[sourceHttp.policy]===sourceHttp.directPolicy?targetHttp.directPolicy:input[sourceHttp.policy];
-        let task;
-        try{task=host.task.fetch(request);}catch(error){active=false;throw error;}
-        return task.then(response=>{
-          active=false;
-          if(!response||typeof response[targetLayout.responseStatus]!=='number'||!Number.isInteger(response[targetLayout.responseStatus])||response[targetLayout.responseStatus]<100||response[targetLayout.responseStatus]>599)fail('HTTP success requires a numeric response status');
-          const data=response.body;
-          if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
-          return callback(null,{[sourceLayout.responseStatus]:response[targetLayout.responseStatus],headers:response.headers},data);
-        },reason=>{active=false;return callback(reason&&reason.error||reason||'QX fetch failed',undefined,undefined);});
-      }
-      const opts=Object.assign({},input,{headers:Object.assign({},input.headers)});
-      opts.timeout=input.timeout*sourceHttp.timeoutMs/targetHttp.timeoutMs;
-      return host.http[method](opts,(error,response,data)=>{
-        active=false;
-        if(error)return callback(error,response,data);
-        if(!response||typeof response.status!=='number'||!Number.isInteger(response.status)||response.status<100||response.status>599)fail('HTTP success requires a numeric response status');
-        if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
-        return callback(error,response,data);
-      });
-    };
-    return client;
-  }
-  // Modified: 2026-11-02 (chance). QX-source fetch remains a real Promise.
-  // Sanitize only documented fields on every host; no timeout or cancellation shim.
-  function sourceTask(){
-    if(!config.httpTask)return undefined;
-    const native=host.task,client=host.http;let active=false;
-    if(targetHttp.style==='promise'?!native:!client)fail('native HTTP transport unavailable');
-    return {fetch:input=>{
-      if(active)fail('QX fetch subset permits one active request');active=true;
-      const incoming=input[sourceHttp.optionsRoot]||{},request={url:input.url,method:input.method||'GET',headers:Object.assign({},input.headers),opts:{[sourceHttp.redirect]:incoming[sourceHttp.redirect]===undefined?sourceHttp.defaults.redirect:incoming[sourceHttp.redirect],[sourceHttp.cookie]:incoming[sourceHttp.cookie]===undefined?sourceHttp.defaults.cookie:incoming[sourceHttp.cookie],[sourceHttp.tls]:incoming[sourceHttp.tls]===undefined?sourceHttp.defaults.tls:incoming[sourceHttp.tls]}};
-      if(own(input,'body'))request.body=input.body;
-      if(own(incoming,sourceHttp.policy))request.opts[sourceHttp.policy]=incoming[sourceHttp.policy];
-      const normalize=(response,data)=>{
-        if(!response||typeof response[sourceLayout.responseStatus]!=='number'||!Number.isInteger(response[sourceLayout.responseStatus])||response[sourceLayout.responseStatus]<100||response[sourceLayout.responseStatus]>599)fail('QX fetch success requires a numeric statusCode');
-        const result={[sourceLayout.responseStatus]:response[sourceLayout.responseStatus]};
-        if(config.httpTaskBinary){const b=bytes(data);if(b.length>65536)fail('QX fetch subset byte limit');result[sourceLayout.binaryField]=buffer(b);}
-        else{if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('QX fetch subset requires ASCII response text');result.body=data;}
-        return result;
-      };
-      if(targetHttp.style==='promise'){
-        let promise;try{promise=native.fetch(request);}catch(error){active=false;throw error;}
-        return promise.then(response=>{active=false;return normalize(response,response&&(config.httpTaskBinary?response.bodyBytes:response.body));},reason=>{active=false;throw reason;});
-      }
-      const options={url:request.url,headers:request.headers,[targetHttp.redirect]:request.opts[sourceHttp.redirect],[targetHttp.cookie]:request.opts[sourceHttp.cookie],[targetHttp.tls]:request.opts[sourceHttp.tls]};
-      if(own(request,'body'))options.body=request.body;
-      if(own(request.opts,sourceHttp.policy))options[targetHttp.policy]=request.opts[sourceHttp.policy]===sourceHttp.directPolicy?targetHttp.directPolicy:request.opts[sourceHttp.policy];
-      if(config.httpTaskBinary)options['binary-mode']=true;
-      return new Promise((resolve,reject)=>{
-        try{client[request.method.toLowerCase()](options,(error,response,data)=>{
-          active=false;if(error){reject({error});return;}
-          try{resolve(normalize(response&&{[sourceLayout.responseStatus]:response[targetLayout.responseStatus]},data));}catch(error){reject(error);}
-        });}catch(error){active=false;reject(error);}
-      });
-    }};
-  }
-  // Modified: 2026-11-02 (chance). Surge already carries a JSON payload for
-  // typed Loon PluginObject arguments. QX deliberately supplies no argument.
-  function sourceArgument(){
-    if(!config.argumentMapped)return undefined;
-    if(targetLayout.argument==='absent')return undefined;
-    const schema=config.argumentSchema;let input=host.argument;
-    if(schema.kind==='string'){
-      if(typeof input!=='string')fail('declared source String argument missing');return input;
-    }
-    if(targetLayout.argument==='string'){
-      if(typeof input!=='string')fail('declared PluginObject JSON argument missing');
-      input=JSON.parse(input);
-    }
-    if(!input||typeof input!=='object'||Array.isArray(input))fail('PluginObject argument dictionary required');
-    for(const key of Object.keys(schema.fields)){if(!own(input,key)||typeof input[key]!==schema.fields[key])fail('PluginObject argument type mismatch: '+key);if(schema.enumValues&&schema.enumValues[key]&&!schema.enumValues[key].includes(input[key]))fail('PluginObject argument enum mismatch: '+key);}
-    return input;
-  }
-  function start(request,response){
-    const script={name:config.name||host.script&&host.script.name||host.ctx&&host.ctx.script.name};
-    if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=sourceLayout.scriptStartTime==='date'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
-    const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
-    const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
-    originalResponse=view(response,'response');
-    const result=run(view(request,'request'),originalResponse,done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask(),sourceArgument(),host.codecs&&host.codecs.TextEncoder,host.codecs&&host.codecs.TextDecoder,host.codecs&&host.codecs.atob,host.codecs&&host.codecs.btoa);
-    if(config.from==='egern')return Promise.resolve(result).then(done);
-    return completion||result;
-  }
-  if(config.to==='egern')return (async()=>{
-    async function input(message,role){if(!message)return undefined;const result={url:message.url,method:message.method,status:message.status,headers:{}};for(const [name,value]of message.headers){if(own(result.headers,name))fail('duplicate header needs an explicit full-header declaration');result.headers[name]=value;}
-      if(config.binary)result.body=new Uint8Array(await message.arrayBuffer());else if(role==='response'||config.phase==='request'||config.phase==='echo')result.body=await message.text();return result;}
-    return await start(await input(host.ctx.request,'request'),await input(host.ctx.response,'response'));
-  })();
-  return start(host.request,host.response);
-})(__wayxConfig,__wayxHost,__wayxRun);
+}).call(this);}});
 })();

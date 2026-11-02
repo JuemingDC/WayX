@@ -1,261 +1,242 @@
+/* Adapter: GPL-3.0-only; derived from ScriptHub b943361f11be5795b3eb10f9cc4e5497642922fc. See vendor/script-hub/NOTICE.md. */
 (function(){
 const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
-if(!__wayxTarget)throw new Error('Unsupported adblock script host');
-const __wayxCodecs=undefined;
-const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task,argument:typeof $argument==='undefined'?undefined:$argument,codecs:__wayxCodecs};
-const __wayxContexts={"response":{"qx":{"from":"loon","to":"qx","phase":"response","binary":false,"responseBody":true,"apiPlan":{"version":1,"omitNotificationOptions":true,"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"status","scriptStartTime":"date","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":true},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":true}},"notification":{"root":"$notification.post","open":"openUrl","media":"mediaUrl","action":null,"openAction":null,"stringLink":true,"delay":true},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"typed"},"target":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"}},"headerReads":{},"headerPrefixes":{},"binaryReads":false},"surge":{"from":"loon","to":"surge","phase":"response","binary":false,"responseBody":true,"apiPlan":{"version":1,"omitNotificationOptions":false,"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"status","scriptStartTime":"date","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":true},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":true}},"notification":{"root":"$notification.post","open":"openUrl","media":"mediaUrl","action":null,"openAction":null,"stringLink":true,"delay":true},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"typed"},"target":{"responseStatus":"status","scriptStartTime":"epoch-seconds","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":false},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1000,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":false}},"notification":{"root":"$notification.post","open":"url","media":"media-url","action":"action","openAction":"open-url","stringLink":false,"delay":false},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"string"}},"headerReads":{},"headerPrefixes":{},"binaryReads":false},"loon":{"from":"loon","to":"loon","phase":"response","binary":false,"responseBody":true,"apiPlan":{"version":1,"omitNotificationOptions":false,"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"status","scriptStartTime":"date","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":true},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":true}},"notification":{"root":"$notification.post","open":"openUrl","media":"mediaUrl","action":null,"openAction":null,"stringLink":true,"delay":true},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"typed"},"target":{"responseStatus":"status","scriptStartTime":"date","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":true},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":true}},"notification":{"root":"$notification.post","open":"openUrl","media":"mediaUrl","action":null,"openAction":null,"stringLink":true,"delay":true},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"typed"}}}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
-if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
-const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
+const __wayxHost={global:globalThis,request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,task:typeof $task==='undefined'?undefined:$task,http:typeof $httpClient==='undefined'?undefined:$httpClient,prefs:typeof $prefs==='undefined'?undefined:$prefs,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,notifyQx:typeof $notify==='undefined'?undefined:$notify,notify:typeof $notification==='undefined'?undefined:$notification,script:typeof $script==='undefined'?undefined:$script,argument:typeof $argument==='undefined'?undefined:$argument,environment:typeof $environment==='undefined'?undefined:$environment,loon:typeof $loon==='undefined'?undefined:$loon,setTimeout:typeof setTimeout==='undefined'?undefined:setTimeout,codecs:(function(){
+  const text=value=>{if(typeof value==='symbol')throw new TypeError('Cannot convert a Symbol to a string');return String(value);};
+  const dictionary=value=>{if(value===undefined||value===null)return {};if(typeof value!=='object'&&typeof value!=='function')throw new TypeError('Options must be an object');return value;};
+  const arrayBufferLength=Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get;
+  const typedPrototype=Object.getPrototypeOf(Uint8Array.prototype),typedGet=name=>Object.getOwnPropertyDescriptor(typedPrototype,name).get,dataGet=name=>Object.getOwnPropertyDescriptor(DataView.prototype,name).get;
+  const typedName=Object.getOwnPropertyDescriptor(typedPrototype,Symbol.toStringTag).get,typedLength=typedGet('length'),typedBuffer=typedGet('buffer'),typedOffset=typedGet('byteOffset'),typedBytes=typedGet('byteLength'),dataBuffer=dataGet('buffer'),dataOffset=dataGet('byteOffset'),dataBytes=dataGet('byteLength'),setBytes=Uint8Array.prototype.set;
+  const inputBytes=value=>{
+    if(value===undefined)return new Uint8Array(0);
+    let length;try{length=arrayBufferLength.call(value);}catch{}
+    if(length!==undefined)return new Uint8Array(value,0,length);
+    if(ArrayBuffer.isView(value)){
+      const typed=typedName.call(value)!==undefined,buffer=(typed?typedBuffer:dataBuffer).call(value),offset=(typed?typedOffset:dataOffset).call(value),size=(typed?typedBytes:dataBytes).call(value);
+      arrayBufferLength.call(buffer);return new Uint8Array(buffer,offset,size);
+    }
+    throw new TypeError('Expected an ArrayBuffer or view');
+  };
+  const scalar=(s,index)=>{let cp=s.charCodeAt(index),read=1;if(cp>=0xd800&&cp<=0xdbff){const low=s.charCodeAt(index+1);if(low>=0xdc00&&low<=0xdfff){cp=0x10000+((cp-0xd800)<<10)+(low-0xdc00);read=2;}else cp=0xfffd;}else if(cp>=0xdc00&&cp<=0xdfff)cp=0xfffd;return {cp,read};};
+  const sequence=cp=>cp<=0x7f?[cp]:cp<=0x7ff?[0xc0|(cp>>6),0x80|(cp&63)]:cp<=0xffff?[0xe0|(cp>>12),0x80|((cp>>6)&63),0x80|(cp&63)]:[0xf0|(cp>>18),0x80|((cp>>12)&63),0x80|((cp>>6)&63),0x80|(cp&63)];
+  const encoderInstances=new WeakSet();
+  const encoderBrand=value=>{if(!encoderInstances.has(value))throw new TypeError('Illegal TextEncoder receiver');};
+  class TextEncoder{
+    constructor(){encoderInstances.add(this);}
+    get encoding(){encoderBrand(this);return 'utf-8';}
+    encode(input=undefined){encoderBrand(this);const s=input===undefined?'':text(input),out=[];for(let i=0;i<s.length;){const point=scalar(s,i);out.push(...sequence(point.cp));i+=point.read;}return new Uint8Array(out);}
+    encodeInto(input,destination){encoderBrand(this);if(arguments.length<2)throw new TypeError('Two arguments required');const s=text(input);if(typedName.call(destination)!=='Uint8Array')throw new TypeError('Uint8Array destination required');const capacity=typedLength.call(destination);let read=0,written=0;while(read<s.length){const point=scalar(s,read),bytes=sequence(point.cp);if(written+bytes.length>capacity)break;setBytes.call(destination,bytes,written);written+=bytes.length;read+=point.read;}return {read,written};}
+  }
+  const decoders=new WeakMap(),decoderState=value=>{const state=decoders.get(value);if(!state)throw new TypeError('Illegal TextDecoder receiver');return state;};
+  const reset=state=>{state.point=0;state.seen=0;state.need=0;state.lower=0x80;state.upper=0xbf;};
+  class TextDecoder{
+    constructor(label='utf-8',options=undefined){
+      const encoding=text(label).replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/g,'').toLowerCase(),opts=dictionary(options),fatal=!!opts.fatal,ignoreBOM=!!opts.ignoreBOM;
+      if(!['utf-8','utf8','unicode-1-1-utf-8','unicode11utf8','unicode20utf8','x-unicode20utf8'].includes(encoding))throw new RangeError('Only UTF-8 labels are supported');
+      const state={fatal,ignoreBOM,stream:false,bom:false};reset(state);decoders.set(this,state);
+    }
+    get encoding(){decoderState(this);return 'utf-8';}
+    get fatal(){return decoderState(this).fatal;}
+    get ignoreBOM(){return decoderState(this).ignoreBOM;}
+    decode(input=undefined,options=undefined){
+      const state=decoderState(this),bytes=inputBytes(input),opts=dictionary(options),stream=!!opts.stream,out=[];
+      if(!state.stream){reset(state);state.bom=false;}state.stream=stream;
+      const emit=cp=>{if(!state.bom){state.bom=true;if(cp===0xfeff&&!state.ignoreBOM)return;}out.push(cp<=0xffff?String.fromCharCode(cp):String.fromCharCode(0xd800+((cp-0x10000)>>10),0xdc00+((cp-0x10000)&1023)));};
+      const error=()=>{reset(state);if(state.fatal)throw new TypeError('Invalid UTF-8 data');emit(0xfffd);};
+      for(let i=0;i<bytes.length;i++){
+        const b=bytes[i];
+        if(!state.need){
+          if(b<=0x7f){emit(b);continue;}
+          if(b>=0xc2&&b<=0xdf){state.need=1;state.point=b&31;continue;}
+          if(b>=0xe0&&b<=0xef){state.need=2;state.point=b&15;if(b===0xe0)state.lower=0xa0;if(b===0xed)state.upper=0x9f;continue;}
+          if(b>=0xf0&&b<=0xf4){state.need=3;state.point=b&7;if(b===0xf0)state.lower=0x90;if(b===0xf4)state.upper=0x8f;continue;}
+          error();continue;
+        }
+        if(b<state.lower||b>state.upper){error();i--;continue;}
+        state.lower=0x80;state.upper=0xbf;state.point=(state.point<<6)|(b&63);state.seen++;
+        if(state.seen===state.need){const cp=state.point;reset(state);emit(cp);}
+      }
+      if(!stream&&state.need)error();return out.join('');
+    }
+  }
+  const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  class PortableInvalidCharacterError extends Error{get name(){return 'InvalidCharacterError';}get code(){return 5;}get [Symbol.toStringTag](){return 'DOMException';}}
+  const invalid=()=>{throw typeof DOMException==='function'?new DOMException('Invalid Base64 character','InvalidCharacterError'):new PortableInvalidCharacterError('Invalid Base64 character');};
+  function atob(value){if(!arguments.length)throw new TypeError('One argument required');let s=text(value).replace(/[\t\n\f\r ]/g,'');if(s.length%4===0)s=s.replace(/==?$/,'');if(s.length%4===1||/[^A-Za-z0-9+/]/.test(s))invalid();let bits=0,buffer=0,out='';for(let i=0;i<s.length;i++){buffer=(buffer<<6)|alphabet.indexOf(s[i]);bits+=6;if(bits>=8){bits-=8;out+=String.fromCharCode((buffer>>bits)&255);}}return out;}
+  function btoa(value){if(!arguments.length)throw new TypeError('One argument required');const s=text(value);let out='';for(let i=0;i<s.length;i+=3){const a=s.charCodeAt(i),b=s.charCodeAt(i+1),c=s.charCodeAt(i+2);if(a>255||b>255||c>255)invalid();const word=(a<<16)|((b||0)<<8)|(c||0);out+=alphabet[(word>>>18)&63]+alphabet[(word>>>12)&63]+(i+1<s.length?alphabet[(word>>>6)&63]:'=')+(i+2<s.length?alphabet[word&63]:'=');}return out;}
+  return {TextEncoder,TextDecoder,atob,btoa};
+})()};
+const __wayxContexts={"response":{"qx":{"phase":"response","responseBody":true,"binary":false,"binaryKnown":true,"name":"移除百度搜索首页信息流广告","from":"loon","to":"qx","apiPlan":{"version":1,"omitNotificationOptions":true,"qxHttp":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"status","scriptStartTime":"date","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":true},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":true}},"notification":{"root":"$notification.post","open":"openUrl","media":"mediaUrl","action":null,"openAction":null,"stringLink":true,"delay":true},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"typed"},"target":{"responseStatus":"statusCode","scriptStartTime":"absent","binaryField":"bodyBytes","store":{"style":"prefs","read":"valueForKey","write":"setValueForKey","remove":"removeValueForKey","undefinedDeletes":false},"http":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"notification":{"root":"$notify","open":null,"media":null,"action":null,"openAction":null,"stringLink":false,"delay":false},"completion":{"statusEncoding":"line","synthetic":"flat"},"argument":"absent"}},"runtimePolicyVersion":2,"omittedParameters":["undocumented-qx-parameters"]},"surge":{"phase":"response","responseBody":true,"binary":false,"binaryKnown":true,"name":"移除百度搜索首页信息流广告","from":"loon","to":"surge","apiPlan":{"version":1,"omitNotificationOptions":false,"qxHttp":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"status","scriptStartTime":"date","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":true},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":true}},"notification":{"root":"$notification.post","open":"openUrl","media":"mediaUrl","action":null,"openAction":null,"stringLink":true,"delay":true},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"typed"},"target":{"responseStatus":"status","scriptStartTime":"epoch-seconds","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":false},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1000,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":false}},"notification":{"root":"$notification.post","open":"url","media":"media-url","action":"action","openAction":"open-url","stringLink":false,"delay":false},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"string"}},"runtimePolicyVersion":2,"omittedParameters":[]},"loon":{"phase":"response","responseBody":true,"binary":false,"binaryKnown":true,"name":"移除百度搜索首页信息流广告","from":"loon","to":"loon","apiPlan":{"version":1,"omitNotificationOptions":false,"qxHttp":{"style":"promise","root":"$task.fetch","optionsRoot":"opts","redirect":"redirection","cookie":"auto-cookie","tls":"skip-cert-verify","policy":"policy","timeoutMs":null,"directPolicy":"direct","defaults":{"redirect":true,"cookie":false,"tls":false}},"methods":["get","post","put","delete","head","options","patch"],"source":{"responseStatus":"status","scriptStartTime":"date","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":true},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":true}},"notification":{"root":"$notification.post","open":"openUrl","media":"mediaUrl","action":null,"openAction":null,"stringLink":true,"delay":true},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"typed"},"target":{"responseStatus":"status","scriptStartTime":"date","binaryField":"body","store":{"style":"store","read":"read","write":"write","remove":null,"undefinedDeletes":true},"http":{"style":"callback","root":"$httpClient","optionsRoot":null,"redirect":"auto-redirect","cookie":"auto-cookie","tls":"insecure","policy":"policy","timeoutMs":1,"directPolicy":"DIRECT","defaults":{"redirect":true,"cookie":true,"tls":true}},"notification":{"root":"$notification.post","open":"openUrl","media":"mediaUrl","action":null,"openAction":null,"stringLink":true,"delay":true},"completion":{"statusEncoding":"number","synthetic":"response"},"argument":"typed"}},"runtimePolicyVersion":2,"omittedParameters":[]}}},__wayxConfig=__wayxContexts[__wayxHost.response===undefined?'request':'response']?.[__wayxTarget];
+if(!__wayxConfig)throw new Error('Unregistered HTTP source/target declaration');
+return (function(config,host,run){
+  const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+  const fail=message=>{throw new TypeError('WayX API: '+message);};
+  const source=config.apiPlan.source,target=config.apiPlan.target;
+  const headers=(function(headers){
+  if(headers===undefined||headers===null)return headers;
+  if(typeof headers!=='object'||Array.isArray(headers))throw new TypeError('Header dictionary required');
+  const lowerCaseHeaders=Object.fromEntries(Object.entries(headers).map(([k,v])=>[k.toLowerCase(),v]));
+  const key=prop=>typeof prop==='string'?prop.toLowerCase():prop;
+  return new Proxy(lowerCaseHeaders,{
+    get:(target,prop,receiver)=>{
+      if(prop==='hasOwnProperty')return name=>Object.prototype.hasOwnProperty.call(target,key(name));
+      if(prop==='propertyIsEnumerable')return name=>Object.prototype.propertyIsEnumerable.call(target,key(name));
+      if(typeof prop==='string'&&!Object.prototype.hasOwnProperty.call(target,key(prop))&&['toString','toLocaleString','valueOf','constructor'].includes(prop))return Reflect.get(target,prop,receiver);
+      return Reflect.get(target,key(prop),receiver);
+    },
+    set:(target,prop,value)=>Reflect.defineProperty(target,key(prop),{value,writable:true,enumerable:true,configurable:true}),
+    deleteProperty:(target,prop)=>Reflect.deleteProperty(target,key(prop)),
+    has:(target,prop)=>Reflect.has(target,key(prop)),
+    defineProperty:(target,prop,descriptor)=>{
+      if(key(prop)!==prop&&!descriptor.configurable)throw new TypeError('Case-insensitive Header descriptors must be configurable');
+      return Reflect.defineProperty(target,key(prop),descriptor);
+    },
+    getOwnPropertyDescriptor:(target,prop)=>{const d=Reflect.getOwnPropertyDescriptor(target,key(prop));return d&&key(prop)!==prop?Object.assign({},d,{configurable:true}):d;},
+  });
+});
+  const bytes=value=>ArrayBuffer.isView(value)?new Uint8Array(value.buffer,value.byteOffset,value.byteLength):value instanceof ArrayBuffer?new Uint8Array(value):fail('binary body requires BufferSource');
+  const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
+  const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&/^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value);if(m)return Number(m[1]);return fail('invalid HTTP status');};
+  const statusLine=value=>typeof value==='string'?value:'HTTP/1.1 '+status(value)+' '+({200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error'}[status(value)]||'Status');
+  function view(value){
+    if(value===undefined)return undefined;
+    const result=Object.assign({},value);
+    if(value.headers!==undefined)result.headers=headers(value.headers);
+    if(own(value,target.responseStatus)){result[source.responseStatus]=status(value[target.responseStatus]);if(source.responseStatus!==target.responseStatus)delete result[target.responseStatus];}
+    if(config.binary){
+      const valueBytes=target.binaryField==='bodyBytes'?value.bodyBytes:value.body;
+      if(valueBytes!==undefined){const b=bytes(valueBytes);if(source.binaryField==='bodyBytes'){result.bodyBytes=buffer(b);delete result.body;}else{result.body=b;delete result.bodyBytes;}}
+    }
+    return result;
+  }
+  const request=view(host.request),response=view(host.response);
+  let completed=false;
+  function message(value,synthetic){
+    if(!value||typeof value!=='object'||Array.isArray(value))return fail('completion requires an object');
+    const out=Object.assign({},value);
+    if(own(out,'statusCode')&&!own(out,'status'))out.status=out.statusCode;
+    delete out.statusCode;
+    if(own(out,'status'))out.status=target.completion.statusEncoding==='line'?statusLine(out.status):status(out.status);
+    if(own(out,'headers')){if(!out.headers||typeof out.headers!=='object'||Array.isArray(out.headers))fail('completion headers require a dictionary');out.headers=Object.assign({},headers(out.headers));}
+    if(own(out,'bodyBytes')){out.body=bytes(out.bodyBytes);delete out.bodyBytes;}
+    if(out.body instanceof ArrayBuffer||ArrayBuffer.isView(out.body)){if(target.binaryField==='bodyBytes'){out.bodyBytes=buffer(out.body);delete out.body;}else out.body=bytes(out.body);}
+    for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort'].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
+    if(target.completion.synthetic==='flat'&&out.abort)fail('target abort API unavailable');
+    if(target.completion.synthetic==='flat'&&!synthetic&&config.phase==='response'&&own(out,'headers')&&!own(out,'body')&&!own(out,'bodyBytes')&&config.responseBody)fail('QX response-body requires body with changed headers');
+    return out;
+  }
+  function done(value){
+    if(completed)return;completed=true;
+    if(value===undefined||value===null)return host.done({});
+    if(value===response||value===request){
+      // Return actual current fields; mutations made by author code are retained.
+      const current=value===response?host.response:host.request;
+      const out={};for(const k of ['url','headers','body','bodyBytes',source.responseStatus])if(own(value,k))out[k]=value[k];
+      value=out;
+    }
+    if(typeof value==='string')value={body:value};
+    let synthetic=false,payload=value;
+    if(value&&typeof value==='object'&&own(value,'response')){synthetic=true;payload=value.response;}
+    else if(config.from==='qx'&&config.phase==='echo')synthetic=true;
+    const out=message(payload,synthetic);
+    if(synthetic){if(target.completion.synthetic==='flat'){if(config.phase!=='echo')fail('QX synthetic response requires an echo declaration');return host.done(out);}return host.done({response:out});}
+    return host.done(out);
+  }
+  // ScriptHub-style native transport bridge, with complete method/error contracts.
+  function transport(input,style,method){
+    if(typeof input==='string')input={url:input};
+    if(!input||typeof input!=='object'||typeof input.url!=='string')return fail('HTTP request requires url');
+    const http=style==='promise'?config.apiPlan.qxHttp:source.http;
+    const options=style==='promise'?(input.opts||{}):input;
+    const verb=String(method||input.method||'GET').toLowerCase();
+    if(!config.apiPlan.methods.includes(verb))return fail('HTTP method unavailable: '+verb);
+    const req={url:input.url};
+    if(own(input,'headers'))req.headers=Object.assign({},input.headers);
+    if(own(input,'body'))req.body=input.body instanceof ArrayBuffer||ArrayBuffer.isView(input.body)?(target.http.style==='promise'?buffer(input.body):bytes(input.body)):input.body;
+    if(own(input,'bodyBytes'))req.bodyBytes=buffer(input.bodyBytes);
+    const mapped={};
+    for(const semantic of ['redirect','cookie','tls'])mapped[target.http[semantic]]=own(options,http[semantic])?options[http[semantic]]:http.defaults[semantic];
+    if(own(options,http.policy))mapped[target.http.policy]=options[http.policy]===http.directPolicy?target.http.directPolicy:options[http.policy];
+    if(target.http.style==='promise'){
+      req.method=verb.toUpperCase();req.opts=mapped;
+      return {req,verb};
+    }
+    Object.assign(req,mapped);
+    if(http.timeoutMs!==null&&target.http.timeoutMs!==null&&own(input,'timeout'))req.timeout=input.timeout*http.timeoutMs/target.http.timeoutMs;
+    for(const key of ['binary-mode','body-base64','alpn'])if(style==='callback'&&own(input,key))req[key]=input[key];
+    if(own(req,'bodyBytes')){req.body=bytes(req.bodyBytes);delete req.bodyBytes;req['binary-mode']=true;}
+    if(style==='promise')req['binary-mode']=true;
+    return {req,verb};
+  }
+  function taskFetch(input){
+    return new Promise((resolve,reject)=>{
+      let plan;try{plan=transport(input,'promise');}catch(error){reject(error);return;}
+      const normalize=(native,data)=>{
+        if(!native)return reject({error:'HTTP transport returned no response'});
+        const out={statusCode:status(native[target.responseStatus]),headers:headers(native.headers||{})};
+        if(data instanceof ArrayBuffer||ArrayBuffer.isView(data)){out.bodyBytes=buffer(data);out.body=new host.codecs.TextDecoder().decode(bytes(data));}else out.body=data;
+        resolve(out);
+      };
+      if(target.http.style==='promise'){
+        let promise;try{promise=host.task.fetch(plan.req);}catch(error){reject(error);return;}
+        Promise.resolve(promise).then(r=>{try{normalize(r,r&&(own(r,'bodyBytes')?r.bodyBytes:r.body));}catch(error){reject(error);}},reject);
+      }else{
+        const fn=host.http&&host.http[plan.verb];if(typeof fn!=='function'){reject(new TypeError('Native HTTP method unavailable'));return;}
+        try{fn.call(host.http,plan.req,(error,r,data)=>{if(error){reject({error});return;}try{normalize(r,data);}catch(e){reject(e);}});}catch(error){reject(error);}
+      }
+    });
+  }
+  const http={};for(const method of config.apiPlan.methods)http[method]=(input,callback)=>{
+    if(typeof callback!=='function')return fail('HTTP callback required');
+    const plan=transport(input,'callback',method);
+    if(target.http.style==='callback'){
+      const fn=host.http&&host.http[method];if(typeof fn!=='function')return fail('native HTTP method unavailable');
+      return fn.call(host.http,plan.req,(error,r,data)=>{if(error)return callback(error,r,data);if(!r)return callback('HTTP transport returned no response',r,data);const result=Object.assign({},r,{headers:headers(r.headers||{})});result.status=status(r[target.responseStatus]);return callback(null,result,data);});
+    }
+    return host.task.fetch(plan.req).then(r=>{if(!r)return callback('HTTP transport returned no response',undefined,undefined);return callback(null,{status:status(r.statusCode),headers:headers(r.headers||{})},input&&input['binary-mode']&&own(r,'bodyBytes')?bytes(r.bodyBytes):r.body);},e=>callback(e&&e.error||e,undefined,undefined));
+  };
+  const nativeStore=target.store.style==='prefs'?host.prefs:host.store;
+  const storageKey=key=>{if(key===undefined){const name=config.name||(config.from===config.to&&host.script&&host.script.name);if(!name)return fail('source storage default key needs source script name');return name;}if(typeof key!=='string')return fail('storage key must be String');return key;};
+  const store={read:key=>nativeStore[target.store.read](storageKey(key)),write:(value,key)=>{
+    key=storageKey(key);if(value===null||(value===undefined&&source.store.undefinedDeletes))return target.store.remove?nativeStore[target.store.remove](key):nativeStore[target.store.write](null,key);
+    if(typeof value!=='string')return fail('storage value must be String or deletion marker');return nativeStore[target.store.write](value,key);
+  }};
+  const prefKey=key=>typeof key==='string'?key:fail('QX storage requires an explicit String key');
+  const prefs={valueForKey:key=>store.read(prefKey(key)),setValueForKey:(value,key)=>{key=prefKey(key);if(typeof value!=='string')return fail('QX storage value must be String');return store.write(value,key);},removeValueForKey:key=>target.store.remove?nativeStore[target.store.remove](prefKey(key)):nativeStore[target.store.write](null,prefKey(key))};
+  function notify(title='',subtitle='',body='',option,delay){
+    if(config.apiPlan.omitNotificationOptions)return target.notification.root==='$notify'?host.notifyQx(title,subtitle,body):host.notify.post(title,subtitle,body);
+    if(delay!==undefined&&delay!==0&&config.from!==config.to)return fail('notification delay has no target API');
+    if(config.from===config.to)return host.notify.post(title,subtitle,body,option,delay);
+    const raw=typeof option==='string'?{url:option}:option||{};
+    const open=raw.openUrl||raw.url||raw['open-url'],media=raw.mediaUrl||raw['media-url'];
+    const mapped={};if(open!==undefined)mapped[target.notification.open]=open;if(media!==undefined)mapped[target.notification.media]=media;
+    for(const key of Object.keys(raw))if(!['url','openUrl','open-url','mediaUrl','media-url','action'].includes(key))fail('notification option unavailable: '+key);
+    return host.notify.post(title,subtitle,body,mapped);
+  }
+  let argument=config.from==='qx'||target.argument==='absent'?undefined:host.argument;
+  if(config.argumentSchema&&config.argumentSchema.kind==='object'&&typeof argument==='string')argument=JSON.parse(argument);
+  const script=config.from==='qx'?undefined:Object.assign({},host.script,{name:config.name||host.script&&host.script.name});
+  if(script&&script.startTime!==undefined){const t=script.startTime;script.startTime=t instanceof Date?t:new Date(t*1000);}
+  const environment=Object.assign({},host.environment);delete environment['surge-version'];delete environment['stash-version'];
+  const overlay={
+    $request:request,$response:response,$done:done,$script:script,
+    $task:config.from==='qx'?{fetch:taskFetch}:undefined,$httpClient:config.from==='qx'?undefined:http,
+    $prefs:config.from==='qx'?prefs:undefined,$persistentStore:config.from==='qx'?undefined:store,
+    $notify:config.from==='qx'?notify:undefined,$notification:config.from==='qx'?undefined:{post:notify},
+    $argument:argument,$environment:environment,$loon:config.from==='loon'?(host.loon||'Loon (WayX API compatibility)'):undefined,
+  };
+  if(config.from==='loon')overlay.setInterval=(fn,delay,...args)=>host.setTimeout(fn,delay,...args);
+  for(const name of ['TextEncoder','TextDecoder','atob','btoa'])if(typeof host.global[name]==='undefined')overlay[name]=host.codecs[name];
+  const scope=new Proxy(overlay,{has:(t,key)=>own(t,key),get:(t,key)=>key===Symbol.unscopables?undefined:Reflect.get(t,key),set:(t,key,value)=>Reflect.set(t,key,value)});
+  const global=new Proxy(host.global,{get:(t,key)=>own(overlay,key)?overlay[key]:Reflect.get(t,key),set:(t,key,value)=>own(overlay,key)?Reflect.set(overlay,key,value):Reflect.set(t,key,value),has:(t,key)=>own(overlay,key)||Reflect.has(t,key)});
+  overlay.globalThis=global;overlay.window=global;overlay.global=global;
+  return run.call(global,scope);
+})(__wayxConfig,__wayxHost,function(__wayxScope){with(__wayxScope){return (function(){
 /*
 脚本引用https://raw.githubusercontent.com/Keywos/rule/main/JS/baiduindex.js
 */
 //2023-09-13 22:48:24
 const baidus=`<html lang="zh-CN"><head> <meta name="referrer" content="always"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"> <meta http-equiv="x-dns-prefetch-control" content="on"> <meta name="description" content="全球最大的中文搜索引擎、致力于让网民更便捷地获取信息，找到所求。百度超过千亿的中文网页数据库，可以瞬间找到相关的搜索结果。"> <link rel="dns-prefetch" href="//m.baidu.com"> <link rel="dns-prefetch" href="//ms.bdstatic.com"> <link rel="shortcut icon" href="https://ms.bdstatic.com/se/static/wiseindex/img/favicon64_587c374.ico" type="image/x-icon"> <link rel="apple-touch-icon-precomposed" href="https://psstatic.cdn.bcebos.com/video/wiseindex/aa6eef91f8b5b1a33b454c401_1660835115000.png"> <meta name="format-detection" content="telephone=no"><noscript> <style type="text/css"> #page { display: none; } </style> <meta http-equiv="refresh" content="0; URL=http://m.baidu.com/?baiduid=EEE04C85E282BF7A74A39B3D8D10365E&amp;cip=111.19.88.255?index=&amp;ssid=0&amp;bd_page_type=1&amp;from=0&amp;logid=7777011404765231730&pu=sz%401321_480&t_noscript=jump" /> </noscript> <title>百度一下</title> <style type="text/css" class="spa-index-style" data-lsid="plus_css_head"> :root { --allbg: #f1f1f1; /* --borders: 1px solid #4e6ff2; */ --inputbg: #e6e4e4; --bdyx: #4e6ff2f1; --textin: #000000d1; } @media (prefers-color-scheme: dark) { ::backdrop, :root { --allbg: #1e1e20; /* --borders: 1px solid #191919; */ --inputbg: #353539a3; --bdyx: #5d7eb3; --textin: #eaeaebcc; } #logo.use-festival img { filter: brightness(600); } } body, h1, h2, h3, p, div, input, button { margin: 0; padding: 0; } body { height: 100%; background-color: var(--allbg); overflow-x: hidden; max-width: 100%; font-family: Arial, Helvetica, sans-serif; text-align: center; -webkit-text-size-adjust: none } input, button, textarea { -webkit-box-sizing: border-box; box-sizing: border-box; border: 0; border-radius: 0; background: transparent; -webkit-appearance: none; outline: 0 } #logo { height: 57px; padding-bottom: 17px } #logo.use-festival img { max-width: 217px; height: 100%; } #index-form .con-wrap { display: -moz-box; display: -webkit-box; display: box; width: 100%; } #index-form .con-wrap .con-inner-left { -webkit-box-flex: 1; -moz-box-flex: 1; box-flex: 1; display: -moz-box; display: -webkit-box; display: box; border-top-left-radius: 12px; border-bottom-left-radius: 12px } #index-card .se-input, #index-card .se-encode { display: block; margin: 2px 0; padding: 6px 35px 6px 6px; font-size: 18px; line-height: 24px; -webkit-appearance: none; -webkit-box-flex: 1; -moz-box-flex: 1; box-flex: 1; min-width: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); } #index-bn { position: relative; right: -1px; /* box-sizing: inherit; */ width: 58px; height: 49px; line-height: 49px; padding: 0 10px; border: 0; font-size: 16px; font-weight: 700; white-space: nowrap; letter-spacing: -1px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; text-shadow: none; padding-right: 20px; /* background-color: var(--bdyx); */ -webkit-user-select: none; user-select: none } .se-form #index-bn { right: -2px } .index-banner .index-banner-text { display: block; overflow: hidden; max-width: 85px; height: 21px; font-size: 12px; } #index-card .se-input, .has-background #index-card .se-input { height: 49px; } #index-card .se-form .se-input, .has-background #index-card .se-form .se-input { height: 47px; /* width: 100px; */ padding-left: 12px; padding-right: 12px } #index-card .se-input:focus { outline: 0 } #index-card .hidden-submit { position: absolute; z-index: -1; width: 0; height: 0 } /* .searchbox-exp #index-bn.qm-activity { color: #333 } */ /* .searchbox-exp #index-bn:active { background-color: #4662d9 } */ .searchbox-exp #index-form { height: 49px; margin: 0 16px; border: var(--borders); /* 1px solid #4e6ef2; */ background-color: var(--inputbg); /* background: #fff; */ border-radius: 22px; -webkit-box-shadow: initial; box-shadow: initial } .searchbox-exp #index-form.se-form { height: 51px; margin: 0 17px; border-width: 1px; box-sizing: border-box } @media (min-width: 801px) { .searchbox-exp #index-form.se-form { margin: 0 30%; } } #index-card .input-wrapper { flex: 1 0 auto; position: relative; min-width: 0; -webkit-box-flex: 1; -moz-box-flex: 1; box-flex: 1 } #index-card .input-wrapper .se-input { width: 100% } #index-kw::-webkit-search-cancel-button, #index-kw::-webkit-search-clear-button { display: none; } </style></head><body> <div id="page"> <div id="index-card" class="" data-lsversion="3965f6be7add0277"> <div class="skin-container" id="skin-container"></div> <div id="header" class="searchbox-exp "> <div id="userinfo-wrap" class=""> <style type="text/css"> #userinfo-wrap { height: 20% !important; } #logo { padding-bottom: 40px !important; } </style> </div> <div id="logo" style="opacity: 0.8;" class="use-festival"><a href="https://www.baidu.com"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiYAAACvCAYAAADJ7hV/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAGoGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNy4yLWMwMDAgNzkuMWI2NWE3OWI0LCAyMDIyLzA2LzEzLTIyOjAxOjAxICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjMuNSAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjMtMDktMTJUMTY6NDM6NTQrMDg6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDIzLTA5LTEyVDIxOjQwOjM2KzA4OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIzLTA5LTEyVDIxOjQwOjM2KzA4OjAwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozN2U4OTRjNS1hM2JiLTRiZDgtYjZhNy03MGRmZWRhYzVhYjkiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDo1MjJhZDdiYy1iN2IyLTU2NGYtOGU5ZC1kMzk4MGU0NWQ3OGUiIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo3N2JiZGVkNS0xZDVjLTQyMmItOWQyYi05Y2M4Yjc3NmRmNGUiPiA8eG1wTU06SGlzdG9yeT4gPHJkZjpTZXE+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJjcmVhdGVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjc3YmJkZWQ1LTFkNWMtNDIyYi05ZDJiLTljYzhiNzc2ZGY0ZSIgc3RFdnQ6d2hlbj0iMjAyMy0wOS0xMlQxNjo0Mzo1NCswODowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDIzLjUgKE1hY2ludG9zaCkiLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249InNhdmVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjZhODZlMzZjLWMwM2QtNDI3Mi1hZmQ3LTMzZjlhNThiY2FkNyIgc3RFdnQ6d2hlbj0iMjAyMy0wOS0xMlQyMTo0MDozNiswODowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDIzLjUgKE1hY2ludG9zaCkiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249InNhdmVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjM3ZTg5NGM1LWEzYmItNGJkOC1iNmE3LTcwZGZlZGFjNWFiOSIgc3RFdnQ6d2hlbj0iMjAyMy0wOS0xMlQyMTo0MDozNiswODowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDIzLjUgKE1hY2ludG9zaCkiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPC9yZGY6U2VxPiA8L3htcE1NOkhpc3Rvcnk+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+/qY1vgAAKkxJREFUeNrtnQl4G8XZx4NWlmQ7N0coBAhXQVrZSXZWdhwn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" alt="百度一下,你就知道"> </a> </div> <div class=""> <form data-formposition="i" class="se-form" id="index-form" action="/s" method="get" autocomplete="off"> <div> <div class="suggest-back" style="display: none;"><i class="c-icon"></i></div> <div class="con-wrap"> <div class="con-inner-left"> <div class="input-wrapper"> <input type="search" autocomplete="off" autocorrect="off" maxlength="64" id="index-kw" name="word" class="se-input adjust-input" data-sa="" style="color: var(--textin)" placeholder=""> <label for="index-kw" class="fake-placeholder"></label> </div> </div> <button id="index-bn" style="opacity: 0.5;color: var(--textin);fill: currentColor;" type="submit"> <div> <svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"> </path> </svg></div> </button> </div> </div> </form> </div> </div></body></html>`;$done({body:baidus});
 
-};
-// Modified: 2026-11-02 (chance). Apply the documented QX notification subset
-// on the native branch too; all original optional expressions still evaluate.
-const __wayxNativeNotify=__wayxConfig.apiPlan.omitNotificationOptions&&__wayxConfig.omittedParameters&&__wayxConfig.omittedParameters.some(p=>p.startsWith('notification.argument'))&&typeof __wayxHost.notifyQx==='function'?((title,subtitle,body)=>__wayxHost.notifyQx(title,subtitle,body)):__wayxHost.notifyQx;
-if(__wayxTarget==="loon"&&!__wayxConfig.httpTask)return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxNativeNotify,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,__wayxHost.http,__wayxHost.task,__wayxHost.argument,__wayxCodecs&&__wayxCodecs.TextEncoder,__wayxCodecs&&__wayxCodecs.TextDecoder,__wayxCodecs&&__wayxCodecs.atob,__wayxCodecs&&__wayxCodecs.btoa);
-return (function(config,host,run){
-  const fail=message=>{throw new Error('WayX API contract: '+message);};
-  const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
-  // Modified: 2026-11-02 (chance). All client spellings/defaults below come
-  // from the semantic target plan, shared with parser validation and reports.
-  const sourceLayout=config.apiPlan.source,targetLayout=config.apiPlan.target;
-  const sourceHttp=sourceLayout.http,targetHttp=targetLayout.http;
-  const targetStore=targetLayout.store.style==='prefs'?host.prefs:host.store;
-  const bytes=value=>value instanceof Uint8Array?new Uint8Array(value.buffer,value.byteOffset,value.byteLength):value instanceof ArrayBuffer?new Uint8Array(value):fail('expected Uint8Array or ArrayBuffer');
-  const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
-  const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&value.match(/^HTTP\/\d(?:\.\d)?\s+(\d{3})(?:\s.*)?$/);return m?Number(m[1]):fail('unsupported HTTP status');};
-  const reasons={200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',307:'Temporary Redirect',308:'Permanent Redirect',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error',502:'Bad Gateway',503:'Service Unavailable'};
-  // Modified: 2026-11-02 (chance). Validate only queried singleton fields;
-  // preserve the author's dictionary and case-insensitive lookup unchanged.
-  function view(value,role){
-    if(value===undefined)return undefined;
-    const names=config.headerReads&&config.headerReads[role]||[];
-    // Modified: 2026-11-02 (chance). Prefix-find input requires at most one
-    // matching field, so dictionary enumeration order cannot alter the result.
-    const prefixes=config.headerPrefixes&&config.headerPrefixes[role]||[];
-    if(names.length||prefixes.length){
-      if(!value.headers||typeof value.headers!=='object'||Array.isArray(value.headers))fail('header dictionary required');
-      for(const prefix of prefixes){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase().startsWith(prefix));if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header prefix lookup requires a singleton string field: '+prefix);}
-      for(const name of names){const keys=Object.keys(value.headers).filter(k=>k.toLowerCase()===name);if(keys.length>1||keys.some(k=>typeof value.headers[k]!=='string'))fail('header lookup requires a singleton string field: '+name);}
-    }
-    const result=Object.assign({},value);
-    // Modified: 2026-11-02 (chance). Closed request-header mutations operate
-    // on a detached singleton String dictionary; no host-object mutation leaks.
-    if(config.headerDeletion&&role==='request'){
-      if(!value.headers||typeof value.headers!=='object'||Array.isArray(value.headers))fail('header dictionary required');
-      const seen=new Set();for(const key of Object.keys(value.headers)){const lower=key.toLowerCase();if(seen.has(lower)||typeof value.headers[key]!=='string')fail('header deletion requires singleton String fields');seen.add(lower);}
-      result.headers=Object.assign({},value.headers);
-    }
-    // Modified: 2026-11-02 (chance). The declaration identifies the principal
-    // binary input; never silently feed text into a byte-only source program.
-    if(config.binaryReads&&role===(config.phase==='response'?'response':'request')){
-      if(targetLayout.binaryField==='bodyBytes'){
-        if(!(value.bodyBytes instanceof ArrayBuffer))fail('binary trigger requires QX ArrayBuffer bodyBytes');
-        if(sourceLayout.binaryField!=='bodyBytes'){result.body=new Uint8Array(value.bodyBytes);delete result.bodyBytes;}
-      }else{
-        const input=bytes(value.body);
-        if(sourceLayout.binaryField==='bodyBytes'){result.bodyBytes=buffer(input);delete result.body;}
-        else result.body=input;
-      }
-    }
-    if(sourceLayout.responseStatus!==targetLayout.responseStatus&&own(result,targetLayout.responseStatus)){
-      result[sourceLayout.responseStatus]=status(result[targetLayout.responseStatus]);delete result[targetLayout.responseStatus];
-    }
-    if(sourceLayout.binaryField==='bodyBytes'){
-      if(result.body instanceof Uint8Array||result.body instanceof ArrayBuffer){result[sourceLayout.binaryField]=buffer(result.body);delete result.body;}
-    }else if(own(result,'bodyBytes')){
-      if(config.binaryReads&&role===(config.phase==='response'?'response':'request'))result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;
-    }
-    return result;
-  }
-  const sourceStore={
-    read:key=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');const v=targetStore[targetLayout.store.read](key);return v==null?null:v;},
-    write:(value,key)=>{if(typeof key!=='string'||/[\\/]/.test(key))fail('explicit plain storage key required');if(value===undefined&&sourceLayout.store.undefinedDeletes)value=null;if(value!==null&&typeof value!=='string')fail('unsupported storage coercion');return value===null&&targetLayout.store.remove?targetStore[targetLayout.store.remove](key):targetStore[targetLayout.store.write](value,key);}
-  };
-  const sourcePrefs={valueForKey:key=>sourceStore.read(key),setValueForKey:(value,key)=>sourceStore.write(value,key),removeValueForKey:key=>sourceStore.write(null,key)};
-  // Modified: 2026-11-02 (chance). Only explicit URL/HTTP media fields map;
-  // no fake notification delay, clipboard action or undocumented QX options.
-  function notify(title,subtitle,body,option,delay){
-    if(config.to==='egern'){if(arguments.length>3)fail('notification options unavailable');return host.ctx.notify({title,subtitle,body});}
-    // Modified: 2026-11-02 (chance). Omit QX-undocumented source options
-    // before optional-field validation; argument construction already occurred.
-    if(targetLayout.notification.open===null)return host.notifyQx(title,subtitle,body);
-    if(config.apiPlan.omitNotificationOptions)return host.notify.post(title,subtitle,body);
-    if(arguments.length<=3)return host.notify.post(title,subtitle,body);
-    if(delay!==undefined&&delay!==0)fail('notification delay has no verified target mapping');
-    let url,media;const notification=sourceLayout.notification;
-    if(notification.stringLink&&typeof option==='string')url=option;
-    else if(notification.open){
-      if(!option||typeof option!=='object'||Array.isArray(option))fail('notification options require a dictionary');
-      if(notification.action&&option[notification.action]!==undefined&&option[notification.action]!==notification.openAction)fail('notification action needs an explicit mapping');
-      url=option[notification.open];media=option[notification.media];
-    }else if(option&&typeof option==='object'&&!Object.keys(option).length)return host.notify.post(title,subtitle,body);
-    else fail('source notification options have no verified mapping');
-    if(url!==undefined&&typeof url!=='string')fail('notification URL requires String');
-    if(media!==undefined&&(typeof media!=='string'||!/^https?:\/\//i.test(media)))fail('notification media requires HTTP(S) URL');
-    const mapped={};
-    if(url!==undefined)mapped[targetLayout.notification.open]=url;
-    if(media!==undefined)mapped[targetLayout.notification.media]=media;
-    return host.notify.post(title,subtitle,body,mapped);
-  }
-  function headersView(headers){
-    const object=Object.assign({},headers||{});
-    const key=name=>Object.keys(object).find(k=>k.toLowerCase()===String(name).toLowerCase());
-    return new Proxy(object,{get:(target,name)=>{
-      if(name==='get')return n=>{const k=key(n);return k===undefined?null:target[k];};
-      if(name==='has')return n=>key(n)!==undefined;
-      const k=typeof name==='string'?key(name):name;return k===undefined?undefined:target[k];
-    }});
-  }
-  function ctxMessage(value){
-    if(value===undefined)return undefined;
-    let consumed=false;
-    const consume=()=>{if(consumed)throw new TypeError('Body has already been consumed');consumed=true;return value.body;};
-    return {url:value.url,method:value.method,status:value.status??value.statusCode,headers:headersView(value.headers),text:async()=>{const v=consume();if(v===undefined||v===null)return '';if(typeof v!=='string')fail('binary-to-text decoding needs an explicit codec');return v;},json:async()=>{const v=consume();if(typeof v!=='string')fail('JSON requires the text-body contract');return JSON.parse(v);},arrayBuffer:async()=>{const v=consume();return v===undefined||v===null?new ArrayBuffer(0):buffer(v);}};
-  }
-  // Modified: 2026-11-02 (chance). Only a proven untouched source context
-  // identity becomes pass-through; arbitrary/modified objects follow normal rules.
-  let originalResponse;
-  function canonical(value){
-    if(config.contextPassThrough&&value===originalResponse&&value!==undefined)return {};
-    if(value===undefined||value===null)return {};
-    if(typeof value==='string'){if(config.from!=='qx')fail('non-QX string completion');return config.phase==='echo'?{response:{status:200,body:value}}:{body:value};}
-    if(typeof value!=='object'||Array.isArray(value))fail('unsupported completion result');
-    if(sourceLayout.completion.synthetic==='flat'&&config.phase==='echo')value={response:value};
-    const result=Object.assign({},value);
-    if(own(result,'statusCode')){result.status=result.statusCode;delete result.statusCode;}
-    if(own(result,'status'))result.status=status(result.status);
-    if(own(result,'bodyBytes')){result.body=new Uint8Array(result.bodyBytes);delete result.bodyBytes;}
-    if(result.response){result.response=Object.assign({},result.response);if(own(result.response,'status'))result.response.status=status(result.response.status);if(own(result.response,'bodyBytes')){result.response.body=new Uint8Array(result.response.bodyBytes);delete result.response.bodyBytes;}}
-    for(const k of Object.keys(result))if(!['url','headers','body','status','response','abort'].includes(k))fail('unmapped completion field: '+k);
-    return result;
-  }
-  let completed=false,resolveDone;
-  const completion=config.to==='egern'?new Promise(resolve=>resolveDone=resolve):null;
-  function done(value){
-    if(completed)return;completed=true;
-    const result=canonical(value);
-    if(config.to==='egern'){
-      const response=result.response?host.ctx.respond(result.response):result.abort?host.ctx.abort():result;
-      resolveDone(Object.keys(result).length?response:undefined);return;
-    }
-    if(targetLayout.completion.synthetic==='flat'){
-      if(result.abort)fail('target abort semantics are not proven');
-      let output=result;
-      if(result.response){if(config.phase!=='echo')fail('direct response requires a QX echo declaration');output=result.response;}
-      if(own(output,'status'))output.status='HTTP/1.1 '+status(output.status)+' '+(reasons[status(output.status)]||'Status');
-      if(output.body instanceof Uint8Array||output.body instanceof ArrayBuffer){output.bodyBytes=buffer(output.body);delete output.body;}
-      return host.done(output);
-    }
-    if(config.to==='loon'&&result.abort)fail('Loon abort result is not documented');
-    return host.done(result);
-  }
-  // Modified: 2026-11-02 (chance). Callback-only HTTP mapping keeps explicit
-  // cookies/redirects and native cancellation; no fake Promise timeout or null success.
-  function callbackHttp(){
-    if(!config.httpCallback)return undefined;
-    if(targetHttp.style==='promise'?!host.task:!host.http)fail('native HTTP transport unavailable');
-    const client={};let active=false;
-    for(const method of config.apiPlan.methods)client[method]=(input,callback)=>{
-      if(active)fail('callback HTTP subset permits one active request');active=true;
-      // Modified: 2026-11-02 (chance). QX author-documented fields only;
-      // unsupported timeout/ALPN/etc. are omitted by user instruction, never faked.
-      if(targetHttp.style==='promise'){
-        const request={url:input.url,method:method.toUpperCase(),headers:Object.assign({},input.headers),opts:{[targetHttp.redirect]:input[sourceHttp.redirect]===undefined?sourceHttp.defaults.redirect:input[sourceHttp.redirect],[targetHttp.cookie]:input[sourceHttp.cookie]===undefined?sourceHttp.defaults.cookie:input[sourceHttp.cookie],[targetHttp.tls]:input[sourceHttp.tls]===undefined?sourceHttp.defaults.tls:input[sourceHttp.tls]}};
-        if(own(input,'body'))request.body=input.body;
-        if(own(input,sourceHttp.policy))request.opts[targetHttp.policy]=input[sourceHttp.policy]===sourceHttp.directPolicy?targetHttp.directPolicy:input[sourceHttp.policy];
-        let task;
-        try{task=host.task.fetch(request);}catch(error){active=false;throw error;}
-        return task.then(response=>{
-          active=false;
-          if(!response||typeof response[targetLayout.responseStatus]!=='number'||!Number.isInteger(response[targetLayout.responseStatus])||response[targetLayout.responseStatus]<100||response[targetLayout.responseStatus]>599)fail('HTTP success requires a numeric response status');
-          const data=response.body;
-          if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
-          return callback(null,{[sourceLayout.responseStatus]:response[targetLayout.responseStatus],headers:response.headers},data);
-        },reason=>{active=false;return callback(reason&&reason.error||reason||'QX fetch failed',undefined,undefined);});
-      }
-      const opts=Object.assign({},input,{headers:Object.assign({},input.headers)});
-      opts.timeout=input.timeout*sourceHttp.timeoutMs/targetHttp.timeoutMs;
-      return host.http[method](opts,(error,response,data)=>{
-        active=false;
-        if(error)return callback(error,response,data);
-        if(!response||typeof response.status!=='number'||!Number.isInteger(response.status)||response.status<100||response.status>599)fail('HTTP success requires a numeric response status');
-        if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
-        return callback(error,response,data);
-      });
-    };
-    return client;
-  }
-  // Modified: 2026-11-02 (chance). QX-source fetch remains a real Promise.
-  // Sanitize only documented fields on every host; no timeout or cancellation shim.
-  function sourceTask(){
-    if(!config.httpTask)return undefined;
-    const native=host.task,client=host.http;let active=false;
-    if(targetHttp.style==='promise'?!native:!client)fail('native HTTP transport unavailable');
-    return {fetch:input=>{
-      if(active)fail('QX fetch subset permits one active request');active=true;
-      const incoming=input[sourceHttp.optionsRoot]||{},request={url:input.url,method:input.method||'GET',headers:Object.assign({},input.headers),opts:{[sourceHttp.redirect]:incoming[sourceHttp.redirect]===undefined?sourceHttp.defaults.redirect:incoming[sourceHttp.redirect],[sourceHttp.cookie]:incoming[sourceHttp.cookie]===undefined?sourceHttp.defaults.cookie:incoming[sourceHttp.cookie],[sourceHttp.tls]:incoming[sourceHttp.tls]===undefined?sourceHttp.defaults.tls:incoming[sourceHttp.tls]}};
-      if(own(input,'body'))request.body=input.body;
-      if(own(incoming,sourceHttp.policy))request.opts[sourceHttp.policy]=incoming[sourceHttp.policy];
-      const normalize=(response,data)=>{
-        if(!response||typeof response[sourceLayout.responseStatus]!=='number'||!Number.isInteger(response[sourceLayout.responseStatus])||response[sourceLayout.responseStatus]<100||response[sourceLayout.responseStatus]>599)fail('QX fetch success requires a numeric statusCode');
-        const result={[sourceLayout.responseStatus]:response[sourceLayout.responseStatus]};
-        if(config.httpTaskBinary){const b=bytes(data);if(b.length>65536)fail('QX fetch subset byte limit');result[sourceLayout.binaryField]=buffer(b);}
-        else{if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('QX fetch subset requires ASCII response text');result.body=data;}
-        return result;
-      };
-      if(targetHttp.style==='promise'){
-        let promise;try{promise=native.fetch(request);}catch(error){active=false;throw error;}
-        return promise.then(response=>{active=false;return normalize(response,response&&(config.httpTaskBinary?response.bodyBytes:response.body));},reason=>{active=false;throw reason;});
-      }
-      const options={url:request.url,headers:request.headers,[targetHttp.redirect]:request.opts[sourceHttp.redirect],[targetHttp.cookie]:request.opts[sourceHttp.cookie],[targetHttp.tls]:request.opts[sourceHttp.tls]};
-      if(own(request,'body'))options.body=request.body;
-      if(own(request.opts,sourceHttp.policy))options[targetHttp.policy]=request.opts[sourceHttp.policy]===sourceHttp.directPolicy?targetHttp.directPolicy:request.opts[sourceHttp.policy];
-      if(config.httpTaskBinary)options['binary-mode']=true;
-      return new Promise((resolve,reject)=>{
-        try{client[request.method.toLowerCase()](options,(error,response,data)=>{
-          active=false;if(error){reject({error});return;}
-          try{resolve(normalize(response&&{[sourceLayout.responseStatus]:response[targetLayout.responseStatus]},data));}catch(error){reject(error);}
-        });}catch(error){active=false;reject(error);}
-      });
-    }};
-  }
-  // Modified: 2026-11-02 (chance). Surge already carries a JSON payload for
-  // typed Loon PluginObject arguments. QX deliberately supplies no argument.
-  function sourceArgument(){
-    if(!config.argumentMapped)return undefined;
-    if(targetLayout.argument==='absent')return undefined;
-    const schema=config.argumentSchema;let input=host.argument;
-    if(schema.kind==='string'){
-      if(typeof input!=='string')fail('declared source String argument missing');return input;
-    }
-    if(targetLayout.argument==='string'){
-      if(typeof input!=='string')fail('declared PluginObject JSON argument missing');
-      input=JSON.parse(input);
-    }
-    if(!input||typeof input!=='object'||Array.isArray(input))fail('PluginObject argument dictionary required');
-    for(const key of Object.keys(schema.fields)){if(!own(input,key)||typeof input[key]!==schema.fields[key])fail('PluginObject argument type mismatch: '+key);if(schema.enumValues&&schema.enumValues[key]&&!schema.enumValues[key].includes(input[key]))fail('PluginObject argument enum mismatch: '+key);}
-    return input;
-  }
-  function start(request,response){
-    const script={name:config.name||host.script&&host.script.name||host.ctx&&host.ctx.script.name};
-    if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=sourceLayout.scriptStartTime==='date'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
-    const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
-    const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
-    originalResponse=view(response,'response');
-    const result=run(view(request,'request'),originalResponse,done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask(),sourceArgument(),host.codecs&&host.codecs.TextEncoder,host.codecs&&host.codecs.TextDecoder,host.codecs&&host.codecs.atob,host.codecs&&host.codecs.btoa);
-    if(config.from==='egern')return Promise.resolve(result).then(done);
-    return completion||result;
-  }
-  if(config.to==='egern')return (async()=>{
-    async function input(message,role){if(!message)return undefined;const result={url:message.url,method:message.method,status:message.status,headers:{}};for(const [name,value]of message.headers){if(own(result.headers,name))fail('duplicate header needs an explicit full-header declaration');result.headers[name]=value;}
-      if(config.binary)result.body=new Uint8Array(await message.arrayBuffer());else if(role==='response'||config.phase==='request'||config.phase==='echo')result.body=await message.text();return result;}
-    return await start(await input(host.ctx.request,'request'),await input(host.ctx.response,'response'));
-  })();
-  return start(host.request,host.response);
-})(__wayxConfig,__wayxHost,__wayxRun);
+}).call(this);}});
 })();

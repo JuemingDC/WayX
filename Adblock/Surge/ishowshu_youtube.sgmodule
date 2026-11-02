@@ -32,13 +32,13 @@
 ^https:\/\/rr[\w-]+\.googlevideo\.com\/initplayback\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Script]
-ishowshu_youtube_1 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/browse,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
-ishowshu_youtube_2 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/search,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
-ishowshu_youtube_3 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/account\/get_setting,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
-ishowshu_youtube_4 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/get_watch,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
-ishowshu_youtube_5 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/next,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
-ishowshu_youtube_6 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
-ishowshu_youtube_7 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/reel\/reel_watch_sequence,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317/youtube.response.js,requires-body=true
+ishowshu_youtube_1 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/browse,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-2ac96d103b8f/youtube.response.js,requires-body=true
+ishowshu_youtube_2 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/search,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-2ac96d103b8f/youtube.response.js,requires-body=true
+ishowshu_youtube_3 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/account\/get_setting,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-2ac96d103b8f/youtube.response.js,requires-body=true
+ishowshu_youtube_4 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/get_watch,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-2ac96d103b8f/youtube.response.js,requires-body=true
+ishowshu_youtube_5 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/next,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-2ac96d103b8f/youtube.response.js,requires-body=true
+ishowshu_youtube_6 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\?,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-2ac96d103b8f/youtube.response.js,requires-body=true
+ishowshu_youtube_7 = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/reel\/reel_watch_sequence,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-2ac96d103b8f/youtube.response.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% *.googlevideo.com, youtubei.googleapis.com

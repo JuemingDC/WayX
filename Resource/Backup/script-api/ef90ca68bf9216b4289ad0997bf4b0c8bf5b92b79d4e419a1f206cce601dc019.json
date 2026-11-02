@@ -60,12 +60,8 @@
     ],
     "diagnostics": []
   },
-  "specialization": {
-    "folds": 0,
-    "branches": 0,
-    "reason": "no provable host branch"
-  },
-  "sourceView": "source-host-specialized analysis input; operation offsets are UTF-16, not raw-byte offsets",
+  "runtimePolicyVersion": 2,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
       "qx": {
@@ -76,9 +72,9 @@
         "analysisSourceSha256": "8217f2150f8d12ae04d2c49b5da0a838e83f4de68b34df71c2da16cc1267898f",
         "operations": [
           {
-            "id": "read:259",
-            "rule": "request.header.lookup",
-            "kind": "header",
+            "id": "api:0",
+            "rule": "request.headers",
+            "kind": "context",
             "source": {
               "api": "$request.headers.User-Agent",
               "start": 259,
@@ -87,23 +83,24 @@
               "column": 8,
               "access": "read",
               "memberPath": [
+                "headers",
                 "User-Agent"
               ]
             },
-            "canonical": "request.header.lookup",
-            "value": "header String / missing",
+            "canonical": "request.headers",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "read:291",
-            "rule": "request.header.lookup",
-            "kind": "header",
+            "id": "api:1",
+            "rule": "request.headers",
+            "kind": "context",
             "source": {
               "api": "$request.headers.user-agent",
               "start": 291,
@@ -112,21 +109,22 @@
               "column": 40,
               "access": "read",
               "memberPath": [
+                "headers",
                 "user-agent"
               ]
             },
-            "canonical": "request.header.lookup",
-            "value": "header String / missing",
+            "canonical": "request.headers",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:485",
+            "id": "api:2",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -139,37 +137,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "bodyBytes",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:512",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -182,13 +160,13 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "native",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
@@ -202,9 +180,9 @@
         "analysisSourceSha256": "8217f2150f8d12ae04d2c49b5da0a838e83f4de68b34df71c2da16cc1267898f",
         "operations": [
           {
-            "id": "read:259",
-            "rule": "request.header.lookup",
-            "kind": "header",
+            "id": "api:0",
+            "rule": "request.headers",
+            "kind": "context",
             "source": {
               "api": "$request.headers.User-Agent",
               "start": 259,
@@ -213,29 +191,24 @@
               "column": 8,
               "access": "read",
               "memberPath": [
+                "headers",
                 "User-Agent"
               ]
             },
-            "canonical": "request.header.lookup",
-            "value": "header String / missing",
+            "canonical": "request.headers",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "read:291",
-            "rule": "request.header.lookup",
-            "kind": "header",
+            "id": "api:1",
+            "rule": "request.headers",
+            "kind": "context",
             "source": {
               "api": "$request.headers.user-agent",
               "start": 291,
@@ -244,27 +217,22 @@
               "column": 40,
               "access": "read",
               "memberPath": [
+                "headers",
                 "user-agent"
               ]
             },
-            "canonical": "request.header.lookup",
-            "value": "header String / missing",
+            "canonical": "request.headers",
+            "value": "runtime value",
             "target": {
               "api": "$request.headers",
-              "lowering": "preserve exact key operations; case/duplicate/framing behavior needs a header rule",
-              "proof": "header-operation-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "requires-proof",
-            "diagnostics": [
-              {
-                "api": "headers-shape",
-                "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-                "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-              }
-            ]
+            "decision": "runtime",
+            "diagnostics": []
           },
           {
-            "id": "call:485",
+            "id": "api:2",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -277,37 +245,17 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "fields": [
-              {
-                "source": "body",
-                "canonical": "complete.body",
-                "target": "body",
-                "action": "map",
-                "cases": [
-                  {
-                    "when": "String",
-                    "target": "body",
-                    "transform": "identity"
-                  },
-                  {
-                    "when": "Uint8Array or ArrayBuffer",
-                    "target": "body",
-                    "transform": "preserve exact byteOffset/byteLength"
-                  }
-                ]
-              }
-            ],
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "call:512",
+            "id": "api:3",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -320,31 +268,19 @@
               "memberPath": []
             },
             "canonical": "complete(pass|modify|respond)",
-            "value": "phase-specific result",
+            "value": "runtime value",
             "target": {
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "result-field-and-phase-proof"
+              "lowering": "Dispatch source API call through the shared runtime; validate values at invocation",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
-            "decision": "mapped",
+            "decision": "runtime",
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "headers-shape",
-            "reason": "Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-            "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-          }
-        ]
+        "diagnostics": []
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "headers-shape",
-      "reason": "surge: Callback hosts do not document identical header casing, duplicate-field or enumeration behavior",
-      "solution": "Use a target-native header implementation or establish the exact header object contract on real clients"
-    }
-  ]
+  "diagnostics": []
 }
