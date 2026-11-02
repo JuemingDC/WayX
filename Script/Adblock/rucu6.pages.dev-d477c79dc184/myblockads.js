@@ -1,7 +1,7 @@
 (function(){
 const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
 if(!__wayxTarget)throw new Error('Unsupported adblock script host');
-const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};
+const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task};
 const __wayxContexts={"response":{"qx":{"from":"loon","to":"qx","phase":"response","binary":false,"headerReads":{}},"surge":{"from":"loon","to":"surge","phase":"response","binary":false,"headerReads":{}},"loon":{"from":"loon","to":"loon","phase":"response","binary":false}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
 if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
 const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
@@ -282,7 +282,7 @@ switch (isResp) {
 $done({ body });
 
 };
-if(__wayxTarget==="loon")return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
+if(__wayxTarget==="loon")return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,__wayxHost.http);
 return (function(config,host,run){
   const fail=message=>{throw new Error('WayX API contract: '+message);};
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -371,10 +371,26 @@ return (function(config,host,run){
   // cookies/redirects and native cancellation; no fake Promise timeout or null success.
   function callbackHttp(){
     if(!config.httpCallback)return undefined;
-    if(!host.http)fail('native callback HTTP transport unavailable');
+    if(config.to==='qx'?!host.task:!host.http)fail('native HTTP transport unavailable');
     const client={};let active=false;
     for(const method of ['get','post','put','delete','head','options','patch'])client[method]=(input,callback)=>{
       if(active)fail('callback HTTP subset permits one active request');active=true;
+      // Modified: 2026-11-02 (chance). QX author-documented fields only;
+      // unsupported timeout/ALPN/etc. are omitted by user instruction, never faked.
+      if(config.to==='qx'){
+        const request={url:input.url,method:method.toUpperCase(),headers:Object.assign({},input.headers),opts:{redirection:input['auto-redirect']===undefined?true:input['auto-redirect'],'auto-cookie':input['auto-cookie']===undefined?true:input['auto-cookie'],'skip-cert-verify':input.insecure===undefined?config.from==='loon':input.insecure}};
+        if(own(input,'body'))request.body=input.body;
+        if(own(input,'policy'))request.opts.policy=input.policy==='DIRECT'?'direct':input.policy;
+        let task;
+        try{task=host.task.fetch(request);}catch(error){active=false;throw error;}
+        return task.then(response=>{
+          active=false;
+          if(!response||typeof response.statusCode!=='number'||!Number.isInteger(response.statusCode)||response.statusCode<100||response.statusCode>599)fail('HTTP success requires a numeric response status');
+          const data=response.body;
+          if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
+          return callback(null,{status:response.statusCode,headers:response.headers},data);
+        },reason=>{active=false;return callback(reason&&reason.error||reason||'QX fetch failed',undefined,undefined);});
+      }
       const opts=Object.assign({},input,{headers:Object.assign({},input.headers)});
       opts.timeout=input.timeout*(config.from==='surge'?1000:1)/(config.to==='surge'?1000:1);
       return host.http[method](opts,(error,response,data)=>{

@@ -1,7 +1,7 @@
 (function(){
 const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
 if(!__wayxTarget)throw new Error('Unsupported adblock script host');
-const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify};
+const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task};
 const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"headerReads":{}},"loon":{"from":"qx","to":"loon","phase":"response","binary":false,"headerReads":{}}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
 if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
 const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
@@ -24,7 +24,7 @@ const version = 'V1.0.8';
 let responseBody={};$request.url.includes("/v2/user")?((responseBody=JSON.parse($response.body)).result.is_vip=1,responseBody.result.svip_expired_at=1892260800,responseBody.result.wt.vip.expired_at=1892260800,responseBody.result.svip_take_effect=1,responseBody.result.vip_type="s"):$request.url.includes("user_detail")?(responseBody=JSON.parse($response.body),["svip","vip"].forEach(e=>{responseBody.vip_info[e]&&(responseBody.vip_info[e]={expires_time:"1892260800",is_auto_renewal:!0})})):$request.url.includes("activity")?responseBody=$request.url.includes("type_id=A03")?{status:"ok",activities:[{type:"tabbar",name:"aichat",feature:false}]}:{status:"ok",activities:[{items:[{}]}]}:$request.url.includes("operation/homefeatures")?responseBody={data:[]}:$request.url.includes("operation/feeds")?(responseBody=JSON.parse($response.body)).data=responseBody.data.filter(e=>-1!=e.category_times_text.indexOf("人查看")):$request.url.includes("operation/banners")?responseBody={data:[{avatar:"https://cdn-w.caiyunapp.com/p/app/operation/prod/banner/668502d5c3a2362582a2a5da/d9f198473e7f387d13ea892719959ddb.jpg",url:"https://cdn-w.caiyunapp.com/p/app/operation/prod/article/66850143c3a2362582a2a5d9/index.html",title:"暴雨来袭，这些避险“秘籍”你学会了吗？",banner_type:"article"}]}:$request.url.includes("operation/features")?(responseBody=JSON.parse($response.body)).data=responseBody.data.filter(e=>-1!=e.url.indexOf("cy://")):$request.url.includes("campaigns")?responseBody={campaigns:[{name:"driveweather",title:"驾驶天气新功能",url:"cy://page_driving_weather",cover:"https://cdn-w.caiyunapp.com/p/banner/test/668d442c4fe75aca7251c161.png"}]}:$request.url.includes("notification/message_center")?responseBody={messages:[]}:$request.url.includes("config/cypage")?responseBody={popups:[],actions:[]}:$done({}),$done({body:JSON.stringify(responseBody)});
 
 };
-if(__wayxTarget==="qx")return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval);
+if(__wayxTarget==="qx")return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,__wayxHost.http);
 return (function(config,host,run){
   const fail=message=>{throw new Error('WayX API contract: '+message);};
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -113,10 +113,26 @@ return (function(config,host,run){
   // cookies/redirects and native cancellation; no fake Promise timeout or null success.
   function callbackHttp(){
     if(!config.httpCallback)return undefined;
-    if(!host.http)fail('native callback HTTP transport unavailable');
+    if(config.to==='qx'?!host.task:!host.http)fail('native HTTP transport unavailable');
     const client={};let active=false;
     for(const method of ['get','post','put','delete','head','options','patch'])client[method]=(input,callback)=>{
       if(active)fail('callback HTTP subset permits one active request');active=true;
+      // Modified: 2026-11-02 (chance). QX author-documented fields only;
+      // unsupported timeout/ALPN/etc. are omitted by user instruction, never faked.
+      if(config.to==='qx'){
+        const request={url:input.url,method:method.toUpperCase(),headers:Object.assign({},input.headers),opts:{redirection:input['auto-redirect']===undefined?true:input['auto-redirect'],'auto-cookie':input['auto-cookie']===undefined?true:input['auto-cookie'],'skip-cert-verify':input.insecure===undefined?config.from==='loon':input.insecure}};
+        if(own(input,'body'))request.body=input.body;
+        if(own(input,'policy'))request.opts.policy=input.policy==='DIRECT'?'direct':input.policy;
+        let task;
+        try{task=host.task.fetch(request);}catch(error){active=false;throw error;}
+        return task.then(response=>{
+          active=false;
+          if(!response||typeof response.statusCode!=='number'||!Number.isInteger(response.statusCode)||response.statusCode<100||response.statusCode>599)fail('HTTP success requires a numeric response status');
+          const data=response.body;
+          if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('callback HTTP subset requires ASCII response text');
+          return callback(null,{status:response.statusCode,headers:response.headers},data);
+        },reason=>{active=false;return callback(reason&&reason.error||reason||'QX fetch failed',undefined,undefined);});
+      }
       const opts=Object.assign({},input,{headers:Object.assign({},input.headers)});
       opts.timeout=input.timeout*(config.from==='surge'?1000:1)/(config.to==='surge'?1000:1);
       return host.http[method](opts,(error,response,data)=>{
