@@ -150,3 +150,23 @@ Modified: 2026-11-02 (chance). 本节更新前文对应的支持域，尚未通�
 - 存储：同符号读取别名只在 truthy 分支消费时，null 和 undefined 均不进入该分支，可证明缺失观察相同。无守卫 JSON.parse、严格缺失比较、序列化和外传仍不能归一；不改变源存储的真实内容和保存设置。
 
 `tests/script-p01.ts` 用同一通用程序字节验证三端标量、存储、Header、声明观察域与逃逸/重复字段/动态输出反例。Node 测试不代替实机证据，生产原文、通用文件和报告继续仅由 Actions 发布。
+
+
+## P1 及后续：HTTP、完成包装、编码别名与通知
+
+Modified: 2026-11-02 (chance). 本节补充当前已实现的子域，不将“对应字段”当作完整兼容。
+
+| 能力 | 本批实现 | 继续阻断 |
+| --- | --- | --- |
+| QX 来源 HTTP | URL/method/header/body/policy 的已证明 const String 或拼接；then 成功参数可解构 body/statusCode/bodyBytes，允许重命名 | 非静态输入、响应 headers、rest/default 参数、详细错误观察、混合文本/字节；七方法、显式默认值、ASCII/容量和失败传播限制不变 |
+| 完成包装函数 | 单参数函数体仅 `$done(parameter)`，每个引用都为直接调用且实参结果形状已证明；业务表达式不重写 | 回调/函数别名逃逸、参数改写、defaults/rest、多语句、未知实参、async/generator |
+| 编解码 | TextEncoder/TextDecoder/atob/btoa 的一层只读 const 别名；每个使用点仍是闭合调用/构造 | 可变别名、构造器身份/反射、实例外传、非 UTF-8、共享缓冲区、intrinsic 改写 |
+| Loon → Surge 通知 | 明确 String 链接或 openUrl/mediaUrl 对象映射 url/media-url；delay 仅 0 | 非零延迟、剪贴板动作、未知字段/动态对象 |
+| Surge → Loon 通知 | 明确 url、可选 action=open-url、media-url 映射 openUrl/mediaUrl | 剪贴板确认、自动消失、声音、base64 媒体等未证明的行为 |
+| 目标 QX 通知 | 仅发送三文本参数；其它附加参数按用户授权省略、无参数错误 | 参数构造表达式仍求值，省略不是通知调度/取消或递送保证 |
+
+本批核对 [Surge API](https://manual.nssurge.com/scripting/api.html)、[Loon API](https://nsloon.app/docs/Script/script_api/) 和 QX 作者仓库 sample.conf/sample-task.js/README 及 request/response-header 示例。Surge 选项要求 iOS 5.11+/Mac 5.7+。在所查 QX 作者仓库资料中未建立 rich notification 的 open-url/media-url 契约，不能用第三方 Env 层作为官方证据；QX 来源的非空第四参数到其它宿主继续阻断，原生原文保留。系统权限、通知递送与点击流程不宣称跨软件完全一致。
+
+参数部分仍要求实际 schema/payload 与安全作者默认路径，Spotify 省略参数后传 null 的处理不能靠外层 catch 计作去广告成功。真实版本/设备/源开始时间不能凭空构造；WASM 继续只编译检查、不实例化作者模块。压缩、加密、其它编码须针对真实操作提供独立实现及错误/字节向量，当前不提供空 API。
+
+`tests/script-p1plus.ts` 实际运行同一 JS 的三宿主测试，覆盖上述新增域、QX 省略选项但保留构造副作用、网络返回和反例；既有编解码差分/HTTP 本地服务/备份事务测试继续有效。Actions 同步原始正文、脚本、固定通用地址、报告和索引。

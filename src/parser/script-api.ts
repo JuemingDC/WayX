@@ -1,3 +1,5 @@
+// Modified: 2026-11-02 (chance). Map documented optional notifications separately from HTTP options.
+import { notificationContract } from "./script-notification.ts";
 // Modified: 2026-11-01 (chance). Inspect JavaScript syntax rather than replacing API names in strings/comments; only emit adapters for a documented bounded contract.
 import ts from "typescript";
 import { codecContract } from "./script-codecs.ts";
@@ -696,6 +698,7 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
     };
     scan(inventory.tree);
   }
+  const notificationOmissions = new Set<string>();
   let synthesis = 0,
     passOrModify = 0;
   for (const { api, node } of inventory.calls) {
@@ -822,13 +825,22 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
         "Verify target timers and completion cancellation before enabling",
       );
     const args = node.arguments;
-    if (api === "$notify" || api === "$notification.post")
-      if (args.length > 3)
+    if (api === "$notify" || api === "$notification.post") {
+      const notification = notificationContract(
+        args,
+        inventory.checker,
+        options.from,
+        options.to,
+      );
+      for (const omission of notification.omitted)
+        notificationOmissions.add(omission);
+      if (!notification.ok)
         add(
           api,
           "Notification attachments/actions/delay differ across clients",
-          "Translate options individually; delayed notification is not equivalent to a timer cancelled by $done",
+          "Use explicit documented open-URL/HTTP media fields; QX omits unsupported optional parameters, other targets require per-field proof",
         );
+    }
     if (api === "$prefs.valueForKey" || api === "$persistentStore.read") {
       if (
         options.from !== "surge" &&
@@ -1026,6 +1038,18 @@ export function planScriptApiConversion(source: string, options: ApiOptions) {
             ...(argsContract.omittedParameters
               ? { omittedParameters: argsContract.omittedParameters }
               : {}),
+          }
+        : {}),
+      ...(notificationOmissions.size
+        ? {
+            omittedParameters: [
+              ...new Set([
+                ...(argsContract.ok
+                  ? (argsContract.omittedParameters ?? [])
+                  : []),
+                ...notificationOmissions,
+              ]),
+            ],
           }
         : {}),
       ...(taskContract.ok

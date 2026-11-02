@@ -168,7 +168,9 @@ for (const target of ["qx", "surge", "loon"]) {
 }
 for (const bad of [
   'const d=new TextDecoder("gbk");$done({body:d.decode($response.body)});',
-  "const D=TextDecoder;const d=new D();$done();",
+  // Modified: 2026-11-02 (chance). Closed const constructor aliases are now
+  // supported; mutable aliases still lack a bounded constructor identity.
+  "let D=TextDecoder;const d=new D();$done();",
   "const d=new TextDecoder();leak(d);$done();",
   'if(typeof TextEncoder!=="undefined")$done();',
   'String.prototype.toLowerCase=()=>"x";const d=new TextDecoder();$done({body:d.decode()});',

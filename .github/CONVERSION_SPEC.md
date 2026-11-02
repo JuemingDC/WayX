@@ -499,3 +499,8 @@ Modified: 2026-11-02 (chance). 映射目录须分别列出 QX/Surge/Loon API 对
 ## 2.29 P0／P1 数据流及只读 Header 扩展
 
 Modified: 2026-11-02 (chance). 支持同上下文短路后得到已支持标量的读取、闭合 const 字段名和没有任何写入/逃逸/延迟使用的字面量字符串表；不运行混淆解码器。仅在完整清单没有未知观察且完全不读取输入正文或模式时忽略 binary profile 差异；其它歧义继续阻断。Header 支持固定 literal 的锚定 i 精确/前缀 find 与 guarded singleton lookup，保留原字典和原业务表达式；多命中/非字符串明确失败，readonly let 别名须逐使用点证明，不扩展为任意可变对象。输入查询通过不能放行 String/未知输出 Header 字典。存储别名的 truthy 分支只在相同符号和所有引用经过审查时证明缺失等价；直接 JSON.parse 的 null/undefined 差异不消除。范围、三端共用文件、源名、逐字节备份和 QX 未说明参数无错省略规则不变；详见 docs/script-api-compatibility.md 的 P0／P1 节。
+
+
+## 2.30 P1 及后续的有限参数与调用映射
+
+Modified: 2026-11-02 (chance). QX fetch 可证明的 const String 请求字段保持原构造求值，成功参数允许闭合已知字段解构，不接受 rest/default 或响应 Header 逃逸。仅转发单一参数给原生 $done 的闭合包装函数须审查所有直接调用的实参，不能放行任意参数流。局部 UTF-8/Base64 编码器可使用一层 readonly const 别名，仍限制闭合实例和所有调用点。通知只对已获文档支持的 Loon/Surge URL、HTTP 媒体字段进行映射，非零延迟、剪贴板确认等独立阻断；目标 QX 的附加通知参数按用户授权无错省略，保留原构造表达式副作用，省略写外部 metadata。未从所查 QX 作者仓库证明的来源 rich options 不反向猜测其语义。环境、参数默认路径、WASM/压缩等未验证能力不因本条放宽。详见 docs/script-api-compatibility.md 的 P1 及后续节；仍仅由 Actions 同事务更新原文、脚本与产物。

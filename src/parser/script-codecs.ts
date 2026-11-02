@@ -99,6 +99,29 @@ export function codecContract(tree: ts.SourceFile, checker: ts.TypeChecker) {
     });
     return closed;
   };
+  // Modified: 2026-11-02 (chance). Bind one-hop const aliases to scoped
+  // codecs only when every alias use remains a direct call/construction.
+  const aliases = new Map<ts.Symbol, string>();
+  const initializers = new Set<ts.Node>();
+  walk(tree, (n) => {
+    if (
+      !ts.isVariableDeclaration(n) ||
+      !ts.isIdentifier(n.name) ||
+      !n.initializer ||
+      !ts.isIdentifier(n.initializer) ||
+      !(codecNames as readonly string[]).includes(n.initializer.text) ||
+      valueSymbol(n.initializer, checker) ||
+      !ts.isVariableDeclarationList(n.parent) ||
+      !(n.parent.flags & ts.NodeFlags.Const)
+    )
+      return;
+    const sym = checker.getSymbolAtLocation(n.name);
+    if (sym) {
+      aliases.set(sym, n.initializer.text);
+      initializers.add(n.initializer);
+      needed.add(n.initializer.text);
+    }
+  });
   walk(tree, (n) => {
     // Scoped standard algorithms assume pristine intrinsics. Do not let unknown
     // aliases or prototype writes turn a native operation into an author override.
@@ -165,19 +188,28 @@ export function codecContract(tree: ts.SourceFile, checker: ts.TypeChecker) {
       ok = false;
     if (
       !ts.isIdentifier(n) ||
-      !(codecNames as readonly string[]).includes(n.text) ||
-      valueSymbol(n, checker)
+      (!aliases.has(valueSymbol(n, checker)!) &&
+        (!(codecNames as readonly string[]).includes(n.text) ||
+          valueSymbol(n, checker)))
     )
       return;
+    if (
+      initializers.has(n) ||
+      (ts.isVariableDeclaration(n.parent) &&
+        n.parent.name === n &&
+        aliases.has(valueSymbol(n, checker)!))
+    )
+      return;
+    const name = aliases.get(valueSymbol(n, checker)!) ?? n.text;
     // Ignore object/property names rather than inventing a free host dependency.
     if (
       (ts.isPropertyAccessExpression(n.parent) && n.parent.name === n) ||
       (ts.isPropertyAssignment(n.parent) && n.parent.name === n)
     )
       return;
-    needed.add(n.text);
+    needed.add(name);
     const p = n.parent;
-    if (n.text === "atob" || n.text === "btoa") {
+    if (name === "atob" || name === "btoa") {
       if (
         !ts.isCallExpression(p) ||
         p.expression !== n ||
@@ -187,11 +219,11 @@ export function codecContract(tree: ts.SourceFile, checker: ts.TypeChecker) {
         ok = false;
       return;
     }
-    if (!ts.isNewExpression(p) || p.expression !== n || !validUse(p, n.text)) {
+    if (!ts.isNewExpression(p) || p.expression !== n || !validUse(p, name)) {
       ok = false;
       return;
     }
-    if (n.text === "TextDecoder" && p.arguments?.length) {
+    if (name === "TextDecoder" && p.arguments?.length) {
       const label = constantString(p.arguments[0], checker);
       if (
         label === null ||

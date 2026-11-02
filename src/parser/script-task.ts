@@ -2,6 +2,7 @@
 // author-documented fields; optional undocumented parameters are omitted, not errors.
 import ts from "typescript";
 import { valueSymbol, safePresenceUse } from "./script-analysis.ts";
+import { constantString } from "./script-bindings.ts";
 import { qxHttpOptions } from "./qx-http-options.ts";
 const methods = new Set([
   "GET",
@@ -78,6 +79,37 @@ export function qxTaskContract(
     fn: ts.ArrowFunction | ts.FunctionExpression,
     kind: "success" | "error",
   ) => {
+    // Modified: 2026-11-02 (chance). A closed success destructuring observes
+    // only the same scalar/byte fields as direct reads, with no rest or defaults.
+    if (
+      kind === "success" &&
+      fn.parameters.length === 1 &&
+      ts.isObjectBindingPattern(fn.parameters[0].name) &&
+      !fn.parameters[0].initializer
+    ) {
+      const seen = new Set<string>();
+      for (const element of fn.parameters[0].name.elements) {
+        const property = element.propertyName ?? element.name;
+        if (
+          element.dotDotDotToken ||
+          element.initializer ||
+          !ts.isIdentifier(element.name) ||
+          !(ts.isIdentifier(property) || ts.isStringLiteralLike(property)) ||
+          seen.has(property.text) ||
+          !["statusCode", "body", "bodyBytes"].includes(property.text)
+        )
+          return false;
+        seen.add(property.text);
+        if (property.text === "body") text = true;
+        if (property.text === "bodyBytes") binary = true;
+      }
+      let observesArguments = false;
+      walk(fn.body, (n) => {
+        if (ts.isIdentifier(n) && n.text === "arguments")
+          observesArguments = true;
+      });
+      return !observesArguments;
+    }
     if (
       fn.parameters.length > 1 ||
       fn.parameters.some(
@@ -155,11 +187,16 @@ export function qxTaskContract(
       method = request.get("method"),
       headers = request.get("headers"),
       body = request.get("body");
+    // Modified: 2026-11-02 (chance). Resolve literal/closed const String
+    // values only; keep runtime request construction and side effects unchanged.
+    const urlValue = url ? constantString(url, checker) : null;
+    const methodValue = method ? constantString(method, checker) : "GET";
+    const bodyValue = body ? constantString(body, checker) : null;
     if (
-      !url ||
-      !ts.isStringLiteralLike(url) ||
-      !/^https?:\/\//.test(url.text) ||
-      (method && (!ts.isStringLiteralLike(method) || !methods.has(method.text)))
+      urlValue === null ||
+      !/^https?:\/\//.test(urlValue) ||
+      methodValue === null ||
+      !methods.has(methodValue)
     ) {
       ok = false;
       return;
@@ -171,11 +208,12 @@ export function qxTaskContract(
       return;
     }
     for (const [key, value] of h) {
-      const lower = key.toLowerCase();
+      const lower = key.toLowerCase(),
+        string = constantString(value, checker);
       if (
         names.has(lower) ||
-        !ts.isStringLiteralLike(value) ||
-        /[\r\n\u0080-\uffff]/.test(value.text) ||
+        string === null ||
+        /[\r\n\u0080-\uffff]/.test(string) ||
         [
           "cookie",
           "connection",
@@ -186,22 +224,18 @@ export function qxTaskContract(
         ok = false;
         return;
       }
-      names.set(lower, value.text);
+      names.set(lower, string);
     }
     if (
       !names.has("user-agent") ||
       !names.has("accept") ||
       names.get("accept-encoding") !== "identity" ||
       (body &&
-        (!ts.isStringLiteralLike(body) ||
-          /[^\x00-\x7f]/.test(body.text) ||
-          body.text.length > 65536 ||
+        (bodyValue === null ||
+          /[^\x00-\x7f]/.test(bodyValue) ||
+          bodyValue.length > 65536 ||
           !names.has("content-type") ||
-          ["GET", "HEAD"].includes(
-            method && ts.isStringLiteralLike(method)
-              ? method.text.toUpperCase()
-              : "GET",
-          )))
+          ["GET", "HEAD"].includes(methodValue)))
     ) {
       ok = false;
       return;
@@ -219,7 +253,7 @@ export function qxTaskContract(
       }
       if (
         key === "policy"
-          ? !ts.isStringLiteralLike(value)
+          ? constantString(value, checker) === null
           : ![ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword].includes(
               value.kind,
             )

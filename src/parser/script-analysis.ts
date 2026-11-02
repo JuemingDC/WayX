@@ -316,6 +316,91 @@ export function completionObjects(
   if (!ts.isIdentifier(node)) return null;
   const symbol = checker.getSymbolAtLocation(node),
     decl = symbol?.valueDeclaration;
+  // Modified: 2026-11-02 (chance). A closed one-parameter completion wrapper
+  // may forward only that parameter to native $done. Prove every direct caller's
+  // argument independently; no callbacks, aliases, mutation, defaults or rest.
+  if (
+    symbol &&
+    !seen.has(symbol) &&
+    decl &&
+    ts.isParameter(decl) &&
+    ts.isIdentifier(decl.name) &&
+    !decl.initializer &&
+    !decl.dotDotDotToken
+  ) {
+    const fn = decl.parent;
+    const eligible =
+      (ts.isFunctionDeclaration(fn) ||
+        ts.isArrowFunction(fn) ||
+        ts.isFunctionExpression(fn)) &&
+      fn.parameters.length === 1 &&
+      !fn.asteriskToken &&
+      !fn.modifiers?.some((m) => m.kind === ts.SyntaxKind.AsyncKeyword);
+    if (!eligible || !fn.body) return null;
+    let body: ts.Node = fn.body;
+    if (ts.isBlock(body)) {
+      if (body.statements.length !== 1) return null;
+      const statement = body.statements[0];
+      if (ts.isExpressionStatement(statement)) body = statement.expression;
+      else return null;
+    }
+    if (
+      !ts.isCallExpression(body) ||
+      !ts.isIdentifier(body.expression) ||
+      body.expression.text !== "$done" ||
+      valueSymbol(body.expression, checker) ||
+      body.arguments.length !== 1 ||
+      body.arguments[0] !== node
+    )
+      return null;
+    const owner = ts.isFunctionDeclaration(fn) ? fn : fn.parent;
+    if (
+      !(ts.isFunctionDeclaration(owner) && owner.name) &&
+      !(
+        ts.isVariableDeclaration(owner) &&
+        ts.isIdentifier(owner.name) &&
+        ts.isVariableDeclarationList(owner.parent) &&
+        owner.parent.flags & ts.NodeFlags.Const
+      )
+    )
+      return null;
+    const name = owner.name!;
+    const binding = checker.getSymbolAtLocation(name);
+    if (!binding) return null;
+    const next = new Set(seen).add(symbol).add(binding);
+    const values: ts.ObjectLiteralExpression[] = [];
+    let valid = true;
+    const scan = (n: ts.Node) => {
+      if (
+        ts.isIdentifier(n) &&
+        valueSymbol(n, checker) === binding &&
+        n !== name
+      ) {
+        const call = n.parent;
+        if (
+          !ts.isCallExpression(call) ||
+          call.expression !== n ||
+          call.arguments.length !== 1 ||
+          ts.isSpreadElement(call.arguments[0]) ||
+          !ts.isExpressionStatement(call.parent)
+        )
+          valid = false;
+        else {
+          const objects = completionObjects(
+            call.arguments[0],
+            tree,
+            checker,
+            next,
+          );
+          if (!objects) valid = false;
+          else values.push(...objects);
+        }
+      }
+      ts.forEachChild(n, scan);
+    };
+    scan(tree);
+    return valid && values.length > 0 && values.length <= 64 ? values : null;
+  }
   if (
     !symbol ||
     seen.has(symbol) ||

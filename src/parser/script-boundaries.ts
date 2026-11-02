@@ -34,7 +34,7 @@ export const scriptCapabilityBoundaries = {
   completion: {
     status: "conditional",
     domain:
-      "Literal/conditional/spread result objects, closed object-returning functions with nonescaping call results, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
+      "Literal/conditional/spread result objects, closed object-returning functions with nonescaping call results and single-parameter $done forwarding wrappers with all callers audited, closed variables and static scalar body/bodyBytes/status/statusCode/url reads/assignments/deletion; proven QX string/undefined results require original response-body declarations; class-local strict receivers preserve native calls",
     outside:
       "Alias escapes, shorthand escapes, duplicate dynamic declarations, loop assignment, unknown/async returns, escaped function results, header/response mutations and dynamic property writes remain blocked",
   },
@@ -60,7 +60,7 @@ export const scriptCapabilityBoundaries = {
       "conditional-callback-and-qx-Promise-bridge-with-authorized-omissions",
     qx: qxHttpOptions,
     implemented:
-      "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. QX-source literal/closed-const fetch calls support closed then/catch and locally caught await, numeric statusCode, ASCII or exact-offset bodyBytes. All retain explicit UA/Accept/identity encoding, <=64KiB and one active request; source Promise errors propagate and unknown QX fields are omitted on all hosts including QX itself",
+      "Callback-source bridge: seven methods; Surge/Loon keep strict explicit HTTP options and native timeout unit conversion; QX maps author-documented fields and omits undocumented optional request parameters. QX-source literal/closed-const String request fields and fetch calls support closed then/catch, success-field destructuring without rest/defaults, and locally caught await, numeric statusCode, ASCII or exact-offset bodyBytes. All retain explicit UA/Accept/identity encoding, <=64KiB and one active request; source Promise errors propagate and unknown QX fields are omitted on all hosts including QX itself",
     production:
       "Shared callback-source and proven QX-source Promise programs publish only after every registered profile passes all three hosts; ignored QX fields are recorded outside author scripts",
     fixtures:
@@ -97,13 +97,24 @@ export const scriptCapabilityBoundaries = {
     reason:
       "Surge standard WebAPI may require WebView; QX/Loon do not promise all same globals",
     implemented:
-      "Scoped direct UTF-8 TextEncoder/Decoder and atob/btoa with closed instances, pristine intrinsics, exact BufferSource views, streaming/fatal/BOM, encodeInto and standard Base64 validation; tested against independent native vectors",
+      "Scoped UTF-8 TextEncoder/Decoder and atob/btoa with direct use or closed one-hop const aliases and closed instances, pristine intrinsics, exact BufferSource views, streaming/fatal/BOM, encodeInto and standard Base64 validation; tested against independent native vectors",
     outside:
       "Legacy encodings, shared buffers, codec reflection/escapes, intrinsic mutation, compression, arbitrary Web APIs and full DOMException identity remain unproven",
     next: "Extend independently verified algorithms or establish each target engine contract; local author polyfills remain local code",
   },
   // Modified: 2026-11-02 (chance). Typed source parameters and declared byte
   // inputs are separate contracts; QX omission never fabricates author defaults.
+  // Modified: 2026-11-02 (chance). Keep optional notification correspondence
+  // distinct from delivery, clipboard/delay lifecycle and undocumented QX fields.
+  notification: {
+    status: "conditional-url-and-http-media",
+    domain:
+      "Three text fields; explicit Loon openUrl/mediaUrl or String link maps to Surge url/media-url, and explicit Surge open-url/url/media-url maps to Loon. Only HTTP(S) media and zero delay are supported; target QX omits optional arguments without parameter errors",
+    outside:
+      "Source QX rich-notification options lack author-repository evidence in inspected files and remain blocked to other hosts; clipboard confirmation, delayed delivery, base64 media, sound and lifecycle are not equated",
+    evidence:
+      "Surge scripting/api.html notification options (iOS 5.11+/Mac 5.7+); Loon Script API notification section; QX sample.conf and sample-task.js document three text fields. No notification-delivery/device certification is claimed",
+  },
   arguments: {
     status: "conditional-with-authorized-qx-omission",
     domain:
