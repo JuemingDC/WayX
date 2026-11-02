@@ -1,3 +1,4 @@
+import { pruneGeneratedScripts } from "./generated-scripts.ts";
 import { prepareScriptApiAdapters } from "./script-api.ts";
 // Modified: 2026-11-01 (chance). Archive upstream bytes and publish only verified WayX script references, in one repository transaction.
 import fs from "node:fs/promises";
@@ -315,10 +316,17 @@ export async function refreshSourceBackups(
     changes,
     rawBase,
   });
+  const scriptCleanup = await pruneGeneratedScripts(root, {
+    index,
+    changes,
+    artifacts,
+    rawBase,
+  });
   for (const record of Object.values(index.objects)) await verify(record);
   changes.set(INDEX, JSON.stringify(index, null, 2) + "\n");
   const report = {
     version: 1,
+    scriptCleanup,
     pluginSources: sources.length,
     scriptUrls: usedScripts.size,
     backedUpScripts: [...usedScripts].filter((u) => index.latest[u]).length,

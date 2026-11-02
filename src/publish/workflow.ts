@@ -30,11 +30,9 @@ export function surgeTargetPath(entry: any): any {
   if (!entry?.surge) throw new Error("manifest entry missing surge filename");
   return `${SURGE_ADBLOCK_DIR}/${entry.surge}`;
 }
-const GENERATED_HELPER_FILENAME_RE: any =
-  /^(?:features_(?:qx|surge)|phase_(?:qx|surge)_(?:request|response)|mock|header|complex_qx|mock_file|json_add_qx|redirect|reject|complex_surge|request_mock|json_mutation_surge|legacy_header|legacy_json_add_(?:qx|surge)|legacy_mock|legacy_request_mock)_[0-9a-f]{10}\.js$/;
-export function isWayxGeneratedHelperFilename(name: any): any {
-  return GENERATED_HELPER_FILENAME_RE.test(String(name ?? ""));
-}
+// Modified: 2026-11-02 (chance). Cleanup shares exactly the generator's ownership rules.
+import { isWayxGeneratedHelperFilename } from "../domain/generated-scripts.ts";
+export { isWayxGeneratedHelperFilename } from "../domain/generated-scripts.ts";
 async function staleGeneratedHelpers(
   root: any,
   entry: any,

@@ -436,3 +436,5 @@ Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与
 原生 QX echo-response/analyze-echo-response 的远程 HTTP(S) js/mjs/cjs 或已验证 WayX 共用脚本链接，仍修复为对应 script echo，保留 analyze/body、query/fragment 与来源依据；远程 JSON/数据和本地资源不误判为脚本。来源暂停和原备份获取授权不变。
 
 依据： https://github.com/crossutility/Quantumult-X 、 https://manual.nssurge.com/scripting/ 、 https://nsloon.app/docs/Script/script_api/ 、 https://nsloon.app/docs/Script/script_v2/ 。
+
+Modified: 2026-11-02 (chance). 旧生成脚本清理在所有声明重绑定后、同一备份发布事务中执行。仅管理 API/Adblock 生成目录、生成器共享文件名规则及 legacy 目录；未标记为生成的作者/手工脚本不因无引用而删除。根据最终产物、冻结源声明、保留的手工脚本和脚本间相对/完整/编码 URL 建立引用闭包，保留传递依赖与仍作为来源 URL 的文件；无根引用的旧生成文件和孤立循环才移除。同步清理 adapters/bindings 的悬空记录，原始 Resource/Backup 字节不删除，status.json 记录 scriptCleanup。正在使用的 Rewrite mock/helper 和 Module 方向适配文件不按年代或目录整批删除。

@@ -470,25 +470,8 @@ export async function prepareScriptApiAdapters(
       ),
     );
   }
-  // Retire directional files only after every active declaration stopped using
-  // them. Raw source archives and their stable URLs are never removed here.
-  const used = new Set<string>();
-  for (const artifact of artifacts)
-    for (const ref of scriptReferences(
-      String(changes.get(artifact.relative) ?? artifact.text),
-    )) {
-      const p = local(ref.value);
-      if (p) used.add(p);
-    }
-  for (const file of Object.keys(adapters))
-    if (file.startsWith("Script/Api/") && !used.has(file)) {
-      changes.set(file, null);
-      delete adapters[file];
-    }
-  for (const values of Object.values<any>(bindings))
-    for (const [url, binding] of Object.entries<any>(values))
-      if (binding.path?.startsWith("Script/Api/") && !adapters[binding.path])
-        delete values[url];
+  // Modified: 2026-11-02 (chance). Retirement is performed once after all
+  // outputs are rebound, with dependencies across every Script file included.
   for (const [url, entry] of Object.entries<any>(priorApiPlans))
     if (
       !apiPlans[url] &&

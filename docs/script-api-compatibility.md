@@ -25,3 +25,7 @@ Header 采用大小写无关、小写字典策略，这是接受的兼容规范�
 原件 Resource/Backup/script/<URL SHA>/<原名>；共用文件 Script/Adblock/<来源主机>-<URL摘要>/<原名>；外部 API 清单 Resource/Backup/script-api/<URL SHA>.json。索引校验原件和清单摘要。
 
 报告 runtimePolicyVersion=2、validationMode=api-runtime-compatibility 表示 API 适配器已组合并通过契约测试，不表示作者所有业务路径已在设备上执行。验证使用独立 API 向量、模拟原生传输和合成备份事务；实际生产原件及产物仅由 Actions 更新。
+
+## 旧生成文件清理
+
+Modified: 2026-11-02 (chance). Actions 在最终引用重绑定后清理没有引用的旧生成文件；生成器与清理器共用文件名归属规则。冻结源、手工脚本、脚本相对依赖和来源 URL 都参与保留判断，正在使用的旧 mock 或 Module 适配文件继续保留。原始备份不删除，清理文件清单写入 Resource/Backup/status.json 的 scriptCleanup。
