@@ -1,13 +1,15 @@
 # 插件和源脚本备份
 
-Modified: 2026-11-01 (chance). 每次 Actions 同步同时归档插件正文及其直接引用的脚本，发布产物引用 WayX 备份。
+Modified: 2026-11-03 (chance). 每次 Actions 同步归档插件正文及其直接引用的脚本；去广告 HTTP 声明引用共用兼容脚本，其它声明引用原文备份。
 
-| 内容 | 路径 | 用途 |
-| --- | --- | --- |
-| 插件原始响应 | Resource/Backup/plugin/URL摘要/文件名 | 原始字节，含原作者署名、注释和来源绑定 |
-| 脚本原始响应 | Resource/Backup/script/URL摘要/文件名 | 供 QX、Surge 产物下载的脚本原始正文 |
-| 出处及校验索引 | Resource/Backup/index.json | 原地址、实际获取地址、SHA-256、大小、版本路径 |
-| 本次覆盖及缺失清单 | Resource/Backup/status.json | 已备份数量、改写产物数、404/网络失败及保留版本 |
+| 内容               | 路径                                       | 用途                                           |
+| ------------------ | ------------------------------------------ | ---------------------------------------------- |
+| 插件原始响应       | Resource/Backup/plugin/URL摘要/文件名      | 原始字节，含原作者署名、注释和来源绑定         |
+| 脚本原始响应       | Resource/Backup/script/URL摘要/文件名      | 原始正文及不参与 API 适配的脚本下载地址        |
+| 共用兼容脚本       | Script/Adblock/来源主机-URL摘要前12位/原名 | 三方向 HTTP API 适配，作者业务正文只保留一次   |
+| API 引用清单       | Resource/Backup/script-api/URL摘要.json    | 原件绑定、描述性 API 清单与运行时契约          |
+| 出处及校验索引     | Resource/Backup/index.json                 | 原地址、实际获取地址、SHA-256、大小、版本路径  |
+| 本次覆盖及缺失清单 | Resource/Backup/status.json                | 已备份数量、改写产物数、404/网络失败及保留版本 |
 
 获取仍请求作者原地址，通过统一 Surge UA、有限重试和共享字节快照完成。插件正文无变化也重新获取脚本。归档不修改 BOM、换行、脚本内部 API 或任何原注释；备份不能证明脚本跨客户端的 API 兼容性。
 
@@ -17,4 +19,4 @@ Modified: 2026-11-01 (chance). 每次 Actions 同步同时归档插件正文及�
 
 本地回归：`node tests/backups.ts`。本地只测试隔离夹具，不抓取或提交生产归档；实际源字节由 Actions 拉取。
 
-Modified: 2026-11-01 (chance). 去广告 HTTP 脚本的通用版本另存于 Script/Adblock/<来源主机>-<URL摘要前12位>/<源文件名>，QX/Surge/Loon 使用同一份文件和地址，固定地址原位更新；原始归档不改。不额外插入内部文件头声明，出处写入索引。配置控制、任务和 Module 工具不参与本轮通用化，但仍备份。Resource/Backup/script-api-status.json 给出每条原脚本的适配结果、原因和方案。新版本不能通过 API 规划时保留已有适配文件，详情见 script-api-compatibility.md。
+Modified: 2026-11-01 (chance). 去广告 HTTP 脚本的通用版本另存于 Script/Adblock/<来源主机>-<URL摘要前12位>/<源文件名>，Loon 来源保留 Loon/QX/Surge 分支，QX 来源保留 QX/Surge 分支，各声明共享同一份文件和地址，固定地址原位更新；原始归档不改。不额外插入内部文件头声明，出处写入索引。配置控制、任务和 Module 工具不参与本轮通用化，但仍备份。Resource/Backup/script-api-status.json 给出每条原脚本的适配结果、原因和方案。新版本语法或 HTTP 声明不满足组合条件时保留已验证的旧适配文件，详情见 script-api-compatibility.md。

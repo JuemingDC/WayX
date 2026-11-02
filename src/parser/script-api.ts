@@ -47,9 +47,9 @@ export function inspectScriptApis(source: string) {
       getNewLine: () => "\n",
     },
   );
-  const checker = compiler.getTypeChecker(),
-    contextAliases = new Map<ts.Symbol, string>();
-  const refs = collectScriptApiReferences(tree, checker, contextAliases);
+  // Modified: 2026-11-03 (chance). Inventory uses lexical references only; no static-proof state.
+  const checker = compiler.getTypeChecker();
+  const refs = collectScriptApiReferences(tree, checker);
   const problems: ApiProblem[] = [];
   try {
     new vm.Script(source);
@@ -63,11 +63,7 @@ export function inspectScriptApis(source: string) {
   return {
     tree,
     checker,
-    contextAliases,
     paths: [...new Set(refs.map((r) => r.api))].sort(),
-    calls: refs
-      .filter((r) => r.call && ts.isCallExpression(r.call))
-      .map((r) => ({ api: r.api, node: r.call as ts.CallExpression })),
     problems,
   };
 }
@@ -92,10 +88,8 @@ export function planScriptApiConversion(
   const operationIR = parseScriptApiIR(
     inventory.tree,
     inventory.checker,
-    inventory.contextAliases,
     options.from,
     options.to,
-    options,
     problems,
   );
   const apiPlan = emitScriptApiPlan(operationIR);

@@ -44,10 +44,8 @@ Modified: 2026-11-02 (chance). QX 未说明参数按用户要求省略且不报�
 <!-- Modified: 2026-10-25 (chance). Explicit user instruction: add no-resolve to Surge IP rules across all generated sources. -->
 Surge 输出的目的 IP 类规则（IP-CIDR、IP-CIDR6、GEOIP、IP-ASN，包括复合条件中的 IP 子项）统一补一个 `no-resolve`，已有参数不重复；Loon 转模块、原生 QX 转模块、分流规则集与独立含策略片段使用相同策略。保留地址、策略、其它参数及规则顺序，不向域名规则添加此参数，QX 原生输出不变。这是用户明确授权的解析行为差异：未解析的域名请求跳过 IP 条件，不由 IP 规则主动触发 DNS；不能宣称它与未加参数的源行为完全相同。依据 https://manual.nssurge.com/rules/ip.html 。
 
-
 <!-- Modified: 2026-10-25 (chance). Record the explicit original-URL Script lowering exception, including both echo modes. -->
 用户明确授权原生 QX Script 声明直接转换为 Surge 通用 HTTP Script，保留作者脚本原始字节；根据本次后续授权对独立适配副本执行 AST API 分析与受限转换；根据 2026-11-01 授权，发布前将脚本资源操作数绑定到已校验的 WayX 备份地址。`script-echo-response` → `type=http-request,requires-body=false`；`script-analyze-echo-response` → `type=http-request,requires-body=true`（QX 官方示例明确后者等待请求体）。普通 request/response 的 header/body 脚本分别保留阶段并设置 requires-body=false/true。声明映射和内部 API 映射分别验证；只有 API 规划通过的已支持子域才引用适配文件，不能以声明通过推断原脚本已经等价。Surge http-request 支持脚本直接返回 response；原作者程序是否使用该格式由源码分析与原触发类型确定；适配遵守 2.23 的严格边界。`url-and-header` 仍注释并保留完整源声明和诊断，不删除 header 条件，也不生成无法保留完整整头语义的脚本。
-
 
 ## 2.3 单条组合与声明顺序
 
@@ -64,7 +62,6 @@ Surge 输出的目的 IP 类规则（IP-CIDR、IP-CIDR6、GEOIP、IP-ASN，包�
 <!-- Modified: 2026-10-26 (chance). User requests escaped literal host separators in all QX/Surge URL regexes. -->
 QX/Surge 的目标 URL 正则统一将可识别 HTTP(S) authority 中的字面域名分隔点写成 `\.`，包括 Loon 新旧 Rewrite、URL-REGEX Rule、Script 的 URL matcher 及原生 QX 来源；已有 `\.` 不重复转义。不修改路径/查询中的点号、Header/Body 匹配正则、MITM hostname、普通分流域名、重定向目标或脚本资源 URL。保护现有反斜杠、字符类、分组与 `.*`/`.+` 等通配操作；不能确定为普通域名分隔符的结构保留原样，不对任意正则做全局点号替换。该收紧是用户明确授权的匹配范围变化：源未转义 `example.com` 原可匹配 `exampleXcom`，目标 `example\.com` 不再匹配它。源 AST/IR、原始源码及来源注释不改，生成目标字段幂等，不能声称此策略与未转义的源完全等价。
 
-
 源 Regex literal 只去除最外层 delimiter；仅结束分隔符后的后缀识别为 flags。逐字符保留主体中的转义、斜线、字符类、分组、量词和 lookaround，不作 case folding、全局 `\\/ → /`、捕获组重写；源后缀 flags 保留在 AST/IR，目标原生输出按下述目标/字段策略映射 flags。
 
 <!-- Modified: 2026-10-26 (chance). QX author confirms ims support; user restores only native Header/Body m/s. -->
@@ -73,14 +70,12 @@ QX/Surge 的目标 URL 正则统一将可识别 HTTP(S) authority 中的字面�
 
 上述 QX 省略 `i`、URL flags 仍是用户授权的语义例外，不能声称支持缺失，也不能声称与保留全部源 flags 完全等价。严格等价接口拒绝被省略的源 flags；QX Header/Body 仅含 m/s 时允许映射。源 AST/IR、作者原脚本和 JavaScript helper 内的 `RegExp(source, flags)` 保留原 flags。协议 Header 名称匹配所需的大小写处理和整头遍历标记不属于源 flags，不因本策略删除；无法安全限制在单字段的 Header 替换继续使用原有 helper/诊断边界。保留域名字面量的 `\.`，不自动给作者正则加锚点；域名点号按下述用户授权策略处理。
 
-
 <!-- Modified: 2026-11-01 (chance). Restore Surge flags based on the supplied Miles / Surge Networks support email. -->
 Surge 官方支持邮件确认：`[URL Rewrite]`、`[Map Local]`、`[Script]`、`[Header Rewrite]` 的 pattern，以及 `[Body Rewrite]` 的 URL 和正文正则均使用 Apple ICU，支持 `(?i)`、`(?m)`、`(?s)`、`(?x)` 及组合，iOS/Mac 共用核心。恢复所有 Surge 输出路径的源 flags，包括 Rewrite v2、Script v2、原生 QX 转换和保留的窄 URL prefilter；不得再以未确认支持为由删除。Loon literal 后缀仍仅解析来源已支持的 i/m/s，映射为固定顺序 `(?ims)`；原生来源中的内联 x 及其作用域原样保留，不凭目标支持扩充来源语法，JS helper 不接受虚构的 `/pattern/x`。ICU 校验继续作为发布门禁。
 
 仅 Surge `[Body Rewrite]` 的正文 regex 默认开启 m，URL regex 没有该默认；所有字段默认关闭 s。Loon 源正文未启用 m 时显式输出 `(?-m)`（与 i/s 合并为 `(?i-m)`、`(?s-m)` 等），源有 m 则保留 m，避免 `^`/`$` 从整段边界扩大到每行边界；正文内的显式作用域仍可覆盖前置模式。该默认补偿只用于明确的 Loon Regex AST，不能把 Surge 原生正文默认强行改为关闭。无源 i/s/x 时不凭空开启；不改变 QX 的既有策略。官方正文默认说明：https://manual.nssurge.com/http/body-rewrite.html 。恢复模式不代表 ICU 与 JavaScript 的 Unicode/换行/匹配替换语义已获全量等价认证。
 
 本次用户授权的 Surge flags 修正同样覆盖暂停可莉来源的现有产物：Actions 从已保存的 Resource/Loon 快照恢复能唯一对应的 URL/Header/Body/Script 字段，不获取新插件、不取消暂停、不重新生成其它内容。保留脚本备份/API 地址，歧义字段保留并记入运行报告 `.github/monitor/.runtime/surge-flags.json`。变更通过原有事务与最终 ICU 校验后发布；重复运行幂等。
-
 
 动态 Regex 只接受完整 `/pattern/flags` 或语义 Regex 节点，不执行表达式、不二次展开变量，缺失或无效值不匹配；生成 helper 保留解析出的 `i/m/s`。
 
@@ -132,7 +127,6 @@ add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊�
 目标正则能力由 `TARGET_REGEX_CAPABILITIES` 按客户端与配置字段集中声明；`unverified` 不得因为 runner ICU 编译成功而提升为已验证，也不得据此删除 flags 或自动改变既有原生优先策略。最终验证集中检查转换器语法、变化的生成脚本及实际配置产物，不在各阶段重复完整生成。
 
 输出阶段仅对同一规则区段中完全相同的活动路由声明去重，保留首次位置和所有源注释。策略或参数不同的规则不得合并；Rewrite、Body、Header 和 Script 等可能重复执行的动作不得按行去重。
-
 
 jq_file、jq-path 和 mock_file 只读取源声明指定的原地址。JQ 文件内联实际程序，不把路径当 JQ、不用仓库副本替代、不为 JQ 文件本身创建脚本。作者表达式只做单行配置必需的转义、非字符串注释处理与空白压缩，不作代数改写。
 
@@ -260,7 +254,7 @@ sync 是产物与 README 的写入入口；canonical、README 对比及回归套
 
 ## 2.16 自动化与报告
 
-唯一 GitHub workflow 为 .github/workflows/converter-check.yml，每日 UTC `30 17 * * *`（北京时间 01:30）及手动/PR 执行。远端只允许 main，最多另有 test；checkout 后核对分支预算。Work 自动活动不因此恢复。
+唯一 GitHub workflow 为 .github/workflows/converter-check.yml，每日 UTC `30 21 * * *`（北京时间次日 05:30）及实现变更 push、手动/PR 执行。远端只允许 main，最多另有 test；checkout 后核对分支预算。Work 自动活动不因此恢复。
 
 目录刷新 → 规则集生成/全量 sync → 一次最终产物检查 → 报告、Issue 与发布。日常 Action 不运行全仓语法预扫描、checkpoint 回归套件、canonical 重转、规则集重建回放、重复的目标格式/README/受管文件扫描。可写 main/test 执行监控并要求 complete=true；只读 PR 不写 Issue、mirror/state。目录刷新成功即可尝试监控。
 
@@ -322,11 +316,9 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 
 ## 2.19 Python 规则集聚合
 
-
 <!-- Modified: 2026-10-25 (chance). Add measured independent-service selectors rather than widening regex/domain boundaries or automatically expanding all upstream children. -->
 
 覆盖补充按当前发布数据比较父分类与独立子服务，只有存在额外原生声明且属于既有业务范围才显式登记；不自动递归拉取全部子分类，不把细分声明增加等同于所有域名此前未覆盖。Google 补 Play/FCM/Trust Services/Scholar，Disney 补 ESPN/Hulu/Star+；Microsoft 对 Azure/Bing/PKI/OneDrive 分别使用 `@cn` 和 `@!cn`，不凭新增子服务改写直连/代理默认。media_cn 适度加入国内协作、文档、网盘；media 加海外网盘和密码管理。独立服务无额外声明的分类不为数量增加重复 selectors。广告拦截、通用 cn/proxy 和独立 filterfix 不随此覆盖补充扩大。
-
 
 <!-- Modified: 2026-10-25 (chance). Explicitly select the independent apple-update service; the optimized aggregate apple release may omit its more-specific entries. -->
 
@@ -372,8 +364,7 @@ Modified: 2026-11-01 (chance). Actions 内原生 QX 走格式校验与复制路�
 
 ## 2.18 原生 QX Script 字节保留与备份引用（2026-11-01）
 
-Modified: 2026-11-01 (chance). 最新用户要求将范围收敛到去广告插件的 HTTP 脚本，暂不处理修改客户端配置的 API；取代此前四平台方向文件的生产方案。QX/Surge/Loon 三端共用一个源名通用脚本，详细约束见 2.23。原 JS 始终按字节备份；API 规划独立于配置转换，不得以声明可转换推断脚本 API 全量兼容。
-
+Modified: 2026-11-01 (chance). 转换范围为去广告插件的 HTTP 脚本，不处理修改客户端配置的 API。每源 URL 共用一个源名脚本，保留授权目标及来源原生分支，详细约束见 2.23。原 JS 始终按字节备份；API 规划独立于配置转换，不得以声明可转换推断脚本 API 全量兼容。
 
 ## 2.19 可莉来源暂停（2026-10-29）
 
@@ -399,7 +390,6 @@ Modified: 2026-11-01 (chance). 最新用户要求将范围收敛到去广告插�
 
 图标集通过统一获取器和运行快照拉取一次，监控复用本轮输入并保存原始集合内容。正常转换在目标比较前补全，metadata-only icons 命令仅补全登记的受管目标；重复执行保持稳定，未匹配列表保留在报告中。可莉暂停继续阻止源和依赖获取。
 
-
 ## 2.22 插件正文与源脚本持久备份
 
 Modified: 2026-11-01 (chance). 每次同步使用同一运行快照的原始响应字节归档 Loon 与原生 QX 插件正文，并获取其活动脚本声明及现有 Adblock/Module 产物直接引用的 HTTP(S) 脚本；包括任务脚本和已登记的暂停来源。未参与本次拉取的保留源快照须标记来源状态，不冒充最新上游响应。未引用的任意历史脚本与脚本内部动态网络依赖不靠猜测枚举。
@@ -413,7 +403,6 @@ Modified: 2026-11-01 (chance). 每次同步使用同一运行快照的原始响�
 Modified: 2026-11-01 (chance). 原生 QX 上游整条 URL rewrite 使用大写 `REJECT` 时，按上传 sample 的小写 `reject` 规范化该动作 token，并保留完整原声明注释；不调整 matcher、Header、参数或脚本正文，不推广到未知动作。
 
 Modified: 2026-11-01 (chance). 奶思大合集中实测含非 QX 的 DOMAIN 类型声明；原生片段格式修正只将已知 DOMAIN/DOMAIN-SUFFIX/DOMAIN-KEYWORD/DOMAIN-WILDCARD 类型分别改为 host/host-suffix/host-keyword/host-wildcard，并规范已支持 IP-CIDR/IP6-CIDR/USER-AGENT 类型的大小写。保留参数、策略、顺序和原声明注释，不猜测未知类型。
-
 
 ## 2.23 ScriptHub 派生的通用 Script API 兼容层
 
@@ -429,7 +418,7 @@ Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无
 
 ## 2.25 备份、清单与验证
 
-Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与后续实施条件维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 可映射真实 QX removeAllValues，clipboard 可映射 Surge action/text。runtimePolicyVersion=4、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
+Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与维护边界维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 映射真实 QX removeAllValues；Surge 忽略全量清空和通知点击行为，保留通知内容与支持的媒体字段。runtimePolicyVersion=4、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
 
 测试由 API 契约、标准向量、模拟原生网络及合成备份事务组成；覆盖动态输入、Env 接收者、Header 操作、七方法/失败/并发、字节、存储和通知，并以独立 zlib 向量验证压缩和损坏输入；原生 QX clear-all 保留，Surge 无清空存储 API 时不以已见键集合模拟。不得用源脚本的具体语法分支堆叠测试放行清单。Rule/Rewrite/Module 的已有转换职责不受影响。
 
@@ -440,3 +429,5 @@ Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与
 Modified: 2026-11-02 (chance). 旧生成脚本清理在所有声明重绑定后、同一备份发布事务中执行。仅管理 API/Adblock 生成目录、生成器共享文件名规则及 legacy 目录；未标记为生成的作者/手工脚本不因无引用而删除。根据最终产物、冻结源声明、保留的手工脚本和脚本间相对/完整/编码 URL 建立引用闭包，保留传递依赖与仍作为来源 URL 的文件；无根引用的旧生成文件和孤立循环才移除。同步清理 adapters/bindings 的悬空记录，原始 Resource/Backup 字节不删除，status.json 记录 scriptCleanup。正在使用的 Rewrite mock/helper 和 Module 方向适配文件不按年代或目录整批删除。
 
 Modified: 2026-11-02 (chance). 用户新授权覆盖此前 Surge 严格阻断策略：全量清空存储操作忽略、返回 undefined；HTTP ALPN 与完成值 h2_trailers/node/policy 省略。通知忽略延时和所有点击行为，立即提交内容，远程媒体及可识别内嵌图片映射官方 media-url 或 media-base64/media-base64-mime。Header 匹配保持大小写无关。源版本/构建/路径字段不恢复、不阻断转换，以包装器注释说明；保留实际可得信息及兼容 presence，不通过源码猜测删除业务分支。这些明确接受的降级不等于严格语义一致；普通业务异常、网络错误和加密错误不得吞掉。
+
+Modified: 2026-11-03 (chance). 当前实现只维护运行时 API 契约，不保留旧 author-composition 实验、静态证明参数或未使用的选项目录；历史设计查阅 Git。原始归档及仍被引用的旧适配文件保留完整性验证，只有现有 Actions 引用闭包清理确认无用后才删除。

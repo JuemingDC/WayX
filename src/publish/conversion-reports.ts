@@ -143,7 +143,8 @@ function inventoryMarkers(
   }
   return out;
 }
-function intentionalDrop(item: any, target: any): any {
+// Modified: 2026-11-03 (chance). Intentional source drops are target independent.
+function intentionalDrop(item: any): any {
   if (
     item.section === "Rewrite" &&
     /json\.jq\s*\(\s*["']jq-path=/i.test(item.line)
@@ -212,12 +213,7 @@ function popMarker(map: any, source: any): any {
   );
   return list.shift();
 }
-function reconcileTarget(
-  items: any,
-  targetText: any,
-  target: any,
-  verified: any,
-): any {
+function reconcileTarget(items: any, targetText: any, verified: any): any {
   const markers: any = declarationMarkers(targetText);
   const markerMap: any = multimap(markers);
   const counts: any = {
@@ -232,7 +228,7 @@ function reconcileTarget(
   };
   const details: any = [];
   for (const item of items) {
-    const drop: any = intentionalDrop(item, target);
+    const drop: any = intentionalDrop(item);
     if (drop) {
       counts.intentionalDrop++;
       details.push({ ...item, outcome: "intentionalDrop", reason: drop });
@@ -497,14 +493,12 @@ for (const entry of catalog) {
   const qxRecon: any = reconcileTarget(
     parsed.items,
     qx,
-    "qx",
     sourceVerified &&
       audit.coverage.artifacts?.[rel(qxPath)] === validationArtifactDigest(qx),
   );
   const surgeRecon: any = reconcileTarget(
     parsed.items,
     surge,
-    "surge",
     sourceVerified &&
       audit.coverage.artifacts?.[rel(surgePath)] ===
         validationArtifactDigest(surge),

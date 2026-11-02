@@ -1,6 +1,6 @@
 # TypeScript architecture
 
-Modified: 2026-10-30 (chance).
+Modified: 2026-11-03 (chance).
 
 WayX uses one Node.js TypeScript application. Install the locked dependencies with `npm ci`; Node must satisfy package.json. Node executes erasable TypeScript directly; `npm run typecheck` checks the source without emitting a second implementation.
 
@@ -42,11 +42,17 @@ Daily synchronization does not run developer suites or canonical regeneration ag
 
 config/fetch.json contains the single Surge UA and limits. WAYX_FETCH_UA overrides the same value everywhere. This default is an actual observed Surge UA from the supplied HAR; application version numbers do not identify an exact network UA. Proxy variables are inherited by the CLI via Node's environment-proxy support. There is no direct-network fallback.
 
-The fetch service bounds the decoded response stream, retries transient failures only and captures exact input bytes. Modified: 2026-11-01 (chance). Snapshots share exact response bytes across conversion and persistent backup, including URL fragment variants. They seal after backup acquisition and verify hashes on replay. Author scripts are downloaded for byte-preserving archives and never translated internally. Production script operands use verified WayX stable backup URLs; author source URLs remain in provenance. See source-backups.md.
+The fetch service bounds the decoded response stream, retries transient failures only and captures exact input bytes. Modified: 2026-11-01 (chance). Snapshots share exact response bytes across conversion and persistent backup, including URL fragment variants. They seal after backup acquisition and verify hashes on replay. Original author scripts are archived byte for byte. HTTP adblock scripts from Loon/QX are composed with the ScriptHub-derived API compatibility runtime without rewriting their business body; other scripts keep verified raw backup references. Production directions are Loon→QX, Loon→Surge and QX→Surge, with the source-native branch retained in the shared file. See source-backups.md and script-api-compatibility.md.
 
 .lpxe and unknown binary inputs are archived under Resource/Encrypted/Loon/<id>/<sha>. Original URL, byte size, format and SHA-256 are recorded. Activity is tracked in .github/sources/opaque-state.json; validators verify the archive before acknowledging a skipped conversion. Existing output remains intact; a new opaque-only source has no invented target. Successful plaintext acquisition clears active opaque status while preserving historical bytes. Invalid ordinary text remains a source failure.
 
 The author's #!source directive remains unchanged in both targets. Loon's URL-binding digest and the archive's content digest have separate meanings. Kelee remains paused in .github/sources/kelee-pause.json; this migration does not resume it.
+
+## Runtime adapters and maintenance
+
+`src/domain/script-api.ts` owns API layouts and descriptive contracts; parser inventory never authorizes mappings by proving author values. `src/emit/script-api-runtime.ts` adapts actual calls and `src/emit/script-api-program.ts` composes the untouched body once. Pinned providers and required licenses remain under src/vendor and vendor. Runtime policy 4 includes the explicitly accepted Surge omissions; compatibility output is not device certification.
+
+Current specifications live in docs/script-api; superseded designs are available through Git history. Removed experiments are not alternate production entry points. TypeScript rejects unused locals and parameters. Historical backup/adapter validation remains for retained published artifacts; generated cleanup runs only after final reference rebinding in the existing Actions transaction.
 
 ## Changes and failures
 

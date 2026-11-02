@@ -1,3 +1,4 @@
+// Modified: 2026-11-03 (chance). Section labels describe current TypeScript responsibilities.
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript validation layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -28,7 +29,7 @@ import {
   surgeRuleTypesInTree,
   SURGE_MODULE_POLICIES,
 } from "../parser/rule.ts";
-// metadata.mjs
+// Metadata
 // WayX target metadata normalization
 // Author: chance
 // Category: Converter / Metadata
@@ -213,7 +214,7 @@ export function validateConversionMetadata(
     }
   } else throw new TypeError("Unknown metadata target: " + target);
 }
-// output.mjs
+// Output
 // Target output builders for Quantumult X and Surge
 // Author: chance
 // Category: Converter / Output
@@ -401,7 +402,7 @@ export function renderSurgeOutput({
   }
   return finalizeOutputLines([...header, "", ...sections]);
 }
-// qx-comment.mjs
+// Qx comment
 // Quantumult X inline source-note rendering
 // Author: chance
 // Category: Converter / Comments / Quantumult X
@@ -495,7 +496,7 @@ export function attachQxInlineNote({
     lines: [`{# ${candidate.text} #} ${output[0]}`],
   };
 }
-// qx-snippet-validator.mjs
+// Qx snippet validator
 // Quantumult X snippet validator
 // Author: chance
 // Category: Converter / Quantumult X / Validation
@@ -781,7 +782,7 @@ export function validateQX(text: any, entry: any): any {
     throw new Error(`${entry.id}: missing commented QX section heading`);
   }
 }
-// surge-module.mjs
+// Surge module
 // WayX Surge Module formatter / validator
 // Author: chance
 // Category: Converter / Surge Module

@@ -468,22 +468,7 @@ export function differentialConditionOracle({
     cases,
   };
 }
-// Lower regex nodes only; strings, escapes and source provenance stay intact.
-export function stripRegexFlags(node: any): any {
-  if (Array.isArray(node)) return node.map(stripRegexFlags);
-  if (!node || typeof node !== "object") return node;
-  const copy: any = Object.fromEntries(
-    Object.entries(node).map(([key, value]: any): any => [
-      key,
-      stripRegexFlags(value),
-    ]),
-  );
-  if (node.type === "regex") {
-    copy.flags = "";
-    delete copy.raw;
-  }
-  return copy;
-}
+// Modified: 2026-11-03 (chance). Target-aware regex compilation replaces the unused recursive flag stripper.
 
 // WayX target regex compiler
 // Author: chance

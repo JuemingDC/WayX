@@ -1,6 +1,6 @@
-# Script API 能力与实施路线
+# Script API 能力与维护边界
 
-Modified: 2026-11-02 (chance). 当前维护的是去广告 HTTP 脚本的通用 API 转换。生产方向保留 **Loon→QX、Loon→Surge、QX→Surge**，每源 URL 一个同源命名的共用脚本，作者业务正文只出现一次。运行时处理动态对象、函数、别名和 Env 接收者，不用仓库作者脚本作为 API 放行样本。
+Modified: 2026-11-03 (chance). 当前维护的是去广告 HTTP 脚本的通用 API 转换。生产方向保留 **Loon→QX、Loon→Surge、QX→Surge**，每源 URL 一个同源命名的共用脚本，作者业务正文只出现一次。运行时处理动态对象、函数、别名和 Env 接收者，不用仓库作者脚本作为 API 放行样本。
 
 DNS、GeoIP、ASN、配置控制、任务和 Module 工具不参与新增 API 适配。DNS/IP 查询不进入操作清单、未实现能力统计或后续待办；原作者正文不删除。
 
@@ -16,7 +16,7 @@ DNS、GeoIP、ASN、配置控制、任务和 Module 工具不参与新增 API �
 | QX fetch→Surge 字节响应            | 依据 charset 使用标准 TextDecoder；缺省 UTF-8，未知标签明确失败                      | UTF-8、旧编码及错误路径                                                 |
 | `$persistentStore` / `$prefs`      | 动态 String 键值、默认来源名称、显式 null/undefined 删除                             | 真实目标 SDK 返回值；不把空字符串当删除                                 |
 | Loon `$persistentStore.remove()`   | QX 调用真实 removeAllValues；Loon 保留原生 remove                                    | 全量清空不以部分已见键集合模拟                                          |
-| `$notification.post` / `$notify`   | 字段映射；Surge 忽略通知点击行为；QX 未说明附加参数省略                    | 来源实参构造副作用与目标通知参数                                        |
+| `$notification.post` / `$notify`   | 字段映射；Surge 忽略通知点击行为；QX 未说明附加参数省略                              | 来源实参构造副作用与目标通知参数                                        |
 | `$done`                            | 动态完成对象、状态格式、字节、synthetic response 包装；先校验再锁定提交              | 校验错误后重试、只提交一次、原生抛错、echo 声明                         |
 | Loon `setTimeout/setInterval`      | 真实宿主调度；Loon interval 按文档只执行一次                                         | 回调、毫秒单位、附加参数与源 API presence                               |
 | UTF-8 / Base64                     | 独立标准实现，原生能力可用时优先                                                     | 编码、BOM、流式、fatal、品牌及非法输入                                  |

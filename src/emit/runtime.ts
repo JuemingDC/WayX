@@ -116,7 +116,8 @@ function qxMockBase64Decoder(): any {
     "}",
   ];
 }
-function headerHelpers(headerOps: any = []): any {
+// Modified: 2026-11-03 (chance). Header helpers do not depend on operation metadata.
+function headerHelpers(): any {
   return [
     regexReplacementRuntimeSource(),
     "function __wayxHeaderKey(headers, name) {",
@@ -150,7 +151,7 @@ function renderHeaderOps(
         ),
       )
     : null;
-  lines.push(...headerHelpers(headerOps));
+  lines.push(...headerHelpers());
   for (const op of headerOps) {
     const lowerName: any = String(op.name || "").toLowerCase();
     if (op.type === "add") {
@@ -1554,7 +1555,6 @@ export function renderSingleJsonMutationScript(
   }
   return renderRewriteScript(ast, options);
 }
-export const renderSingleJsonAddScript: any = renderSingleJsonMutationScript;
 // All matching source entries run in source order. One target HTTP Script owns
 // the phase, re-evaluates each original condition, and commits each mutation
 // before the next entry reads headers/body. Only our synchronous helpers enter
@@ -1617,154 +1617,6 @@ export function renderRewritePhaseDispatcher(
     script: lines.join("\n"),
     requiresBody,
     fullHeaderMode,
-    qxAction: "script-" + phase + "-" + (requiresBody ? "body" : "header"),
-    surgeType: "http-" + phase,
-  };
-}
-// Experimental author composition, explicitly requested by the user.
-// Preserve Rewrite order, Loon's body-disable relation and first Script match;
-// the author gets a lexical $done, so async callbacks finish the outer owner.
-export function renderRewriteAuthorComposition(
-  rewrites: any,
-  authors: any,
-  options: any = {},
-): any {
-  if (!rewrites.length || !authors.length)
-    throw new Error("composition requires Rewrite and author Script entries");
-  const phase: any = rewrites[0].phase;
-  if (
-    !["request", "response"].includes(phase) ||
-    rewrites.some((ast: any): any => ast.phase !== phase) ||
-    authors.some((item: any): any => item.phase !== phase)
-  )
-    throw new Error("composition requires one HTTP phase");
-  if (authors.some((item: any): any => !item.source?.trim() || !item.url))
-    throw new Error(
-      "composition requires materialized author source and original URL",
-    );
-  if (authors.some((item: any): any => item.binaryBodyMode))
-    throw new Error(
-      "experimental composition does not adapt binary author bodies",
-    );
-  if (
-    authors.some((item: any): any =>
-      /\b(?:globalThis|window|global)\s*(?:\.|\[)|\beval\s*\(|\bFunction\s*\(|\bimport\b|\bexport\b/.test(
-        item.source,
-      ),
-    )
-  )
-    throw new Error(
-      "experimental composition requires lexical globals; reflective/module author code retains its original path",
-    );
-  if (
-    rewrites.some((ast: any): any =>
-      ast.actions.some(
-        (a: any): any =>
-          a.name.endsWith(".header.add") || /\.body\.mock/.test(a.name),
-      ),
-    )
-  )
-    throw new Error(
-      "experimental composition excludes duplicate headers and terminal mocks",
-    );
-  const plans: any = rewrites.map((ast: any): any =>
-    renderRewriteScript(ast, {
-      ...options,
-      argumentTable: null,
-      sharedRuntime: true,
-    }),
-  );
-  const requiresBody: any =
-    plans.some((p: any): any => p.requiresBody) ||
-    authors.some((a: any): any => a.requiresBody);
-  const match: any = (condition: any): any =>
-    "(($request,$response)=>{const __wayxCaptures={};return " +
-    compileComplexCondition(condition, options.target, {
-      sharedRuntime: true,
-    }) +
-    ";})(__wayxRequest,__wayxConditionResponse)";
-  const lines: any = [
-    ...qxSemanticMetadata(options),
-    "// Experimental: Rewrite order -> first enabled matching author; Body/JQ hit disables author.",
-    regexReplacementRuntimeSource(),
-    conditionRuntimeSource(),
-    ...(plans.some((p: any): any => p.json) ? JSON_MUTATION_RUNTIME : []),
-    plans.some((p: any): any => p.dynamicPath)
-      ? parseJsonKeyPath.toString()
-      : "",
-    "function __wayxClone(x){return {...(x||{}),headers:{...(x?.headers||{})}}}",
-    "const __wayxRequest=__wayxClone($request);",
-    'const __wayxResponse=typeof $response==="undefined"?undefined:__wayxClone($response);',
-    'const __wayxOriginalResponse=typeof $response==="undefined"?undefined:__wayxClone($response);',
-    "let __wayxConditionResponse=__wayxResponse;",
-    "let __wayxResult={};let __wayxBodyHit=false;let __wayxFinished=false;const __wayxOuterDone=$done;",
-    "function __wayxFinish(value){if(__wayxFinished)return;__wayxFinished=true;__wayxOuterDone(value)}",
-    "function __wayxCommit(value={}){Object.assign(__wayxResult,value);Object.assign(" +
-      (phase === "request" ? "__wayxRequest" : "__wayxResponse") +
-      ",value)}",
-    'function __wayxRunAuthor(run,bodyMode,meta,argument){return new Promise(resolve=>{let ended=false;const finish=(value={})=>{if(ended)return;ended=true;resolve(value||{})};const fail=error=>{console.log("[WayX] author failed",meta.url,String(error));finish({})};const request=__wayxClone(__wayxRequest);const response=__wayxResponse?__wayxClone(__wayxResponse):undefined;if(!bodyMode){delete request.body;if(response)delete response.body}try{const task=run(request,response,finish,argument,meta);if(task&&typeof task.then==="function")task.catch(fail)}catch(error){fail(error)}})}',
-    "(async()=>{",
-  ];
-  for (let index: any = 0; index < plans.length; index++) {
-    const ast: any = rewrites[index],
-      plan: any = plans[index];
-    lines.push("  if(" + match(ast.condition) + "){");
-    if (plan.requiresBody) lines.push("    __wayxBodyHit=true;");
-    lines.push(
-      "    (($request,$response,$done)=>{\n" +
-        plan.script +
-        "\n})(__wayxRequest,__wayxResponse,__wayxCommit);",
-      "  }",
-    );
-  }
-  if (phase === "response")
-    lines.push("  __wayxConditionResponse=__wayxOriginalResponse;");
-  lines.push("  if(!__wayxBodyHit){");
-  authors.forEach((author: any, index: any): any => {
-    // URL remains in source provenance; original JS text is copied unchanged
-    // into a function scope. No string replacement of $done or runtime fetch.
-    lines.push(
-      "    " + (index ? "else " : "") + "if(" + match(author.condition) + "){",
-      "      // Source Script: " + author.url.replace(/[\r\n]/g, ""),
-      "      const value=await __wayxRunAuthor(function($request,$response,$done,$argument,$script){\n" +
-        author.source +
-        "\n}," +
-        Boolean(author.requiresBody) +
-        "," +
-        JSON.stringify({
-          url: author.url,
-          name: author.name || "script",
-          timeout: author.timeout || 20,
-          binaryBodyMode: false,
-        }) +
-        "," +
-        (author.argument === undefined
-          ? "undefined"
-          : JSON.stringify(author.argument)) +
-        ");",
-      "      if(value.response || " +
-        (phase === "request" ? "value.status" : "false") +
-        ")__wayxResult=value;else __wayxCommit(value);",
-      "    }",
-    );
-  });
-  lines.push("  }");
-  if (options.target === "qx" && requiresBody)
-    lines.push(
-      '  if(Object.keys(__wayxResult).length && !("body" in __wayxResult) && !("response" in __wayxResult))__wayxResult.body=' +
-        (phase === "request" ? "__wayxRequest" : "__wayxResponse") +
-        ".body;",
-    );
-  lines.push(
-    "  __wayxFinish(__wayxResult);",
-    '})().catch(error=>{console.log("[WayX] composition failed",String(error));__wayxFinish(__wayxResult)});',
-    "",
-  );
-  return {
-    pattern: "^",
-    script: lines.join("\n"),
-    requiresBody,
-    timeout: Math.max(...authors.map((a: any): any => a.timeout || 20)),
     qxAction: "script-" + phase + "-" + (requiresBody ? "body" : "header"),
     surgeType: "http-" + phase,
   };

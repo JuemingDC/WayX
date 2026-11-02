@@ -1,3 +1,4 @@
+// Modified: 2026-11-03 (chance). Section labels describe current TypeScript responsibilities.
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -11,7 +12,7 @@ import {
   SURGE_WAYX_RULE_TYPES,
   SURGE_WAYX_RULE_BUILTIN_POLICIES,
 } from "../domain/core.ts";
-// rule-ast.mjs
+// Rule ast
 // Loon Rule source parser / target-neutral AST
 // Author: chance
 // Category: Converter / Rule / AST
@@ -221,7 +222,7 @@ export function renderRuleAst(
   for (const param of ast.params) parts.push(param.raw);
   return parts.join(",");
 }
-// rule.mjs
+// Rule
 // WayX Loon Rule parser facade and target planners
 // Author: chance
 // Category: Converter / Rule

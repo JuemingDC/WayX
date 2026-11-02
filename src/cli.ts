@@ -38,14 +38,13 @@ try {
   switch (command) {
     case "help":
       console.log(
-        "WayX: prepare setup-jq icons catalog rules sync verify monitor reports issues gate publish summary final check test regenerate regex script-api script-syntax",
+        "WayX: prepare setup-jq icons catalog discover rules sync verify monitor monitor-source reports issues gate publish summary final check test regenerate regex script-api script-syntax",
       );
       break;
     case "prepare":
       await automation.prepare();
       break;
     case "setup-jq":
-    case "setup_jq":
       await automation.setupJq();
       break;
     // Modified: 2026-10-30 (chance). Refresh metadata independently of plugin/rule generation.
@@ -139,7 +138,7 @@ try {
     case "regenerate":
       await invoke("src/publish/regenerate-canonical.ts", args);
       break;
-    // Modified: 2026-11-01 (chance). Expose the same API planner for isolated script conversions and auditable blocked-API reports.
+    // Modified: 2026-11-03 (chance). Expose the HTTP runtime adapter and descriptive API reports.
     case "script-api": {
       const chunks: Buffer[] = [];
       for await (const chunk of process.stdin) chunks.push(Buffer.from(chunk));

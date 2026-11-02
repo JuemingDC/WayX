@@ -1,5 +1,6 @@
 // Modified: 2026-11-02 (chance). Lightweight API inventory reports runtime
 // dispatch and boundaries; it never proves or rewrites concrete business values.
+// Modified: 2026-11-03 (chance). Remove retired dataflow aliases, queries and planner options.
 import ts from "typescript";
 import crypto from "node:crypto";
 import {
@@ -37,7 +38,6 @@ function path(n: ts.Node): string | null {
 export function collectScriptApiReferences(
   tree: ts.SourceFile,
   checker: ts.TypeChecker,
-  _aliases = new Map<ts.Symbol, string>(),
 ) {
   const refs: ScriptApiReference[] = [];
   const walk = (n: ts.Node) => {
@@ -111,14 +111,11 @@ export function collectScriptApiReferences(
 export function parseScriptApiIR(
   tree: ts.SourceFile,
   checker: ts.TypeChecker,
-  aliases: Map<ts.Symbol, string>,
   from: ScriptClient,
   to: ScriptClient,
-  _options: any,
-  problems: any[] = [],
-  _queries?: any,
+  problems: { api: string; reason: string; solution: string }[] = [],
 ): ScriptApiIR & { analysisSourceSha256: string } {
-  const operations = collectScriptApiReferences(tree, checker, aliases).map(
+  const operations = collectScriptApiReferences(tree, checker).map(
     (r, index): ScriptApiOperation => {
       const rule = scriptApiDefinitions
         .filter(

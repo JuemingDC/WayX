@@ -200,7 +200,8 @@ export interface ScriptApiDefinition {
   proof: string;
 }
 const same = (api: string) => ({ qx: api, loon: api, surge: api });
-export const scriptApiDefinitions: ScriptApiDefinition[] = [
+// Modified: 2026-11-03 (chance). Define current contracts once; do not overwrite retired static-proof declarations.
+const definitions: Omit<ScriptApiDefinition, "proof">[] = [
   ...(["request", "response"] as const).map((role) => ({
     id: role + ".context",
     kind: "context" as const,
@@ -209,7 +210,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "runtime context object / presence",
     lowering:
       "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
-    proof: "closed-context-proof",
   })),
   ...(["url", "method", "headers", "body"] as const).map((field) => ({
     id: "request." + field,
@@ -224,8 +224,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
           : "String",
     lowering:
       "identity; dictionary operations require their own case/duplicate/framing contract",
-    proof:
-      field === "headers" ? "header-operation-proof" : "context-field-proof",
   })),
   ...(["headers", "body"] as const).map((field) => ({
     id: "response." + field,
@@ -235,7 +233,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value:
       field === "headers" ? "header-dictionary" : "String or declared bytes",
     lowering: "identity; declaration controls whether body is available",
-    proof: field === "headers" ? "header-operation-proof" : "body-mode-proof",
   })),
   ...(["request", "response"] as const).flatMap((role) =>
     (["lookup", "write", "delete"] as const).map((operation) => ({
@@ -249,7 +246,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
           : "header dictionary mutation",
       lowering:
         "ScriptHub-derived case-insensitive Header facade; delete/has/Symbol traps repaired",
-      proof: "runtime-header-api-contract",
     })),
   ),
   {
@@ -263,7 +259,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     canonical: "response.status",
     value: "HTTP status Number",
     lowering: "source/target responseStatus field from host layout",
-    proof: "numeric-status-contract",
   },
   ...(["request", "response"] as const).map((role) => ({
     id: role + ".bytes",
@@ -276,7 +271,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     canonical: role + ".bytes",
     value: "exact byte view",
     lowering: "ArrayBuffer <-> Uint8Array preserving byteOffset/byteLength",
-    proof: "explicit-binary-declaration",
   })),
   {
     id: "complete",
@@ -286,7 +280,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "phase-specific result",
     lowering:
       "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-    proof: "result-field-and-phase-proof",
   },
   {
     id: "storage.remove-by-write",
@@ -302,7 +295,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "explicit null / source-supported undefined deletion marker + key",
     lowering:
       "normalize deletion marker; QX receives only key, callback hosts receive null,key",
-    proof: "explicit-key-and-deletion-marker-proof",
   },
   ...(["read", "write", "remove"] as const).map((op) => ({
     id: "storage." + op,
@@ -328,7 +320,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
           : "explicit deletion; Boolean result",
     lowering:
       "target store layout; missing and deletion semantics remain separate",
-    proof: "explicit-key-value-and-observation-proof",
   })),
   {
     id: "storage.removeAll",
@@ -342,7 +333,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     availability: { qx: "runtime", loon: "native-only", surge: "runtime" },
     solution:
       "Use actual QX/native Loon clear-all; Surge ignores the operation without deleting partial keys",
-    proof: "native store boundary",
   },
   {
     id: "http.request",
@@ -352,7 +342,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "Promise or callback",
     lowering:
       "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
-    proof: "request-response-error-flow-proof",
   },
   {
     id: "notify",
@@ -366,7 +355,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "notification request; delivery is not guaranteed",
     lowering:
       "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
-    proof: "notification-option-proof",
   },
   {
     id: "argument",
@@ -376,7 +364,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "declared typed object or String",
     lowering:
       "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
-    proof: "source-schema-and-default-flow-proof",
   },
   ...(["TextEncoder", "TextDecoder", "atob", "btoa"] as const).map((api) => ({
     id: "codec." + api,
@@ -386,7 +373,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "UTF-8, standard legacy decoder labels and Base64",
     lowering:
       "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-    proof: "closed-codec-and-pristine-intrinsics-proof",
   })),
   // Modified: 2026-11-02 (chance). Compression is a source API contract,
   // backed by native Loon or the pinned Pako provider, independent of author code.
@@ -403,8 +389,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "synchronous Uint8Array -> Uint8Array",
     lowering:
       "native source first; lazy Pako gzip provider with exact views and explicit compression/decompression errors",
-    proof:
-      "independent gzip vectors, CRC/trailer failures and native dispatch API contracts",
   })),
   ...(["encrypt", "decrypt"] as const).map((api) => ({
     id: "crypto.aes." + api,
@@ -419,8 +403,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     },
     lowering:
       "native Loon first; lazy noble-ciphers 2.4.0 synchronous ECB/CBC/CTR/GCM, padding and separate authenticated tag",
-    proof:
-      "NIST and Node crypto vectors, three key lengths, tamper failures and exact typed views",
   })),
   ...(["URL", "URLSearchParams"] as const).map((api) => ({
     id: "standard." + api,
@@ -431,8 +413,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     target: same(api),
     lowering:
       "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
-    proof:
-      "standard URL vectors and independent Node URL differential contracts",
   })),
   // Modified: 2026-11-02 (chance). Loon timers are one-shot; record source
   // semantics explicitly instead of treating target interval names as equivalent.
@@ -445,7 +425,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "callback, milliseconds and unchanged arguments",
     lowering:
       "actual native setTimeout; Loon setInterval is documented as one-shot",
-    proof: "dynamic scheduling and callback arguments",
   })),
   ...(["request", "response"] as const).map((role) => ({
     id: role + ".trailers",
@@ -455,7 +434,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     value: "HTTP/2 trailer dictionary",
     lowering:
       "preserve native source fields when present; QX completion ignores undocumented fields; Surge completion has no trailer result field",
-    proof: "documented source field and target invocation boundary",
   })),
   {
     id: "script.name",
@@ -469,7 +447,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     canonical: "source.script.name",
     value: "String",
     lowering: "bind original source declaration name, not generated filename",
-    proof: "unique-source-name",
   },
   {
     id: "script.startTime",
@@ -478,7 +455,6 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     canonical: "source.script.startTime",
     value: "Date / epoch seconds",
     lowering: "requires actual source timing origin; never invent one on QX",
-    proof: "actual-timestamp-contract",
   },
 ];
 export interface ScriptApiOperation {
@@ -502,21 +478,7 @@ export interface ScriptApiOperation {
     proof: string;
     capability?: "runtime" | "native-only" | "unavailable" | "unclassified";
   };
-  fields?: {
-    source: string;
-    canonical: string;
-    target: string | null;
-    action: "map" | "omit" | "unresolved";
-    transform?: string;
-    cases?: { when: string; target: string; transform: string }[];
-  }[];
-  decision:
-    | "native"
-    | "mapped"
-    | "omitted"
-    | "requires-proof"
-    | "unmapped"
-    | "runtime";
+  decision: "runtime";
   diagnostics: { api: string; reason: string; solution: string }[];
 }
 export interface ScriptApiIR {
@@ -540,16 +502,20 @@ for (const layout of Object.values(scriptHostLayouts)) {
 }
 Object.freeze(scriptHostLayouts);
 Object.freeze(scriptHttpMethods);
-for (const definition of scriptApiDefinitions) {
-  definition.proof = definition.availability
-    ? "explicit capability boundary; provider proposal is not implemented support"
-    : "runtime API contract; author values are validated at invocation";
-  Object.freeze(definition.source);
-  if (definition.target) Object.freeze(definition.target);
-  if (definition.availability) Object.freeze(definition.availability);
-  Object.freeze(definition);
-}
-Object.freeze(scriptApiDefinitions);
+export const scriptApiDefinitions: readonly ScriptApiDefinition[] =
+  Object.freeze(
+    definitions.map((definition) => {
+      Object.freeze(definition.source);
+      if (definition.target) Object.freeze(definition.target);
+      if (definition.availability) Object.freeze(definition.availability);
+      return Object.freeze({
+        ...definition,
+        proof: definition.availability
+          ? "explicit capability boundary; provider proposal is not implemented support"
+          : "runtime API contract; author values are validated at invocation",
+      });
+    }),
+  );
 
 // Modified: 2026-11-02 (chance). Undocumented QX notification parameters
 // are omitted on source and destination branches; expression effects stay intact.

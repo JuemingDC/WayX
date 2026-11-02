@@ -1,6 +1,6 @@
 # 去广告 Script API 兼容层
 
-Modified: 2026-11-02 (chance). 当前维护方式为 ScriptHub 派生的运行时 API 适配；旧静态证明方案已从生产实现和测试中移除。详见 [完整设计](script-api/02-方案设计.md)。
+Modified: 2026-11-03 (chance). 当前维护方式为 ScriptHub 派生的运行时 API 适配；历史方案由 Git 保存，不保留并行旧实现。详见 [完整设计](script-api/02-方案设计.md)。
 
 ## 范围
 
@@ -18,7 +18,7 @@ Header 采用大小写无关、小写字典策略，这是接受的兼容规范�
 
 ## 能力边界
 
-目标原生的存储缺失值、空值、详细错误对象、编码/Cookie 状态及客户端版本可能仍不同；兼容不等于整程序严格等价。真实源设备/版本、动态 Function 代码的 globals、完整 Header 数组、受限 Proxy descriptor、未提供的 WASM/文件/配置 API 不伪造支持。Loon gzip/ungzip 已复用固定 Pako（原生优先、延迟初始化、gzip 完整流校验）；压缩字节编码和元数据不保证与原生一致。QX echo 和 body/header 规则需要相应声明；未知默认来源存储键、不可用通知动作在调用时明确失败。
+目标原生的存储缺失值、空值、详细错误对象、编码/Cookie 状态及客户端版本可能仍不同；兼容不等于整程序严格等价。真实源设备/版本、动态 Function 代码的 globals、完整 Header 数组、受限 Proxy descriptor、未提供的 WASM/文件/配置 API 不伪造支持。Loon gzip/ungzip 已复用固定 Pako（原生优先、延迟初始化、gzip 完整流校验）；压缩字节编码和元数据不保证与原生一致。QX echo 和 body/header 规则需要相应声明；未知默认来源存储键在调用时明确失败；通知按下述目标省略政策处理。
 
 AES 四模式、URL/URLSearchParams 和旧字符集 TextDecoder 已通过固定上游库接入公共层，保留原生优先、独立作用域和延迟初始化。实现及原生边界见 [API 能力与实施路线](script-api/03-API能力与实施路线.md)。QX removeAllValues 原生保留；目标没有全局清空存储接口时不伪造成功。
 

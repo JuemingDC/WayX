@@ -16,31 +16,19 @@
 
 - Modified: 2026-10-27 (chance). Microsoft CN routing layers override actionless company/OneDrive feed defaults only; preserve explicit row actions, domestic-first ordering, existing GitHub/AI ownership and Microsoft output filenames.
 
-
 - Modified: 2026-10-30 (chance). Production automation is TypeScript under src/, dispatched by src/cli.ts. Keep domain logic free of I/O; all HTTP uses the unified Surge transport, and managed writes use transactions. Never restore Python/MJS forwarding entry points. Archive encrypted source bytes without parsing them or replacing prior client outputs; preserve author #!source and original JS URLs. Source pauses remain authoritative for discovery/conversion; the 2026-11-01 user-authorized backup/rebinding and universal adblock-script passes also cover existing paused Kelee snapshots and their direct script references, without resuming plugin acquisition.
 
 - Modified: 2026-10-30 (chance). Icon manifests and app aliases belong to .github/sources/icons.json. Fill only absent target declaration metadata; preserve author-provided image URLs, source files, client logic and timestamps. Reuse the unified fetch snapshot, reference original image URLs, and keep unmatched apps unchanged.
 
 - Modified: 2026-11-01 (chance). Surge support confirms ICU inline i/m/s/x in URL/Header/Body/Map Local/Script patterns on iOS and Mac. Preserve source flags in Surge native output and Script v2; keep the existing QX policy separate. When lowering a Loon body regex without m, explicitly disable Surge Body Rewrite default multiline with (?-m), preserving source inline scopes. The user-authorized flag-only correction also covers retained paused Kelee Surge artifacts using frozen source snapshots, without resuming catalog acquisition/conversion. Preserve all script URLs and non-regex content, refuse ambiguous mappings, and validate ICU syntax before publication. Keep native source patterns and raw backups intact.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 - Modified: 2026-11-02 (chance). User-directed Script API architecture is a ScriptHub-derived runtime compatibility layer. Preserve author business code and ordinary JavaScript Env receivers; do not add source-content/dataflow/whitelist proofs or validate repository scripts to authorize an API mapping. Maintain API contract tests with dynamic values and synthetic transport/backup integration. Source inventory is descriptive only; publication requires valid classic syntax and unambiguous HTTP declaration metadata.
 - Modified: 2026-11-02 (chance). Reuse pinned ScriptHub code where applicable, preserving GPL licensing/provenance in vendor/script-hub. Maintain corrections for Header delete/has/Symbol/prototype operations, all HTTP methods, rejection/bytes/defaults, actual timers, explicit storage deletion and dynamic completion. No empty APIs or exception-to-pass-through suppression. Header case normalization and target-native storage/error differences are explicit compatibility boundaries, not an equality certificate.
 - Modified: 2026-11-02 (chance). Production directions remain Loon→QX, Loon→Surge and QX→Surge. Emit one source-named common file per URL with one original business body. Raw plugin/script backups remain exact; Actions alone refreshes bytes, common files, source-bound API inventories, indices and references. Keep configuration tools, tasks and Egern outside the API adapter scope. Preserve author notices and required adapter license notices without added author/category banners.
 - Modified: 2026-11-02 (chance). QX-undocumented parameters are omitted at API invocation while original construction effects/errors remain. Source names and typed arguments come from declarations; do not invent saved settings, real device/version data or QX timeout/cancellation. Runtime capability failures remain errors. Report runtimePolicyVersion and validationMode so compatibility output is not presented as author-program or device certification.
 
-- Modified: 2026-11-02 (chance). Loon gzip/ungzip use pinned Pako with isolated lazy initialization, native source preference, Uint8Array boundaries and complete gzip-only validation. Preserve MIT/Zlib notices in generated provider code. Report runtime/native-only/unavailable/unclassified per API; AES/URL/legacy-decoder providers are implemented with pinned noble-ciphers/whatwg-url/Exodus bundles, native preference, scoped lazy initialization, full license notices and reproducible vendor lock/manifest. Runtime policy is version 3. Keep HTTP native text/charset, body-base64 and completion retry contracts in general API tests; never fake device identity or global store clearing. DNS/GeoIP/ASN services are explicitly out of scope: no conversion mappings, compatibility bindings, operation inventories, missing-capability counts or roadmap tasks; retain author bytes. Complete all remaining authorized changes before the single Actions publication. See docs/script-api/03-API能力与实施路线.md.
+- Modified: 2026-11-02 (chance). Loon gzip/ungzip use pinned Pako with isolated lazy initialization, native source preference, Uint8Array boundaries and complete gzip-only validation. Preserve MIT/Zlib notices in generated provider code. Report runtime/native-only/unavailable/unclassified per API; AES/URL/legacy-decoder providers are implemented with pinned noble-ciphers/whatwg-url/Exodus bundles, native preference, scoped lazy initialization, full license notices and reproducible vendor lock/manifest. Runtime policy is version 4. Keep HTTP native text/charset, body-base64 and completion retry contracts in general API tests; never fake device identity or global store clearing. DNS/GeoIP/ASN services are explicitly out of scope: no conversion mappings, compatibility bindings, operation inventories, missing-capability counts or roadmap tasks; retain author bytes. Complete all remaining authorized changes before the single Actions publication. See docs/script-api/03-API能力与实施路线.md.
 
 - Modified: 2026-11-02 (chance). User-authorized Surge policy: omit clear-all storage (undefined result), ALPN and completion trailers/node/policy without errors. Ignore notification delay/click actions while retaining content and mapping inline media via official base64/MIME fields. Keep Header access case-insensitive. Missing source version/build/path metadata is documented and omitted, not a conversion blocker; do not rewrite arbitrary author conditions or swallow business/transport errors. Runtime policy version 4.
+
+- Modified: 2026-11-03 (chance). Keep only current implementation and specifications; use Git history for retired designs. Do not restore the removed author-composition experiment, static-proof arguments or duplicate API option catalogs. TypeScript unused-local/parameter checks enforce this cleanup. Keep historical backup integrity checks until retained artifacts are retired by the managed reference-closure cleanup.

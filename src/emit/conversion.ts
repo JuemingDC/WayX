@@ -1,3 +1,4 @@
+// Modified: 2026-11-03 (chance). Remove unused parser dependencies from the active conversion path.
 import { repairScriptEchoDeclarations } from "../parser/backup-references.ts";
 import { bindKnownBackups } from "../parser/backup-references.ts";
 import { addAppIcon } from "../domain/icons.ts";
@@ -31,7 +32,6 @@ import {
   repairUpstreamJq,
   unquoteRewriteToken,
   isRewriteV2,
-  parseRewriteV2,
   selectRewritePipelineLayer,
   rewriteV2ToSource,
   validateRewriteV2Ast,
@@ -485,7 +485,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
       !blockedV2.has(phase) &&
       group.length > 0 &&
       bodyMatchers.every(
-        (matcher: any, index: any): any => matcher.ok && !matcher.regex.flags,
+        (matcher: any): any => matcher.ok && !matcher.regex.flags,
       ) &&
       new Set(bodyMatchers.map((matcher: any): any => matcher.pattern)).size ===
         1 &&

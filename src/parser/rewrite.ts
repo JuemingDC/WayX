@@ -2272,7 +2272,7 @@ export function complexConditionKinds(node: any, out: any = []): any {
 }
 export function compileComplexCondition(
   node: any,
-  target: any,
+  _target: any,
   { argumentTable = null, sharedRuntime = false }: any = {},
 ): any {
   for (const c of findRewriteComparisons(node, (): any => true)) {
@@ -3923,7 +3923,8 @@ function parseJsonValue(token: any): any {
     return t.slice(1, -1);
   return t;
 }
-function compileJsonMutation(phase: any, op: any, rest: any): any {
+// Modified: 2026-11-03 (chance). JSON mutation compilation only consumes its operation and operands.
+function compileJsonMutation(op: any, rest: any): any {
   if (op === "jq")
     return { ok: true, jq: unquote(String(rest).trim()), preserve: true };
   const tokens: any = legacyShellTokens(rest);
@@ -4200,16 +4201,10 @@ function planBodyRegex(
     line: `${direction} ${targetPattern} ${tokens.join(" ")}`,
   };
 }
-function planJson(
-  pattern: any,
-  action: any,
-  parsed: any,
-  target: any,
-  ctx: any,
-): any {
+function planJson(pattern: any, action: any, parsed: any, target: any): any {
   let compiled: any;
   try {
-    compiled = compileJsonMutation(parsed.phase, parsed.op, parsed.rest);
+    compiled = compileJsonMutation(parsed.op, parsed.rest);
   } catch (error: any) {
     return legacyRewriteReview(
       pattern,
@@ -4424,7 +4419,7 @@ export function planLegacyRewriteIr(ir: any, target: any, ctx: any = {}): any {
   if (operation.kind === "body-regex")
     return planBodyRegex(pattern, action, parsed, target);
   if (operation.kind === "json")
-    return planJson(pattern, action, parsed, target, ctx);
+    return planJson(pattern, action, parsed, target);
   if (operation.kind === "mock")
     return planMock(pattern, action, parsed, target, ctx);
   return issue(

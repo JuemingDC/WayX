@@ -21,9 +21,7 @@ const managed = [
   "Resource/Backup",
   "Adblock/Quantumult X",
   "Adblock/Surge",
-  // Modified: 2026-11-01 (chance). Publish native functional modules alongside their registry state and Adblock counterparts.
-  "Module/QuantumultX",
-  "Module/Surge",
+  // Modified: 2026-11-03 (chance). One Module root covers native and client-specific outputs.
   "Module",
   "Script",
   "Rule",

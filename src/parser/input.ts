@@ -1,3 +1,4 @@
+// Modified: 2026-11-03 (chance). Remove unused parser dependencies from the active conversion path.
 import type { SourceEntry } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
@@ -19,7 +20,6 @@ import {
   dependencySpecFromAction,
   jqDependencySpecFromAction,
   legacyJqPathDependencySpecFromIr,
-  isTextRequestMockAction,
 } from "./rewrite.ts";
 // Modified: 2026-10-25 (chance). Input parsing consumes resource acquisition;
 // these exports preserve the existing tools API without a second fetch path.
@@ -242,7 +242,7 @@ export function discoverSourceScriptUrls(
         .filter((line: string) => !/^\s*(?:#|;|\/\/)/.test(line))
         .join("\n")
         .matchAll(/script-path\s*=\s*(?:"([^"\n]+)"|'([^'\n]+)'|([^,\s]+))/gi),
-    ].map((match: any): any => (match[1]??match[2]??match[3]).trim()),
+    ].map((match: any): any => (match[1] ?? match[2] ?? match[3]).trim()),
   );
   const plugin: any = parsed || parseLoonPlugin(text);
   for (const item of [
@@ -251,7 +251,8 @@ export function discoverSourceScriptUrls(
   ]) {
     if (!item.line || !isScriptV2(item.line)) continue;
     try {
-      for(const member of splitScriptPipelineSources(item.line)) if(isScriptV2(member)) urls.add(parseScriptV2(member).script.path);
+      for (const member of splitScriptPipelineSources(item.line))
+        if (isScriptV2(member)) urls.add(parseScriptV2(member).script.path);
     } catch {
       // Invalid Script v2 syntax is handled by the conversion pipeline.
     }

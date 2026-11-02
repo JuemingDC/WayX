@@ -8,6 +8,8 @@
     "verbatimModuleSyntax": true,
     "noEmit": true,
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "useUnknownInCatchVariables": false,
     "skipLibCheck": true,
     "types": ["node"]

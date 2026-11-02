@@ -15,7 +15,8 @@ import {
   scriptConversionPriorities,
 } from "../parser/script-api-mapping.ts";
 // Modified: 2026-11-02 (chance). Report static module evidence and analysis categories per source without executing archived author code.
-const scriptProblemCategory = (api: string, _reason?: string) =>
+// Modified: 2026-11-03 (chance). Classify actual diagnostics without obsolete proof inputs.
+const scriptProblemCategory = (api: string) =>
   api === "syntax"
     ? "source-invalid"
     : api === "source-profile"
@@ -39,7 +40,6 @@ import {
   applyScriptBindings,
   type ScriptBinding,
 } from "../parser/backup-references.ts";
-import { splitTopLevelCsv } from "../parser/rule.ts";
 import { parseLoonPlugin } from "../parser/input.ts";
 import {
   buildSurgeArgumentTable,
@@ -322,7 +322,6 @@ export async function prepareScriptApiAdapters(
     const syntax = collectScriptApiReferences(
       rawInventory.tree,
       rawInventory.checker,
-      rawInventory.contextAliases,
     ).map((reference) => {
       const start = reference.node.getStart(rawInventory.tree),
         position = rawInventory.tree.getLineAndCharacterOfPosition(start);
@@ -427,7 +426,7 @@ export async function prepareScriptApiAdapters(
           category:
             result.status === "excluded"
               ? "out-of-scope"
-              : scriptProblemCategory(p.api, p.reason),
+              : scriptProblemCategory(p.api),
         })),
 
         // Modified: 2026-11-02 (chance). QX omissions are informational metadata,
@@ -437,7 +436,6 @@ export async function prepareScriptApiAdapters(
               omittedParameters: [
                 ...new Set(
                   Object.values(result.contexts).flatMap((role: any) => [
-                    ...(role.qx?.httpIgnoredOptions ?? []),
                     ...(role.qx?.omittedParameters ?? []),
                   ]),
                 ),
@@ -506,7 +504,7 @@ export async function prepareScriptApiAdapters(
         category:
           d.status === "excluded"
             ? "out-of-scope"
-            : scriptProblemCategory(p.api, p.reason),
+            : scriptProblemCategory(p.api),
       })),
     })),
   };

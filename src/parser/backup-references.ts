@@ -71,8 +71,8 @@ export function bindKnownBackups(
   const bindings: Record<string, ScriptBinding> = {};
   for (const ref of scriptReferences(text)) {
     if (!/^https?:\/\//.test(ref.value)) continue;
-    const url = new URL(ref.value),
-      fragment = url.hash;
+    // Modified: 2026-11-03 (chance). Match backup identity without an unused fragment copy.
+    const url = new URL(ref.value);
     url.hash = "";
     const known = index?.bindings?.[artifact ?? ""]?.[ref.value];
     const record = index?.objects?.[index?.latest?.[url.href]];
