@@ -45,7 +45,7 @@
     },
     "lexicalBindings": {
       "status": "supported",
-      "domain": "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, guarded same-context scalar && reads, immutable literal keys/string tables without decoder execution, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
+      "domain": "TypeScript-resolved local bindings, capture-free generated bindings, closed const request/response/script aliases, guarded same-context scalar && reads, immutable literal keys/string tables without decoder execution, including unrelated delayed readonly uses while the queried access remains top-level, Boolean-only logical guards, mapped context-presence guards, unused pure host-presence probes and pure source-host typeof/const branches with var-hoist preservation, localized source edits and nonescaping function proofs",
       "outside": "Escaping platform aliases, class-getter receiver identity, nonsequential const/TDZ uses, dynamic receivers, eval and Function construction remain blocked"
     },
     "completion": {
@@ -340,18 +340,17 @@
   ],
   "conversionPriorities": {
     "basis": "Distinct blocked source URLs across every registered target/profile; family counts overlap. Single-family candidates still require implementation, all API proofs and runtime checks, not guaranteed unlocks.",
-    "blockedSources": 80,
+    "blockedSources": 79,
     "families": [
       {
         "family": "flow",
         "priority": "P0",
-        "affectedSources": 43,
+        "affectedSources": 42,
         "singleFamilyCandidates": [
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/amap.js",
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/chelaile.js",
           "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/reddit.js",
-          "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_json.js",
-          "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/caixin/caixinAd.js"
+          "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_json.js"
         ],
         "coBlockers": {
           "arguments": 14,
@@ -617,10 +616,10 @@
       }
     ]
   },
-  "adapted": 814,
-  "blocked": 535,
+  "adapted": 816,
+  "blocked": 533,
   "excluded": 4,
-  "universal": 143,
+  "universal": 144,
   "diagnostics": [
     {
       "artifact": "Adblock/Surge/RuCu6_nodecheck.sgmodule",
@@ -38746,24 +38745,20 @@
         "qx"
       ],
       "to": "qx",
-      "status": "blocked",
+      "status": "universal",
       "features": [
-        "$done"
+        "$done",
+        "$response.body.replace"
       ],
-      "problems": [
-        {
-          "api": "$response",
-          "reason": "surge: Computed API property cannot be resolved statically",
-          "solution": "Use a static property name or retain the native script",
-          "category": "analysis-unresolved"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-e0b4de0796f5/caixinAd.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
@@ -38772,24 +38767,20 @@
         "qx"
       ],
       "to": "surge",
-      "status": "blocked",
+      "status": "universal",
       "features": [
-        "$done"
+        "$done",
+        "$response.body.replace"
       ],
-      "problems": [
-        {
-          "api": "$response",
-          "reason": "surge: Computed API property cannot be resolved statically",
-          "solution": "Use a static property name or retain the native script",
-          "category": "analysis-unresolved"
-        }
-      ],
+      "problems": [],
       "specialization": {
         "folds": 0,
         "branches": 0,
         "reason": "no provable host branch"
       },
-      "omittedParameters": []
+      "omittedParameters": [],
+      "path": "Script/Adblock/raw.githubusercontent.com-e0b4de0796f5/caixinAd.js",
+      "retained": false
     },
     {
       "artifact": "Adblock/Quantumult X/fmz200_blockads.snippet",

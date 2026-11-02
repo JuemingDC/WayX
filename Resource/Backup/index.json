@@ -5338,12 +5338,12 @@
     "Resource/Backup/script/a8d59ed8d2ba67d07ab534966aa75f8c25a234e06e52a28e3dd497804082b745/pornhub.js": {
       "url": "https://rucu6.pages.dev/Scripts/webpage/pornhub.js",
       "path": "Resource/Backup/script/a8d59ed8d2ba67d07ab534966aa75f8c25a234e06e52a28e3dd497804082b745/pornhub.js",
-      "sha256": "59b974a705d887890d389a5607e0a7e032ceb28f88138c3c9c5c159c8e63349d",
-      "size": 26414,
+      "sha256": "1044d095de964b804582431d1a27e59800e80ed4630cd47e5f4fae96bb19cc38",
+      "size": 29596,
       "kind": "script",
       "author": "chance",
       "category": "Upstream script backup",
-      "updatedAt": "2026-11-02T04:50:23.946Z"
+      "updatedAt": "2026-11-02T05:15:10.420Z"
     },
     "Resource/Backup/script/20f454d55c70ecb70ff6bfcf2b6a47583df9fd0fd6ce1e3e4b4a9ed7872b19d4/zimuquan.js": {
       "url": "https://rucu6.pages.dev/Scripts/webpage/zimuquan.js",
@@ -9425,8 +9425,8 @@
     "Script/Adblock/rucu6.pages.dev-a8d59ed8d2ba/pornhub.js": {
       "path": "Script/Adblock/rucu6.pages.dev-a8d59ed8d2ba/pornhub.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/pornhub.js",
-      "sourceSha256": "59b974a705d887890d389a5607e0a7e032ceb28f88138c3c9c5c159c8e63349d",
-      "sha256": "2d11d125cd6ff7d885fbfc4495207c34884f19f55fdffac4a81015e47a86e7d5",
+      "sourceSha256": "1044d095de964b804582431d1a27e59800e80ed4630cd47e5f4fae96bb19cc38",
+      "sha256": "783a69dccd53e749a8ad8a3535acdaff2df31ac8ff8d3142b4da8bc16bf2091d",
       "from": "loon",
       "directionPolicyVersion": 1,
       "targets": [
@@ -14819,6 +14819,51 @@
         "branches": 0,
         "reason": "source/text observations retained"
       }
+    },
+    "Script/Adblock/raw.githubusercontent.com-e0b4de0796f5/caixinAd.js": {
+      "path": "Script/Adblock/raw.githubusercontent.com-e0b4de0796f5/caixinAd.js",
+      "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/caixin/caixinAd.js",
+      "sourceSha256": "0366e7eb1ffc341c472304e526f93bf6104a1cda668c85f50e8798fe0f035e4d",
+      "sha256": "4e3196c9d5af03e225180c0769751d385f7823008b81a93e5f855d0ddee2c2d9",
+      "from": "qx",
+      "directionPolicyVersion": 1,
+      "targets": [
+        "qx",
+        "surge"
+      ],
+      "conversionTargets": [
+        "surge"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "qx",
+            "to": "qx",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true
+          },
+          "surge": {
+            "from": "qx",
+            "to": "surge",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true,
+            "headerReads": {},
+            "headerPrefixes": {},
+            "binaryReads": false
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$response.body.replace"
+      ],
+      "specialization": {
+        "folds": 0,
+        "branches": 0,
+        "reason": "no provable host branch"
+      }
     }
   },
   "bindings": {
@@ -15707,6 +15752,11 @@
         "path": "Script/Adblock/raw.githubusercontent.com-8cd9d9503c51/wnbz.js",
         "binary": false,
         "echo": false
+      },
+      "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/caixin/caixinAd.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-e0b4de0796f5/caixinAd.js",
+        "binary": false,
+        "echo": false
       }
     },
     "Adblock/Surge/iMaiCai_remove_ads.sgmodule": {
@@ -16311,6 +16361,11 @@
       },
       "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js": {
         "path": "Script/Adblock/raw.githubusercontent.com-8cd9d9503c51/wnbz.js",
+        "binary": false,
+        "echo": false
+      },
+      "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/caixin/caixinAd.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-e0b4de0796f5/caixinAd.js",
         "binary": false,
         "echo": false
       }

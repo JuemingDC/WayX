@@ -1,4 +1,4 @@
-// 2026-11-02 12:44
+// 2026-11-02 13:10
 // Pornhub 去推广/广告 + 去年龄门（Loon http-response 脚本，独立版）
 // 按 home.html（首页）+ play.html（播放页）两份实测结构编写
 // 注意：广告容器的类名前缀会轮换（首页 rdisc5*、播放页 yv3wl*），不能认前缀——2e~2h 全部按结构（ins.adsbytrafficjunky 为首子元素）删
@@ -65,6 +65,18 @@ if (interTarget) {
 
   // ============ 2. 推广 / 广告（首页 + 播放页） ============
   let navRemoved = false; // 2d 真删掉顶部付费标签行时置真，第 3 节据此给 #mobileContainer 补顶栏留位（见彼处注释）
+  // 广告样式块里登记过的轮换类名集合（供 2h 判空壳、是 2p 的识别逻辑前置）：认含 .ad-link 的 <style> 块，
+  // 抽其中以 aa/ab/ad 结尾的选择器类名。轮换类名不保证含数字（见 2h 注释的纯字母漏网案例），数字判据之外以此名单为准。
+  const adBlockClasses = new Set();
+  body.replace(/<style[^>]*>([\s\S]*?)<\/style>/g, (m, css) => {
+    if (/\.ad-link\b/.test(css)) {
+      css.replace(/\.([a-z0-9]+a[abd])(?=[\s.{,:])/g, (mm, cls) => {
+        adBlockClasses.add(cls);
+        return mm;
+      });
+    }
+    return m;
+  });
   body = body
     // 2a. 掐 TrafficJunky 预加载脚本（var tjPreloadAds = JSON.parse(...) + TJ_ADS_TAKEOVER，负责批量拉 /_xa/ads_batch）
     .replace(/<script\b[^>]*>\s*var tjPreloadAds =[\s\S]*?<\/script>/g, "")
@@ -102,19 +114,23 @@ if (interTarget) {
       /<div\b[^>]*>\s*<ins\b[^>]*\badsbytrafficjunky\b[^>]*><\/ins>[\s\S]*?<\/div>\s*<\/div>/g,
       ""
     )
-    // 2h. 清掉 2f/2g 删空后留下的外层空壳（随机串包装层）：类名认「含数字的随机串 + ad/ab 结尾」、内容全空（或只有注释）才删
+    // 2h. 清掉 2f/2g 删空后留下的外层空壳（随机串包装层）：类名认「随机串 + ad/ab 结尾」、内容全空（或只有注释）才删
     //     类名长度也轮换、不能设上限：已见 yv3wlad(7)、gjd6ad(6)、rdisc5ab(8)、b3go6p8byuzkad(15)；壳被站点内联样式定高 154px，空着也占一整条
-    //     「含数字」这条把 download/tab 这类无数字的正常单词类名排除在外，不会误伤
+    //     广告判据二选一：「含数字」（把 download/tab 这类无数字的正常单词类名排除在外）——但轮换也会出纯字母串：
+    //     实测 iixiucmoad（无数字）两道判据全漏、空壳带着 154px 高度站在播放器上方（无痕冷启首开出现、刷新换一串带数字的就好，
+    //     即「偶尔出现、刷新消失」的真身）。故加第二判据：类名被广告样式块登记过（adBlockClasses，见第 2 节开头）同样删
     .replace(
       /<div\b[^>]*\bclass="([a-z0-9]+a[bd])"[^>]*>(?:\s|<!--[\s\S]*?-->)*<\/div>/g,
-      (m, cls) => (cls.length >= 6 && /\d/.test(cls) ? "" : m)
+      (m, cls) =>
+        cls.length >= 6 && (/\d/.test(cls) || adBlockClasses.has(cls)) ? "" : m
     )
     // 2p. 样式层兜底（2026-10-30 追加）：站点每页有一整块内联 <style> 专给轮换广告类名定尺寸（顶部位 height/min-height 154px 出自这里），
     //     整块的选择器全挂在广告类名下、不服务任何正文元素。DOM 删除与类名轮换赛跑偶尔漏网时，漏网的壳/容器就是靠这块样式撑出空白；
-    //     故识别出这块（两个广告专属标记：含 .ad-link、且有「含数字、以 aa/ab/ad 结尾」的轮换类名选择器）后，把块内全部
+    //     故识别出这块（两个广告专属标记：含 .ad-link、且有以 aa/ab/ad 结尾的轮换类名选择器）后，把块内全部
     //     height/min-height/padding/margin 清零——不管哪种结构变体漏网，高度都塌成 0，刷新与否表现一致
+    //     第二标记原先要求类名含数字，与 2h 同因在纯字母轮换（iixiucmo*）上漏检，已去掉数字要求；.ad-link 是 TJ 广告专属类、仍是主签名
     .replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/g, (m, open, css, close) => {
-      if (!/\.ad-link\b/.test(css) || !/\.[a-z0-9]*\d[a-z0-9]*a[abd][\s.{,:]/.test(css)) return m;
+      if (!/\.ad-link\b/.test(css) || !/\.[a-z0-9]+a[abd][\s.{,:]/.test(css)) return m;
       const zeroed = css
         .replace(/([;{]\s*(?:min-)?height\s*:\s*)\d+(?:\.\d+)?px/g, "$10px")
         .replace(/([;{]\s*(?:padding|margin)(?:-[a-z]+)?\s*:\s*)[^;}]+/g, "$10");
@@ -181,6 +197,27 @@ if (interTarget) {
   body = body.replace(/<script>\s*var interstitial = JSON\.parse\('[^']*'\)[\s\S]*?<\/script>/g, (m) =>
     m.length < 6000 && m.includes("window.location.href = '/interstitial?viewkey=") ? "" : m
   );
+
+  // 2r. 贴片/浮层残余根除（实测 play-2/home-2 钉死的三处漏网，目标是让页面自己不再发出任何 _xa 请求）：
+  // ① 浮层条本体：播放器占位区里的 var TEXTLINKS = [{campaignId, clickUrl, label, ...}]——播放器按它在左上角贴一条
+  //    可关的推广条（label 随活动变：英文「Tap here to see more of me」/ 中文「点击 here 观看完整场景！」等，认文案没用、认变量名）。
+  //    这是 PH 的 in-player 文字链广告位，置空数组即无浮层（与 2k 的 adRoll 置空同理、属播放器受支持状态）；整段删会让 TEXTLINKS 未定义，故只置空。
+  // ② 请求记录里 zone 2524521 的 /_xa/ads 出处：独立变量 var relatedAdRollConfig（与 flashvars 里的 adOutstream 同 zone 的另一份拷贝，
+  //    2k 只处理了 flashvars 里那份、这份一直漏网）。不逐个追配置名，改清扫：页面里任何 "json" 值仍指向 _xa 的一律抽空——
+  //    _xa 是 PH 广告系统命名空间、"json" 字段指它绝无正文用途；回调只认值里含 _xa 才动手，其余 json 字段原样。
+  // ③ ads_batch 的真正触发源（首页/播放页都有、2a 的 tjPreloadAds 是另一路）：独立的 header-bidding 内联脚本
+  //    <script async>function requestHb(url){...XHR...} + initialHBUrl='//cn.pornhub.com/_xa/ads_batch?...' + 当场调用。
+  //    整段自包含（定义与调用都在块内、别处不引用），整段删；守卫认 requestHb 定义 + ads_batch + 长度，三缺一不动。
+  body = body
+    .replace(/var TEXTLINKS\s*=\s*\[[\s\S]*?\];/g, (m) =>
+      m.length < 4000 && m.includes("campaignId") && m.includes("clickUrl")
+        ? "var TEXTLINKS = [];"
+        : m
+    )
+    .replace(/"json":"([^"]*)"/g, (m, u) => (u.includes("_xa") ? '"json":""' : m))
+    .replace(/<script\b[^>]*>\s*function requestHb\([\s\S]*?<\/script>/g, (m) =>
+      m.length < 6000 && m.includes("ads_batch") ? "" : m
+    );
 
   // ============ 3. 兜底 CSS（上游改版导致上面某个锚点失效时的第二道） ============
   // 顶栏留位补偿（仅当 2d 真删了付费标签行时才加）：#mobileHeader 是 position:absolute 的悬浮层、自身不占流内高度，
