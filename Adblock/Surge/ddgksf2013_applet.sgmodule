@@ -46,7 +46,7 @@ http-response ^(http|https):\/\/mp\.weixin\.qq\.com\/mp\/getappmsgad advertiseme
 
 [Script]
 ddgksf2013_applet_1 = type=http-response,pattern=^https?:\/\/wx\.mygolbs\.com\/WxBusServer\/ApiData\.do,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-2ca8a4753be1/zhangshanggongjiao.js,requires-body=true
-ddgksf2013_applet_2 = type=http-response,pattern="^(https?://)?([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}(:\d+)?/wp-json/[a-zA-Z0-9_-]+/(mp\/)?v\d/posts",script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/a94e56a8e11325bbdd4bda192c88018c46e23ce2b741bf84e13d75184fd0cd37/applet.js,requires-body=true
+ddgksf2013_applet_2 = type=http-response,pattern="^(https?://)?([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}(:\d+)?/wp-json/[a-zA-Z0-9_-]+/(mp\/)?v\d/posts",script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-a94e56a8e113/applet.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% api.blibee.com, ucmp.sf-express.com, www.bbkj.work, wx.wxqqurl.cn, wp3.lobdol.cn, awg.enmonster.com, mp.weixin.qq.com, wx.mygolbs.com, jabi.coding.net, api.bspapp.com, 3dd0be8a-54fe-43ff-a0e7-f670c4f20432.bspapp.com, *.tslt.xyz, g.syshhc.top, c.jxjt888.top, www.laoguikeji.cn, qj.bpojie.com, b.tslt.xyz, m.xgjyouhui.com, www.freeheikeji.cn, xcx.xianbaow.com, *.smkj33.top, *.ddly666.top, hkj178.com, a.jxjt888.top, lysl2020.com, www.i3zh.com, iosoi.cn, jabi.coding.net, jt.jxjt888.top, gjsx.vip, d.syshhc.top, gz.gongzijx.com, tvapp.guilaile.cn, www.benbenfx.xyz, 4thdimension.top, api.bspapp.com, tan.ipnas.ltd

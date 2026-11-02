@@ -2,7 +2,7 @@
 const __wayxTarget=typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null;
 if(!__wayxTarget)throw new Error('Unsupported adblock script host');
 const __wayxHost={request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,script:typeof $script==='undefined'?undefined:$script,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,prefs:typeof $prefs==='undefined'?undefined:$prefs,notify:typeof $notification==='undefined'?undefined:$notification,notifyQx:typeof $notify==='undefined'?undefined:$notify,http:typeof $httpClient==='undefined'?undefined:$httpClient,task:typeof $task==='undefined'?undefined:$task};
-const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"headerReads":{}},"loon":{"from":"qx","to":"loon","phase":"response","binary":false,"headerReads":{}}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
+const __wayxContexts={"response":{"qx":{"from":"qx","to":"qx","phase":"response","binary":false,"responseBody":true},"surge":{"from":"qx","to":"surge","phase":"response","binary":false,"responseBody":true,"headerReads":{}},"loon":{"from":"qx","to":"loon","phase":"response","binary":false,"responseBody":true,"headerReads":{}}}},__wayxRole=__wayxHost.response===undefined?'request':'response',__wayxConfig=__wayxContexts[__wayxRole]&&__wayxContexts[__wayxRole][__wayxTarget];
 if(!__wayxConfig)throw new Error('Unregistered adblock HTTP trigger');
 const __wayxRun=function($request,$response,$done,$script,$persistentStore,$prefs,$notification,$notify,__wayxContext,setTimeout,setInterval){
 /***********************************************
@@ -23,7 +23,7 @@ const version = 'V1.0.38';
 let body=$response.body;if(body){switch(true){case/discovery-category\/customCategories/.test($request.url):try{let e=JSON.parse(body);e.customCategoryList&&(e.customCategoryList=e.customCategoryList.filter(e=>("recommend"==e.itemType||"template_category"==e.itemType||"single_category"==e.itemType)&&1005!==e.categoryId)),e.defaultTabList&&(e.defaultTabList=e.defaultTabList.filter(e=>("recommend"==e.itemType||"template_category"==e.itemType||"single_category"==e.itemType)&&1005!==e.categoryId)),body=JSON.stringify(e)}catch(t){console.log("customCategories: "+t)}break;case/discovery-category\/v\d\/category/.test($request.url):try{let a=JSON.parse(body);a.focusImages&&a.focusImages.data&&(a.focusImages.data=a.focusImages.data.filter(e=>-1!=e.realLink.indexOf("open")&&!e.isAd)),body=JSON.stringify(a)}catch(r){console.log("categories: "+r)}break;case/focus-mobile\/focusPic/.test($request.url):try{let s=JSON.parse(body);s.header&&s.header.length<=1&&(s.header[0].item.list[0].data=s.header[0].item.list[0].data.filter(e=>-1!=e.realLink.indexOf("open")&&!e.isAd)),body=JSON.stringify(s)}catch(i){console.log("discovery-feed"+i)}break;case/discovery-feed\/v\d\/mix/.test($request.url):try{let o=JSON.parse(body);o.header?.length==2&&delete o.header[0],o.body=o.body.filter(e=>!(e.item?.adInfo||e.item?.moduleType=="mix_ad"||"bigCard"==e.displayClass)),body=JSON.stringify(o)}catch(d){console.log("discovery-feed:"+d)}break;case/mobile-user\/v\d\/homePage/.test($request.url):try{let c=new Set([210,213,215]),y=JSON.parse(body);if(y.data.serviceModule.entrances){let l=y.data.serviceModule.entrances.filter(e=>c.has(e.id));y.data.serviceModule.entrances=l}body=JSON.stringify(y)}catch(g){console.log("mobile-user:"+g)}break;default:$done({})}$done({body})}else $done({});
 
 };
-if(__wayxTarget==="qx")return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,__wayxHost.http);
+if(__wayxTarget==="qx"&&!__wayxConfig.httpTask)return __wayxRun(__wayxHost.request,__wayxHost.response,__wayxHost.done,__wayxHost.script,__wayxHost.store,__wayxHost.prefs,__wayxHost.notify,__wayxHost.notifyQx,undefined,setTimeout,typeof setInterval==='undefined'?undefined:setInterval,__wayxHost.http);
 return (function(config,host,run){
   const fail=message=>{throw new Error('WayX API contract: '+message);};
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -144,12 +144,46 @@ return (function(config,host,run){
     };
     return client;
   }
+  // Modified: 2026-11-02 (chance). QX-source fetch remains a real Promise.
+  // Sanitize only documented fields on every host; no timeout or cancellation shim.
+  function sourceTask(){
+    if(!config.httpTask)return undefined;
+    const native=host.task,client=host.http;let active=false;
+    if(config.to==='qx'?!native:!client)fail('native HTTP transport unavailable');
+    return {fetch:input=>{
+      if(active)fail('QX fetch subset permits one active request');active=true;
+      const incoming=input.opts||{},request={url:input.url,method:input.method||'GET',headers:Object.assign({},input.headers),opts:{redirection:incoming.redirection===undefined?true:incoming.redirection,'auto-cookie':incoming['auto-cookie']===undefined?false:incoming['auto-cookie'],'skip-cert-verify':incoming['skip-cert-verify']===undefined?false:incoming['skip-cert-verify']}};
+      if(own(input,'body'))request.body=input.body;
+      if(own(incoming,'policy'))request.opts.policy=incoming.policy;
+      const normalize=(response,data)=>{
+        if(!response||typeof response.statusCode!=='number'||!Number.isInteger(response.statusCode)||response.statusCode<100||response.statusCode>599)fail('QX fetch success requires a numeric statusCode');
+        const result={statusCode:response.statusCode};
+        if(config.httpTaskBinary){const b=bytes(data);if(b.length>65536)fail('QX fetch subset byte limit');result.bodyBytes=buffer(b);}
+        else{if(typeof data!=='string'||data.length>65536||/[^\x00-\x7f]/.test(data))fail('QX fetch subset requires ASCII response text');result.body=data;}
+        return result;
+      };
+      if(config.to==='qx'){
+        let promise;try{promise=native.fetch(request);}catch(error){active=false;throw error;}
+        return promise.then(response=>{active=false;return normalize(response,response&&(config.httpTaskBinary?response.bodyBytes:response.body));},reason=>{active=false;throw reason;});
+      }
+      const options={url:request.url,headers:request.headers,'auto-redirect':request.opts.redirection,'auto-cookie':request.opts['auto-cookie'],insecure:request.opts['skip-cert-verify']};
+      if(own(request,'body'))options.body=request.body;
+      if(own(request.opts,'policy'))options.policy=request.opts.policy==='direct'?'DIRECT':request.opts.policy;
+      if(config.httpTaskBinary)options['binary-mode']=true;
+      return new Promise((resolve,reject)=>{
+        try{client[request.method.toLowerCase()](options,(error,response,data)=>{
+          active=false;if(error){reject({error});return;}
+          try{resolve(normalize(response&&{statusCode:response.status},data));}catch(error){reject(error);}
+        });}catch(error){active=false;reject(error);}
+      });
+    }};
+  }
   function start(request,response){
     const script={name:config.name||host.script&&host.script.name||host.ctx&&host.ctx.script.name};
     if(host.script&&host.script.startTime!==undefined){const start=host.script.startTime;script.startTime=config.from==='loon'?(start instanceof Date?start:new Date(start*1000)):(start instanceof Date?start.getTime()/1000:start);}
     const ctx={request:ctxMessage(request),response:ctxMessage(response),script,respond:value=>({response:value}),abort:()=>({abort:true})};
     const sourceTimer=(callback,delay,...args)=>setTimeout(()=>callback(...args),delay);
-    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp());
+    const result=run(view(request,'request'),view(response,'response'),done,config.from==='qx'?undefined:script,config.from==='qx'?undefined:sourceStore,config.from==='qx'?sourcePrefs:undefined,config.from==='qx'?undefined:{post:notify},config.from==='qx'?notify:undefined,ctx,config.from==='loon'?sourceTimer:setTimeout,config.from==='loon'?sourceTimer:undefined,callbackHttp(),sourceTask());
     if(config.from==='egern')return Promise.resolve(result).then(done);
     return completion||result;
   }

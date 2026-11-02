@@ -7406,7 +7406,7 @@
       "path": "Script/Adblock/kelee.one-37eca0771b70/AliYunDrive_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/AliYunDrive/AliYunDrive_remove_ads.js",
       "sourceSha256": "4909ecde19541ad5e83be296e87eab83e62ede4e710fceee3d59dc4cf11f3e38",
-      "sha256": "df535213bca559963b5ffbf03ebf467039ced1a45aebfafbb3f649d370c4d80f",
+      "sha256": "e42d0b35b6a003b20760d889e5301eb264225bf1c70af45b128f77efb1f29fc7",
       "from": "loon",
       "targets": [
         "qx",
@@ -7420,6 +7420,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7427,13 +7428,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7452,7 +7455,7 @@
       "path": "Script/Adblock/kelee.one-3a6c3cc31e79/AutoHome_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/AutoHome/AutoHome_remove_ads.js",
       "sourceSha256": "9ef33d57454935592032fe7d204a9fee555883b49f86d938942719d95a2035dd",
-      "sha256": "edf07b1d8e3ea6e1f3a6e52bfb05ab0ffb50b4a71d885f1278ecc5cfa6611201",
+      "sha256": "7bca238aa19b8e62c88420b3f020277567055160d771096b9a63848c83bc2c55",
       "from": "loon",
       "targets": [
         "qx",
@@ -7466,6 +7469,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7473,13 +7477,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7498,7 +7504,7 @@
       "path": "Script/Adblock/kelee.one-cbe221cf5dc0/BabyTree_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/BabyTree/BabyTree_remove_ads.js",
       "sourceSha256": "0159119e7b367400b85f8814eae93b5030f00bb51a5676e97c03056f3bca70ab",
-      "sha256": "8b8c24fb53d2c4bb3119b61c85aaa69cf601303cc9efb2746d90219d35d2cbb6",
+      "sha256": "fe8e4dc3f6af93bd87b1a6f7a0d06ee90c95a0e2eefcdb0015e53971db9e15f1",
       "from": "loon",
       "targets": [
         "qx",
@@ -7512,6 +7518,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7519,13 +7526,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7544,7 +7553,7 @@
       "path": "Script/Adblock/kelee.one-c5a7ae3bef67/BaiduSearchHomePage_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/BaiduSearch/BaiduSearchHomePage_remove_ads.js",
       "sourceSha256": "a135cb358571270371159b1c1539e555f51c7e53d6531afc6b3687796df0b0d4",
-      "sha256": "99a0bdf8027aa4562a918a284e28d9d9f3d683f8412a038c64482ea35661549c",
+      "sha256": "b01b500948d32e946e1d1aed2ed75f04523321690a42ebaa8a99875d2e8a9a7f",
       "from": "loon",
       "targets": [
         "qx",
@@ -7558,6 +7567,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7565,13 +7575,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7588,7 +7600,7 @@
       "path": "Script/Adblock/kelee.one-83bee2441664/Baidu_input_method_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Baidu_input_method/Baidu_input_method_remove_ads.js",
       "sourceSha256": "4401933fa39f97c72711cf075c9caa8506be46e3fdbf0572d96ab9493aaf623b",
-      "sha256": "507afa4780d06aa421231bbe766dff65e4f7ce1f1fbc6202992121642fc92917",
+      "sha256": "f638685cb6d54c35ed6e82298bf601b033d5269f4da2df4a0b3b8defd288e6b3",
       "from": "loon",
       "targets": [
         "qx",
@@ -7602,6 +7614,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7609,13 +7622,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7634,7 +7649,7 @@
       "path": "Script/Adblock/kelee.one-28f4dc541f88/BooHee_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/BooHee/BooHee_remove_ads.js",
       "sourceSha256": "8b044d530e905fd358dbe155ec75aa8ee460450bed5bf8634556716d544ff388",
-      "sha256": "d391e3f47d549976a2e70a4a3498a15ce991bf277eb8a3f13ff72094382d6fcd",
+      "sha256": "7760b2d000c1a73aeaa99d2b9868a586456882cbe4b89d557149152227fc4cbb",
       "from": "loon",
       "targets": [
         "qx",
@@ -7648,6 +7663,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7655,13 +7671,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7680,7 +7698,7 @@
       "path": "Script/Adblock/kelee.one-25d033d39f66/Chelaile_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Chelaile/Chelaile_remove_ads.js",
       "sourceSha256": "80b889b0fd9f45da4b3327d57bb9ad1809958c68478d1bdc4cc5a62ef9e69919",
-      "sha256": "9db2b77c5c36a11223e3230c977abc7ecf31330848697908ec482a4a66ea77ce",
+      "sha256": "e1a3ed16aa9e9040ceda3bbcb9da17d78703d5249beb2b8edd7a031467a56d0e",
       "from": "loon",
       "targets": [
         "qx",
@@ -7694,6 +7712,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7701,13 +7720,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7725,7 +7746,7 @@
       "path": "Script/Adblock/kelee.one-b42c74e37c3c/ColorfulClouds_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/ColorfulClouds/ColorfulClouds_remove_ads.js",
       "sourceSha256": "51d20e0cd5f134603f541fdb7a05a3e9a259b8e3adece8347b90df237687c0a1",
-      "sha256": "39c903eb586020c069a17d842956b382b6fb14515a2ed58cfc54f83673faef64",
+      "sha256": "35c748a7a7018e04f6b99beab3fffa4694cd5603bfe35ab26bc3903c9f7c5409",
       "from": "loon",
       "targets": [
         "qx",
@@ -7739,6 +7760,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7746,13 +7768,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7771,7 +7795,7 @@
       "path": "Script/Adblock/kelee.one-c2037a6bd293/Douyu_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Douyu/Douyu_remove_ads.js",
       "sourceSha256": "92c8426b0229a89e22277c7f8ca1ff71ad1900e8786cb9f24845491393612b1a",
-      "sha256": "b64f62536d897a7d2b8e337af3a4f7bf0cce86939db1c148f8ecb920c1243672",
+      "sha256": "4ad3d36be6a4ad3410c637e247a05db9f44776cfb0a3c09dde9b7516ed1806f5",
       "from": "loon",
       "targets": [
         "qx",
@@ -7785,6 +7809,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7792,13 +7817,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7817,7 +7844,7 @@
       "path": "Script/Adblock/kelee.one-694792f21aae/DubbingShow_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/DubbingShow/DubbingShow_remove_ads.js",
       "sourceSha256": "00b312e3ed559cfcda15cb43e637c94d6293ad3cb34b2c5d23d9bd330668fe52",
-      "sha256": "6c1ba4fcb549da5817937657b55c1eea58f4533e06d586f5e6e170621ed66664",
+      "sha256": "1c321aee81d60bec6199cca1ca4b2e883474d8f6a8b20d58b38c3528bcf4b6d1",
       "from": "loon",
       "targets": [
         "qx",
@@ -7831,6 +7858,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7838,13 +7866,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7863,7 +7893,7 @@
       "path": "Script/Adblock/kelee.one-dd1adf0ea56d/FlyerTea_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/FlyerTea/FlyerTea_remove_ads.js",
       "sourceSha256": "096bf18999cb7071083a09b8a054087fb91a9872753ed5b64cafb151c0eee087",
-      "sha256": "fb26512727cf028170021be84aa823a1b1ed401483a00a1ee86e04035749115f",
+      "sha256": "fe6df5f8bf2326f6925102b1690087470a85642f7fde4c09ad71a2d71d491fbd",
       "from": "loon",
       "targets": [
         "qx",
@@ -7877,6 +7907,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7884,13 +7915,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7909,7 +7942,7 @@
       "path": "Script/Adblock/kelee.one-09e8dc8c196b/HUPU_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/HUPU/HUPU_remove_ads.js",
       "sourceSha256": "43ec9962925a76ca49cf1491a73430bd1b7fc3ef206de50eb0083c75b69865a6",
-      "sha256": "499a633e93dbacaf0867dfb982f5cd12c3ef427f511938dc19a6eb15ae7c8d78",
+      "sha256": "e695abf7e936ff821dee21422de8266e02779f555fef8b72624c9d71e7984df4",
       "from": "loon",
       "targets": [
         "qx",
@@ -7923,6 +7956,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7930,13 +7964,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -7955,7 +7991,7 @@
       "path": "Script/Adblock/kelee.one-0c08b6ade279/JD_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/JD/JD_remove_ads.js",
       "sourceSha256": "c029c4151fe73b3a6f660d0933393d1b6afd1969651f01a88d5a357abfdd7cb4",
-      "sha256": "c3c6057bf0a9e24ccbb9f6e957c4931162cbdc27490da1bef72a99872acd5e5c",
+      "sha256": "f986e720374c66ba54b4f0040e957d65fd8ca6c4cfdd0747da2f76b61481047a",
       "from": "loon",
       "targets": [
         "qx",
@@ -7969,6 +8005,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -7976,13 +8013,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8001,7 +8040,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-4c456c6aa61a/jingdong.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/jingdong.js",
       "sourceSha256": "a8115b3c60d3e9ad76d9bd0e6bb1edf07b73bd569dbd80b7efbbcf7bd3059322",
-      "sha256": "dc9cba91808bac27bc010b2cf7af6c31341c3848e359032a491c186a681c13cb",
+      "sha256": "0eaed2817ad2526576a56382ef6627d522f7a3adca6f77181e1f69e4c529386b",
       "from": "loon",
       "targets": [
         "qx",
@@ -8015,6 +8054,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8022,13 +8062,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8047,7 +8089,7 @@
       "path": "Script/Adblock/kelee.one-5d403a80285e/KuaiKanComic_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/KuaiKanComic/KuaiKanComic_remove_ads.js",
       "sourceSha256": "e9f4e623df954abbaa76b3e67059b370d7df97e71c16067fc5014d2c1a81a911",
-      "sha256": "d992d6835157e669a810ef2acc961c6e37821e75d963f09235f1f8c1480ab961",
+      "sha256": "3b2bdea01d5b00001c5eeec9a553c3f18d0c1a1b7a57e2787ca7030aff92b855",
       "from": "loon",
       "targets": [
         "qx",
@@ -8061,6 +8103,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8068,13 +8111,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8093,7 +8138,7 @@
       "path": "Script/Adblock/kelee.one-34857e13ac47/MKZ_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/MKZ/MKZ_remove_ads.js",
       "sourceSha256": "b3d570b03982fd706501218fdd9e6371f5bf0dd4d9e764e26a5accc4a7b6820b",
-      "sha256": "f0a89ab8ca163d92ffe5ac2941a6486a547eaac9653f8223cb191802eba0ccb1",
+      "sha256": "993905383693da9ff9a00c3b39e7f3a21012b622f9631eec575ff3a5a853acc6",
       "from": "loon",
       "targets": [
         "qx",
@@ -8107,6 +8152,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8114,13 +8160,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8139,7 +8187,7 @@
       "path": "Script/Adblock/kelee.one-88e0dafed4cd/MaiMai_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/MaiMai/MaiMai_remove_ads.js",
       "sourceSha256": "e941215a83fa4b06cef7e5931776cef1ac777d0e3e0273b6674b7897f20e9466",
-      "sha256": "0b2b39b2ed92631fec4ef9e9123396df4421f6bd8773d9e534555a89e9e79076",
+      "sha256": "5d57efc3a18514d1ee64f2e5caf3c14b6aced73c821b005c8efa5238f366766d",
       "from": "loon",
       "targets": [
         "qx",
@@ -8153,6 +8201,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8160,13 +8209,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8185,7 +8236,7 @@
       "path": "Script/Adblock/kelee.one-b158d39001e0/MeituMYXJ_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/MeituMYXJ/MeituMYXJ_remove_ads.js",
       "sourceSha256": "9a50669b814eedd82eb9b73518089547bc7b9c5388dc4e441dfc9f155c55fc61",
-      "sha256": "0f4efcf22b7b2acb22690161fae7a2511a480bfc0cf8c4e6311e92f7b8496ade",
+      "sha256": "b8e435e0abdb5b093abb0d4ec939de1ce4e2fcf0ae0a09effe73a0579504cd03",
       "from": "loon",
       "targets": [
         "qx",
@@ -8199,6 +8250,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8206,13 +8258,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8231,7 +8285,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-9102b70e3365/adrive.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/adrive.js",
       "sourceSha256": "bd7eacc3125068b590138218d9ab53bab69d2e6cc737b7b817fe2784b7141fb4",
-      "sha256": "f3a6f68ff4b2602bff450320ec825782181028a9bc54a89de6e789ecd6df8c8b",
+      "sha256": "b1cba7e6207be9d9334ec86bd2d01e06630b7b8cba021e01082cce6c2dea95c3",
       "from": "loon",
       "targets": [
         "qx",
@@ -8245,6 +8299,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8252,13 +8307,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8277,7 +8334,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-c51a82707df8/changyuan.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/changyuan.js",
       "sourceSha256": "c290a8db06f7589f5042633ad198a27e3ccbf76d8e600f6674f806fcd2b023c2",
-      "sha256": "0b5fac9d32b01da519a25aa5704daceeb445d1cd9210331540468acf812c857d",
+      "sha256": "0eb98136dc868d789ccb0660fcebe79519345ced240ae0499b91d913da92b327",
       "from": "loon",
       "targets": [
         "qx",
@@ -8291,6 +8348,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8298,13 +8356,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8323,7 +8383,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-93242e4da35e/coolapk.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/coolapk.js",
       "sourceSha256": "9de5475ec61381cc5ac2cd796b2f0e4212fd53b9e52a2bdd0f9b06478926d384",
-      "sha256": "6194934e524c14f49451d21b5eca55cad69006051bcefdf9cfc5af43a4407f7d",
+      "sha256": "b7ee0757acf0c8c3670a44368160a8333fda0d2f734e6b4a5c0ec9673b54ced8",
       "from": "loon",
       "targets": [
         "qx",
@@ -8337,6 +8397,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8344,13 +8405,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8369,7 +8432,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-db81649b5167/cloud139.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/cloud139.js",
       "sourceSha256": "084a20edd58471dde5e7126bd7dd44bd177b8bb11b3e3d6a13b6379a03247b51",
-      "sha256": "160651243cd1164e50728d3afc94f294464ab6fdbc2f55470ba8becd8ec6c12a",
+      "sha256": "1aa7e160e1c80b071a0aa01d6dd0068c6375f72de94823d13fdb5f46dc8a9284",
       "from": "loon",
       "targets": [
         "qx",
@@ -8383,6 +8446,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8390,13 +8454,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8415,7 +8481,7 @@
       "path": "Script/Adblock/kelee.one-8fd25976d1ef/NeteaseNews_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/NeteaseNews/NeteaseNews_remove_ads.js",
       "sourceSha256": "9f03b3b39c8b6d576b1ac18cd098ef5fd08c17fb2be9044f94344ea3a3ff4b8b",
-      "sha256": "515f730e6d3ef8ffa5ca00ac1e664e77e3f81374f0834d5768f1100977f64288",
+      "sha256": "4047abb50eeaf9e968d7ac9414ae3f0e3d8763a7fe1a0983b2a54215221a05d0",
       "from": "loon",
       "targets": [
         "qx",
@@ -8429,6 +8495,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8436,13 +8503,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8461,7 +8530,7 @@
       "path": "Script/Adblock/kelee.one-a09af5bf8168/PICC_Insurance_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PICC_Insurance/PICC_Insurance_remove_ads.js",
       "sourceSha256": "c9783faae5d4d945eafc44913ce55c26c1bf827f3145b5c5dd1b2daf4e13ffb8",
-      "sha256": "435fcbadaa587e9b5ff292475dabb3e3ccea0a10bcab42ef800cfa30b821bbf3",
+      "sha256": "35f3b231b5cbf4a7655c33e40057c4c41b7126ddc8c042e4b2b1c6738b5f27f8",
       "from": "loon",
       "targets": [
         "qx",
@@ -8475,6 +8544,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8482,13 +8552,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8507,7 +8579,7 @@
       "path": "Script/Adblock/kelee.one-ea8de3d90345/PinDuoDuo_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PinDuoDuo/PinDuoDuo_remove_ads.js",
       "sourceSha256": "63af2e44da24da11f5c1bc930aefdcef2ce16aa65293be3e80ba8520d46e9c58",
-      "sha256": "2d7f9b78e3deaac422d837e10da432c8b5eb5b092ee46e42b982a3228e2409a3",
+      "sha256": "89ea2967a9ef2be09343b2739e7b3d93ba9b3eea202f8b49c5613128899aad78",
       "from": "loon",
       "targets": [
         "qx",
@@ -8521,6 +8593,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8528,13 +8601,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8552,7 +8627,7 @@
       "path": "Script/Adblock/kelee.one-15d2e267fe35/PuPuMall_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/PuPuMall/PuPuMall_remove_ads.js",
       "sourceSha256": "76659d365b0da3eef1ef54cde44254f9d951799138af52a3edeea2e29a43f83f",
-      "sha256": "d9eb1f4611971d26891dbf13f9b2508c7c066427fda900ae5371f9d19f50d1c2",
+      "sha256": "f94af6cd1f82e256854794af357a28e2fad0be36516b10ee00714838ec07c082",
       "from": "loon",
       "targets": [
         "qx",
@@ -8566,6 +8641,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8573,13 +8649,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8598,7 +8676,7 @@
       "path": "Script/Adblock/kelee.one-bb38729be757/RiskBird_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/RiskBird/RiskBird_remove_ads.js",
       "sourceSha256": "56a1c10a6422423845a8486fbc5deff60f37e6aa9e40fc439317e7e2c57fc9e2",
-      "sha256": "fbe6a68fdc02e3b657182d10c8140b3a503a283b7615c0d71108d8043357c5c1",
+      "sha256": "c5b9e29356a229029c97c3a87faf2c09d7ada1365ddc4f0ebf513685805332c4",
       "from": "loon",
       "targets": [
         "qx",
@@ -8612,6 +8690,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8619,13 +8698,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8643,7 +8724,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-ef6210742aaa/amap.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/amap.js",
       "sourceSha256": "90be0dca3a927df667c805470c31f75e2abd9a7d1c7903dd40e17ecb12c54004",
-      "sha256": "b2dc36fdc3df57393c5e3ccf3e80ddac7731253869d0e63383cc8390db129015",
+      "sha256": "fd82916f41e2802e681357d535f74e4f8d26f6f7ddba3b9a10f776fc9acf6062",
       "from": "loon",
       "targets": [
         "qx",
@@ -8657,6 +8738,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8664,13 +8746,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8689,7 +8773,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-3026ecfface7/pinduoduo.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/pinduoduo.js",
       "sourceSha256": "817d4582c77a063e5716866d19aedc4944170996eb8a7ff3bf5392bfe9053dbb",
-      "sha256": "25bb6ca748ad692ac5c7f323330691e3fb165784e6cd8917550c6b7fc7382169",
+      "sha256": "b7501f210356f37d87433f49550fb5035a9b438fca2420c31df43c220ee7301b",
       "from": "loon",
       "targets": [
         "qx",
@@ -8703,6 +8787,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8710,13 +8795,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8735,7 +8822,7 @@
       "path": "Script/Adblock/kelee.one-b3647f0da5e1/ShuQiCenterReader_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/ShuQiCenterReader/ShuQiCenterReader_remove_ads.js",
       "sourceSha256": "aae03c4a577abdd6a9a77069ce6d16b327e5821afc6a85c8b689dcddf1b5f976",
-      "sha256": "c11cee99534118e123cc246bca1ab3b9527e44006f2992d7685878fd54cba302",
+      "sha256": "7a90a51dce5b5d1cf71dfb3a80f42643ebd823235978e36ee1d6d8f9ba509ac7",
       "from": "loon",
       "targets": [
         "qx",
@@ -8749,6 +8836,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8756,13 +8844,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8780,7 +8870,7 @@
       "path": "Script/Adblock/kelee.one-6df6a61bc422/TV_Assistant_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/TV_Assistant/TV_Assistant_remove_ads.js",
       "sourceSha256": "a957df12593369f6ce111a79619ba88cdad4870aa18b639ff1942a92d441bb18",
-      "sha256": "e253ab2fab5fa7b0cdf4402eb80ce78f0f7ba96fca24f35b34bafd79bf484d6a",
+      "sha256": "b584d1ff4a82fecfadc35aca78488657c9a7af2659254d25454c323b3c47beee",
       "from": "loon",
       "targets": [
         "qx",
@@ -8794,6 +8884,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8801,13 +8892,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8825,7 +8918,7 @@
       "path": "Script/Adblock/kelee.one-6cf1d356d9f8/Uki_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Uki/Uki_remove_ads.js",
       "sourceSha256": "af15371ec2946805b9f3f2af8a13f807434a05166e4f76178a8e28fdf645b720",
-      "sha256": "bd33d8e2f0a600858616972d5378ee67ec25dbc77e1d96e2cf6d764125978333",
+      "sha256": "6a6160cdf2c99e2b1504c1a3f8eb3d0984460f6043c3b5847a2e1b0a05466cc7",
       "from": "loon",
       "targets": [
         "qx",
@@ -8839,6 +8932,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8846,13 +8940,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8871,7 +8967,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-c976b51fb013/baidu-index.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/baidu-index.js",
       "sourceSha256": "34ad9b82cb0ab2c2f86c1a1e8a1fe08d5f3fee564d90386fd4581b6f77712517",
-      "sha256": "a69b1587503693f75287306ade366806551c05af7f95d468bbf7d2a747b33cdb",
+      "sha256": "3fbaea09b4c58025bdde4488028c185a1397fc27dc23610a77ffe8ec01da7279",
       "from": "loon",
       "targets": [
         "qx",
@@ -8885,6 +8981,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8892,13 +8989,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8915,7 +9014,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-12e96fd6df84/baidu-zhidao.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/baidu-zhidao.js",
       "sourceSha256": "74ef3f15baee30de1677e94d00a7fce99011346181366affc7ee4cee5e0ea628",
-      "sha256": "696d40507c3a7f0257b1e4998b68e07712719a62777cae0f92f127d024ca1bd9",
+      "sha256": "29d01e0d7396c0fb33c2b4084664605bba0b79e07801988c8d2e473e35b70c7a",
       "from": "loon",
       "targets": [
         "qx",
@@ -8929,6 +9028,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8936,13 +9036,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -8960,7 +9062,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-75448e274a79/myblockads.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
       "sourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d",
-      "sha256": "bf142620c36b7502316ee506d5cd3f15e71886d68229555ee42ec054fb90b81d",
+      "sha256": "aab9bfe9298a073e98941b18829716cd0dd212c627ecc7b325bd12f4f9b80142",
       "from": "loon",
       "targets": [
         "qx",
@@ -8974,6 +9076,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -8981,13 +9084,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9006,7 +9111,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-a8d59ed8d2ba/pornhub.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/pornhub.js",
       "sourceSha256": "286b16e2ff25fd9e7c50f2465e339d2e83f91cefc8357e88b92a9ce5a0e24cbe",
-      "sha256": "1e08d1c80afc8fc8300d88d166d1cb070b7ec75dfd58449093aa25de1cf39329",
+      "sha256": "53f7015eb46f4fda14c21a1b2666012094120b7026560d0cf0fff469dd138233",
       "from": "loon",
       "targets": [
         "qx",
@@ -9020,6 +9125,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9027,13 +9133,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9052,7 +9160,7 @@
       "path": "Script/Adblock/kelee.one-91a927bdcefb/kff.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/kff/kff.js",
       "sourceSha256": "8453c73e9412fd99396afbfea14e7d26c46936da1650603b6f2433cda18cbf2c",
-      "sha256": "d394c7120dfe026e8eceefc326f36841520eaf8527e04301d366d9c879bc03cf",
+      "sha256": "9319d52612309124e0889ec44b32c0e5616059245c81546bc0a291d156b6b18c",
       "from": "loon",
       "targets": [
         "qx",
@@ -9066,6 +9174,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9073,13 +9182,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9097,7 +9208,7 @@
       "path": "Script/Adblock/kelee.one-5249430bf536/ems.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/ems/ems.js",
       "sourceSha256": "2208e4945d8781e5bc9d20a436fc141629a7e4dc9fd516f9fe917196010cf5bc",
-      "sha256": "17d7e27f5145ddc5e4c9b200fee1f62feedb1af970a041784355e6f27836fa13",
+      "sha256": "2b9e24bd16572a459a7773e22d70dcad95a973eca48aff54fd6744411e89b945",
       "from": "loon",
       "targets": [
         "qx",
@@ -9111,6 +9222,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9118,13 +9230,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9142,7 +9256,7 @@
       "path": "Script/Adblock/kelee.one-630feb4741db/FamilyMart.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/FamilyMart/FamilyMart.js",
       "sourceSha256": "e25457f43eacfbf27ca8229445e69f60f7562ece723b5ebaf07969c0ebf75e1c",
-      "sha256": "1e3eeefafc498fe54b623e349ffaba5c9a5b847cfd09722c956451895ee8eda5",
+      "sha256": "fb28d4368f114fa796844a3fd8c1494936333b68dc4b3c2d9d55ac58de503475",
       "from": "loon",
       "targets": [
         "qx",
@@ -9156,6 +9270,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9163,13 +9278,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9187,7 +9304,7 @@
       "path": "Script/Adblock/kelee.one-d962d63c7cad/lawson.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/lawson/lawson.js",
       "sourceSha256": "3d57d6ae9070934eef3513e2a4b640fad9dd5076fbbc6c471994bd3d790068f1",
-      "sha256": "98fb917bbe483d18831321ae7bbcbe5e8c2ba2fcba59b0fe2d01d9b1e9746d3f",
+      "sha256": "d2eb492d40c907842ebf4b3073323bf560731e899c29d1b9c820668adfeb9f95",
       "from": "loon",
       "targets": [
         "qx",
@@ -9201,6 +9318,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9208,13 +9326,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9232,7 +9352,7 @@
       "path": "Script/Adblock/kelee.one-0758ac0de9b9/chayanyuese_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/chayanyuese/chayanyuese_remove_ads.js",
       "sourceSha256": "4b7f857caa810648f7be584e916ceffb9c12dd3b2ce7766ed5bd605646e2a4d1",
-      "sha256": "f505d5d0ad081a56ab5db28f5e2c42785df54ac80bd242f496dff5e5c8a11344",
+      "sha256": "779e7b7acbfa104dc3e7c78bc7ba584d3cc96c888ca1f8379f43a65ab23ab147",
       "from": "loon",
       "targets": [
         "qx",
@@ -9246,6 +9366,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9253,13 +9374,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9277,7 +9400,7 @@
       "path": "Script/Adblock/kelee.one-2dc6bc77fe52/coco.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/coco/coco.js",
       "sourceSha256": "dc9a1915eed8f6f760a8f3a03f5e2f5a0f346373693ae4ac2e0c5dbd90fd46b3",
-      "sha256": "aea9e34b11709a35e820821c5ee797c0e5766eecf05d4798a449a6dc417c60af",
+      "sha256": "52b4333e2df77d6f023ec1c1d5c850bad2bd07cfaf53c5e9cf96a38708224aa5",
       "from": "loon",
       "targets": [
         "qx",
@@ -9291,6 +9414,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9298,13 +9422,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9322,7 +9448,7 @@
       "path": "Script/Adblock/kelee.one-c14e0d6e985b/qingju.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/qingju/qingju.js",
       "sourceSha256": "8664e7a22b21aaa8546ec167e3a43fee7ebd2c00552a126212720b09a4819bf8",
-      "sha256": "a56cd0334538d4f76ec08eb848313156476744abe97dc1fb1226760b3f950808",
+      "sha256": "01a89e0b3a32cba392155e59f6e8740a6752aeddd8761e504774b5694fbe9eb7",
       "from": "loon",
       "targets": [
         "qx",
@@ -9336,6 +9462,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9343,13 +9470,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9367,7 +9496,7 @@
       "path": "Script/Adblock/kelee.one-291682ce6dcd/alittle-tea.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/alittle-tea/alittle-tea.js",
       "sourceSha256": "c765215071712fa0c0c0ef3719263fff81d4a1ce0189f8bc0861aa721657a44c",
-      "sha256": "e5855c8156f5fe15c55bd1584aecc94e9f7ea53acc1d6ea263068a5f47b9afa6",
+      "sha256": "b844da814833581050aef2c815818966624f0e27279dc69e1ff556fdade5dc76",
       "from": "loon",
       "targets": [
         "qx",
@@ -9381,6 +9510,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9388,13 +9518,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9412,7 +9544,7 @@
       "path": "Script/Adblock/kelee.one-1335e255edeb/M_Stand.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/M_Stand/M_Stand.js",
       "sourceSha256": "5d6f163842ce53eb034fa01c244f6482fedd2f5d56b7c206c25d6f11c21e805f",
-      "sha256": "45eb26eda34ea24176c3166cb74f0046713c86eae7f056eb03e256fcd26ff873",
+      "sha256": "205bb8588c65be560d1f29d89b23e6614d0ccd36a18fd0e962b8f69592ae5cd7",
       "from": "loon",
       "targets": [
         "qx",
@@ -9426,6 +9558,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9433,13 +9566,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9457,7 +9592,7 @@
       "path": "Script/Adblock/kelee.one-1dc1411467a1/T3.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/T3/T3.js",
       "sourceSha256": "ab1ca9af4dd9b294f585335856de51d6df2b61c31d9a3d1982a5b091355da25a",
-      "sha256": "a82d7309ebd86a29e5c97edb996db6beabb8c3149d035cf778c5e5044c22d962",
+      "sha256": "8677d5c0c088a2e12be1d306d4d45dcef4fc4021666f6cce6f66014abc3f9ca0",
       "from": "loon",
       "targets": [
         "qx",
@@ -9471,6 +9606,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9478,13 +9614,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9502,7 +9640,7 @@
       "path": "Script/Adblock/kelee.one-81bb9080036a/ming.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/WexinMiniPrograms/ming/ming.js",
       "sourceSha256": "bd0f4e67ae73fdd083b10c1e802912d8c9ade1b2b14a0dead865d7af0b90d991",
-      "sha256": "469130ce3df740ebefe2ed6c24c88c4a315b19d1d02c4dd113e691fa637fa8f7",
+      "sha256": "e4b2a0dad268ce9f24b04795347e116abd0e21e6ba8d39fa9507dc63be7e6042",
       "from": "loon",
       "targets": [
         "qx",
@@ -9516,6 +9654,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9523,13 +9662,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9547,7 +9688,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-95fcdbecafef/zhihu.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/zhihu.js",
       "sourceSha256": "f35efe4a539e1c69709ceffdcd220afc7563faa943b369ebd52238cb387f29e2",
-      "sha256": "f03ec99c27ff00d5697f8c317941bb407cd8966d468d326928a82d25b5014470",
+      "sha256": "e5c0ae80b91bc1aaa3ac82c1eaf9a3f6a15111d7ffef69e2e10cfc03dd7d0a59",
       "from": "loon",
       "targets": [
         "qx",
@@ -9561,6 +9702,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -9568,13 +9710,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -9595,7 +9739,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-2ca8a4753be1/zhangshanggongjiao.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/zhangshanggongjiao.js",
       "sourceSha256": "0a2ebfbf41ed4b7dbd39f4aa50616ac42cd59d5eb0baa026fc1b98e7a4f5a8bb",
-      "sha256": "72bf84edbc8d0b9361c8d2ef713b1058b6b601c00b46ed69aba3a2a45261047b",
+      "sha256": "6b0d4ef948f44507cb56eab3b287cf51f9056b4d139d07aa534a1174d44b05f2",
       "from": "qx",
       "targets": [
         "qx",
@@ -9608,13 +9752,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -9622,6 +9768,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -9640,7 +9787,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-9894f7225d37/bing.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/bing.js",
       "sourceSha256": "12ecdd295de9c427dbd0fbed9d356d70e6b5c0afe0105fb7f678484b4fc98ce5",
-      "sha256": "5ba740a322ee5aa2c0c36eeb30ee9c6f30a12b1720e8016df2bdf55e339fc813",
+      "sha256": "1f7cdba42af4b2a90d78ff7449aec9f299174c787fd01185181112033273387a",
       "from": "qx",
       "targets": [
         "qx",
@@ -9653,13 +9800,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -9667,6 +9816,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -9686,7 +9836,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-c53fa988e9de/cainiao_json.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/cainiao_json.js",
       "sourceSha256": "508701b04e3289d37d9baa649dce8a317329b21ebd4433872dc7906866bcdd5c",
-      "sha256": "cb8d7de869ecd5b163d74706f7ca9fcc760026eb1f2d3a26c9524e0fc2f90013",
+      "sha256": "ec0388fb8a393318485137fe47a3eecf110b62cb14285883daa47284950ad8fe",
       "from": "qx",
       "targets": [
         "qx",
@@ -9699,13 +9849,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -9713,6 +9865,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -9732,7 +9885,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-1151295f6776/caiyun_json.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/caiyun_json.js",
       "sourceSha256": "1a165112aac24bf3830fa47b77d223d85beffdeaf91ee96eef05ab9429b36844",
-      "sha256": "87005d0a661896437d7d108c9c22d9f2ebc9d84480a5a58668a768bfbe34460b",
+      "sha256": "2d275c669aa8c6db1d56c4f4a9c2625676c3f91902242fffd5a9d342b8b49833",
       "from": "qx",
       "targets": [
         "qx",
@@ -9745,13 +9898,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -9759,6 +9914,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -9778,7 +9934,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a8626525ec76/keepStyle.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/keepStyle.js",
       "sourceSha256": "199783afcdd891bfd5fa298638e5806263521c14fd561ab6fda84efe5fe1e332",
-      "sha256": "8a988101cfb6b60844b0380587e84a395572b300fc4637c276e5040e06edc9de",
+      "sha256": "f344939c176ecbdebd825cb3c9303bd19a179c0276727d542dab92a54a0ac794",
       "from": "qx",
       "targets": [
         "qx",
@@ -9791,13 +9947,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -9805,6 +9963,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -9824,7 +9983,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-dbdcc5fc1c23/smzdm_json.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/smzdm_json.js",
       "sourceSha256": "cbcabf770447117a66358314950a4233448eeb86274ccfb96d148294d327eece",
-      "sha256": "a6e014b499e2d872f256de0acd45c9dfa86597950cbc147052ed4775f83b9fea",
+      "sha256": "439b23a98a576ac64bf9ab9fac8fbc768d503cec23b86d741e675eda91c970ff",
       "from": "qx",
       "targets": [
         "qx",
@@ -9837,13 +9996,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -9851,6 +10012,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -9870,7 +10032,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-b2506abb5e1f/weibo_search_info.json",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_search_info.json",
       "sourceSha256": "5404166f304ace3d4749e18500d595acadaf5c913d13c5b196657a05149872ac",
-      "sha256": "f93012a5a778bbe9ec7f2f13a0dad6cb590fb08bbcc39df50d83ee63431586ff",
+      "sha256": "8ffe26eec9854a84c11ee937078f49eda1af9af4493e0d3bd5c77d35ac6199fc",
       "from": "qx",
       "targets": [
         "qx",
@@ -9883,13 +10045,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -9897,6 +10061,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -9914,7 +10079,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-2bd76811ea1e/weibo_search_topic.json",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/weibo_search_topic.json",
       "sourceSha256": "57881f577f253467924a5ce8698997bdc1dfaa102ca93c2538065d44a564215d",
-      "sha256": "0560fe3d81c752a1601eb7a5406a41e42201373c2981acfa23a0f4395d00454b",
+      "sha256": "e4284916ce42aa860ad04630d03ef6e7ffcd4d5dde647ce0d4d05ca60c3a5f5b",
       "from": "qx",
       "targets": [
         "qx",
@@ -9927,13 +10092,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -9941,6 +10108,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -9958,7 +10126,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-7207e9dc0800/ximalaya_json.js",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/ximalaya_json.js",
       "sourceSha256": "2b0cb0abf3cf9eaf16e45591c947d2ab1905c2fa5aa8c1ca56ac1f3b4cf19533",
-      "sha256": "d941c67a37b745f4b2734774515aba04d08f0a6c734a144ced1e18a0f9b168ac",
+      "sha256": "c9a74f0b2be9d0f33677f245a3896a41e20c6ee010ce1de1d844cfb1fd44b74a",
       "from": "qx",
       "targets": [
         "qx",
@@ -9971,13 +10139,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -9985,6 +10155,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10004,7 +10175,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-0430e3242fcf/51card.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/51card.js",
       "sourceSha256": "5f3708e56c28a2e7fec50f90f8b6768ed0e6b3d7b354bef0e32fd21f7a57a6c2",
-      "sha256": "58dfddb205758bec136f1500ba0530f97b271e7e0117dd7c4ca156bb6f5e0b1c",
+      "sha256": "96c899a2c6d4fb4a4ae3594d89e16bf7459cd2cc17e9464e1b39b316337fd426",
       "from": "qx",
       "targets": [
         "qx",
@@ -10017,13 +10188,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10031,6 +10204,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10050,7 +10224,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-f8526d9282f8/555Ad.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/555Ad.js",
       "sourceSha256": "9d8d59fe3cbd5bdeffe80c580fa210a94432bfedc6cb5e018feda761dcbcf681",
-      "sha256": "9a89a0f1445b1093123691790918e98873e44fd1773581c9c058991823a48ffe",
+      "sha256": "a1c9da8e1e3faf1f4c4ab8ac16fcb009715a3f08ae80070d360e0f7d6764a8d4",
       "from": "qx",
       "targets": [
         "qx",
@@ -10063,13 +10237,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10077,6 +10253,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10095,7 +10272,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-05f68b57c8c1/cainiao.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cainiao/cainiao.js",
       "sourceSha256": "76fe899db1e045aaff2d71d6ff3c58cb665bac52a5996ff20e56079a02a6451c",
-      "sha256": "d7ff404e0d4a58b5038a172f078ab7087fa16b2028b2028cc38de0e23a17ec4f",
+      "sha256": "ce4dffd4f5d0704a3b7aa9491c758308830727c6239925d909ccd91b86f0caf3",
       "from": "qx",
       "targets": [
         "qx",
@@ -10108,13 +10285,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10122,6 +10301,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10141,7 +10321,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-c3206eef6cec/adrive.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/adrive/adrive.js",
       "sourceSha256": "9d31582028a31ea605e69d09aa9e33949e57050006a8e0f3deb79b1c89933acd",
-      "sha256": "ce208d8c34b287e2f4cd7eecf89e0d57b5e4590e20ee7399b36df0f507ace40a",
+      "sha256": "246ed103e2f0bdd20597b7d47fd76b04481f7da23be659dca555e7736883a8e3",
       "from": "qx",
       "targets": [
         "qx",
@@ -10154,13 +10334,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10168,6 +10350,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10187,7 +10370,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-47c242029d83/cnftp.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cnftp.js",
       "sourceSha256": "4a95ce816c3e0bbaddf99e76c0f4b5ae3adb74318b9509e24ace40b675f11954",
-      "sha256": "d094ed435f510e4feb9492468e4d67f3498dd436a6b05162c31dcbd784cb354f",
+      "sha256": "e441731684b0f625da3327605d6aa272dd2a157245f9e97b29f61c56bd5c36f1",
       "from": "qx",
       "targets": [
         "qx",
@@ -10200,13 +10383,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10214,6 +10399,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10233,7 +10419,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-9d456958a066/tieba-json.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/tieba-json.js",
       "sourceSha256": "91040c0d5bf906357829d8df344a3bdce00b59e6c24f255e54a2ef7a46d04c69",
-      "sha256": "730a051da911236fb16dc7b2b42f17e65c9d31926a7fc907ec7f6765c38b7c0b",
+      "sha256": "7da1299d786c40368f510b8d4b497427ccac3055aea0381f754b85c23876397b",
       "from": "qx",
       "targets": [
         "qx",
@@ -10246,13 +10432,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10260,6 +10448,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10281,7 +10470,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-50531633c816/bohe_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/bohe/bohe_ads.js",
       "sourceSha256": "493534355c02be962e06a75ad7eb51b1918c5c347122f40663ae9bc39a64cc1e",
-      "sha256": "60a43f3876d25d11c8f45a5320d77e9db99a3e62adf4a297bc77d8c0c997d080",
+      "sha256": "8d031c49c86feb74cffc1a616edf21d9cf0a5c03f5225e86aafbc448b4f8c038",
       "from": "qx",
       "targets": [
         "qx",
@@ -10294,13 +10483,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10308,6 +10499,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10327,7 +10519,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-0827b6345221/bilibiliManga.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/bilibiliManga.js",
       "sourceSha256": "17035efc2c7b5d367a5f6e70ca2e0f7f23aa342c9edb3bf044587e5ee073f261",
-      "sha256": "5f671712264b7b90cfcfd55ed743b2ecb834493c1540eb7bdc73ff68ea87ec6f",
+      "sha256": "2264105fbaf74f2acee10205ecb7b97ddd90a763818ea8573bf7e189d351b57b",
       "from": "qx",
       "targets": [
         "qx",
@@ -10340,13 +10532,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10354,6 +10548,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10373,7 +10568,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-e118fec1aaae/blued.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/blued.js",
       "sourceSha256": "5b39cca2a3debe6a73083f7781b6b0eb47d91755f597169db34109db3813a172",
-      "sha256": "9b1a31b38f9b8448ec19c8a3845436345a4042337963a497ba01dbd5120bdcec",
+      "sha256": "9005ef1ef2678e0353da9ade9bca9c313f826f28dfcdfe05a9eb4ec0d7043e3e",
       "from": "qx",
       "targets": [
         "qx",
@@ -10386,13 +10581,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10400,6 +10597,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10418,7 +10616,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-6497035a5ea6/didiAds.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/didi/didiAds.js",
       "sourceSha256": "c4f17a8ca8b27e15b7332460c83b5ba19aeded4c21e8f31beff8cefc54425ab7",
-      "sha256": "2ba22d0b9af54ba567142fb00873e8f88ebafc2a6de485701b5277498fe4c06d",
+      "sha256": "88a75dfbc84ddc4b64b886987ce711021b3f1d1d709e5185a1da5ca55eeec114",
       "from": "qx",
       "targets": [
         "qx",
@@ -10431,13 +10629,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10445,6 +10645,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10464,7 +10665,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-8a4d8a863599/dianyinglieshou.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/dianyinglieshou.js",
       "sourceSha256": "50926e7d5f53278d37e0dc2d66b8159a1813537708c88b231159cfa2b201f198",
-      "sha256": "32377418fc2dc7b2bf2a991a6dcd0b99518a2bf19c0f20c0701a4ca14cabeecc",
+      "sha256": "0a61d3a92dc432be82bc8ace0aa5da38b8e89a4f684ead454975f936643b4fe4",
       "from": "qx",
       "targets": [
         "qx",
@@ -10477,13 +10678,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10491,6 +10694,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10510,7 +10714,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a929f621f8a4/ddxq.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ddxq.js",
       "sourceSha256": "8ae52e7bccc43facf64dc9edaf8e6e1c1da564c6bbab242fb9e51a304e3a0b16",
-      "sha256": "0a7d6a3622878bf392acf20fd985b73ac6c23f2e84a3f099895462749c7f89bc",
+      "sha256": "ca5d19d79aa6c2482aee3034634d148d88efc5a0371540b354221c7a52230eff",
       "from": "qx",
       "targets": [
         "qx",
@@ -10523,13 +10727,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10537,6 +10743,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10556,7 +10763,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-97c6492922db/wechatApplet.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/wechatApplet.js",
       "sourceSha256": "4e0a57585f4ce16bc2f655ec104d1b25d9d42864b78f3ca893b48e7c9e487bed",
-      "sha256": "68350dcc5ef4098bfb56b3224a2f8e47750747f938359119f0bbc2ab0cbd66f2",
+      "sha256": "a28ebca0ee869a7d22a6124175856b12f7a5ae3f88c6af887cdd3cf710188278",
       "from": "qx",
       "targets": [
         "qx",
@@ -10569,13 +10776,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10583,6 +10792,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10602,7 +10812,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-5caa481275e3/fly.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/fly.js",
       "sourceSha256": "9642b1436e2ad10a35cb40ba33b8b1b5c72047a8d1bdfaaa87600cf3d6c1cd41",
-      "sha256": "482658f5283c6982495a0bcc8db99fb020948108c4226cddcf884013bcc020f5",
+      "sha256": "3604f2380d77ca9d8080d7a35391a3421d4dee241d4b30555391dedd16d931a9",
       "from": "qx",
       "targets": [
         "qx",
@@ -10615,13 +10825,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10629,6 +10841,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10647,7 +10860,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-c5e861643f0c/fenbi.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/fenbi.js",
       "sourceSha256": "bc6eff20278e7244bb5d11fd8698aa4195471f0df3cc68a28c598b8f60c232d5",
-      "sha256": "ad98e85ee29c5cd5dcbee97b395796c295148927a690b9201c0cc6a7eb9cb8a3",
+      "sha256": "2a600ef26f56d77cefcae5a4c347037a89562b832ef29f56ffcde1843c49bbd5",
       "from": "qx",
       "targets": [
         "qx",
@@ -10660,13 +10873,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10674,6 +10889,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10693,7 +10909,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-db81e1e426a2/foliday.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/foliday.js",
       "sourceSha256": "9e48b618be78330bbcd1d29e56bc5a407414d12a03a158a4d559f7857c74b976",
-      "sha256": "f355a78f91defce353a8244497b99bcd8882b39beccdd24a9c6d6e4b17635e77",
+      "sha256": "20f23bc518e84c8417e9609ffc5b29cbc0da23c38c737d637187386d08937f3c",
       "from": "qx",
       "targets": [
         "qx",
@@ -10706,13 +10922,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10720,6 +10938,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10739,7 +10958,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-806c7be05c2b/freshippo.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/freshippo.js",
       "sourceSha256": "edf71faccbca61b153bbce98f56b75e27313883cf520e5e315f6ba15ed52360d",
-      "sha256": "ba3328774070dd3a9a6a54623f73a4970a9b4e692adbb52be3df365fb91575bb",
+      "sha256": "6829a65908ed0e5f4d06d66e524a73e822aa63d011f71eaf14f3d38582137382",
       "from": "qx",
       "targets": [
         "qx",
@@ -10752,13 +10971,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10766,6 +10987,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10785,7 +11007,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-999597247942/huifutianxia_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/huifutianxia_ads.js",
       "sourceSha256": "5a97f31585d436c36413301a16b4862f62481923caf63f44b1e39eb3b7d1b11f",
-      "sha256": "9420d242167e6be2b64c01924718537dc42269a0bb50f7d5fd066b752511d18a",
+      "sha256": "54d45a61147a94e78cf8632014f9dfbbd1e55e24ac7388fea76b94e753b79b86",
       "from": "qx",
       "targets": [
         "qx",
@@ -10798,13 +11020,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10812,6 +11036,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10831,7 +11056,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-b413e8b37358/ithome.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/ithome/ithome.js",
       "sourceSha256": "afa7249bf854abe582d6c6b73e0297d24a8ee2221db0982c8cb4ce90bb0d4872",
-      "sha256": "ea7d8b3067daed51c29bc61586ca1e8cd9ee74f4f2d74480d429029ca443a937",
+      "sha256": "6ab4f3c878c9e0af60ff4e4b6c85568d88bdf0bd1a75780ea276ef8f83f4697f",
       "from": "qx",
       "targets": [
         "qx",
@@ -10844,13 +11069,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10858,6 +11085,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10877,7 +11105,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-d2fc650d2019/ccblife.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ccblife.js",
       "sourceSha256": "d4017e1658d35309671deda236c0e0bcc560fa604796562d2b39fcc6f69b4958",
-      "sha256": "cdcd8941e605aef3f33f5e89a95c1b04664c2e75746e218c1e85f03e72cdcea2",
+      "sha256": "3865e73c673a6561b3fd084f8fa3c58e3587e28bde772fb8f52bbe16052c3496",
       "from": "qx",
       "targets": [
         "qx",
@@ -10890,13 +11118,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10904,6 +11134,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10923,7 +11154,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a1536927e11e/alicdn.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/alicdn.js",
       "sourceSha256": "e6ff8a29a82508abff43eab1e85c7d518002c6d810f5458d1b78a8219fc4cdcf",
-      "sha256": "52f7d009d0cf6f5c836f2f655c08d01c8b478b2ceea100a41cefb87080f9b626",
+      "sha256": "125926e647de49cb9d2f54e5ff998364fcb3b0d847833798e1cf9aeb82eab82e",
       "from": "qx",
       "targets": [
         "qx",
@@ -10936,13 +11167,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10950,6 +11183,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -10969,7 +11203,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-644b98230e1f/jingdong.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/jingdong/jingdong.js",
       "sourceSha256": "3e7cc975f8985a4d2dbdbdefc405d0e3e6c9c07bf3c5361da1ecae206b6c04a1",
-      "sha256": "5c5dd7b2e247dc00a5aed265578126b568ddbfe3a49dcb5b178358c4895aa9b5",
+      "sha256": "4a177909851ee45709bbb4b403477c611038826902a7353f4c550234dcf45455",
       "from": "qx",
       "targets": [
         "qx",
@@ -10982,13 +11216,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -10996,6 +11232,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11015,7 +11252,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a0a5a0cbf755/jingxiAd.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/jingxiAd.js",
       "sourceSha256": "aa125c2689fba2cdd3ff1eb5aeb9e43bde2b1abab546cfcafdb67bd647d47b94",
-      "sha256": "205374165b485002a5d01834ae33fde4484ee5759f177641e839e82b6a25c369",
+      "sha256": "1e0c170c0636e1c850300cfc7f8db609a27615421144801710b488a4cb722d36",
       "from": "qx",
       "targets": [
         "qx",
@@ -11028,13 +11265,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11042,6 +11281,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11061,7 +11301,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-14d1e419b620/coolapk.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/coolapk.js",
       "sourceSha256": "58002f35b6ed5dbcb277e4571f231cc5491d9cd2d04f72ad9c63d4b35b15c003",
-      "sha256": "6517c408ce372ed3bad8f0709bed3cd6054e6a058b994f47cae8cdf264495fe9",
+      "sha256": "ea5f9bf4f60f708b66b69dd7b660ba09513226985dff1a6325b77bb39594f996",
       "from": "qx",
       "targets": [
         "qx",
@@ -11074,13 +11314,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11088,6 +11330,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11107,7 +11350,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-75e7feecf556/kuwo.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/kuwo/kuwo.js",
       "sourceSha256": "d5119438070518dcd250dba9d678d85b063db97db3a52bdce2ae34760469ae8a",
-      "sha256": "e0f7615011b49857a5703ca200d29e73baa211888179417b50bade8267fd6f9a",
+      "sha256": "d04cb8cadbb634e02edf4a2e5fd7ecb7241c50b117a6b090ac5e2b7d53b4001c",
       "from": "qx",
       "targets": [
         "qx",
@@ -11120,13 +11363,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11134,6 +11379,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11154,7 +11400,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-758f3f177a29/adsense.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/adsense.js",
       "sourceSha256": "171f97bb25c6cb29aeb134acdddca5c96b06e0e70a6e4f670914eba1c8f3b662",
-      "sha256": "e048c734f6a09614d783043073b093d11cdc9d4176032f932c7b30407b77b204",
+      "sha256": "c3a9b442b879d7006998fda1c2f354c67d977dbc2fa853c0adb000e29a1081bd",
       "from": "qx",
       "targets": [
         "qx",
@@ -11167,13 +11413,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11181,6 +11429,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11202,7 +11451,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-101b360ee977/keep.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/keep.js",
       "sourceSha256": "4efaba25017ff63e2e39e7fa55fac425e38262576bb31fe487b98ce5fce37f92",
-      "sha256": "ec47abe85e2483eb41ebf834f514812426ee6457b26e926169bd22c25ea1684d",
+      "sha256": "1a4cde322be688ccb36f1a820eb6e0d82eff8c2e27f6431902ed299a0c91a16e",
       "from": "qx",
       "targets": [
         "qx",
@@ -11215,13 +11464,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11229,6 +11480,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11248,7 +11500,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-733ffc3b9511/ltsst-ad.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/lvtusuishenting/ltsst-ad.js",
       "sourceSha256": "d056e2f2ecb0a48ce09e324e7c5296b8e4fe54b0fbad0c68173bbd7717f3da49",
-      "sha256": "106a08c30535f1eccd960f16dded4cb6f199f98c1ac4fee397fb2cf8dab294c9",
+      "sha256": "1fc07725afd2247ffe3e2a634a5cf15c41e4c356580155ba4af098bc37ad7d28",
       "from": "qx",
       "targets": [
         "qx",
@@ -11261,13 +11513,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11275,6 +11529,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11294,7 +11549,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-e8587938c145/lawson.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/lawson.js",
       "sourceSha256": "ebf5ba4051ffeca870f3f0a15e6c9042649931c8d2b267e3bb51ef0545e3fb93",
-      "sha256": "29ba6ad5fb1267a721f6d265ff75e3934cc7e8a753a930e51d6a91b6e118b6de",
+      "sha256": "ee7253002ad8aeb6826e15bcdf170bf91a981539799c418ca1beb641f9ad191b",
       "from": "qx",
       "targets": [
         "qx",
@@ -11307,13 +11562,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11321,6 +11578,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11340,7 +11598,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-30a4a807311c/mafengwo.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/mafengwo.js",
       "sourceSha256": "9944c174ff0270e9b4cb9a0b8ebf8b40d1a9232b633d7fbee57c171eda6397ea",
-      "sha256": "5091766bb947367047376e2f06011c87d9f9a3c313c147f89bf740bab23184f7",
+      "sha256": "0089e50f6c41151a20ee126b5f27dc0e59e7df1d1fa8ab6e770e3287b9b00d9b",
       "from": "qx",
       "targets": [
         "qx",
@@ -11353,13 +11611,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11367,6 +11627,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11386,7 +11647,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-b5f13a6e3c47/maimai_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/maimai/maimai_ads.js",
       "sourceSha256": "cdd9424de68aa4aad03ba5fda672ccf5e3d3344ee3886e72848bfb7b30977c28",
-      "sha256": "a3a80f739f8347b5c31e47ee391ca0ef57e28b0f4e687ef3675affdb036ab020",
+      "sha256": "24050c6d1de316f16b630ba0fa799b265e68cfe02c2c4db709dd5ac5c6ab6c45",
       "from": "qx",
       "targets": [
         "qx",
@@ -11399,13 +11660,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11413,6 +11676,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11432,7 +11696,7 @@
       "path": "Script/Adblock/github.com-29c959d46da4/mlxx.js",
       "sourceUrl": "https://github.com/fmz200/wool_scripts/raw/main/Scripts/mlxx/mlxx.js",
       "sourceSha256": "7c22e8836f2e9247755180d094d2700e5bb6d10d70cfd042ebc463eb501e8416",
-      "sha256": "8a7851d7b1935a9fe81d754e7921d6b1d472f355f714259f43bb9e7068866c42",
+      "sha256": "60541756b62318af9b8e7e3cce4b5aac2c7c0392f830ebfa3c34ae6f29abd3dd",
       "from": "qx",
       "targets": [
         "qx",
@@ -11445,13 +11709,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11459,6 +11725,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11478,7 +11745,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-86a5c2c779ec/PupuSplashAds.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/PupuSplashAds.js",
       "sourceSha256": "187189b01bd11dbd3fa992428facf680e73f26e5267cfe45dc24f53b788d9215",
-      "sha256": "440d223ffd5ee8203f96954549c6f9d619b28793339ab6723e27d9ff250d415f",
+      "sha256": "c875e0ac69922362b58f5b1a298411527edd4a620461faf87a2419a124eeae0c",
       "from": "qx",
       "targets": [
         "qx",
@@ -11491,13 +11758,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11505,6 +11774,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11524,7 +11794,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-6c23ec663dcc/qmai.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/qmai.js",
       "sourceSha256": "b6823b14feaba4600fdc73438d91b35f1c5b166da3177b70da19dc97f850ce65",
-      "sha256": "dcda25dfbf2015b79186d794817984c8ce3b8cf2a339c1bbcc12886ee11e3a20",
+      "sha256": "6e1f9d3fcd10148495e2ec46783c836fe82d5b63ca3291e571482663da520bbf",
       "from": "qx",
       "targets": [
         "qx",
@@ -11537,13 +11807,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11551,6 +11823,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11570,7 +11843,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-ac2c1ec848a8/qidian.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/qidian.js",
       "sourceSha256": "e599a063040ecb222ad5d4f8666157ef1ee31495aef6d87fb13453dce46f5c19",
-      "sha256": "a80ddba8eb34019579fa1238e6a2523664b9eef8a04582bf2e4240f49438434e",
+      "sha256": "452257294da15544d60dba2327e0bd01188ac4bc8bda7684962bdc16079f54f0",
       "from": "qx",
       "targets": [
         "qx",
@@ -11583,13 +11856,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11597,6 +11872,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11618,7 +11894,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-e388fd2c12c5/51job.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/51job.js",
       "sourceSha256": "85e2b927da9a653691d954775adbab6160e24ca8e6117b779d27c1924bec1af0",
-      "sha256": "f2bd2bc1b08dfc50922c34c01ee4a8b039a1646b619bbe9b5952f44616c41b61",
+      "sha256": "2386eeb8ad8a03aa770881a59d0239af0dc59b52af51dc4e7af4b6c8213f6001",
       "from": "qx",
       "targets": [
         "qx",
@@ -11631,13 +11907,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11645,6 +11923,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11664,7 +11943,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a5bda7e38c3e/QuDa.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/QuDa.js",
       "sourceSha256": "a388141caa03a22decbe518fbdd670c806f0893a540daed142c9b0ba37636bd3",
-      "sha256": "afad27d7c1b3bc808f9b6fe2b90fcda1cc272bb37e51e60906a3f6717f1feeb6",
+      "sha256": "81a4fab9971822c8203d44025173e8e8b5495abf3597f19f55da809252d5e54b",
       "from": "qx",
       "targets": [
         "qx",
@@ -11677,13 +11956,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11691,6 +11972,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11709,7 +11991,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-2d477c4af29c/smzdm_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/smzdm/smzdm_ads.js",
       "sourceSha256": "8e8b27474b277b334b1b37b14b412330485140b0df1cb77112f66fa043c550db",
-      "sha256": "0f4066048be5a1f7194aa267750ed9618aba40f0c52433b24b95ec4508844288",
+      "sha256": "b10dfbd9cb473e73aa16fabd4ff1a271023d53ae358ac87ad2caa8e31cb62f22",
       "from": "qx",
       "targets": [
         "qx",
@@ -11722,13 +12004,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11736,6 +12020,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11755,7 +12040,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-1ca6ef134b1b/Smzdm.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/smzdm/Smzdm.js",
       "sourceSha256": "611b9fa8cb1022622d1df9a2952b0f0fa1a001069b5666cce7e09b87dbec8dff",
-      "sha256": "75594444973936dc3b794d6cc671cf0448be46b4df8c947383e3c649565191a0",
+      "sha256": "c4e2bbb2bedc60c5c71c5d516b55ba6a4bc1e613f6e639819eed802ef1e398e4",
       "from": "qx",
       "targets": [
         "qx",
@@ -11768,13 +12053,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11782,6 +12069,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11801,7 +12089,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-cf2c05d120b0/soda.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/soda.js",
       "sourceSha256": "a252569a8ff6317abedd2714fb4932d631cc07ce857a403aa88a83818661b78e",
-      "sha256": "c46f8abb08b14877171efb4baca92c146f4f63b482fbbeae5f61d9821543f7f8",
+      "sha256": "121fcde1f46353587bb76c830bae3e1a54fae674448539826890ad09bd260b8c",
       "from": "qx",
       "targets": [
         "qx",
@@ -11814,13 +12102,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11828,6 +12118,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11846,7 +12137,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-c039fffc8a49/req_replace_body.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/template/req_replace_body.js",
       "sourceSha256": "90adc7374f0c9a62b25bbea2027570e2c08002130bca22d909607fcfca642c70",
-      "sha256": "9b0bca45f0281dcaab81c7f861ed2085ef081360817ccaf8cc46bbfa6a12b242",
+      "sha256": "a916049c01d877ee8352e00657cce8b92b10bef13b1d328f851338eb5feaf1f6",
       "from": "qx",
       "targets": [
         "qx",
@@ -11859,13 +12150,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "request",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "request",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11873,6 +12166,7 @@
             "to": "loon",
             "phase": "request",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11890,7 +12184,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-02086290c7c6/spotify-json.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-json.js",
       "sourceSha256": "41cf1074770cdef3948baa12ff4a8db9045d1cac888714c8b7e69909eb531bc9",
-      "sha256": "90e94e03620354bb6ff1c812de3a973d08b7223166d489fa8fc217891f7cd929",
+      "sha256": "9193776a1611d700d19b9805b101a2739d22b6aa6f4c820344bbe58dde026927",
       "from": "qx",
       "targets": [
         "qx",
@@ -11903,13 +12197,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "request",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "request",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
@@ -11917,6 +12213,7 @@
             "to": "loon",
             "phase": "request",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           }
         }
@@ -11935,7 +12232,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a4ac231868fb/qq-news.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/qq-news.js",
       "sourceSha256": "98b921f278eae3f4d99751a35c2b0c867b9716bd20713da14859f4033f8c7394",
-      "sha256": "4361c1da100d8ef0351214186b342de4dc93a87965408d154c4e70e780892fbc",
+      "sha256": "2091346d0313aed87b3e7e2efe6757857f25297c836cc7d521abb7cc91ac0661",
       "from": "qx",
       "targets": [
         "qx",
@@ -11948,13 +12245,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -11962,6 +12261,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -11983,7 +12283,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-75dcaa1d4527/tuhu.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/tuhu.js",
       "sourceSha256": "d4a8f475d9c24107644eadce1736e2d0db68974129809ca7f05c77e48abe4561",
-      "sha256": "a0e0de7045ca64eb4b47ce1ad7f3d09b58338f5579418a67d9a1b46ce3952da3",
+      "sha256": "ee706437e41878e59d33a1b4e92a9720adb7b5484a6cd188852915ad5fbf2f46",
       "from": "qx",
       "targets": [
         "qx",
@@ -11996,13 +12296,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12010,6 +12312,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12029,7 +12332,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-03e37ba50a09/vgtime.js",
       "sourceUrl": "https://raw.githubusercontent.com/app2smile/rules/master/js/vgtime.js",
       "sourceSha256": "489f711e41734a6c9a8749d79923c3dc3930c63239fc7e97cb3e25a29c9eafd3",
-      "sha256": "b2e1fd08393afde2761ab9e6255b272d2ed8060089fcc1c17e767ff3e2546f8c",
+      "sha256": "68e8db69600422cd86d038828b6501d9f67d47a43d0b708872fa989fdf14274e",
       "from": "qx",
       "targets": [
         "qx",
@@ -12042,13 +12345,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12056,6 +12361,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12074,7 +12380,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-3b4e68077227/dict-youdao-ad.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/youdao/dict-youdao-ad.js",
       "sourceSha256": "07261d8faf3a9dd0591477679935b3a44fc1b044ed5ca849e01b04cc889f4c0c",
-      "sha256": "450934511b7e2eb9272658e0049e6d3175580c08f9913fd40c2ad8a10df104d0",
+      "sha256": "5d68c012ffdc82e6f88fe43060382599d411bbffeb4c5f0b9efbe35cd1705742",
       "from": "qx",
       "targets": [
         "qx",
@@ -12087,13 +12393,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12101,6 +12409,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12120,7 +12429,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-d28d901fa4fd/goofish.js",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/refs/heads/main/script/goofish.js",
       "sourceSha256": "d76d0a65d975a523ad4bb62c5d90dc9898a5a93ad79cf03dea01150705792b20",
-      "sha256": "885ce5d05dbd6142474e7c7aa6e6536e945bd4a78f90a6abf2aec1eb7d5f71f3",
+      "sha256": "f1db92df0583f6108a0b3a41a00f81a2f8f27024845d5c626cc1eeb841279cdc",
       "from": "qx",
       "targets": [
         "qx",
@@ -12133,13 +12442,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12147,6 +12458,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12166,7 +12478,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-15cb41bf88f2/xjsp.js",
       "sourceUrl": "https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/File/xjsp.js",
       "sourceSha256": "6fc5d0aa5b7d70febfc7081b95d16f15cf1664767286a9ca0c5939d5c8187859",
-      "sha256": "52e334edddc959e58305d6437e59fb9afb297b1c8f08fd0d72959512fb5bf65e",
+      "sha256": "45db69b0ec5df8287a5d52801580d589c5b8c46862d80e551c77979b19c6c4c5",
       "from": "qx",
       "targets": [
         "qx",
@@ -12179,13 +12491,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12193,6 +12507,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12212,7 +12527,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-deda39243f57/xmApp.js",
       "sourceUrl": "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/xmApp.js",
       "sourceSha256": "319c650370f0c4086a6aea0f0d9efa0677c4ac9829d07830218dac69c174164a",
-      "sha256": "5be78079cf1d1c1537013ed465872c206f10efdd6b0dbffb201ead5fb7347361",
+      "sha256": "a86a2becc66c14373c6744832b0b1baa385c8728b7e4dba4aca8192fa713879b",
       "from": "qx",
       "targets": [
         "qx",
@@ -12225,13 +12540,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12239,6 +12556,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12258,7 +12576,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-9aefdaf10b33/yx.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/yx.js",
       "sourceSha256": "7a85dc4dabb4c048a2c9231c17580df96d94c478479a54e3be33346c64e7d6ec",
-      "sha256": "f98fcb41910a188881c8c61202c53d0100d313b81cc81190e7923b838c82500b",
+      "sha256": "d7ae9bf9ab20f21753e76af4b5f1cca9e2eb6a93643d1c6788375f7f622f9d3d",
       "from": "qx",
       "targets": [
         "qx",
@@ -12271,13 +12589,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12285,6 +12605,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12303,7 +12624,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-bfec7c5588dc/zhangshanggongjiao.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhangshanggongjiao.js",
       "sourceSha256": "ee4e5a1ee5ce0817e0787578f7dd47874c65e9bd02bfda4b27527d4f6d59a44c",
-      "sha256": "a382fbb7c774757748d37f0e79502c830804d944e6c94adaa507aef8a11d4922",
+      "sha256": "fb678309f12a0ab2e9818f973eae62246274172662a38dbd8ffbc5de0230cea7",
       "from": "qx",
       "targets": [
         "qx",
@@ -12316,13 +12637,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12330,6 +12653,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12348,7 +12672,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-a110f9b20814/cmschina.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cmschina/cmschina.js",
       "sourceSha256": "0d65a79b61b6ef85c88110538e21ca4f5aafe9b7acc6c3272b17ef7361c2c8b6",
-      "sha256": "51418b73115b885a8478382780913ee021f948f28f883d46848f48ff59473fea",
+      "sha256": "acfd622d1ac76ef6967445d9043d5ed6e56bec496424e6c65210f54d949c72eb",
       "from": "qx",
       "targets": [
         "qx",
@@ -12361,13 +12685,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12375,6 +12701,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12393,7 +12720,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-1fa3a573d88a/zhihu.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhihu/zhihu.js",
       "sourceSha256": "544fd88207b9d7005bb5cf427a1994028f91a95a65fde3db72a501983bff99f4",
-      "sha256": "18fb9d03c0e36c2a4b48b1fb92c69d955a3c4073e45e3f16e24ce41cf6b43d6d",
+      "sha256": "57ad6fbbde54cba11fa73941f0961253efc3180a15301140018e1c063d43b109",
       "from": "qx",
       "targets": [
         "qx",
@@ -12406,13 +12733,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12420,6 +12749,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12441,7 +12771,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-224bd1ed6acc/picc_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/picc/picc_ads.js",
       "sourceSha256": "07e5fa66a0efe225b0dae2beaab83a9f1f9ad4dd6d3748d571156db8e324300c",
-      "sha256": "d16dc3b1af2459dcabeb05d7952126c202928591c0ac6c21987df20018989bf7",
+      "sha256": "6f89eca170079de6aa6c9d5f2145b3a0ecd813451b58972c93f1264d23d91e58",
       "from": "qx",
       "targets": [
         "qx",
@@ -12454,13 +12784,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12468,6 +12800,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12487,7 +12820,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-5af7cfca554d/zhuanzhuan.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhuanzhuan/zhuanzhuan.js",
       "sourceSha256": "b8498e51290e0d0e83018d216b9cf44d602cef5392c39a509ca576c06937efaf",
-      "sha256": "9b9b2514c0cdce073ffb791ae760c337b6f5f9fa739e75b39066334a9e8bcd69",
+      "sha256": "497a66bd540572470073c2f6666e47f8b0b3c339e0734deb4790175bea83be3d",
       "from": "qx",
       "targets": [
         "qx",
@@ -12500,13 +12833,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12514,6 +12849,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12533,7 +12869,7 @@
       "path": "Script/Adblock/kelee.one-1560243f758f/iMaiCai_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/iMaiCai/iMaiCai_remove_ads.js",
       "sourceSha256": "f186eb3760ab578964cf713104a2a563c2b9365cb2e23311f165537de3fc8b06",
-      "sha256": "398934c17e3f99d1790ff263a61cbdf89bfd526501f1e31a641d3205a01cfa8e",
+      "sha256": "95b2ff7379029c14a6d1f0ea3e18ee067cf1073d9b483eae745d125bd4ec3bf2",
       "from": "loon",
       "targets": [
         "qx",
@@ -12547,6 +12883,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -12554,13 +12891,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -12578,7 +12917,7 @@
       "path": "Script/Adblock/github.com-a8cb10290904/amap-new.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/amap-new.js",
       "sourceSha256": "38e5772eb450d2f7eeb8d8f29011e470243367967fd01c907ec8178771f2f4ce",
-      "sha256": "ccd80d8baed10a71b6ede7a27ca61417ccb75e704bcd70baa9092ed3e715213b",
+      "sha256": "c0d5d4bc391b6d090d4d51b9f27019648e4befdcd2d3f679a7daaca034e7c373",
       "from": "qx",
       "targets": [
         "qx",
@@ -12591,13 +12930,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12605,6 +12946,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12624,7 +12966,7 @@
       "path": "Script/Adblock/github.com-e6cdd3dd2d16/bestv.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bestv.js",
       "sourceSha256": "a0b53d7d95c77ad576245a5a9c770a262c1204ca85e58ea1c6d9badee0e71b51",
-      "sha256": "22d55897fac9757761533500256abc733dffaf9237ecb3f9d1243e20c58b4f80",
+      "sha256": "0540292ba5da2f3eea8a04a1039729708a01d5412578e443af36a0d6b1f3dcb1",
       "from": "qx",
       "targets": [
         "qx",
@@ -12637,13 +12979,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12651,6 +12995,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12670,7 +13015,7 @@
       "path": "Script/Adblock/github.com-d769eac18a0a/bilibili-ad.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bilibili-ad.js",
       "sourceSha256": "f6b52b5370d979368121ecd757b5eaeea114d8668f5b9141c2197127a47a150a",
-      "sha256": "b2f63248e3e73bdcac82a380cea969454efebe1aa4d9b265fc56add458057e5e",
+      "sha256": "9cb0be53276b52f69b7aa0fa9bc4317a63c19fe0578f57f0970cce5c6da22cd3",
       "from": "qx",
       "targets": [
         "qx",
@@ -12683,13 +13028,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12697,6 +13044,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12716,7 +13064,7 @@
       "path": "Script/Adblock/github.com-c52952a8148b/goofish.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/goofish.js",
       "sourceSha256": "d76d0a65d975a523ad4bb62c5d90dc9898a5a93ad79cf03dea01150705792b20",
-      "sha256": "885ce5d05dbd6142474e7c7aa6e6536e945bd4a78f90a6abf2aec1eb7d5f71f3",
+      "sha256": "f1db92df0583f6108a0b3a41a00f81a2f8f27024845d5c626cc1eeb841279cdc",
       "from": "qx",
       "targets": [
         "qx",
@@ -12729,13 +13077,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12743,6 +13093,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12762,7 +13113,7 @@
       "path": "Script/Adblock/github.com-db0b34b4344c/keep.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/keep.js",
       "sourceSha256": "d955973bdc94d7dab355bd534b60a5627b21bb0c3f9e89c9296214c41a9e7091",
-      "sha256": "2a2ee086b697853feb275b1dd322638f660701399a40d50b9b445a356e054af5",
+      "sha256": "754e9040fa3bf419288d032014a7cfd20354d4e26222e098435101f1816fded3",
       "from": "qx",
       "targets": [
         "qx",
@@ -12775,13 +13126,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12789,6 +13142,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12808,7 +13162,7 @@
       "path": "Script/Adblock/github.com-95107c304a30/pdd.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pdd.js",
       "sourceSha256": "fa4d1cac3c791fdac0d6007ce67e3a2ba7c1703d15807c2dd086dbf6d6bd8ddb",
-      "sha256": "9e6512174750c78d27bd462bffcc82729ed539177b91de355f5144a5536b7e69",
+      "sha256": "e1c0438fd1b08dc3eb93248334b339f9f189668189a04d7125749fdbdf633f78",
       "from": "qx",
       "targets": [
         "qx",
@@ -12821,13 +13175,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12835,6 +13191,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12854,7 +13211,7 @@
       "path": "Script/Adblock/github.com-8ed16206ce68/pp.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/pp.js",
       "sourceSha256": "3b419ba2d6a95c31432c6cf025218c618b190d5a0bf793855e9346f21f6668bf",
-      "sha256": "3b104f4e3bd29343cebe285ca4cf308728d4661e8865138371561f945f423708",
+      "sha256": "b2bc1a98b486b8312eb25dd4e019d2ba1a923e8d7d3508b5be66aaf85b0e653a",
       "from": "qx",
       "targets": [
         "qx",
@@ -12867,13 +13224,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12881,6 +13240,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12900,7 +13260,7 @@
       "path": "Script/Adblock/github.com-77efc1885e03/shihuo.js",
       "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/shihuo.js",
       "sourceSha256": "f29be23186bdee00873c43387a0b5cd4dc9b0d359cb11041558fb9257b5bc30b",
-      "sha256": "dcc853814693cb1da64ddd2b59b7da25c6a6c9f2fc9f99111e0235b1138c6963",
+      "sha256": "036ff278d600300f68f1692209fc42580e4eaf4482702105bf6fc95ffc54d8dc",
       "from": "qx",
       "targets": [
         "qx",
@@ -12913,13 +13273,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -12927,6 +13289,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -12946,7 +13309,7 @@
       "path": "Script/Adblock/kelee.one-9858236b7366/mobileClouds_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/mobileClouds/mobileClouds_remove_ads.js",
       "sourceSha256": "ec2ac94692a6d6ceee12251142ccf3e200a3a27f2335bd32fdc64239c395d798",
-      "sha256": "79b90c5258b402162d9ee9a6ec84f83c0b27447aa961152298ae0185c88ee3be",
+      "sha256": "1544f89f0422d3050372873ce4ff4e8150238df2877d11aa9d8bc8604d184170",
       "from": "loon",
       "targets": [
         "qx",
@@ -12960,6 +13323,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -12967,13 +13331,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -12992,7 +13358,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-4b8d1b919e60/hlwxx_remove_ads.js",
       "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js",
       "sourceSha256": "1ec71d2e02541253369b8562533c0edfdecbeb65787081bb6fa97a68af26c0ea",
-      "sha256": "01bfbde675618fce77b19e8f2d11d3a268ef8a96e61288f030533ffd7f85461b",
+      "sha256": "cde078828d6151d3e7579158edf8c84485d022e9c24ab7c9af4c9cf8ca68a5f5",
       "from": "qx",
       "targets": [
         "qx",
@@ -13005,13 +13371,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -13019,6 +13387,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -13037,7 +13406,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-d3a5f386d448/mgtv_vip.js",
       "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/mgtv_vip.js",
       "sourceSha256": "7393e4f79938096a5ae000533dd228f88b7d03215031f6b22bbf3edf56bd1bec",
-      "sha256": "e162f802c6b4ef0a6b4749668fe23dfb8451fc3774f5797d48f1c15c3a9afcf5",
+      "sha256": "90e466dd5a12387354d958d31e49145f48f2e8237d416144c9cdcd151f2d204b",
       "from": "qx",
       "targets": [
         "qx",
@@ -13050,13 +13419,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "request",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "request",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
@@ -13064,6 +13435,7 @@
             "to": "loon",
             "phase": "request",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           }
         }
@@ -13082,7 +13454,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-99b02d3cac44/MeiTuanNoAd.js",
       "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MeiTuanNoAd.js",
       "sourceSha256": "16a2800107ebbadde4209bb961894a4d068a9b19cd0267a66d412de896f50e05",
-      "sha256": "e2c4d413e332f976d55dac37ed1de9c310f65663aba862358e4457cb1ccf359e",
+      "sha256": "53f59f3c1185bec6449391b769ce836473ab59ffd2637793a1efc6108849343d",
       "from": "qx",
       "targets": [
         "qx",
@@ -13095,13 +13467,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -13109,6 +13483,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -13127,7 +13502,7 @@
       "path": "Script/Adblock/kelee.one-d61358f358cf/BiliComic_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/BiliComic/BiliComic_remove_ads.js",
       "sourceSha256": "a44f3d9f44b79940c1d75561a3e4ddc1a57a6a989b6c39f7d97e48db4245224d",
-      "sha256": "d0b90f51b6764a9c257e7be9e0e726b2c71c62c194051a2054e250144e8523ba",
+      "sha256": "a8a7a5f440831a291700ff434123be74fec4927b502f368849597a4281dd142d",
       "from": "loon",
       "targets": [
         "qx",
@@ -13141,6 +13516,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13148,13 +13524,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13173,7 +13551,7 @@
       "path": "Script/Adblock/kelee.one-1717ca508ca6/CaixinMedia_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/CaixinMedia/CaixinMedia_remove_ads.js",
       "sourceSha256": "591a0e4aa1e5b6efb60a1d88fb9ef04e2d372cc4b2f3a8cc7d40f8abd6622ca5",
-      "sha256": "9258116f58650adf2179e4a0eb273c4432e78d546cbb8f541140f21d35ba24fa",
+      "sha256": "2cc441810683065ed0ecc243b97bd11a0810f4a5e020cdb3295a45c416aca39d",
       "from": "loon",
       "targets": [
         "qx",
@@ -13187,6 +13565,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13194,13 +13573,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13219,7 +13600,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-d477c79dc184/myblockads.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/myblockads.js",
       "sourceSha256": "55725115e4adc11d8594d252617728c3b0267caa44fec21e6e819c9a81e17fa8",
-      "sha256": "44df768ce448e531ca972c7ab71b833ec9020190a69a359de10a63a7a82b7b8c",
+      "sha256": "7cf967595e59e40dea10f0acbb23617e1ee7c0194a08de3dbb24000b2afbbd3c",
       "from": "loon",
       "targets": [
         "qx",
@@ -13233,6 +13614,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13240,13 +13622,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13265,7 +13649,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-8f7d651e07b1/kugou.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/kugou.js",
       "sourceSha256": "6063f59363090b1434f415eda9ade4f6011a7b409d0d500677cc4a081f89f43d",
-      "sha256": "c9ab270bf55635b8c88c040e612642a239c71597a34d59decd1f45fd64dcb7dd",
+      "sha256": "c4446b89cad18748a12b87f91bd1fe0dae5b2acf808e2891a9544210d1e459ee",
       "from": "loon",
       "targets": [
         "qx",
@@ -13279,6 +13663,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13286,13 +13671,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13311,7 +13698,7 @@
       "path": "Script/Adblock/kelee.one-6659152f24c8/Soul_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Soul/Soul_remove_ads.js",
       "sourceSha256": "5a9a02b54668a58dbe2942d39eca12612b2f4669a6cd4fe2847032cbea753d0a",
-      "sha256": "e7141560a6733c4cfeb5b04dff604099a59e4664b27e7e679c7e49041f9657fa",
+      "sha256": "30aa6f6749f6c53c0665c0a1916cd18716938b7f21da6a8561d9a9a9417e5601",
       "from": "loon",
       "targets": [
         "qx",
@@ -13325,6 +13712,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13332,13 +13720,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13357,7 +13747,7 @@
       "path": "Script/Adblock/kelee.one-9d853d73b21f/Taobao_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Taobao/Taobao_remove_ads.js",
       "sourceSha256": "3ccb2093683d84a0085a24506fb04d3ac87713e8e1bade764711816e8908d903",
-      "sha256": "202550f0cb3508cf0e01b16475ac3459847d49f7c674aa671200025c3f3cda84",
+      "sha256": "d7967c68ed76bec867fc70cfef611a8ab93af0fc2e61372ba9ce8566d3d29c12",
       "from": "loon",
       "targets": [
         "qx",
@@ -13371,6 +13761,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13378,13 +13769,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13403,7 +13796,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-5d99ca157433/weibo.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/weibo.js",
       "sourceSha256": "7498cbef4c2f3293afebc3a686faec63220e27a62cd16303c18db2371bf529f3",
-      "sha256": "eb5dd4bec1a8a0a3ccd23013a56e8a4e6f66d3b0a605ac7fd445cec838de2794",
+      "sha256": "1886a8c4f8bf0982acaeac4a74288caed550c0ca78039b55675a2e83821142f9",
       "from": "loon",
       "targets": [
         "qx",
@@ -13417,6 +13810,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13424,13 +13818,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13449,7 +13845,7 @@
       "path": "Script/Adblock/kelee.one-dc0eef05c006/Weibo_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js",
       "sourceSha256": "026ccd766a53f744c2bf2aad93c4deb6f207defe4daf973178bb3e4193c997fb",
-      "sha256": "f646ce68384664497e1507919fec96c74610dbd4e4856140f889685d0526bb96",
+      "sha256": "5dc74442d0e7d5bae7ab6a4ca96c7b5b0a07df72e48249f3af52187a71640fa4",
       "from": "loon",
       "targets": [
         "qx",
@@ -13463,6 +13859,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13470,13 +13867,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13495,7 +13894,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-99c1f7a94b66/myBlockAds.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/myBlockAds.js",
       "sourceSha256": "4cf62100424886068a5470daecec319e93ccd034c647d79a9daaa72bbbc341bb",
-      "sha256": "4b763c50c035b0d79c8d61181164d59b8d8fd8dd8c21ff843e5281080d763a8d",
+      "sha256": "bae36ba019dc0d82d12e59c8d40e5834b2f1eb00a557901a2b0690c113f72be1",
       "from": "qx",
       "targets": [
         "qx",
@@ -13508,13 +13907,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -13522,6 +13923,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -13541,7 +13943,7 @@
       "path": "Script/Adblock/kelee.one-28e7d9d5ad8f/MotorFans_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/MotorFans/MotorFans_remove_ads.js",
       "sourceSha256": "f464b6e3853433ae5fb5667c9b17b0333cffdc0c24014b7607fde6d39823f16d",
-      "sha256": "172e8fdf9b080c8b722d2971d2683026751014b4ab8621b0c6961466e34a771a",
+      "sha256": "e557a56442123f969623c73d441512cb044997445771a320ee308cd862667667",
       "from": "loon",
       "targets": [
         "qx",
@@ -13555,6 +13957,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13562,13 +13965,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13586,7 +13991,7 @@
       "path": "Script/Adblock/rucu6.pages.dev-821aa576b617/12306.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/12306.js",
       "sourceSha256": "0c805290e56a4b557c0ed235ae06a1e5d70025ed3d990036e3f6b8ca44f3a0c3",
-      "sha256": "946e6eb83b14fec2e01f9ab1058f00d65ec488c59131e8da231c8539c52acf9f",
+      "sha256": "8605301e7053d2a747c4bc778f6cf213cab10354d778ef0f5cc279dce557fcc1",
       "from": "loon",
       "targets": [
         "qx",
@@ -13600,6 +14005,7 @@
             "to": "qx",
             "phase": "echo",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13607,13 +14013,15 @@
             "to": "surge",
             "phase": "request",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "request",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13631,7 +14039,7 @@
       "path": "Script/Adblock/kelee.one-2531c9fe6208/SodaMusic_remove_ads.js",
       "sourceUrl": "https://kelee.one/Resource/JavaScript/SodaMusic/SodaMusic_remove_ads.js",
       "sourceSha256": "f7a929bfe291b2433db14a2a7ef99b38e92b1f21eaed847e05cc803269eddb93",
-      "sha256": "e658d9d055eb616008beb76153be67eaeade3dda5768c48b3de941960104afdd",
+      "sha256": "140f00ef1fc67251347b2710f60ae89cb3d5c74f2d28dbb68ba034f0c99142a9",
       "from": "loon",
       "targets": [
         "qx",
@@ -13645,6 +14053,7 @@
             "to": "qx",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "surge": {
@@ -13652,13 +14061,15 @@
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": false,
             "headerReads": {}
           },
           "loon": {
             "from": "loon",
             "to": "loon",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": false
           }
         }
       },
@@ -13676,7 +14087,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-53e7438651b1/12306.js",
       "sourceUrl": "https://raw.githubusercontent.com/kokoryh/Script/master/js/12306.js",
       "sourceSha256": "676fe92784297b1ec93e0dc128597af3e38f42e9a37772cbdb9bda4ab9eed3dd",
-      "sha256": "00644e4c35b934651c5f160cd08602234601a97d1e0ea0d3a55e319d20de5c61",
+      "sha256": "9906e034cc5730d4547d0b01412d1423c1460b949ae713fe3cd29d140f22de4c",
       "from": "qx",
       "targets": [
         "qx",
@@ -13689,13 +14100,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "echo",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "echo",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -13703,6 +14116,7 @@
             "to": "loon",
             "phase": "echo",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -13721,7 +14135,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-89816a294604/mdb.js",
       "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/mdb.js",
       "sourceSha256": "f50cef7a5f3b3e3179f9c5a93f2ab937dd72d83ca4dc2c9e8a66937c38e3e9ab",
-      "sha256": "55d12767969b2a65c47b808463aa189ae4160db0458d442d0cb9f1f3a6da3ff9",
+      "sha256": "942083bf259d1b689147c4ebb6927feedaed1301b019db39e0bafbeafcfa5ff6",
       "from": "qx",
       "targets": [
         "qx",
@@ -13734,13 +14148,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -13748,6 +14164,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -13766,7 +14183,7 @@
       "path": "Script/Adblock/raw.githubusercontent.com-fc4b214bb465/reddit.js",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/reddit.js",
       "sourceSha256": "3178f057b758e8e5fa20477c8abde707fa367482f63553be833773dd33aec3ed",
-      "sha256": "1043eaac79a0e17f9f0d4d135d1ad29b8e3b0184c1d6a578015abf2ef0804019",
+      "sha256": "f35cff5bc321a7bfb8a6d8f85d4543e5b28ac53ad169e86b57356aa7063ed969",
       "from": "qx",
       "targets": [
         "qx",
@@ -13779,13 +14196,15 @@
             "from": "qx",
             "to": "qx",
             "phase": "response",
-            "binary": false
+            "binary": false,
+            "responseBody": true
           },
           "surge": {
             "from": "qx",
             "to": "surge",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           },
           "loon": {
@@ -13793,6 +14212,7 @@
             "to": "loon",
             "phase": "response",
             "binary": false,
+            "responseBody": true,
             "headerReads": {}
           }
         }
@@ -13800,6 +14220,102 @@
       "features": [
         "$done",
         "$response.body.replace"
+      ],
+      "specialization": {
+        "folds": 0,
+        "branches": 0,
+        "reason": "no provable host branch"
+      }
+    },
+    "Script/Adblock/raw.githubusercontent.com-a94e56a8e113/applet.js": {
+      "path": "Script/Adblock/raw.githubusercontent.com-a94e56a8e113/applet.js",
+      "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/applet.js",
+      "sourceSha256": "0e2ffdd010b7f1ee38c526af5b7842f8fe3af89bf7ccd298596025baa4471855",
+      "sha256": "a931b0c785d99eed22391a97e627257715a2e25d020bd3f0b2e0d9383e3f7f19",
+      "from": "qx",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "qx",
+            "to": "qx",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true
+          },
+          "surge": {
+            "from": "qx",
+            "to": "surge",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true,
+            "headerReads": {}
+          },
+          "loon": {
+            "from": "qx",
+            "to": "loon",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true,
+            "headerReads": {}
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$response.body"
+      ],
+      "specialization": {
+        "folds": 0,
+        "branches": 0,
+        "reason": "no provable host branch"
+      }
+    },
+    "Script/Adblock/raw.githubusercontent.com-8cd9d9503c51/wnbz.js": {
+      "path": "Script/Adblock/raw.githubusercontent.com-8cd9d9503c51/wnbz.js",
+      "sourceUrl": "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js",
+      "sourceSha256": "b4c4a10fbb15268d20b1c2dd69c842494029f7bd8eb691add5db105ce087cbef",
+      "sha256": "3b953ceeb51021f18f83d880aca569f5439d6c24998484a9d06184f032c18bca",
+      "from": "qx",
+      "targets": [
+        "qx",
+        "surge",
+        "loon"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "from": "qx",
+            "to": "qx",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true
+          },
+          "surge": {
+            "from": "qx",
+            "to": "surge",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true,
+            "headerReads": {}
+          },
+          "loon": {
+            "from": "qx",
+            "to": "loon",
+            "phase": "response",
+            "binary": false,
+            "responseBody": true,
+            "headerReads": {}
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$response.body"
       ],
       "specialization": {
         "folds": 0,
@@ -14333,6 +14849,11 @@
         "path": "Script/Adblock/raw.githubusercontent.com-2ca8a4753be1/zhangshanggongjiao.js",
         "binary": false,
         "echo": false
+      },
+      "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/applet.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-a94e56a8e113/applet.js",
+        "binary": false,
+        "echo": false
       }
     },
     "Adblock/Surge/ddgksf2013_bingsimplify.sgmodule": {
@@ -14684,6 +15205,11 @@
         "path": "Script/Adblock/raw.githubusercontent.com-fc4b214bb465/reddit.js",
         "binary": false,
         "echo": false
+      },
+      "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-8cd9d9503c51/wnbz.js",
+        "binary": false,
+        "echo": false
       }
     },
     "Adblock/Surge/iMaiCai_remove_ads.sgmodule": {
@@ -14927,6 +15453,11 @@
     "Adblock/Quantumult X/ddgksf2013_applet.snippet": {
       "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/zhangshanggongjiao.js": {
         "path": "Script/Adblock/raw.githubusercontent.com-2ca8a4753be1/zhangshanggongjiao.js",
+        "binary": false,
+        "echo": false
+      },
+      "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/applet.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-a94e56a8e113/applet.js",
         "binary": false,
         "echo": false
       }
@@ -15278,6 +15809,11 @@
       },
       "https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/reddit.js": {
         "path": "Script/Adblock/raw.githubusercontent.com-fc4b214bb465/reddit.js",
+        "binary": false,
+        "echo": false
+      },
+      "https://raw.githubusercontent.com/Sliverkiss/QuantumultX/main/AdBlock/xmApp/wnbz.js": {
+        "path": "Script/Adblock/raw.githubusercontent.com-8cd9d9503c51/wnbz.js",
         "binary": false,
         "echo": false
       }
