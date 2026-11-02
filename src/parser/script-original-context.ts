@@ -1,6 +1,7 @@
-// Modified: 2026-11-02 (chance). An untouched QX response returned directly
+// Modified: 2026-11-02 (chance). An untouched Loon/QX response returned directly
 // to $done is a pass-through, not an arbitrary completion/header dictionary.
 import ts from "typescript";
+import { scriptHostLayouts, type ScriptClient } from "../domain/script-api.ts";
 import { valueSymbol, safePresenceUse } from "./script-analysis.ts";
 export function originalContextCompletionContract(
   tree: ts.SourceFile,
@@ -15,12 +16,16 @@ export function originalContextCompletionContract(
   const calls = new Set<ts.CallExpression>();
   const role = "$response";
   if (
-    options.from !== "qx" ||
+    !["qx", "loon"].includes(options.from) ||
     options.phase !== "response" ||
     options.binary ||
     options.responseBody !== true
   )
     return { calls, roots: new Set<string>() };
+  // Modified: 2026-11-02 (chance). The registered source, not the filename,
+  // selects the status field for the same immutable response proof.
+  const statusField =
+    scriptHostLayouts[options.from as ScriptClient].responseStatus;
   const unparen = (n: ts.Node): ts.Node =>
     ts.isParenthesizedExpression(n) ? unparen(n.expression) : n;
   const walk = (n: ts.Node, fn: (n: ts.Node) => void) => {
@@ -111,7 +116,7 @@ export function originalContextCompletionContract(
             ts.isStringLiteralLike(p.argumentExpression)
           ? p.argumentExpression.text
           : null;
-    if (!field || !["body", "statusCode"].includes(field)) {
+    if (!field || !["body", statusField].includes(field)) {
       safe = false;
       return;
     }

@@ -287,8 +287,8 @@ export const scriptApiDefinitions: ScriptApiDefinition[] = [
     id: "complete.original-context",
     kind: "completion",
     selector: "original-context",
-    source: { qx: "$done" },
-    target: { surge: "$done({})" },
+    source: { qx: "$done", loon: "$done" },
+    target: { surge: "$done({})", qx: "$done({})", loon: "$done" },
     canonical: "complete.pass-original",
     value: "proven untouched response context",
     lowering:

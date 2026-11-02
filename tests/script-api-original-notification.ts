@@ -73,7 +73,6 @@ for (const altered of [
   { ...options, phase: "echo" as const },
   { ...options, binary: true },
   { ...options, responseBody: false },
-  { ...options, from: "loon" as const },
 ])
   assert.equal(pair("$done($response);", altered).status, "blocked");
 // QX author documents three fields. Every optional expression is evaluated once,
@@ -146,9 +145,12 @@ const raw = new Map<string, Buffer>();
 for (const url of originals) {
   const bytes = await fs.readFile(index.latest[url]);
   raw.set(url, bytes);
-  const real = universal(bytes.toString(), "qx", [profile]);
+  const from = url.startsWith("https://kelee.one/") ? "loon" : "qx";
+  const real = universal(bytes.toString(), from, [profile]);
   assert.equal(real.status, "universal", url + JSON.stringify(real.problems));
-  for (const host of ["qx", "surge"]) {
+  for (const host of from === "loon"
+    ? ["loon", "qx", "surge"]
+    : ["qx", "surge"]) {
     let notes: any[] = [];
     const input =
       host === "qx"
@@ -175,7 +177,9 @@ for (const url of originals) {
       ...(host === "qx"
         ? { $task: { fetch() {} }, $notify: (...a: any[]) => notes.push(a) }
         : {
-            $environment: { "surge-version": "real" },
+            ...(host === "loon"
+              ? { $loon: "real" }
+              : { $environment: { "surge-version": "real" } }),
             $notification: { post: (...a: any[]) => notes.push(a) },
           }),
     });
@@ -185,7 +189,7 @@ for (const url of originals) {
     } else
       assert.deepEqual(
         JSON.parse(JSON.stringify(out)),
-        host === "qx" ? input : {},
+        host === from ? input : {},
       );
   }
 }
@@ -201,6 +205,7 @@ try {
     path.join(root, qx),
     "# Managed by: WayX Native QX\n" +
       originals
+        .slice(1)
         .map(
           (u, n) =>
             `^https://fixture${n}\\.test/ url script-response-body ${u}`,
@@ -212,6 +217,7 @@ try {
     path.join(root, surge),
     "#!name=Test\n# Managed by: WayX Native QX to Surge\n[Script]\n" +
       originals
+        .slice(1)
         .map(
           (u, n) =>
             `s${n} = type=http-response,pattern=^https://fixture${n}\\.test/,requires-body=true,script-path=${u}`,
@@ -219,10 +225,35 @@ try {
         .join("\n") +
       "\n",
   );
+  const entry = {
+    id: "loon-original",
+    file: "original.lpx",
+    source: "https://author.test/original.lpx",
+    qx: "loon.snippet",
+    surge: "loon.sgmodule",
+  };
+  const plugin = Buffer.from(
+    '[Script]\nresponse if ${url} ~= /fixture/ then script("' +
+      originals[0] +
+      '") with requires_body=true\n',
+  );
+  await fs.mkdir(path.join(root, "Resource/Loon"), { recursive: true });
+  await fs.writeFile(path.join(root, "Resource/Loon", entry.file), plugin);
+  await fs.writeFile(
+    path.join(root, "Adblock/Quantumult X", entry.qx),
+    "^https://loon\\.test/ url script-response-body " + originals[0] + "\n",
+  );
+  await fs.writeFile(
+    path.join(root, "Adblock/Surge", entry.surge),
+    "L=type=http-response,pattern=^https://loon\\.test/,requires-body=true,script-path=" +
+      originals[0] +
+      "\n",
+  );
   const report = await refreshSourceBackups(root, {
-    catalog: [],
+    catalog: [entry],
     resources: {
-      cachedBytes: async () => null,
+      cachedBytes: async (url: string) =>
+        url === entry.source ? plugin : null,
       fetchBytes: async (url: string) => raw.get(url)!,
     },
     log: () => {},
@@ -240,7 +271,9 @@ try {
       bytes,
     );
     const adapter = generated.find((a) => a.sourceUrl === url)!;
-    for (const file of [qx, surge])
+    for (const file of url === originals[0]
+      ? ["Adblock/Quantumult X/" + entry.qx, "Adblock/Surge/" + entry.surge]
+      : [qx, surge])
       assert.ok(
         (await fs.readFile(path.join(root, file), "utf8")).includes(
           adapter.path,

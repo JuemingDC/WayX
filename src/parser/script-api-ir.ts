@@ -695,6 +695,10 @@ export function parseScriptApiIR(
         (definition?.kind === "completion" && p.api.startsWith("$done")),
     );
     let target = definition?.target?.[to] ?? definition?.source[to] ?? null;
+    // Modified: 2026-11-02 (chance). Native original-context completion keeps
+    // its source API; authorized foreign hosts use the empty modification form.
+    if (definition?.selector === "original-context" && from === to)
+      target = "$done";
     if (definition?.kind === "http" && targetLayout.http.style === "callback") {
       let method = api.startsWith("$httpClient.")
         ? api.split(".").at(-1)

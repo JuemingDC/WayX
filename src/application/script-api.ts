@@ -161,8 +161,17 @@ export async function prepareScriptApiAdapters(
             ["string", "raw-string"].includes(argument.type))
         )
           argumentSchema = { kind: "string" };
+        // Modified: 2026-11-02 (chance). Preserve original Loon body-read
+        // provenance; target declarations must not invent an original-context proof.
+        const bodyOption = ir.options?.find((o: any) =>
+          /^(?:requires_body|requires-body)$/.test(o.name),
+        );
+        const responseBody =
+          bodyOption?.value?.value === true ||
+          /^(?:true|1)$/.test(String(bodyOption?.value ?? ""));
         const p = {
           phase: ir.phase,
+          responseBody,
           binary,
           binaryKnown,
           name: scriptIrTag(ir),

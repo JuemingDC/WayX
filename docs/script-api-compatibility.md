@@ -45,7 +45,7 @@ Modified: 2026-11-02 (chance). `src/domain/script-api.ts` 是具体 API/宿主�
 
 Modified: 2026-11-02 (chance). QX 作者已核对示例只声明通知三个文本参数：遵循用户省略未说明参数的规则，来源 QX 的第 4 个及以后参数在 QX 原生和 Surge 分支均省略。原表达式仍求值一次、抛错不被吞掉，省略记录在外部计划；不读取已构造可选对象的 getter。Loon→Surge 的选项继续按明确字段证明，不一起放宽。
 
-QX 文本 response-body 中的 `$done($response)` 增加 `complete.original-context` 规则。只有来源对象完全未修改且不别名/外传、不读取 Header/字节时，才将目标完成映射为 `$done({})`，保留原始 HTTP 响应。上下文字段写入、括号/解构/循环目标、delete/update、错误阶段、二进制和间接完成调用均不适用。来源端保留原返回，目标端通过原 view 的身份判断放行，不把任意对象误作原响应。
+Loon/QX 文本响应且声明读取正文时的 `$done($response)` 增加 `complete.original-context` 规则。只有来源对象完全未修改且不别名/外传、不读取 Header/字节时，才将目标完成映射为 `$done({})`，保留原始 HTTP 响应。上下文字段写入、括号/解构/循环目标、delete/update、错误阶段、二进制和间接完成调用均不适用。按登记来源选择 status/statusCode 标量字段。来源端保留原返回，目标端通过原 view 的身份判断放行，不把任意对象误作原响应。
 
 真实样本：两个来源 URL 的小兔充充脚本及 Soul 脚本；验证既覆盖未命中的原样响应，也覆盖修改正文/通知分支及原件备份和共用引用事务。其它 Header 修改、严格存储缺失值和混淆计算字段仍按原边界处理。
 
@@ -181,7 +181,7 @@ Modified: 2026-11-02 (chance). 本节补充当前已实现的子域，不将“�
 | Surge → Loon 通知 | 明确 url、可选 action=open-url、media-url 映射 openUrl/mediaUrl | 剪贴板确认、自动消失、声音、base64 媒体等未证明的行为 |
 | 目标 QX 通知 | 仅发送三文本参数；其它附加参数按用户授权省略、无参数错误 | 参数构造表达式仍求值，省略不是通知调度/取消或递送保证 |
 
-本批核对 [Surge API](https://manual.nssurge.com/scripting/api.html)、[Loon API](https://nsloon.app/docs/Script/script_api/) 和 QX 作者仓库 sample.conf/sample-task.js/README 及 request/response-header 示例。Surge 选项要求 iOS 5.11+/Mac 5.7+。在所查 QX 作者仓库资料中未建立 rich notification 的 open-url/media-url 契约，不能用第三方 Env 层作为官方证据；QX 来源的非空第四参数到其它宿主继续阻断，原生原文保留。系统权限、通知递送与点击流程不宣称跨软件完全一致。
+本批核对 [Surge API](https://manual.nssurge.com/scripting/api.html)、[Loon API](https://nsloon.app/docs/Script/script_api/) 和 QX 作者仓库 sample.conf/sample-task.js/README 及 request/response-header 示例。Surge 选项要求 iOS 5.11+/Mac 5.7+。在所查 QX 作者仓库资料中未建立 rich notification 的 open-url/media-url 契约，不能用第三方 Env 层作为官方证据；来源 QX 的未说明可选参数现在按用户授权省略，原生共用分支同样过滤；仍不宣称 rich notification 功能等价。系统权限、通知递送与点击流程不宣称跨软件完全一致。
 
 参数部分仍要求实际 schema/payload 与安全作者默认路径，Spotify 省略参数后传 null 的处理不能靠外层 catch 计作去广告成功。真实版本/设备/源开始时间不能凭空构造；WASM 继续只编译检查、不实例化作者模块。压缩、加密、其它编码须针对真实操作提供独立实现及错误/字节向量，当前不提供空 API。
 

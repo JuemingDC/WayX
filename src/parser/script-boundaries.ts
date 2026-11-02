@@ -132,9 +132,9 @@ export const scriptCapabilityBoundaries = {
   // Modified: 2026-11-02 (chance). Untouched original response return is an
   // explicit pass-through contract rather than generic header output support.
   originalContextCompletion: {
-    status: "conditional-qx-response-pass-through",
+    status: "conditional-loon-qx-response-pass-through",
     domain:
-      "Direct $done($response) in a QX text response-body trigger; all context observations are immutable scalar reads or presence checks, with no aliases, escapes, header/binary reads or mutations. Surge receives $done({}) and retains original wire fields",
+      "Direct $done($response) in a registered Loon/QX text response trigger with body available; all context observations are immutable scalar reads or presence checks, with no aliases, escapes, header/binary reads or mutations. Authorized target hosts receive $done({}) and retains original wire fields",
     outside:
       "Wrong phase, missing body declaration, binary input, context mutation/escape, reflective or indirect completion remain blocked; no general mutable-context/header support",
   },

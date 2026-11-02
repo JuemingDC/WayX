@@ -536,6 +536,6 @@ Modified: 2026-11-02 (chance). 语法识别须接纳共同目录中的已知跨�
 
 Modified: 2026-11-02 (chance). QX 作者 sample.conf、sample-task.js、sample-rewrite-with-script.js 中已核对的通知契约为三个文本参数。按用户“未说明参数直接忽略”的授权，来源 QX 的附加通知参数在所有授权目标及原生共用分支均省略，记录外部 omittedParameters 和逐调用字段。参数构造副作用、顺序及抛错仍保留，不读取省略对象的 getter，不把未证实的 rich options 映射到 Surge。Loon 来源到 Surge 的通知字段与延迟继续严格证明。宿主目录推导共同 omitNotificationOptions 执行计划，校验器、运行时及记录使用同一判断。
 
-QX 文本 response-body 声明的直接 $done($response)，仅在全源码证明来源上下文没有别名、外传、Header/字节观察或任何字段写入时，映射为 complete.pass-original；Surge $done({}) 保留原响应，避免把原 Header/Content-Length/编码重新提交。允许原对象的 presence 和 body/statusCode 标量读取，审查括号/解构/循环/delete/update 写入及 $done 的重绑定。phase、二进制、非原对象身份或未知调用不适用。目标 kernel 只对已证明的原 view 身份执行放行；其它完成对象走原规则。原生来源执行仍返回原对象，计划须如实区分。真实两份小兔充充及 Soul 原件、反例和同一备份事务验证，不运行生产本地生成。
+Loon/QX 文本响应且声明读取正文时的直接 $done($response)，仅在全源码证明来源上下文没有别名、外传、Header/字节观察或任何字段写入时，映射为 complete.pass-original；授权目标的 $done({}) 保留原响应，避免把原 Header/Content-Length/编码重新提交。允许原对象的 presence 和 body 及来源 status/statusCode 标量读取，审查括号/解构/循环/delete/update 写入及 $done 的重绑定。phase、二进制、非原对象身份或未知调用不适用。目标 kernel 只对已证明的原 view 身份执行放行；其它完成对象走原规则。原生来源执行仍返回原对象，计划须如实区分。真实两份小兔充充及 Soul 原件、反例和同一备份事务验证，不运行生产本地生成。
 
 依据： https://github.com/crossutility/Quantumult-X/blob/master/sample-rewrite-with-script.js 、 https://github.com/crossutility/Quantumult-X/blob/master/sample.conf 、 https://manual.nssurge.com/scripting/http-request.html 。源码、固定共享 URL、三个生产方向与 Actions-only 发布规则保持不变。
