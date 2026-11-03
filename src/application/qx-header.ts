@@ -334,7 +334,9 @@ export function prepareQxHeaderRewrites({
           "[Script]\n" + declarations.join("\n"),
         );
       else text += "\n[Script]\n" + declarations.join("\n") + "\n";
-      // Modified: 2026-11-03 (chance). Refresh the README-facing count after resolving declarations.
+    }
+    if (declarations.length || text !== current(target)) {
+      // Native URL-only merges also need publication without a generated Script.
       text = text.replace(
         /^# Native QX review count: \d+$/m,
         "# Native QX review count: " +
