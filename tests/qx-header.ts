@@ -96,3 +96,54 @@ for (const [left,right,url] of [
 ]) { assert.ok(new RegExp(left).test(url)); assert.ok(new RegExp(right).test(url)); assert.equal(disjointUrls(left,right),false); }
 const optionalScheme=plan(['^http://amdc\\.m\\.taobao\\.com/amdc/mobileDispatch App* url-and-header reject','^https?://gw\\.alicdn\\.com/imgextra/ url reject-dict']);
 assert.equal(optionalScheme.report[0].status,'converted');assert.doesNotMatch(optionalScheme.output,/REVIEW REQUIRED/);
+
+// Modified: 2026-11-03 (chance). Authorized URL-only consolidation preserves the
+// original QX source and all Header provenance comments; Surge emits one reject.
+const sameUrl = '^http:\\/\\/.+\\/amdc\\/mobileDispatch';
+const nativeMerge = plan([
+  sameUrl + ' %E8%8F%9C%E9%B8%9F%E8%A3%B9%E8%A3%B9* url-and-header reject',
+  sameUrl + ' %E9%97%B2%E9%B1%BC* url-and-header reject',
+]);
+assert.deepEqual(nativeMerge.report.map((r:any)=>r.status),['converted','converted']);
+assert.ok(nativeMerge.report.every((r:any)=>r.mode==='authorized-url-only-merge'));
+assert.equal(nativeMerge.output.split('\n').filter(x=>x===sameUrl+' _ reject').length,1);
+assert.match(nativeMerge.output,/COMPATIBILITY EXCEPTION/);
+assert.doesNotMatch(nativeMerge.output,/REVIEW REQUIRED/);
+assert.match(nativeMerge.output,/^# Native QX review count: 0$/m);
+assert.ok(nativeMerge.output.includes('# Source declaration: '+sameUrl+' %E9%97%B2%E9%B1%BC* url-and-header reject'));
+assert.equal([...nativeMerge.changes.keys()].filter(x=>x.endsWith('.js')).length,0);
+assert.equal(prepareQxHeaderRewrites({...nativeMerge,index:{},rawBase}).length,0);
+
+// Differing actions must not be coalesced into a URL-only rule.
+const differentActions = plan([
+  sameUrl + ' appA url-and-header reject',
+  sameUrl + ' appB url-and-header reject-dict',
+]);
+assert.doesNotMatch(differentActions.output,/COMPATIBILITY EXCEPTION/);
+assert.doesNotMatch(differentActions.output,/^http:\\\/\\\/.+\\\/amdc\\\/mobileDispatch _ reject$/m);
+
+// A distinct fixed-host URL keeps its Header guard, even if the generic
+// intersection checker sees broad regexes with no concrete shared authority.
+const isolatedHeader = plan([
+  '^https:\\/\\/gw\\.xiaocantech\\.com\\/rpc BatchMatchPlacement|WaitClaimedPoints|GetBannerList url-and-header reject-dict',
+  '^https?:\\/\\/.+?\\.58cdn\\.com\\.cn\\/brandads\\/ url reject-200',
+]);
+assert.equal(isolatedHeader.report[0].status,'converted');
+assert.match(isolatedHeader.output,/wayx_qx_header_.*type=http-request/);
+assert.doesNotMatch(isolatedHeader.output,/REVIEW REQUIRED/);
+assert.match(isolatedHeader.output,/^# Native QX review count: 0$/m);
+const isolatedCode = [...isolatedHeader.changes].find(([key])=>key.endsWith('.js'))![1];
+for (const [value,hit] of [['BatchMatchPlacement',true],['Unrelated',false]]) {
+  const done:any[]=[];
+  vm.runInNewContext(isolatedCode,{
+    $request:{url:'https://gw.xiaocantech.com/rpc',method:'POST',headers:{'X-RPC-Method':value}},
+    $done:(result:any)=>done.push(result),
+  });
+  assert.equal(done.length,1);
+  if(hit) {
+    assert.equal(done[0].response.status,200);
+    assert.equal(done[0].response.body,'{}');
+  } else assert.deepEqual(JSON.parse(JSON.stringify(done[0])),{});
+}
+assert.equal(prepareQxHeaderRewrites({...isolatedHeader,index:{},rawBase}).length,0);
+
