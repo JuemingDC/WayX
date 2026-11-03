@@ -2,9 +2,65 @@
   "version": 1,
   "scriptCleanup": {
     "removed": [],
-    "retainedGenerated": 252,
+    "retainedGenerated": 256,
     "policy": "unreferenced-generated-only; active/transitive/manual/source dependencies retained"
   },
+  "headerRewrites": [
+    {
+      "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
+      "source": "^http:\\/\\/.+\\/amdc\\/mobileDispatch %E8%8F%9C%E9%B8%9F%E8%A3%B9%E8%A3%B9* url-and-header reject",
+      "status": "review",
+      "reason": "Potential rewrite overlap requires ordered dispatch"
+    },
+    {
+      "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
+      "source": "^http:\\/\\/.+\\/amdc\\/mobileDispatch %E9%97%B2%E9%B1%BC* url-and-header reject",
+      "status": "review",
+      "reason": "Potential rewrite overlap requires ordered dispatch"
+    },
+    {
+      "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
+      "source": "^https:\\/\\/gw\\.xiaocantech\\.com\\/rpc BatchMatchPlacement|WaitClaimedPoints|GetBannerList url-and-header reject-dict",
+      "status": "review",
+      "reason": "Potential rewrite overlap requires ordered dispatch"
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu_amap.sgmodule",
+      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch AMapiPhone* url-and-header reject",
+      "status": "converted"
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu_goofish.sgmodule",
+      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E9%97%B2%E9%B1%BC* url-and-header reject",
+      "status": "converted"
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu_lecheng.sgmodule",
+      "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 LCIphoneAdhocIP* url-and-header reject-dict",
+      "status": "converted"
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu_leisu.sgmodule",
+      "source": "^https:\\/\\/s3plus\\.meituan\\.net\\/ leisu* url-and-header reject-dict",
+      "status": "converted"
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu_leisu.sgmodule",
+      "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 leisu* url-and-header reject-dict",
+      "status": "converted"
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu_taobao.sgmodule",
+      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E6%B7%98%E5%AE%9D* url-and-header reject",
+      "status": "review",
+      "reason": "Potential rewrite overlap requires ordered dispatch"
+    },
+    {
+      "artifact": "Adblock/Surge/zenmofeishi_txsports-ad-clean.sgmodule",
+      "source": "^https:\\/\\/config\\.ab\\.qq\\.com\\/tab\\/GetTabRemoteConfig(?:\\?.*)?$ (?i)\\r\\nUser-Agent:\\s*QQSportsV3\\/ url-and-header script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-f685b508c8f0/txsports-ad-clean.js",
+      "status": "converted"
+    }
+  ],
   "pluginSources": 362,
   "scriptUrls": 246,
   "backedUpScripts": 241,

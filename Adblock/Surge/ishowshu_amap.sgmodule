@@ -19,8 +19,6 @@
 # Upstream author = 树先生
 # Upstream date = 2026-09-16
 # 阿里平台广告
-# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
-# Source declaration: ^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch AMapiPhone* url-and-header reject
 # 开屏广告
 # 打车页面底部推广
 # 首页底部ai、探索ai分析
@@ -83,6 +81,7 @@ http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/dsp\/profile\/index\/node
 http-response-jq ^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/main-page-aiqs '.data.mapBizList |= map(select(IN(.dataKey; "UserAssetsVirtualCard", "FootPrintNewCityDialog", "PoiRecommendVirtualCard", "PersonalRecommendVirtualCard") | not))'
 
 [Script]
+wayx_qx_header_6f7a803c41 = type=http-request,pattern=^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Generated/header_f63f20f159.js,requires-body=false,full-header-mode=true
 ishowshu_amap_1 = type=http-response,pattern=^https:\/\/m5-zb\.amap\.com\/ws\/boss\/car\/order\/content_info,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-a8cb10290904/amap-new.js,requires-body=true
 ishowshu_amap_2 = type=http-response,pattern=^https:\/\/info\.amap\.com\/ws\/shield\/search\/poi\/detail,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-a8cb10290904/amap-new.js,requires-body=true
 ishowshu_amap_3 = type=http-response,pattern=^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/search\/sp,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-a8cb10290904/amap-new.js,requires-body=true

@@ -26,11 +26,12 @@ DOMAIN-SUFFIX,1rtb.com,REJECT
 DOMAIN-SUFFIX,adx.adwangmai.com,REJECT
 DOMAIN,dsp-x.jd.com,REJECT
 DOMAIN,dspvideo.umeng.com,REJECT
-# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
-# Source declaration: ^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1 LCIphoneAdhocIP* url-and-header reject-dict
 
 [Map Local]
 ^https:\/\/dl-(?:ct|cm)-hz\.imou\.com(:443)?\/lechange\/saas\/advertisement\/ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [MITM]
 hostname = %APPEND% img1.360buyimg.com, dl-ct-hz.imou.com, dl-cm-hz.imou.com
+
+[Script]
+wayx_qx_header_8c56e891da = type=http-request,pattern=^https:\/\/img1\.360buyimg\.com\/pop\/jfs\/t1,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Generated/header_6908536a59.js,requires-body=false,full-header-mode=true

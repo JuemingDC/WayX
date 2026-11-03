@@ -20,8 +20,6 @@
 # 分流添加广告下发
 USER-AGENT,%E9%97%B2%E9%B1%BC*,REJECT
 # 拦截广告下发
-# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
-# Source declaration: ^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch %E9%97%B2%E9%B1%BC* url-and-header reject
 # 搜索页多余推荐列表
 # 这些宝贝超好卖
 # 用闲鱼币买更便宜
@@ -97,6 +95,7 @@ http-response-jq ^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.trade\
 http-response-jq ^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.trade\.order\.render\/ 'del(.data.bottomBarVO.benefitPointAtmosphere) | .data.components |= map(select(.render != "meanTimeBuyVO"))'
 
 [Script]
+wayx_qx_header_7607493393 = type=http-request,pattern=^http:\/\/amdc\.m\.taobao\.com\/amdc\/mobileDispatch,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Generated/header_6a9cd0f5d1.js,requires-body=false,full-header-mode=true
 ishowshu_goofish_1 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.home\.nextfresh\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-c52952a8148b/goofish.js,requires-body=true
 ishowshu_goofish_2 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.local\.home\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-c52952a8148b/goofish.js,requires-body=true
 ishowshu_goofish_3 = type=http-response,pattern=^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.idle\.user\.page\.my\.adapter\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-c52952a8148b/goofish.js,requires-body=true
