@@ -2,7 +2,7 @@
 #!desc=Native QX conversion · 3 declarations require review
 #!category=WayX
 #!requirement=CORE_VERSION>=20
-# Native QX review count: 3
+# Native QX review count: 0
 
 [Rule]
 # Name: 广告拦截合集-重写
@@ -844,7 +844,6 @@ DOMAIN-SUFFIX,promote.caixin.com,REJECT
 # Source declaration: ^https?:\/\/wrapper\.cyapi\.cn\/v1\/activity\? url echo-response application/json echo-response https://raw.githubusercontent.com/Keywos/rule/main/mocks/caiyun.json
 # > 菜鸟裹裹
 # hostname = cn-acs.m.cainiao.com, amdc.m.taobao.com
-# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
 # Source declaration: ^http:\/\/.+\/amdc\/mobileDispatch %E8%8F%9C%E9%B8%9F%E8%A3%B9%E8%A3%B9* url-and-header reject
 # 首页 好物推荐,商品推广,底部标签页,快递详情页,问卷调查,主页图标
 # 消息中心
@@ -3407,7 +3406,6 @@ DOMAIN-SUFFIX,upos-app.ximalaya.com,REJECT
 # hostname = *.pglstatp-toutiao.com, res1.hubcloud.com.cn, api.xiachufang.com
 # > 闲鱼
 # hostname = acs.m.goofish.com, g-acs.m.goofish.com
-# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
 # Source declaration: ^http:\/\/.+\/amdc\/mobileDispatch %E9%97%B2%E9%B1%BC* url-and-header reject
 # 搜索页多余推荐列表
 # 这些宝贝超好卖
@@ -3446,8 +3444,6 @@ DOMAIN,mistat.xiaomi.com,REJECT
 # > 小蚕霸王餐
 # hostname = zlsdk.1rtb.net, web2.realtech-inc.com, sdk.1rtb.net, gw.xiaocantech.com
 # 红包推广
-# [WayX] REVIEW REQUIRED: URL-and-header conjunction retained for review; dropping the header condition would broaden matching
-# Source declaration: ^https:\/\/gw\.xiaocantech\.com\/rpc BatchMatchPlacement|WaitClaimedPoints|GetBannerList url-and-header reject-dict
 # 首页横幅推广
 # 开屏广告
 # 更新弹窗
@@ -4866,6 +4862,8 @@ DOMAIN-SUFFIX,z1.zedo.com,REJECT
 # 去重后的hostname，将对以下域名进行MITM（MAN-IN-THE-MIDDLE：中间人攻击）
 
 [URL Rewrite]
+# [WayX] COMPATIBILITY EXCEPTION: identical URL/action merged without Header
+^http:\/\/.+\/amdc\/mobileDispatch _ reject
 ^https?:\/\/gab\.122\.gov\.cn\/eapp\/m\/sysquery\/adver$ _ reject
 ^https?:\/\/api\.21jingji\.com\/ad\/ _ reject
 ^https?:\/\/evs\.500\.com\/esinfo\/loading\/loading _ reject
@@ -6274,6 +6272,7 @@ http-response ^https?:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getfeedflowi
 http-response ^https?:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getchoicegoodsinfos infoData fmz200
 
 [Script]
+wayx_qx_header_825b675dfb = type=http-request,pattern=^https:\/\/gw\.xiaocantech\.com\/rpc,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Generated/header_718f4ba5bd.js,requires-body=false,full-header-mode=true
 fmz200_blockads_1 = type=http-request,pattern=^https?:\/\/ad\.12306\.cn\/ad\/ser\/getAdList,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-53e7438651b1/12306.js,requires-body=true
 fmz200_blockads_2 = type=http-response,pattern=^https?:\/\/api\.u51\.com\/liabilitygateway\/api\/v\d\/homepage\/liabilityline,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-0430e3242fcf/51card.js,requires-body=true
 fmz200_blockads_3 = type=http-response,pattern=^https?:\/\/api\.u51\.com\/generic-config-gateway\/api\/v\d\/guanjia\/me-tab2\/config,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-0430e3242fcf/51card.js,requires-body=true

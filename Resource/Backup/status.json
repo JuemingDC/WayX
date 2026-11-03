@@ -2,60 +2,26 @@
   "version": 1,
   "scriptCleanup": {
     "removed": [],
-    "retainedGenerated": 257,
+    "retainedGenerated": 258,
     "policy": "unreferenced-generated-only; active/transitive/manual/source dependencies retained"
   },
   "headerRewrites": [
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
       "source": "^http:\\/\\/.+\\/amdc\\/mobileDispatch %E8%8F%9C%E9%B8%9F%E8%A3%B9%E8%A3%B9* url-and-header reject",
-      "status": "review",
-      "reason": "Potential rewrite overlap requires ordered dispatch",
-      "overlapCount": 1342,
-      "overlapExamples": [
-        "^https?:\\/\\/gab\\.122\\.gov\\.cn\\/eapp\\/m\\/sysquery\\/adver$ url reject",
-        "^https?:\\/\\/ad\\.12306\\.cn\\/ad\\/ser\\/getAdList url script-analyze-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-53e7438651b1/12306.js",
-        "^https?:\\/\\/api\\.21jingji\\.com\\/ad\\/ url reject",
-        "^http?:\\/\\/tianqi\\.2345\\.com\\/api\\/content\\/getContentFeeds\\.php url reject-dict",
-        "^https?:\\/\\/ad\\.life\\.360\\.cn\\/v2\\/app\\/advertisement\\/config\\?sdk_ver= url reject-dict",
-        "^https?:\\/\\/evs\\.500\\.com\\/esinfo\\/loading\\/loading url reject",
-        "^https?:\\/\\/api\\.u51\\.com\\/(generic-config-gateway|rs-resys)\\/api\\/v\\d\\/(creditpage-config|recommend) url reject-200",
-        "^https?:\\/\\/api\\.u51\\.com\\/liabilitygateway\\/api\\/v\\d\\/homepage\\/liabilityline url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-0430e3242fcf/51card.js"
-      ]
+      "status": "converted",
+      "mode": "authorized-url-only-merge"
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
       "source": "^http:\\/\\/.+\\/amdc\\/mobileDispatch %E9%97%B2%E9%B1%BC* url-and-header reject",
-      "status": "review",
-      "reason": "Potential rewrite overlap requires ordered dispatch",
-      "overlapCount": 1342,
-      "overlapExamples": [
-        "^https?:\\/\\/gab\\.122\\.gov\\.cn\\/eapp\\/m\\/sysquery\\/adver$ url reject",
-        "^https?:\\/\\/ad\\.12306\\.cn\\/ad\\/ser\\/getAdList url script-analyze-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-53e7438651b1/12306.js",
-        "^https?:\\/\\/api\\.21jingji\\.com\\/ad\\/ url reject",
-        "^http?:\\/\\/tianqi\\.2345\\.com\\/api\\/content\\/getContentFeeds\\.php url reject-dict",
-        "^https?:\\/\\/ad\\.life\\.360\\.cn\\/v2\\/app\\/advertisement\\/config\\?sdk_ver= url reject-dict",
-        "^https?:\\/\\/evs\\.500\\.com\\/esinfo\\/loading\\/loading url reject",
-        "^https?:\\/\\/api\\.u51\\.com\\/(generic-config-gateway|rs-resys)\\/api\\/v\\d\\/(creditpage-config|recommend) url reject-200",
-        "^https?:\\/\\/api\\.u51\\.com\\/liabilitygateway\\/api\\/v\\d\\/homepage\\/liabilityline url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-0430e3242fcf/51card.js"
-      ]
+      "status": "converted",
+      "mode": "authorized-url-only-merge"
     },
     {
       "artifact": "Adblock/Surge/fmz200_blockads.sgmodule",
       "source": "^https:\\/\\/gw\\.xiaocantech\\.com\\/rpc BatchMatchPlacement|WaitClaimedPoints|GetBannerList url-and-header reject-dict",
-      "status": "review",
-      "reason": "Potential rewrite overlap requires ordered dispatch",
-      "overlapCount": 154,
-      "overlapExamples": [
-        "^https?:\\/\\/[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+){1,3}(:\\d+)?\\/api\\/v\\d\\/advert url reject",
-        "^https?:\\/\\/[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+){1,3}(:\\d+)?\\/api\\/v\\d\\/movie\\/index_recommend url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-f8526d9282f8/555Ad.js",
-        "^https?:\\/\\/.+?\\.58cdn\\.com\\.cn\\/brandads\\/ url reject-200",
-        "^https?:\\/\\/[\\d\\.]+\\/3f1\\/cards\\.iqiyi\\.com\\/(views_home\\/3\\.0\\/qy_home|waterfall\\/3\\.0\\/feed)\\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-47c242029d83/cnftp.js",
-        "^https?:\\/\\/(kjp|t7z)\\.cupid\\.iqiyi\\.com\\/mixer\\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-47c242029d83/cnftp.js",
-        "^https?:\\/\\/[\\s\\S]*\\.baidu\\.com/.*?ad[xs]\\.php url reject-img",
-        "^http(s:\\/\\/tiebac|:\\/\\/c\\.tieba)\\.baidu\\.com\\/(c\\/(s\\/sync|f\\/(ad\\/getSplashAd|frs\\/(page|threadlist|generalTabList)|pb\\/(pic)?page|excellent\\/personalized))$|tiebaads\\/commonbatch\\?) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-9d456958a066/tieba-json.js",
-        "^http(s:\\/\\/tiebac|:\\/\\/c\\.tieba)\\.baidu\\.com\\/c\\/(b\\/ad\\/adBid|f\\/(frs\\/(page|threadlist|generalTabList)|ad\\/getFeedAd|pb\\/page|excellent\\/personalized))\\?cmd url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-f38021eb462f/tieba-proto.js"
-      ]
+      "status": "converted"
     },
     {
       "artifact": "Adblock/Surge/ishowshu_amap.sgmodule",

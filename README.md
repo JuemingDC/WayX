@@ -510,7 +510,7 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[广告拦截合集-重写](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/fmz200_blockads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Ffmz200_blockads.snippet%2C%20tag%3D%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%90%88%E9%9B%86-%E9%87%8D%E5%86%99%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Ffmz200_blockads.sgmodule) · 3 条待核对 |
+| **[广告拦截合集-重写](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/fmz200_blockads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Ffmz200_blockads.snippet%2C%20tag%3D%E5%B9%BF%E5%91%8A%E6%8B%A6%E6%88%AA%E5%90%88%E9%9B%86-%E9%87%8D%E5%86%99%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Ffmz200_blockads.sgmodule) |
 
 #### M
 
