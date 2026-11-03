@@ -98,6 +98,74 @@ function tryOrderedRejectGroup(first: any, rows: any[], text: string, rawBase: s
   };
 }
 
+
+/** Authorized URL-only fallback for identical QX URL/action with distinct headers. */
+function tryMergeIdenticalUrlActions(row: any, rows: any[], text: string): any {
+  if (!row.header || !orderedRejectActions.has(row.action)) return null;
+  const members = rows.filter((item) => item.url === row.url);
+  if (
+    members.length < 2 ||
+    members.some((item) => !item.header || item.action !== row.action) ||
+    new Set(members.map((item) => item.header)).size < 2
+  ) return null;
+  const url = normalizeUrlRegexForTarget(row.url);
+  const body = row.action === "reject-dict" ? "{}" :
+    row.action === "reject-array" ? "[]" : "";
+  const section = row.action === "reject" ? "URL Rewrite" : "Map Local";
+  const native = row.action === "reject" ? url + " _ reject" :
+    url + " data-type=text data=" + JSON.stringify(body) +
+    " status-code=200" +
+    (body ? ' header="Content-Type:application/json"' : "");
+  const lines = text.split("\n");
+  const remove: number[] = [];
+  const seen = new Set<number>();
+  for (const member of members) {
+    const source = "# Source declaration: " + url +
+      " " + member.header + " url-and-header " + member.action;
+    const at = lines.findIndex((line, index) => !seen.has(index) && line === source);
+    if (at < 1) return null;
+    seen.add(at);
+    if (lines[at - 1].includes("URL-and-header conjunction retained for review"))
+      remove.push(at - 1);
+  }
+  if (!remove.length && lines.includes(native))
+    return { members, already: true };
+  if (remove.length !== members.length) return null;
+  for (const index of remove.sort((a, b) => b - a)) lines.splice(index, 1);
+  if (!lines.includes(native)) {
+    let sectionAt = lines.indexOf("[" + section + "]");
+    if (sectionAt < 0) {
+      lines.push("", "[" + section + "]");
+      sectionAt = lines.length - 1;
+    }
+    lines.splice(
+      sectionAt + 1, 0,
+      "# [WayX] COMPATIBILITY EXCEPTION: identical URL/action merged without Header",
+      native,
+    );
+  }
+  return { members, text: lines.join("\n") };
+}
+
+// A fixed host narrows the safe script trigger. Other known matches on that
+// same host must retain the existing ordered-dispatch review boundary.
+function literalRequestHost(pattern: string): string | null {
+  const normalized = normalizeUrlRegexForTarget(pattern)
+    .replace(/\\\//g, "/")
+    .replace(/\\\./g, ".");
+  return /^\^https?:\/\/([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+)\//.exec(normalized)?.[1]?.toLowerCase() ?? null;
+}
+function standaloneGuardedReject(row: any, rows: any[], overlaps: any[]): boolean {
+  const host = literalRequestHost(row.url);
+  return Boolean(
+    host &&
+    row.header &&
+    orderedRejectActions.has(row.action) &&
+    rows.every((item) => item === row || item.url !== row.url) &&
+    overlaps.every((item) => literalRequestHost(item.url) !== host)
+  );
+}
+
 export function prepareQxHeaderRewrites({
   artifacts,
   changes,
@@ -131,6 +199,22 @@ export function prepareQxHeaderRewrites({
     const processed = new Set<any>();
     for (const row of rows.filter((r: any) => r.header)) {
       if (processed.has(row)) continue;
+      const merged = tryMergeIdenticalUrlActions(row, rows, text);
+      if (merged) {
+        for (const member of merged.members) processed.add(member);
+        if (!merged.already) {
+          text = merged.text;
+          for (const member of merged.members) {
+            report.push({
+              artifact: target.relative,
+              source: member.line,
+              status: "converted",
+              mode: "authorized-url-only-merge",
+            });
+          }
+        }
+        continue;
+      }
       const predicate = parseQxHeaderPredicate(row.header);
       let reason = !predicate
         ? "Unsupported whole-header serialization predicate"
@@ -155,7 +239,8 @@ export function prepareQxHeaderRewrites({
           }
           continue;
         }
-        reason = "Potential rewrite overlap requires ordered dispatch";
+        if (!standaloneGuardedReject(row, rows, overlaps))
+          reason = "Potential rewrite overlap requires ordered dispatch";
       }
       const script = row.action.match(
         /^script-response-(body|header)\s+(\S+)$/,
