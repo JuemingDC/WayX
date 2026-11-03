@@ -36,6 +36,10 @@ function tryOrderedRejectGroup(first: any, rows: any[], text: string, rawBase: s
     return null;
   try { for (const plan of plans) new RegExp(plan.url); } catch { return null; }
 
+  const hash = crypto.createHash("sha256")
+    .update(members.map((row) => row.line).join("\n")).digest("hex").slice(0, 10);
+  if (text.includes("wayx_qx_header_" + hash + " = type=http-request,"))
+    return { members, already: true };
   const lines = text.split("\n"), used = new Set<number>(), removed: number[] = [];
   for (const row of members) {
     let at = -1;
@@ -68,8 +72,6 @@ function tryOrderedRejectGroup(first: any, rows: any[], text: string, rawBase: s
     removed.push(at);
   }
   for (const at of removed.sort((a, b) => b - a)) lines.splice(at, 1);
-  const hash = crypto.createHash("sha256")
-    .update(members.map((row) => row.line).join("\n")).digest("hex").slice(0, 10);
   const file = "Script/Generated/header_" + hash + ".js";
   const pattern = "(?:" + plans.map((p) => "(?:" + p.url + ")").join("|") + ")";
   const code = [
@@ -140,6 +142,10 @@ export function prepareQxHeaderRewrites({
       if (!reason && overlaps.length > 0) {
         const ordered = tryOrderedRejectGroup(row, rows, text, rawBase);
         if (ordered) {
+          if (ordered.already) {
+            for (const member of ordered.members) if (member.header) processed.add(member);
+            continue;
+          }
           text = ordered.text;
           changes.set(ordered.file, ordered.code);
           declarations.push(ordered.declaration);
