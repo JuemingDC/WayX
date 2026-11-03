@@ -1,3 +1,4 @@
+import { prepareQxHeaderRewrites } from "./qx-header.ts";
 import { compactGeneratedPluginComments } from "../domain/output-comments.ts";
 import { pruneGeneratedScripts } from "./generated-scripts.ts";
 import { prepareScriptApiAdapters } from "./script-api.ts";
@@ -334,6 +335,13 @@ export async function refreshSourceBackups(
     changes,
     rawBase,
   });
+  // Modified: 2026-11-03 (chance). Bind header predicates only after exact source backups and common API programs exist.
+  const headerRewrites = prepareQxHeaderRewrites({
+    artifacts,
+    changes,
+    index,
+    rawBase,
+  });
   const scriptCleanup = await pruneGeneratedScripts(root, {
     index,
     changes,
@@ -345,6 +353,7 @@ export async function refreshSourceBackups(
   const report = {
     version: 1,
     scriptCleanup,
+    headerRewrites,
     pluginSources: sources.length,
     scriptUrls: usedScripts.size,
     backedUpScripts: [...usedScripts].filter((u) => index.latest[u]).length,

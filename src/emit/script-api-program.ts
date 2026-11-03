@@ -1,3 +1,8 @@
+import {
+  headerPredicateRuntime,
+  headerArgumentPrefix,
+} from "../domain/qx-header.ts";
+// Modified: 2026-11-03 (chance). Evaluate declaration header guards before author execution; native QX remains unchanged.
 // Modified: 2026-11-02 (chance). Compose one untouched author body with an API
 // scope. Lexical declarations and Env objects remain ordinary JavaScript.
 import ts from "typescript";
@@ -45,6 +50,7 @@ const ${target}=${fixedTarget ? JSON.stringify(fixedTarget) : "typeof $loon==='s
 const ${host}={global:globalThis,request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,task:typeof $task==='undefined'?undefined:$task,http:typeof $httpClient==='undefined'?undefined:$httpClient,prefs:typeof $prefs==='undefined'?undefined:$prefs,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,notifyQx:typeof $notify==='undefined'?undefined:$notify,notify:typeof $notification==='undefined'?undefined:$notification,script:typeof $script==='undefined'?undefined:$script,argument:typeof $argument==='undefined'?undefined:$argument,environment:typeof $environment==='undefined'?undefined:$environment,loon:typeof $loon==='undefined'?undefined:$loon,setTimeout:typeof setTimeout==='undefined'?undefined:setTimeout,codecs:(${scriptCodecs})((${encodingProvider}),{TextDecoder:typeof TextDecoder==='undefined'?undefined:TextDecoder}),utils:typeof $utils==='undefined'?undefined:$utils,crypto:typeof $crypto==='undefined'?undefined:$crypto,compression:${loonSource ? "(" + pakoRuntime + ")" : "undefined"},aes:${loonSource ? "(" + aesProvider + ")" : "undefined"},url:(${urlProvider})};
 const ${table}=${JSON.stringify(contexts)},${config}=${table}[${host}.response===undefined?'request':'response']?.[${target}];
 if(!${config})throw new Error('Unregistered HTTP source/target declaration');
+if(${target}==='surge'&&${config}.from==='qx'&&typeof ${host}.argument==='string'&&${host}.argument.startsWith(${JSON.stringify(headerArgumentPrefix)})){const p=JSON.parse(decodeURIComponent(${host}.argument.slice(${headerArgumentPrefix.length})));if(!(${headerPredicateRuntime})(p,${host}.request))return ${host}.done({});${host}.argument=undefined;}
 return (${scriptApiRuntime})(${config},${host},function(${scope}){with(${scope}){return (function(){\n${source}\n}).call(this);}});
 })();\n`;
 }

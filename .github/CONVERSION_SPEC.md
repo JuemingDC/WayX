@@ -433,3 +433,11 @@ Modified: 2026-11-02 (chance). 用户新授权覆盖此前 Surge 严格阻断策
 Modified: 2026-11-03 (chance). 当前实现只维护运行时 API 契约，不保留旧 author-composition 实验、静态证明参数或未使用的选项目录；历史设计查阅 Git。原始归档及仍被引用的旧适配文件保留完整性验证，只有现有 Actions 引用闭包清理确认无用后才删除。
 
 Modified: 2026-11-03 (chance). 生成正文精简：通用脚本不附带适配层开发备注；插件省略重复 Target 和常规参数转换说明，规划诊断仍保留。保留原作者注释、许可、转换日期、chance、分类、出处、必要分段和异常提示。已有暂停产物仅使用归档源执行注释精简，不恢复获取。
+
+### 2.25 Native QX url-and-header
+
+Modified: 2026-11-03 (chance). 按上传官方 sample，先匹配 URL，再匹配方法、路径及请求头组成的文本。第一阶段实现限定为不跨分隔符的非空 token 正则（保留量词/大小写，不转换为通配符）、方法前缀/边界、显式忽略大小写的字段前缀。未知序列化布局、潜在 URL 重叠、未支持的动作继续 REVIEW；不能把未命中当作后续规则已执行。URL 正则保持 Surge 原生 ICU 引擎，不在 JS 重编译。
+
+支持 reject（按官方 sample 返回空 404，沿用既有授权省略动态延时）、reject-dict/array/200 和有当前共享 QX API 适配器的 response-header/body。拒绝脚本无请求体读取，开启 full-header-mode 保留重复字段。响应脚本用保留命名空间 argument 在公共适配器外层判断，未命中完成且不执行作者代码；QX 原产物和作者源码不变。完整候选结果写入备份状态报告的 headerRewrites。
+
+官方依据：https://manual.nssurge.com/scripting/http-request.html 、https://manual.nssurge.com/scripting/http-response.html 、https://manual.nssurge.com/http/overview.html 。
