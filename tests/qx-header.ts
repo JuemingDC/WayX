@@ -50,7 +50,32 @@ for(const action of ['reject','reject-dict','reject-array','reject-200']) {
  const again=prepareQxHeaderRewrites({...p,index:{},rawBase});assert.equal(again.length,0);
 }
 const overlap=plan(['^https://example\\.test/ad leisu* url-and-header reject','^https://example\\.test/ url reject-dict']);
-assert.equal(overlap.report[0].status,'review');assert.match(overlap.output,/REVIEW REQUIRED/);
+assert.equal(overlap.report[0].status,'converted');
+assert.doesNotMatch(overlap.output,/REVIEW REQUIRED/);
+assert.match(overlap.output,/^# Native QX review count: 0$/m);
+assert.doesNotMatch(overlap.output,/^\^https:\/\/example\\.test\/ _ reject$/m);
+const overlapCode=[...overlap.changes].find(([key])=>key.endsWith('.js'))![1];
+for(const [url,ua,status] of [
+ ['https://example.test/ad','leisu',404],
+ ['https://example.test/ad','other',200],
+ ['https://example.test/other','leisu',200],
+] as const) {
+ const done:any[]=[];
+ vm.runInNewContext(overlapCode,{$request:{method:'GET',url,headers:{'User-Agent':ua}},$done:(x:any)=>done.push(x)});
+ assert.equal(done.length,1);
+ assert.equal(done[0].response.status,status);
+}
+assert.equal(prepareQxHeaderRewrites({...overlap,index:{},rawBase}).length,0);
+const priority=plan(['^https://example\\.test/ url reject-dict','^https://example\\.test/ad leisu* url-and-header reject']);
+assert.equal(priority.report[0].status,'converted');
+const priorityCode=[...priority.changes].find(([key])=>key.endsWith('.js'))![1];
+const first:any[]=[];
+vm.runInNewContext(priorityCode,{$request:{method:'GET',url:'https://example.test/ad',headers:{'User-Agent':'leisu'}},$done:(x:any)=>first.push(x)});
+assert.equal(first[0].response.status,200);
+assert.equal(first[0].response.body,'{}');
+const incompatible=plan(['^https://example\\.test/ad leisu* url-and-header reject','^https://example\\.test/ url script-response-body https://author.test/remote.js']);
+assert.equal(incompatible.report[0].status,'review');
+assert.match(incompatible.output,/REVIEW REQUIRED/);
 const body='// author remains intact\n$done({body:"changed"});';
 const program=planUniversalAdblockScript(body,'qx',[{phase:'response',responseBody:true}]);
 assert.equal(program.status,'universal');assert.ok(program.code!.includes(body));
