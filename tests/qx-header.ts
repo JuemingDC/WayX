@@ -112,6 +112,7 @@ assert.ok(new RegExp(nativeRejectLines[0].slice(0,-' _ reject'.length)).test('ht
 assert.match(nativeMerge.output,/COMPATIBILITY EXCEPTION/);
 assert.doesNotMatch(nativeMerge.output,/REVIEW REQUIRED/);
 assert.match(nativeMerge.output,/^# Native QX review count: 0$/m);
+assert.doesNotMatch(nativeMerge.output,/^#!desc=Native QX conversion · [1-9]\d* declarations require review$/m);
 assert.ok(nativeMerge.output.includes('# Source declaration: '+sameUrl+' %E9%97%B2%E9%B1%BC* url-and-header reject'));
 assert.equal([...nativeMerge.changes.keys()].filter(x=>x.endsWith('.js')).length,0);
 assert.equal(prepareQxHeaderRewrites({...nativeMerge,index:{},rawBase}).length,0);
