@@ -45,7 +45,7 @@ Modified: 2026-11-02 (chance). QX 未说明参数按用户要求省略且不报�
 Surge 输出的目的 IP 类规则（IP-CIDR、IP-CIDR6、GEOIP、IP-ASN，包括复合条件中的 IP 子项）统一补一个 `no-resolve`，已有参数不重复；Loon 转模块、原生 QX 转模块、分流规则集与独立含策略片段使用相同策略。保留地址、策略、其它参数及规则顺序，不向域名规则添加此参数，QX 原生输出不变。这是用户明确授权的解析行为差异：未解析的域名请求跳过 IP 条件，不由 IP 规则主动触发 DNS；不能宣称它与未加参数的源行为完全相同。依据 https://manual.nssurge.com/rules/ip.html 。
 
 <!-- Modified: 2026-10-25 (chance). Record the explicit original-URL Script lowering exception, including both echo modes. -->
-用户明确授权原生 QX Script 声明直接转换为 Surge 通用 HTTP Script，保留作者脚本原始字节；根据本次后续授权对独立适配副本执行 AST API 分析与受限转换；根据 2026-11-01 授权，发布前将脚本资源操作数绑定到已校验的 WayX 备份地址。`script-echo-response` → `type=http-request,requires-body=false`；`script-analyze-echo-response` → `type=http-request,requires-body=true`（QX 官方示例明确后者等待请求体）。普通 request/response 的 header/body 脚本分别保留阶段并设置 requires-body=false/true。声明映射和内部 API 映射分别验证；只有 API 规划通过的已支持子域才引用适配文件，不能以声明通过推断原脚本已经等价。Surge http-request 支持脚本直接返回 response；原作者程序是否使用该格式由源码分析与原触发类型确定；适配遵守 2.23 的严格边界。`url-and-header` 仍注释并保留完整源声明和诊断，不删除 header 条件，也不生成无法保留完整整头语义的脚本。
+用户明确授权原生 QX Script 声明直接转换为 Surge 通用 HTTP Script，保留作者脚本原始字节；根据本次后续授权对独立适配副本执行 AST API 分析与受限转换；根据 2026-11-01 授权，发布前将脚本资源操作数绑定到已校验的 WayX 备份地址。`script-echo-response` → `type=http-request,requires-body=false`；`script-analyze-echo-response` → `type=http-request,requires-body=true`（QX 官方示例明确后者等待请求体）。普通 request/response 的 header/body 脚本分别保留阶段并设置 requires-body=false/true。声明映射和内部 API 映射分别验证；只有 API 规划通过的已支持子域才引用适配文件，不能以声明通过推断原脚本已经等价。Surge http-request 支持脚本直接返回 response；原作者程序是否使用该格式由源码分析与原触发类型确定；适配遵守 2.23 的严格边界。未进入 2.26 明确授权例外的 `url-and-header` 仍注释并保留完整源声明和诊断，不静默删除 Header 条件，也不生成无法保留完整整头语义的脚本。
 
 ## 2.3 单条组合与声明顺序
 
@@ -436,10 +436,20 @@ Modified: 2026-11-03 (chance). 生成正文精简：通用脚本不附带适配�
 
 ### 2.25 Native QX url-and-header
 
-Modified: 2026-11-03 (chance). 按上传官方 sample，先匹配 URL，再匹配方法、路径及请求头组成的文本。第一阶段实现限定为不跨分隔符的非空 token 正则（保留量词/大小写，不转换为通配符）、方法前缀/边界、显式忽略大小写的字段前缀。未知序列化布局、潜在 URL 重叠、未支持的动作继续 REVIEW；不能把未命中当作后续规则已执行。URL 正则保持 Surge 原生 ICU 引擎，不在 JS 重编译。
+Modified: 2026-11-03 (chance). 按上传官方 sample，先匹配 URL，再匹配方法、路径及请求头组成的文本。第一阶段实现限定为不跨分隔符的非空 token 正则（保留量词/大小写，不转换为通配符）、方法前缀/边界、显式忽略大小写的字段前缀。除 2.26 的明确例外外，未知序列化布局、不能安全协调的 URL 重叠、未支持的动作继续 REVIEW；不能把未命中当作后续规则已执行。URL 正则保持 Surge 原生 ICU 引擎，不在 JS 重编译。
 
 支持 reject（按官方 sample 返回空 404，沿用既有授权省略动态延时）、reject-dict/array/200 和有当前共享 QX API 适配器的 response-header/body。拒绝脚本无请求体读取，开启 full-header-mode 保留重复字段。响应脚本用保留命名空间 argument 在公共适配器外层判断，未命中完成且不执行作者代码；QX 原产物和作者源码不变。完整候选结果写入备份状态报告的 headerRewrites。
 
 官方依据：https://manual.nssurge.com/scripting/http-request.html 、https://manual.nssurge.com/scripting/http-response.html 、https://manual.nssurge.com/http/overview.html 。
 
 Modified: 2026-11-03 (chance). URL 前缀分离将 `^https?` / `^http?` 展开为有限备选后逐对比较，保留顶层 alternation 与真实交集的阻断。报告记录潜在重叠数及前 8 条来源声明；`.+` 可以跨路径，不能将其自行缩窄为主机名通配。
+
+### 2.26 Native QX URL/Header 拒绝动作兼容策略（2026-11-03）
+
+Modified: 2026-11-03 (chance). Author: chance. Category: Adblock / Rewrite / QX→Surge。仅在现有 `src/application/qx-header.ts` 的原生 QX→Surge 备份/发布事务增加兼容分支，不改源 QX 语法、原作者注释、脚本原件、IR、解析层或 Action 结构。
+
+1. **完全相同 URL + 相同拒绝动作 + 不同 Header**：同一目标内，原始 URL 正则文本必须完全一致，全部同 URL 声明都有 Header，动作也完全相同，且至少存在两个不同 Header。对 `reject`、`reject-200`、`reject-dict`、`reject-array`，允许在 Surge 合并为唯一原生 `[URL Rewrite]` 或 `[Map Local]` 规则；**仅对生成的 Surge 删除 Header 条件**。源 QX 原文及原作者注释不改；完整的 `# Source declaration` 来源行继续保留，并用一条必要的兼容例外注释标识。在报告中标记 `mode=authorized-url-only-merge`。**此为用户明确授权的匹配范围扩大，不是严格等价转换**：任何匹配该 URL 的请求都可能触发动作，即使原本没有命中任何一个 Header。不能把动作类型不同或其他无条件规则混入同组，也不能把 `reject-dict` 降级为 `reject`。
+2. **URL 不同的单条联合拒绝规则**：优先保留 URL 与 Header 的双重条件，以原有 `[Script]` `type=http-request` 脚本处理 `reject`、`reject-200`、`reject-dict`、`reject-array`，`requires-body=false`、`full-header-mode=true`；严格区分 404/200 及空 JSON/数组等响应。已有有限同阶段顺序 dispatcher 保持优先。宽泛 URL 正则可能被保守的重叠检测命中时，仅当目标 URL 带固定字面主机、没有另一个完全相同 URL 的声明、没有已知同主机的潜在冲突项，才允许生成单独的 Header 守卫脚本。无法满足这些限制时沿用 REVIEW，不把 `$done({})` 当作允许后续 HTTP Script 执行。
+3. **优先级及风险边界**：Surge 先执行原生 Header/URL Rewrite 和 Map Local，再进入 Script，且同一阶段 HTTP Script 首条匹配占用脚本执行机会。第二种兼容分支无法证明与宽泛、跨主机正则或已有原生 Mock 的完整执行顺序等价；这类残余阴影风险要在规范中明确，不得宣称整份合集全量等价。原生 QX 和已转换的作者脚本保持原样，生成助手由现有引用闭包管理，重复同步不得复制脚本/原生规则。
+
+回归应覆盖合并后唯一原生规则、原来源 Header/注释保留、动作相同与不同的区分、不同 URL 的 Header 命中和未命中、真实宽泛前缀相交、显式同主机冲突继续 REVIEW、重复运行幂等及 Surge 输出校验。Surge 官方依据：https://manual.nssurge.com/http/url-rewrite.html 、https://manual.nssurge.com/http/map-local.html 、https://manual.nssurge.com/http/overview.html 、https://manual.nssurge.com/scripting/http-request.html 。
