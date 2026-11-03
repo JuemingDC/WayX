@@ -106,7 +106,9 @@ const nativeMerge = plan([
 ]);
 assert.deepEqual(nativeMerge.report.map((r:any)=>r.status),['converted','converted']);
 assert.ok(nativeMerge.report.every((r:any)=>r.mode==='authorized-url-only-merge'));
-assert.equal(nativeMerge.output.split('\n').filter(x=>x===sameUrl+' _ reject').length,1);
+const nativeRejectLines = nativeMerge.output.split('\n').filter(x=>x.endsWith(' _ reject') && x.includes('mobileDispatch'));
+assert.equal(nativeRejectLines.length,1);
+assert.ok(new RegExp(nativeRejectLines[0].slice(0,-' _ reject'.length)).test('http://example.test/amdc/mobileDispatch'));
 assert.match(nativeMerge.output,/COMPATIBILITY EXCEPTION/);
 assert.doesNotMatch(nativeMerge.output,/REVIEW REQUIRED/);
 assert.match(nativeMerge.output,/^# Native QX review count: 0$/m);
