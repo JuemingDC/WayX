@@ -244,7 +244,7 @@ sync 是产物与 README 的写入入口；canonical、README 对比及回归套
 
 ## 2.15 README 索引
 
-根 README 保持标题、导航、BoxJs/Module/Adblock/Rule 顺序及 Name/Quantumult X/Surge 三列。Adblock 按实际拉取来源分组，不按插件内 `Author` 或 Converted by 署名分组。已登记资源使用 Catalog 的 source；未登记资源从 QX、Surge 的 Source 注释依次取得原地址。kelee.one 及其子域归“可莉”，rucu6.pages.dev 归“RuCu6”，GitHub/raw.githubusercontent.com 地址归仓库 owner；其它有效来源使用域名，缺失或无效来源归“本地资源”。资源署名与原作者 URL 保留在资源文件中。
+根 README 保持标题、导航、BoxJs/Module/Adblock/Rule 顺序及 Name/Quantumult X/Surge 三列。Modified: 2026-11-03 (chance). 四个分类均在二级标题下使用默认收起的 GitHub `<details>/<summary>`（显示分类与实时条目数），保留二级标题锚点、原有分类顺序及各自表格；Adblock 来源分组在分类折叠内部继续使用独立嵌套 `<details>`。每个 `<summary>` 后与每个 `</details>` 前使用空行，确保 GitHub Markdown 标题及表格可正常渲染。Adblock 按实际拉取来源分组，不按插件内 `Author` 或 Converted by 署名分组。已登记资源使用 Catalog 的 source；未登记资源从 QX、Surge 的 Source 注释依次取得原地址。kelee.one 及其子域归“可莉”，rucu6.pages.dev 归“RuCu6”，GitHub/raw.githubusercontent.com 地址归仓库 owner；其它有效来源使用域名，缺失或无效来源归“本地资源”。资源署名与原作者 URL 保留在资源文件中。
 
 <!-- Modified: 2026-10-25 (chance). Preserve source grouping and order; alphabetize names inside each source and group rule links by policy. -->
 

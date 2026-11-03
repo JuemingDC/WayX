@@ -1141,6 +1141,15 @@ export async function buildReadmePlan(root: any = process.cwd()): Promise<any> {
             .join("\n\n"),
       );
     else sections.push(renderTable(category, rows));
+    // Modified: 2026-11-03 (chance). Fold category content and preserve nested source folds.
+    const heading: any = `## ${category}\n\n`;
+    const current: any = sections[sections.length - 1];
+    if (!current.startsWith(heading)) throw new Error(`README heading mismatch: ${category}`);
+    sections[sections.length - 1] =
+      heading +
+      `<details>\n<summary><strong>${category}</strong> · ${rows.length} 项</summary>\n\n` +
+      current.slice(heading.length) +
+      "\n\n</details>";
   }
   const readme: any = [
     '<div align="center">',

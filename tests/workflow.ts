@@ -310,8 +310,11 @@ assert.match(readme,/<strong>Bob<\/strong> · 1 项/);
 assert.match(readme,/<strong>RuCu6<\/strong> · 1 项/);
 assert.ok(readme.indexOf('<strong>可莉')<readme.indexOf('<strong>Bob'),'groups follow first catalog occurrence');
 assert.ok(readme.indexOf('**[Ads]')<readme.indexOf('<strong>Bob'),'each resource stays within its source group');
-assert.equal((readme.match(/^<details>$/gm)||[]).length,3);
-assert.equal((readme.match(/^<\/details>$/gm)||[]).length,3);
+for(const category of ['BoxJs','Module','Adblock','Rule']) {
+ assert.ok(readme.includes('## '+category+'\n\n<details>\n<summary><strong>'+category+'</strong> · '),'category must be collapsible without losing its heading anchor: '+category);
+}
+assert.equal((readme.match(/^<details>$/gm)||[]).length,7,'four category folds + three Adblock source folds');
+assert.equal((readme.match(/^<\/details>$/gm)||[]).length,7);
 assert.doesNotMatch(readme,/<details open|<input|<script/);
 assert.match(readme,/<\/summary>\n\n#### [A-Z][\s\S]*?\n\n\| Name \|/,'blank line keeps the collapsed Markdown table renderable');
 
