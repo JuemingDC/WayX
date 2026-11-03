@@ -342,15 +342,15 @@ export function prepareQxHeaderRewrites({
         "# Native QX review count: " +
           (text.match(/^# \[WayX\] REVIEW REQUIRED:/gm) ?? []).length,
       );
-      const pending = (text.match(/^# \\[WayX\\] REVIEW REQUIRED:/gm) ?? []).length;
+      const pending = (text.match(/^# \[WayX\] REVIEW REQUIRED:/gm) ?? []).length;
       if (pending === 0)
         text = text.replace(
-          /^(#!desc=Native QX conversion) · \\d+ declarations require review$/m,
+          /^(#!desc=Native QX conversion) · \d+ declarations require review$/m,
           "$1",
         );
       else
         text = text.replace(
-          /^(#!desc=Native QX conversion)(?: · \\d+ declarations require review)?$/m,
+          /^(#!desc=Native QX conversion)(?: · \d+ declarations require review)?$/m,
           "$1 · " + pending + " declarations require review",
         );
       changes.set(target.relative, text);
