@@ -138,6 +138,8 @@ export function prepareQxHeaderRewrites({
           "[Script]\n" + declarations.join("\n"),
         );
       else text += "\n[Script]\n" + declarations.join("\n") + "\n";
+      // Modified: 2026-11-03 (chance). Refresh the README-facing count after resolving declarations.
+      text = text.replace(/^# Native QX review count: \d+$/m, "# Native QX review count: " + (text.match(/^# \[WayX\] REVIEW REQUIRED:/gm) ?? []).length);
       changes.set(target.relative, text);
     }
   }

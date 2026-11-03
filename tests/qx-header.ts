@@ -33,7 +33,7 @@ function plan(lines:string[], extra:any={}) {
 }
 for(const action of ['reject','reject-dict','reject-array','reject-200']) {
  const p=plan(['^https://example\\.test/ad leisu* url-and-header '+action]);
- assert.equal(p.report[0].status,'converted');assert.doesNotMatch(p.output,/REVIEW REQUIRED/);
+ assert.equal(p.report[0].status,'converted');assert.doesNotMatch(p.output,/REVIEW REQUIRED/);assert.match(p.output,/^# Native QX review count: 0$/m);
  const code=[...p.changes].find(([k])=>k.endsWith('.js'))![1];
  for(const [url,ua,hit] of [['https://example.test/ad','leisu',true],['https://example.test/ad','other',false]]) {
   const results:any[]=[];vm.runInNewContext(code,{$request:{url,method:'GET',headers:{'User-Agent':ua}},$done:(x:any)=>results.push(x)});

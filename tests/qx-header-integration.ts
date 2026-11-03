@@ -15,7 +15,7 @@ try {
  const report=await refreshSourceBackups(root,{resources,log:()=>{}});
  assert.equal(report.headerRewrites.filter((r:any)=>r.status==='converted').length,2);
  const output=await fs.readFile(path.join(root,sgPath),'utf8');
- assert.doesNotMatch(output,/REVIEW REQUIRED/);assert.match(output,/wayx_qx_header_v1=/);assert.match(output,/Script\/Generated\/header_/);
+ assert.doesNotMatch(output,/REVIEW REQUIRED/);assert.match(output,/^# Native QX review count: 0$/m);assert.match(output,/wayx_qx_header_v1=/);assert.match(output,/Script\/Generated\/header_/);
  assert.deepEqual(await validateSourceBackups(root),[]);
  await refreshSourceBackups(root,{resources,log:()=>{}});
  assert.equal(await fs.readFile(path.join(root,sgPath),'utf8'),output);
