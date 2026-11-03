@@ -42,11 +42,11 @@ export function prepareQxHeaderRewrites({
       let reason = !predicate
         ? "Unsupported whole-header serialization predicate"
         : "";
+      const overlaps = rows.filter(
+        (r) => r !== row && !disjointUrls(row.url, r.url),
+      );
       // Do not let a new script's URL-only trigger shadow a later independent action.
-      if (
-        !reason &&
-        rows.some((r: any) => r !== row && !disjointUrls(row.url, r.url))
-      )
+      if (!reason && overlaps.length > 0)
         reason = "Potential rewrite overlap requires ordered dispatch";
       const script = row.action.match(
         /^script-response-(body|header)\s+(\S+)$/,
@@ -73,6 +73,8 @@ export function prepareQxHeaderRewrites({
           source: row.line,
           status: "review",
           reason,
+          overlapCount: overlaps.length,
+          overlapExamples: overlaps.slice(0, 8).map((r) => r.line),
         });
         continue;
       }
@@ -139,7 +141,11 @@ export function prepareQxHeaderRewrites({
         );
       else text += "\n[Script]\n" + declarations.join("\n") + "\n";
       // Modified: 2026-11-03 (chance). Refresh the README-facing count after resolving declarations.
-      text = text.replace(/^# Native QX review count: \d+$/m, "# Native QX review count: " + (text.match(/^# \[WayX\] REVIEW REQUIRED:/gm) ?? []).length);
+      text = text.replace(
+        /^# Native QX review count: \d+$/m,
+        "# Native QX review count: " +
+          (text.match(/^# \[WayX\] REVIEW REQUIRED:/gm) ?? []).length,
+      );
       changes.set(target.relative, text);
     }
   }

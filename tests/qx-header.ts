@@ -19,6 +19,12 @@ assert.equal(parse('(?m)^X:.*$'),null);
 assert.equal(disjointUrls('^https?://same/','^http://same/'),false);
 assert.equal(disjointUrls('^https://a/|https://b/','^https://c/'),false);
 assert.equal(disjointUrls('^https://a/','^https://b/'),true);
+// Modified: 2026-11-03 (chance). Optional schemes retain host/path separation and cannot hide real same-host overlap.
+assert.equal(disjointUrls('^https?://a/','^http://b/'),true);
+assert.equal(disjointUrls('^https?://a/','^https://a/'),false);
+assert.equal(disjointUrls('^http?://a/','^htt://a/'),false);
+assert.equal(disjointUrls('^https?://a/|^http://b/','^http://b/'),false);
+assert.equal(disjointUrls('^http://.+/amdc','^http://a/amdc'),false);
 assert.equal(disjointUrls('^https://a/(?:x|y)','^https://b/'),true);
 const rawBase='https://raw.githubusercontent.com/JuemingDC/WayX/main';
 function plan(lines:string[], extra:any={}) {
@@ -57,3 +63,11 @@ for(const [ua,expected] of [['QQSportsV3/1','changed'],['other',undefined]]) {
  assert.equal(results.length,1);assert.equal(results[0].body,expected);
 }
 console.log('QX header conjunctions: rejection status/bodies, native URL declarations, header fields/method/path, duplicate headers, shared author guard, disjointness and idempotence passed');
+
+// Modified: 2026-11-03 (chance). Real broad-pattern intersections must not be reclassified as safe merely because hostnames look different.
+for (const [left,right,url] of [
+ ['^http://.+/amdc/mobileDispatch','^http://59\\.82\\.113\\.10/amdc/mobileDispatch\\?appkey=213807&','http://59.82.113.10/amdc/mobileDispatch?appkey=213807&'],
+ ['^https://gw\\.xiaocantech\\.com/rpc','^https?://.+?\\.58cdn\\.com\\.cn/brandads/','https://gw.xiaocantech.com/rpc/.58cdn.com.cn/brandads/'],
+]) { assert.ok(new RegExp(left).test(url)); assert.ok(new RegExp(right).test(url)); assert.equal(disjointUrls(left,right),false); }
+const optionalScheme=plan(['^http://amdc\\.m\\.taobao\\.com/amdc/mobileDispatch App* url-and-header reject','^https?://gw\\.alicdn\\.com/imgextra/ url reject-dict']);
+assert.equal(optionalScheme.report[0].status,'converted');assert.doesNotMatch(optionalScheme.output,/REVIEW REQUIRED/);

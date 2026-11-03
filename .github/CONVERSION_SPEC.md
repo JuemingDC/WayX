@@ -441,3 +441,5 @@ Modified: 2026-11-03 (chance). 按上传官方 sample，先匹配 URL，再匹�
 支持 reject（按官方 sample 返回空 404，沿用既有授权省略动态延时）、reject-dict/array/200 和有当前共享 QX API 适配器的 response-header/body。拒绝脚本无请求体读取，开启 full-header-mode 保留重复字段。响应脚本用保留命名空间 argument 在公共适配器外层判断，未命中完成且不执行作者代码；QX 原产物和作者源码不变。完整候选结果写入备份状态报告的 headerRewrites。
 
 官方依据：https://manual.nssurge.com/scripting/http-request.html 、https://manual.nssurge.com/scripting/http-response.html 、https://manual.nssurge.com/http/overview.html 。
+
+Modified: 2026-11-03 (chance). URL 前缀分离将 `^https?` / `^http?` 展开为有限备选后逐对比较，保留顶层 alternation 与真实交集的阻断。报告记录潜在重叠数及前 8 条来源声明；`.+` 可以跨路径，不能将其自行缩窄为主机名通配。

@@ -70,10 +70,22 @@ export function literalUrlPrefix(pattern: string): string {
   }
   return out;
 }
+// Modified: 2026-11-03 (chance). Expand optional scheme characters before comparing prefixes; do not discard the host/path proof at https?.
+function urlPrefixes(pattern: string): string[] {
+  const optional = pattern.match(/^\^(https?)\?/);
+  if (!optional) return [literalUrlPrefix(pattern)];
+  const stem = optional[1],
+    tail = pattern.slice(optional[0].length);
+  return [stem, stem.slice(0, -1)].map((value) =>
+    literalUrlPrefix("^" + value + tail),
+  );
+}
 export function disjointUrls(a: string, b: string): boolean {
-  const x = literalUrlPrefix(a),
-    y = literalUrlPrefix(b);
-  return Boolean(x && y && !x.startsWith(y) && !y.startsWith(x));
+  return urlPrefixes(a).every((x) =>
+    urlPrefixes(b).every((y) =>
+      Boolean(x && y && !x.startsWith(y) && !y.startsWith(x)),
+    ),
+  );
 }
 // Kept self-contained for emission into request helpers and shared API adapters.
 export const headerPredicateRuntime = String.raw`function(p,r){
