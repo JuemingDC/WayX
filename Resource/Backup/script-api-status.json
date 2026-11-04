@@ -1863,6 +1863,11 @@
       "sha256": "73c711775f9db8123411c4b26ae4e6554be4a437f562ab9d4d27a3252cbf5e6a",
       "sourceSha256": "a0b53d7d95c77ad576245a5a9c770a262c1204ca85e58ea1c6d9badee0e71b51"
     },
+    "https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js": {
+      "path": "Resource/Backup/script-api/3abf03e42249a12f5fd8033d8ab88d57895d1feb694e300220071ee26585ddb7.json",
+      "sha256": "b5a4c90311614024c6649dec865d0bebc6de5bcf3bc8082fd47623b4a35f8acd",
+      "sourceSha256": "b1db009bb60cf53e2b59b5bea5dc86f6abea0afdb601f2dd8bedfb78f4573a34"
+    },
     "https://github.com/ishowshu/qx/raw/refs/heads/main/script/bilibili-ad.js": {
       "path": "Resource/Backup/script-api/d769eac18a0aa176fe43ea601c456bb4699e13ab272c5c639a926480c64935c7.json",
       "sha256": "7e8b637af38be55634f001a7a3401eff0a4b1fc80df3ee968d568c16b02e7d66",
@@ -1955,8 +1960,8 @@
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Txvideoad.js": {
       "path": "Resource/Backup/script-api/32b2671fd33fa9e5844b6d7a172ed4d9d606a3c1ddc0975c805b20dadf8765dc.json",
-      "sha256": "a1372e56413d3ed1cdeeba67c6a195b98c0790252dc887bf65448e15d3204225",
-      "sourceSha256": "ca96b90cb1cefaa26af178d15a3a2e3f0f8cc03393b06934ef99fc156e825f10"
+      "sha256": "e3150979c9f3382bb7208c36561ad2265bc065398c56e9aa48887dea92f678eb",
+      "sourceSha256": "1c8d1129acbdc4f61098463eef6911ccd076249f343775c299f7f9342f1ec9c9"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MeiTuanNoAd.js": {
       "path": "Resource/Backup/script-api/99b02d3cac44ef89da33adb23bd977e98130af91022003e959895e86cad54010.json",
@@ -2076,10 +2081,10 @@
       }
     ]
   },
-  "adapted": 1289,
+  "adapted": 1293,
   "blocked": 60,
   "excluded": 4,
-  "universal": 220,
+  "universal": 221,
   "diagnostics": [
     {
       "artifact": "Adblock/Surge/RuCu6_nodecheck.sgmodule",
@@ -30125,6 +30130,142 @@
         "undocumented-qx-parameters"
       ],
       "path": "Script/Adblock/github.com-e6cdd3dd2d16/bestv.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Quantumult X/ishowshu_bestv.snippet",
+      "sourceUrl": "https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
+      "from": [
+        "qx"
+      ],
+      "to": "qx",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$httpClient",
+        "$httpClient.get",
+        "$httpClient.post",
+        "$notification",
+        "$notification.post",
+        "$notify",
+        "$persistentStore",
+        "$persistentStore.read",
+        "$persistentStore.write",
+        "$prefs",
+        "$prefs.setValueForKey",
+        "$prefs.valueForKey",
+        "$request.url",
+        "$response.body",
+        "$task",
+        "$task.fetch"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-3abf03e42249/video-parser.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Quantumult X/ishowshu_bestv.snippet",
+      "sourceUrl": "https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
+      "from": [
+        "qx"
+      ],
+      "to": "qx",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$httpClient",
+        "$httpClient.get",
+        "$httpClient.post",
+        "$notification",
+        "$notification.post",
+        "$notify",
+        "$persistentStore",
+        "$persistentStore.read",
+        "$persistentStore.write",
+        "$prefs",
+        "$prefs.setValueForKey",
+        "$prefs.valueForKey",
+        "$request.url",
+        "$response.body",
+        "$task",
+        "$task.fetch"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-3abf03e42249/video-parser.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu_bestv.sgmodule",
+      "sourceUrl": "https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
+      "from": [
+        "qx"
+      ],
+      "to": "surge",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$httpClient",
+        "$httpClient.get",
+        "$httpClient.post",
+        "$notification",
+        "$notification.post",
+        "$notify",
+        "$persistentStore",
+        "$persistentStore.read",
+        "$persistentStore.write",
+        "$prefs",
+        "$prefs.setValueForKey",
+        "$prefs.valueForKey",
+        "$request.url",
+        "$response.body",
+        "$task",
+        "$task.fetch"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-3abf03e42249/video-parser.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu_bestv.sgmodule",
+      "sourceUrl": "https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
+      "from": [
+        "qx"
+      ],
+      "to": "surge",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$httpClient",
+        "$httpClient.get",
+        "$httpClient.post",
+        "$notification",
+        "$notification.post",
+        "$notify",
+        "$persistentStore",
+        "$persistentStore.read",
+        "$persistentStore.write",
+        "$prefs",
+        "$prefs.setValueForKey",
+        "$prefs.valueForKey",
+        "$request.url",
+        "$response.body",
+        "$task",
+        "$task.fetch"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-3abf03e42249/video-parser.js",
       "retained": false
     },
     {

@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-03 09:24:49 UTC
+# Updated: 2026-11-04 01:32:33 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34126
+# Rules: 34227
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -5283,6 +5283,106 @@ host-suffix,91-cg.com,ssid
 host-suffix,91av.one,ssid
 host-suffix,91avfuli.com,ssid
 host-suffix,91beiyong.com,ssid
+host-suffix,91cg.com,ssid
+host-suffix,91cg01.com,ssid
+host-suffix,91cg02.com,ssid
+host-suffix,91cg03.com,ssid
+host-suffix,91cg04.com,ssid
+host-suffix,91cg05.com,ssid
+host-suffix,91cg06.com,ssid
+host-suffix,91cg07.com,ssid
+host-suffix,91cg08.com,ssid
+host-suffix,91cg09.com,ssid
+host-suffix,91cg1.com,ssid
+host-suffix,91cg11.com,ssid
+host-suffix,91cg12.com,ssid
+host-suffix,91cg13.com,ssid
+host-suffix,91cg14.com,ssid
+host-suffix,91cg15.com,ssid
+host-suffix,91cg16.com,ssid
+host-suffix,91cg17.com,ssid
+host-suffix,91cg18.com,ssid
+host-suffix,91cg19.com,ssid
+host-suffix,91cg2.com,ssid
+host-suffix,91cg21.com,ssid
+host-suffix,91cg22.com,ssid
+host-suffix,91cg23.com,ssid
+host-suffix,91cg24.com,ssid
+host-suffix,91cg25.com,ssid
+host-suffix,91cg26.com,ssid
+host-suffix,91cg27.com,ssid
+host-suffix,91cg28.com,ssid
+host-suffix,91cg29.com,ssid
+host-suffix,91cg3.com,ssid
+host-suffix,91cg31.com,ssid
+host-suffix,91cg32.com,ssid
+host-suffix,91cg33.com,ssid
+host-suffix,91cg34.com,ssid
+host-suffix,91cg35.com,ssid
+host-suffix,91cg36.com,ssid
+host-suffix,91cg37.com,ssid
+host-suffix,91cg38.com,ssid
+host-suffix,91cg39.com,ssid
+host-suffix,91cg4.com,ssid
+host-suffix,91cg41.com,ssid
+host-suffix,91cg42.com,ssid
+host-suffix,91cg43.com,ssid
+host-suffix,91cg44.com,ssid
+host-suffix,91cg45.com,ssid
+host-suffix,91cg46.com,ssid
+host-suffix,91cg47.com,ssid
+host-suffix,91cg48.com,ssid
+host-suffix,91cg49.com,ssid
+host-suffix,91cg5.com,ssid
+host-suffix,91cg51.com,ssid
+host-suffix,91cg52.com,ssid
+host-suffix,91cg53.com,ssid
+host-suffix,91cg54.com,ssid
+host-suffix,91cg55.com,ssid
+host-suffix,91cg56.com,ssid
+host-suffix,91cg57.com,ssid
+host-suffix,91cg58.com,ssid
+host-suffix,91cg59.com,ssid
+host-suffix,91cg6.com,ssid
+host-suffix,91cg61.com,ssid
+host-suffix,91cg62.com,ssid
+host-suffix,91cg63.com,ssid
+host-suffix,91cg64.com,ssid
+host-suffix,91cg65.com,ssid
+host-suffix,91cg66.com,ssid
+host-suffix,91cg67.com,ssid
+host-suffix,91cg68.com,ssid
+host-suffix,91cg69.com,ssid
+host-suffix,91cg7.com,ssid
+host-suffix,91cg71.com,ssid
+host-suffix,91cg72.com,ssid
+host-suffix,91cg73.com,ssid
+host-suffix,91cg74.com,ssid
+host-suffix,91cg75.com,ssid
+host-suffix,91cg76.com,ssid
+host-suffix,91cg77.com,ssid
+host-suffix,91cg78.com,ssid
+host-suffix,91cg79.com,ssid
+host-suffix,91cg8.com,ssid
+host-suffix,91cg81.com,ssid
+host-suffix,91cg82.com,ssid
+host-suffix,91cg83.com,ssid
+host-suffix,91cg84.com,ssid
+host-suffix,91cg85.com,ssid
+host-suffix,91cg86.com,ssid
+host-suffix,91cg87.com,ssid
+host-suffix,91cg88.com,ssid
+host-suffix,91cg89.com,ssid
+host-suffix,91cg9.com,ssid
+host-suffix,91cg91.com,ssid
+host-suffix,91cg92.com,ssid
+host-suffix,91cg93.com,ssid
+host-suffix,91cg94.com,ssid
+host-suffix,91cg95.com,ssid
+host-suffix,91cg96.com,ssid
+host-suffix,91cg97.com,ssid
+host-suffix,91cg98.com,ssid
+host-suffix,91cg99.com,ssid
 host-suffix,91cy.app,ssid
 host-suffix,91dasai.com,ssid
 host-suffix,91dy.club,ssid
@@ -8758,6 +8858,7 @@ host-suffix,bild.de,ssid
 host-suffix,bili2.cc,ssid
 host-suffix,bili888.com,ssid
 host-suffix,bili999.com,ssid
+host-suffix,bilibili.tv,ssid
 host-suffix,bilibili301.xyz,ssid
 host-suffix,bilibili302.xyz,ssid
 host-suffix,bilibili303.xyz,ssid

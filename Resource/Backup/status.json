@@ -2,7 +2,7 @@
   "version": 1,
   "scriptCleanup": {
     "removed": [],
-    "retainedGenerated": 258,
+    "retainedGenerated": 259,
     "policy": "unreferenced-generated-only; active/transitive/manual/source dependencies retained"
   },
   "headerRewrites": [
@@ -61,15 +61,15 @@
   ],
   "pluginSources": 362,
   "scriptUrls": 246,
-  "backedUpScripts": 241,
-  "rewrittenArtifacts": 0,
+  "backedUpScripts": 242,
+  "rewrittenArtifacts": 2,
   "scriptApi": {
-    "universal": 220,
-    "adapted": 1289,
+    "universal": 221,
+    "adapted": 1293,
     "blocked": 60,
     "excluded": 4
   },
-  "unresolvedReferences": 14,
+  "unresolvedReferences": 10,
   "failures": [
     {
       "url": "https://raw.githubusercontent.com/JuemingDC/QuantumultX/refs/heads/main/Rewrite/qzxy.snippet",
@@ -95,11 +95,6 @@
     {
       "url": "https://rucu6.pages.dev/Scripts/youtube/response.js",
       "error": "HTTP 404 from original source https://rucu6.pages.dev/Scripts/youtube/response.js",
-      "retained": null
-    },
-    {
-      "url": "https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
-      "error": "HTTP 404 from original source https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js",
       "retained": null
     }
   ]

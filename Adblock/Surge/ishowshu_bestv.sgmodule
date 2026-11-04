@@ -33,8 +33,8 @@
 
 [Script]
 ishowshu_bestv_1 = type=http-response,pattern=^https:\/\/bp-api\.bestv\.cn\/cms\/api\/advertise\/project\/userCenter,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/github.com-e6cdd3dd2d16/bestv.js,requires-body=true
-ishowshu_bestv_2 = type=http-response,pattern=https:\/\/bp-api\.bestv\.(?:com\.cn|cn)\/cms\/api\/(live\/studio\/id\/v8|c\/player\/common),script-path=https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js,requires-body=true
-ishowshu_bestv_3 = type=http-response,pattern=^https?:\/\/360\.com\/(?:video|nba\.m3u|dianshi\.m3u)$,script-path=https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js,requires-body=true
+ishowshu_bestv_2 = type=http-response,pattern=https:\/\/bp-api\.bestv\.(?:com\.cn|cn)\/cms\/api\/(live\/studio\/id\/v8|c\/player\/common),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-3abf03e42249/video-parser.js,requires-body=true
+ishowshu_bestv_3 = type=http-response,pattern=^https?:\/\/360\.com\/(?:video|nba\.m3u|dianshi\.m3u)$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/raw.githubusercontent.com-3abf03e42249/video-parser.js,requires-body=true
 
 [MITM]
 hostname = %APPEND% bp-api.bestv.com.cn, bp-api.bestv.cn, 360.com
