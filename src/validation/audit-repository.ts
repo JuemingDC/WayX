@@ -16,9 +16,7 @@ import {
 import { targetRegexValidationInventory } from "../domain/core.ts";
 import {
   validateQX,
-  validateQxFilterList,
-  validateSurgeRuleSet,
-  validateSurgeRuleSection,
+  validatePublishedRuleList,
   validateConversionMetadata,
 } from "./output.ts";
 import { parseLoonPlugin } from "../parser/input.ts";
@@ -104,11 +102,7 @@ for (const file of files) {
   }
   if (routing.has(rp)) {
     try {
-      if (rp.startsWith("Rule/QuantumultX/"))
-        validateQxFilterList(text, { id: rp }, { builtInPoliciesOnly: true });
-      else if (rp.endsWith(".dconf"))
-        validateSurgeRuleSection(text, { id: rp });
-      else validateSurgeRuleSet(text, { id: rp });
+      validatePublishedRuleList(text, rp);
     } catch (error: any) {
       add(file, 1, "rule-format", error.message);
     }
@@ -153,7 +147,11 @@ for (const file of files) {
   if (rp.endsWith(".sgmodule")) {
     if (rp.startsWith("Adblock/Surge/")) {
       try {
-        validateSurgeModule(text, { id: rp }, { uniqueScripts: rp.split("/").length >= 5 });
+        validateSurgeModule(
+          text,
+          { id: rp },
+          { uniqueScripts: rp.split("/").length >= 5 },
+        );
         validated.surge++;
       } catch (error: any) {
         add(file, 1, "surge-adblock-validator", error?.message || error);

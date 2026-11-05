@@ -11,7 +11,10 @@ import {
 import { scriptReferences } from "../src/parser/backup-references.ts";
 import { executableScript } from "../src/domain/executable-script.ts";
 import { disableUnavailableDeclarations } from "../src/domain/source-health.ts";
-import { validateSurgeModule } from "../src/validation/output.ts";
+import {
+  validatePublishedRuleList,
+  validateSurgeModule,
+} from "../src/validation/output.ts";
 const root = await fs.mkdtemp(path.join(os.tmpdir(), "wayx-release-layout-"));
 const write = async (file: string, data: string) => {
   await fs.mkdir(path.dirname(path.join(root, file)), { recursive: true });
@@ -90,6 +93,19 @@ try {
   assert.equal(
     first.artifacts["Rule/QuantumultX/demo.list"],
     "Rule/Quantumult X/WayX/demo/demo.list",
+  );
+  validatePublishedRuleList(
+    await fs.readFile(
+      path.join(root, "Rule/Quantumult X/WayX/demo/demo.list"),
+      "utf8",
+    ),
+    "Rule/Quantumult X/WayX/demo/demo.list",
+  );
+  assert.throws(() =>
+    validatePublishedRuleList(
+      "host,example.test,unsupported-policy",
+      "Rule/Quantumult X/WayX/demo/demo.list",
+    ),
   );
   const qx = await fs.readFile(
     path.join(root, "Adblock/Quantumult X/Kelee/Demo/Demo.snippet"),

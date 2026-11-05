@@ -1069,7 +1069,8 @@ export function validateSurgeModule(
           `${entry.id}: invalid Surge [Script] declaration: ${line}`,
         );
       const scriptName = declaration[1].trim();
-      if (uniqueScripts && scriptNames.has(scriptName)) throw Error(entry.id + ": duplicate Surge script name: " + scriptName);
+      if (uniqueScripts && scriptNames.has(scriptName))
+        throw Error(entry.id + ": duplicate Surge script name: " + scriptName);
       scriptNames.add(scriptName);
       const body: any = declaration[2];
       const params: any = parseSurgeParameters(
@@ -1136,4 +1137,18 @@ export function validateSurgeModule(
       );
     }
   }
+}
+
+// Modified: 2026-11-05 (chance). Public client directories and working paths
+// select the same native rule grammar after the app-directory migration.
+export function validatePublishedRuleList(text: string, file: string) {
+  if (/^Rule\/(?:QuantumultX|Quantumult X)\//.test(file))
+    return validateQxFilterList(
+      text,
+      { id: file },
+      { builtInPoliciesOnly: true },
+    );
+  if (file.endsWith(".dconf"))
+    return validateSurgeRuleSection(text, { id: file });
+  return validateSurgeRuleSet(text, { id: file });
 }
