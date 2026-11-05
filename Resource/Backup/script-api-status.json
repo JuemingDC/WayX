@@ -1948,6 +1948,11 @@
       "sha256": "982f190c75734baf60a3ffd512db6eac2e0c13f8e7967d224f4f2ba591a4a4f5",
       "sourceSha256": "9a48981f5d1cdac2d7c72c8f1164752ce712113eaf687aeeba2829e78c66308a"
     },
+    "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Pinduoduo.js": {
+      "path": "Resource/Backup/script-api/568fc34ebf9ea54fba6766be8ca36ef83c32ada99fca8e98b946f37f53061beb.json",
+      "sha256": "7c0a1988f3f1457ca705c1e1ad6ecd38937b51492753450d8a6e19b404678b39",
+      "sourceSha256": "587448986828c98251a8ca26d7322ca61a57f27beb8600cf96c4e3819f47c39c"
+    },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/TilingSales_getNav.js": {
       "path": "Resource/Backup/script-api/bf57a82a4cfe3c26ecfc3dede7830ae2cf9552190eca75ee76f3f4d19852d293.json",
       "sha256": "74401131206f25df05d0de535ca04196a6a189995384db000715bd46cebb412a",
@@ -2081,10 +2086,10 @@
       }
     ]
   },
-  "adapted": 1293,
+  "adapted": 1299,
   "blocked": 60,
   "excluded": 4,
-  "universal": 221,
+  "universal": 222,
   "diagnostics": [
     {
       "artifact": "Adblock/Surge/RuCu6_nodecheck.sgmodule",
@@ -33112,6 +33117,126 @@
         "undocumented-qx-parameters"
       ],
       "path": "Script/Adblock/raw.githubusercontent.com-52eaad15c8b3/MT.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Quantumult X/zenmofeishi_pinduoduo.snippet",
+      "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Pinduoduo.js",
+      "from": [
+        "qx"
+      ],
+      "to": "qx",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-568fc34ebf9e/Pinduoduo.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Quantumult X/zenmofeishi_pinduoduo.snippet",
+      "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Pinduoduo.js",
+      "from": [
+        "qx"
+      ],
+      "to": "qx",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-568fc34ebf9e/Pinduoduo.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Quantumult X/zenmofeishi_pinduoduo.snippet",
+      "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Pinduoduo.js",
+      "from": [
+        "qx"
+      ],
+      "to": "qx",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-568fc34ebf9e/Pinduoduo.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Surge/zenmofeishi_pinduoduo.sgmodule",
+      "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Pinduoduo.js",
+      "from": [
+        "qx"
+      ],
+      "to": "surge",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-568fc34ebf9e/Pinduoduo.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Surge/zenmofeishi_pinduoduo.sgmodule",
+      "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Pinduoduo.js",
+      "from": [
+        "qx"
+      ],
+      "to": "surge",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-568fc34ebf9e/Pinduoduo.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Surge/zenmofeishi_pinduoduo.sgmodule",
+      "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/Pinduoduo.js",
+      "from": [
+        "qx"
+      ],
+      "to": "surge",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Script/Adblock/raw.githubusercontent.com-568fc34ebf9e/Pinduoduo.js",
       "retained": false
     },
     {

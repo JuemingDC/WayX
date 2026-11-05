@@ -871,7 +871,7 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[拼多多净化页面布局](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_pinduoduo.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_pinduoduo.snippet%2C%20tag%3D%E6%8B%BC%E5%A4%9A%E5%A4%9A%E5%87%80%E5%8C%96%E9%A1%B5%E9%9D%A2%E5%B8%83%E5%B1%80%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_pinduoduo.sgmodule) |
+| **[拼多多净化底栏与弹窗](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/zenmofeishi_pinduoduo.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fzenmofeishi_pinduoduo.snippet%2C%20tag%3D%E6%8B%BC%E5%A4%9A%E5%A4%9A%E5%87%80%E5%8C%96%E5%BA%95%E6%A0%8F%E4%B8%8E%E5%BC%B9%E7%AA%97%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fzenmofeishi_pinduoduo.sgmodule) |
 
 #### S
 

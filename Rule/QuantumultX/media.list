@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-11-03 09:24:49 UTC
+# Updated: 2026-11-05 01:34:40 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7544
+# Rules: 7549
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,ssid
@@ -4707,6 +4707,9 @@ host-suffix,likee.video,ssid
 host-suffix,likeeapp.ru,ssid
 host-suffix,likeevideo.com,ssid
 host-suffix,likeevideo.ru,ssid
+host-suffix,limbuscompany.global,ssid
+host-suffix,limbuscompanyapi.com,ssid
+host-suffix,limbuscompanycdn.org,ssid
 host-suffix,lin.ee,ssid
 host-suffix,line-apps-beta.com,ssid
 host-suffix,line-apps-rc.com,ssid
@@ -5723,6 +5726,7 @@ host-suffix,profilemaster.com,ssid
 host-suffix,progress.com,ssid
 host-suffix,projectapex.com,ssid
 host-suffix,projectcircuitbreaker.com,ssid
+host-suffix,projectmoon.studio,ssid
 host-suffix,projectpoint.com,ssid
 host-suffix,projectpoint.net,ssid
 host-suffix,projectshoreline.com,ssid
@@ -6182,6 +6186,7 @@ host-suffix,sketchfab.com,ssid
 host-suffix,skillbox.pro,ssid
 host-suffix,skillbox.ru,ssid
 host-suffix,skillfactory.ru,ssid
+host-suffix,skinswap.com,ssid
 host-suffix,sky.com,ssid
 host-suffix,skylanders.com,ssid
 host-suffix,skymatter.com,ssid

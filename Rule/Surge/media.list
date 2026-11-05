@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-11-03 09:24:49 UTC
+# Updated: 2026-11-05 01:34:40 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7544
+# Rules: 7549
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
@@ -4707,6 +4707,9 @@ DOMAIN-SUFFIX,likee.video
 DOMAIN-SUFFIX,likeeapp.ru
 DOMAIN-SUFFIX,likeevideo.com
 DOMAIN-SUFFIX,likeevideo.ru
+DOMAIN-SUFFIX,limbuscompany.global
+DOMAIN-SUFFIX,limbuscompanyapi.com
+DOMAIN-SUFFIX,limbuscompanycdn.org
 DOMAIN-SUFFIX,lin.ee
 DOMAIN-SUFFIX,line-apps-beta.com
 DOMAIN-SUFFIX,line-apps-rc.com
@@ -5723,6 +5726,7 @@ DOMAIN-SUFFIX,profilemaster.com
 DOMAIN-SUFFIX,progress.com
 DOMAIN-SUFFIX,projectapex.com
 DOMAIN-SUFFIX,projectcircuitbreaker.com
+DOMAIN-SUFFIX,projectmoon.studio
 DOMAIN-SUFFIX,projectpoint.com
 DOMAIN-SUFFIX,projectpoint.net
 DOMAIN-SUFFIX,projectshoreline.com
@@ -6182,6 +6186,7 @@ DOMAIN-SUFFIX,sketchfab.com
 DOMAIN-SUFFIX,skillbox.pro
 DOMAIN-SUFFIX,skillbox.ru
 DOMAIN-SUFFIX,skillfactory.ru
+DOMAIN-SUFFIX,skinswap.com
 DOMAIN-SUFFIX,sky.com
 DOMAIN-SUFFIX,skylanders.com
 DOMAIN-SUFFIX,skymatter.com
