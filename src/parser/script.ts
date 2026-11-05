@@ -1563,7 +1563,8 @@ export function qxScriptV2Plan(
       );
     }
   }
-  const condition: any = scriptUrlCondition(ast);
+  // Modified: 2026-11-05 (chance). QX Script v2 matchers preserve Loon URL flags.
+  const condition: any = scriptUrlCondition(ast, "qx");
   if (!condition.ok) return condition;
   const notes: any = [...(condition.notes || [])];
   noteQxForcedEnable(ast, notes);

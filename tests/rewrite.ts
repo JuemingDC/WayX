@@ -844,14 +844,14 @@ const mixedJsonAdd = renderMixedRewriteScript(
 assert.match(mixedJsonAdd.script, /__wayxJsonAdd\(j,\["data","new"\],true\)/);
 
 const flaggedHeaderHelper = renderQxHeaderScript(parseRewriteV2('request if ${url} ~= /api/i then request.header.replace("X-Test", /value/ms, "ok")'));
-assert.equal(flaggedHeaderHelper.pattern, 'api');
+assert.equal(flaggedHeaderHelper.pattern, '(?i)api');
 assert.equal(flaggedHeaderHelper.script.includes('"flags":"i"'), true);
 assert.equal(flaggedHeaderHelper.script.includes('"ms"'), true);
 assert.match(flaggedHeaderHelper.script, /__wayxHeaderReplace\("X-Test","value",v,"ms"\)/);
 
 const flaggedRedirectSource = 'request if ${url} ~= /\\/old\\/(.*)/ims as hit then redirect(302, \"/new/${hit.1}\")';
 const flaggedRedirectHelper = renderQxRedirectScript(parseRewriteV2(flaggedRedirectSource));
-assert.equal(flaggedRedirectHelper.pattern, '\\/old\\/(.*)');
+assert.equal(flaggedRedirectHelper.pattern, '(?ims)\\/old\\/(.*)');
 assert.equal(flaggedRedirectHelper.script.includes('"ims"'), true);
 assert.ok(flaggedRedirectHelper.script.includes('new RegExp(' + JSON.stringify(parseRewriteV2(flaggedRedirectSource).condition.right.pattern) + ', "ims")'));
 
@@ -1288,7 +1288,7 @@ const requestBinaryMockAst = parseRewriteV2('request if ${url} ~= /upload/ then 
 const requestBinaryMockPlan = qxMockPlanFromAction(requestBinaryMockAst.actions[0], {pluginSourceUrl:'https://example.com/Plugins/demo.lpx'});
 assert.throws(() => renderQxMockFileScript(requestBinaryMockPlan), /request mock binary\/bodyBytes output is not enabled/);
 
-// Modified: 2026-10-25 (chance). Native output omits suffix flags under the temporary user policy; source AST stays intact.
+// Modified: 2026-11-05 (chance). Generic analysis remains target-neutral; explicit client mappings below preserve source flags.
 const bareUrl = compileRegexForTarget(parseRewriteV2('request if ${url} ~= /^https:\\/\\/Api\\.Example\\.com\\/[a-z]+/i then reject_dict(200)').condition.right, {subject:'url'});
 assert.equal(bareUrl.ok, true);
 assert.equal(bareUrl.pattern, '^https:\\/\\/Api\\.Example\\.com\\/[a-z]+');
@@ -1300,16 +1300,16 @@ for (const target of ['qx','surge']) for (const flags of ['', 'i','m','s','im','
   const regex={type:'regex',pattern:String.raw`^https:\/\/api\.example\.com\/(a|b)[im]+$`,flags};
   const before=structuredClone(regex);
   const compiled=compileRegexForTarget(regex,{target});
-  assert.equal(compiled.pattern,(target==='surge'&&flags?'(?'+[...'ims'].filter(f=>flags.includes(f)).join('')+')':'')+regex.pattern);
+  assert.equal(compiled.pattern,(flags?'(?'+[...'ims'].filter(f=>flags.includes(f)).join('')+')':'')+regex.pattern);
   assert.deepEqual(regex,before,'native lowering preserves source AST and captures');
-  assert.equal(compileRegexForTarget(regex,{target,requireEquivalent:true}).ok,target==='surge'||!flags,'inline policy does not assert unverified client equivalence');
+  assert.equal(compileRegexForTarget(regex,{target,requireEquivalent:true}).ok,true,'both clients preserve source flags');
 }
 
-// Modified: 2026-11-01 (chance). Surge restores ims; QX keeps its existing policy.
+// Modified: 2026-11-05 (chance). QX and Surge restore source ims in all fields.
 // Surge body explicitly disables the default m when absent from source.
 for(const target of ['qx','surge']) for(const subject of ['url','header','body','script']) for(const flags of ['', 'i','m','s','im','is','ms','ims','smi']) {
   const regex={type:'regex',pattern:'a.b',flags},before=JSON.stringify(regex);
-  const mapped=target==='surge'?[...'ims'].filter(f=>flags.includes(f)).join(''):target==='qx'&&['header','body'].includes(subject)?[...'ms'].filter(f=>flags.includes(f)).join(''):'';
+  const mapped=[...'ims'].filter(f=>flags.includes(f)).join('');
   const mode=mapped+(target==='surge'&&subject==='body'&&!flags.includes('m')?'-m':'');
   const out=compileRegexForTarget(regex,{target,subject});
   assert.equal(out.pattern,(mode?'(?'+mode+')':'')+'a.b');
@@ -1318,15 +1318,15 @@ for(const target of ['qx','surge']) for(const subject of ['url','header','body',
 }
 const restoredBodyAst=parseRewriteV2('response if ${url} ~= /api/i then response.body.replace(/a.b/ims, "x")');
 const restoredBody=qxDirectRewritePlan(restoredBodyAst);
-assert.ok(restoredBody.line.includes('api url response-body (?ms)a.b response-body x'));
-assert.ok(!restoredBody.line.includes('(?i)'));
+assert.ok(restoredBody.line.includes('(?i)api url response-body (?ims)a.b response-body x'));
+assert.ok(restoredBody.line.includes('(?i)'));
 assert.ok(surgeDirectRewritePlan(restoredBodyAst).line.includes('http-response (?i)api (?ims)a.b x'));
 const restoredHeaderSource='request if ${url} ~= /api/i then request.header.replace("X-Test", /abc/ims, "xyz")';
 const restoredHeaderIr=rewriteV2AstToSemanticIr(parseRewriteV2(restoredHeaderSource),restoredHeaderSource);
 const restoredHeader=planQxRewrite(restoredHeaderIr);
-assert.ok(restoredHeader.line.includes('(?ms:abc)'));
-assert.ok(!restoredHeader.line.includes('(?ims:abc)'));
-assert.ok(restoredHeader.line.startsWith('api url request-header '));
+assert.ok(restoredHeader.line.includes('(?ims:abc)'));
+assert.ok(!restoredHeader.line.includes('(?ms:abc)'));
+assert.ok(restoredHeader.line.startsWith('(?i)api url request-header '));
 const qxDeleteV2 = qxDirectRewritePlan(parseRewriteV2('response if ${url} ~= /^https:\\/\\/api\\.example\\.com\\/feed/i then response.json.delete(["data.ads", "data.apps[0].promo"])'));
 assert.equal(qxDeleteV2.ok, true);
 assert.match(qxDeleteV2.line, /url jsonjq-response-body/);
@@ -1351,7 +1351,7 @@ assert.match(surgeJqV2.line, /^http-response-jq /);
 const redirectV2 = parseRewriteV2('request if ${url} ~= /(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)/i as urlMatch then redirect(302, "${urlMatch.1}")');
 const redirectScript = renderQxRedirectScript(redirectV2, {stamp:'2026-09-29 10:00:00 +08:00', category:'Adblock'});
 assert.equal(redirectScript.qxAction, 'script-echo-response');
-assert.equal(redirectScript.pattern, '(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)');
+assert.equal(redirectScript.pattern, '(?i)(^https:\\/\\/live\\.bilibili\\.com\\/\\d+)(?:\\/?\\?.*)');
 assert.match(redirectScript.script, /__wayxLocation/);
 assert.match(redirectScript.script, /HTTP\/1\.1 302 Found/);
 
@@ -1779,13 +1779,13 @@ const inlineFlagsAst=parseRewriteV2(
   'response if ${url} ~= /^https:\\/\\/flags\\.example\\/api$/ims then reject_dict(200)'
 );
 const inlineFlagsMatcher=qxExactRewriteMatcherPlan(inlineFlagsAst,{compatibility:true});
-assert.equal(qxExactRewriteMatcherPlan(inlineFlagsAst).ok,false);
-assert.equal(inlineFlagsMatcher.urlPattern,'^https:\\/\\/flags\\.example\\/api$');
-assert.equal(inlineFlagsMatcher.prefix,'^https:\\/\\/flags\\.example\\/api$ url ');
+assert.equal(qxExactRewriteMatcherPlan(inlineFlagsAst).ok,true);
+assert.equal(inlineFlagsMatcher.urlPattern,'(?ims)^https:\\/\\/flags\\.example\\/api$');
+assert.equal(inlineFlagsMatcher.prefix,'(?ims)^https:\\/\\/flags\\.example\\/api$ url ');
 const inlineFlagsDirect=qxDirectRewritePlan(inlineFlagsAst,{matcher:inlineFlagsMatcher});
 assert.equal(inlineFlagsDirect.ok,true);
-assert.equal(inlineFlagsDirect.line,'^https:\\/\\/flags\\.example\\/api$ url reject-dict');
-assert.doesNotMatch(inlineFlagsDirect.line,/^\(\?[ims]+\)/);
+assert.equal(inlineFlagsDirect.line,'(?ims)^https:\\/\\/flags\\.example\\/api$ url reject-dict');
+assert.match(inlineFlagsDirect.line,/^\(\?ims\)/);
 
 const methodRejectNativeAst=parseRewriteV2(
   'response if ${url} ~= /api/ && ${request.method} == "POST" then reject_dict(200)'
@@ -1873,7 +1873,7 @@ for(const action of ['reject(404)','redirect(302,"https://target.example")','red
 }
 for(const flags of ['i','m','s','ims']) {
   const ast=parseRewriteV2('response if ${url} ~= /API/'+flags+' && ${response.status} == 200 then response.header.del("Server")');
-  assert.equal(qxRewriteMatcherPlan(ast).urlPattern,'API');
+  assert.equal(qxRewriteMatcherPlan(ast).urlPattern,'(?'+flags+')API');
 }
 
 const redirectSource='request if ${url} ~= /(^https:\\/\\/old\\.example\\.com\\/)(.*)/ as hit then redirect(302, "${hit.1}new")';
@@ -2348,9 +2348,9 @@ const flagsNativeJsonPipelineSource='response if ${url} ~= /api/ims then respons
 const flagsNativeJsonPipelineCtx=ctx();
 const flagsNativeJsonPipeline=planQxRewrite(v2(flagsNativeJsonPipelineSource),flagsNativeJsonPipelineCtx);
 assert.equal(flagsNativeJsonPipeline.section,'rewrite');
-assert.match(flagsNativeJsonPipeline.line,/^api url jsonjq-response-body '/);
-assert.match(flagsNativeJsonPipeline.lines[0],/COMPATIBILITY LIMITATION.*ims/);
-assert.doesNotMatch(flagsNativeJsonPipeline.line,/^\(\?[ims]+\)/);
+assert.match(flagsNativeJsonPipeline.line,/^\(\?ims\)api url jsonjq-response-body '/);
+assert.doesNotMatch(flagsNativeJsonPipeline.line,/COMPATIBILITY LIMITATION/);
+assert.match(flagsNativeJsonPipeline.line,/^\(\?ims\)/);
 assert.equal(flagsNativeJsonPipelineCtx.generatedScripts.size,0);
 
 const nestedJsonPipelineSource='response if ${url} ~= /api/ then response.json.add("data.flag",true) | response.json.replace("data.count",2)';

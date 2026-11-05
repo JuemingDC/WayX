@@ -69,7 +69,7 @@ for(const target of ['qx','surge'])for(const phase of ['request','response'])for
   const program=line.match(/'(.+)'$/)[1];const result=spawnSync('jq',['-c',program],{input:JSON.stringify(input),encoding:'utf8'});
   assert.equal(result.status,0,result.stderr);assert.deepEqual(JSON.parse(result.stdout),expected);checked++;
 }
-// Modified: 2026-11-01 (chance). Surge restores flags and compensates default m; QX retains m/s.
+// Modified: 2026-11-05 (chance). Both clients restore ims; only Surge compensates default m.
 for(const phase of ['request','response'])for(const flags of ['i','m','s','ims']) {
   const line=phase+' if ${url} ~= /api/i then '+phase+'.body.replace([/old/'+flags+',/disabled/],["new","enabled"])';
   const output=convertPlugin(entry,'[Rewrite]\n'+line,options);validateConvertedPlugin(entry,output);
@@ -77,15 +77,15 @@ for(const phase of ['request','response'])for(const flags of ['i','m','s','ims']
   for(const target of ['qx','surge']) {
     const active=output[target].split('\n').filter(line=>line && !line.startsWith('#'));
     assert.equal(active.filter(line=>line.includes(target==='qx'?phase+'-body':'http-'+phase+' ')).length,2);
-    const nativeFlags=target==='qx'?flags.replace(/i/g,''):flags+(flags.includes('m')?'':'-m');assert.ok(active.some(line=>line.includes((nativeFlags?'(?'+nativeFlags+')':'')+'old')));checked++;
+    const nativeFlags=target==='qx'?flags:flags+(flags.includes('m')?'':'-m');assert.ok(active.some(line=>line.includes((nativeFlags?'(?'+nativeFlags+')':'')+'old')));checked++;
   }
 }
 // QX whole-header replacements: actual generated regex and capture templates
 // execute against CRLF blocks using the runner's native ICU engine.
 for(const phase of ['request','response'])for(const [regex,replacement,input,expected] of [
-  ['/old/i','new','HTTP/1.1 200 OK\r\nx-test: OLD old\r\nOther: OLD\r\n','HTTP/1.1 200 OK\r\nx-test: OLD new\r\nOther: OLD\r\n'],
+  ['/old/i','new','HTTP/1.1 200 OK\r\nx-test: OLD old\r\nOther: OLD\r\n','HTTP/1.1 200 OK\r\nx-test: new old\r\nOther: OLD\r\n'],
   ['/old(\\d+)/i','$1','HTTP/1.1 200 OK\r\nX-Test: old42\r\nOther: old7\r\n','HTTP/1.1 200 OK\r\nX-Test: 42\r\nOther: old7\r\n'],
-  ['/old/i','$0-new','HTTP/1.1 200 OK\r\nX-Test: OLD\r\n','HTTP/1.1 200 OK\r\nX-Test: OLD\r\n'],
+  ['/old/i','$0-new','HTTP/1.1 200 OK\r\nX-Test: OLD\r\n','HTTP/1.1 200 OK\r\nX-Test: OLD-new\r\n'],
 ]) {
   const output=convertPlugin(entry,'[Rewrite]\n'+phase+' if ${url} ~= /api/i then '+phase+'.header.replace("X-Test",'+regex+',"'+replacement+'")',options);
   validateConvertedPlugin(entry,output);assert.doesNotMatch(output.qx,/script-(?:request|response)-header/);
@@ -485,8 +485,7 @@ function executeSelectedJq(output,target,phase,body) {
       const jq=runIsolatedCase('jq',['-c',filter],{input:'{"data":{"ad":true,"keep":1}}',encoding:'utf8'});assert.equal(jq.status,0,jq.stderr);
       const expected=operation==='delete'?{data:{}}:operation==='replace'?{data:{ad:false,keep:2}}:{data:{ad:false,keep:2}};
       assert.deepEqual(JSON.parse(jq.stdout),expected);
-      if(flags&&target==='qx')assert.match(output[target],/COMPATIBILITY LIMITATION.*matching semantics may differ/);
-      if(target==='surge')assert.doesNotMatch(output[target],/temporarily omits Loon flags/);
+      assert.doesNotMatch(output[target],/temporarily omits Loon flags/);
       checked++;
     }
   }

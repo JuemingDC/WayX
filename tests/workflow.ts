@@ -770,9 +770,9 @@ try {
   const repeatOut=convertPlugin(entry,repeated,options);
   assert.equal((repeatOut.qx.match(/^host, a.example, reject$/gm)||[]).length,1);
   assert.equal((repeatOut.qx.match(/\.x \+= 1/g)||[]).length,2);assert.match(repeatOut.qx,/# keep comment/);
-  // Modified: 2026-10-26 (chance). Verified QX support does not override the URL omission policy.
+  // Modified: 2026-11-05 (chance). QX URL flags are preserved under the restored source policy.
   assert.equal(targetRegexCapability('qx','url').inlineFlags,'verified');
-  assert.equal(compileRegexForTarget({type:'regex',pattern:'api',flags:'i'},{target:'qx',requireEquivalent:true}).ok,false);
+  assert.equal(compileRegexForTarget({type:'regex',pattern:'api',flags:'i'},{target:'qx',requireEquivalent:true}).ok,true);
 
   console.log('Resource architecture: streaming limits, retry classification, snapshot consistency, shared dependencies, pure conversion and safe deduplication passed');
 } finally {globalThis.fetch=originalFetch;await fs.rm(root,{recursive:true,force:true});}

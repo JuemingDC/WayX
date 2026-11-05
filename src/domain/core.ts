@@ -692,9 +692,9 @@ export function validateTargetRegex(
     );
   }
 }
-// Modified: 2026-11-01 (chance). Surge support confirms ICU inline flags in
-// URL/Header/Body/Map Local/Script. Restore Surge flags independently of the
-// existing QX omission policy; Body Rewrite alone defaults to multiline.
+// Modified: 2026-11-05 (chance). Preserve Loon ims in QX URL/Header/Body/Script
+// just as in Surge; native QX input bypasses this compiler. Only Surge body
+// needs compensation for its default multiline mode.
 export const TARGET_REGEX_CAPABILITIES: any = Object.freeze(
   Object.fromEntries(
     ["qx", "surge", "generic"].map((target: any): any => [
@@ -711,8 +711,8 @@ export const TARGET_REGEX_CAPABILITIES: any = Object.freeze(
               emitFlags:
                 target === "surge"
                   ? "imsx"
-                  : target === "qx" && ["body", "header"].includes(field)
-                    ? "ms"
+                  : target === "qx"
+                    ? "ims"
                     : "",
             }),
           ]),

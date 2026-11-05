@@ -1,4 +1,5 @@
 import { refreshFrozenSurgeFlags } from "./surge-flags.ts";
+import { refreshFrozenQxFlags } from "./qx-flags.ts";
 import { readJson } from "../publish/transaction.ts";
 import { refreshSourceBackups } from "./backups.ts";
 import { loadIconIndex } from "../ingest/icons.ts";
@@ -392,6 +393,8 @@ export async function runCatalogSync({
     if (publishable) await backfillIcons(root, icons);
     // Modified: 2026-11-01 (chance). User-authorized flag correction also covers frozen Surge outputs without resuming upstream acquisition.
     if (publishable) await refreshFrozenSurgeFlags(root, manifest);
+    // Modified: 2026-11-05 (chance). Restore QX flags from frozen Loon snapshots only; native QX check/copy stays separate.
+    if (publishable) await refreshFrozenQxFlags(root, manifest);
     // Modified: 2026-11-01 (chance). Archive plugin/script bytes and rebind all published declarations, including paused and retained artifacts, without resuming catalog conversion.
     if (publishable)
       await refreshSourceBackups(root, {

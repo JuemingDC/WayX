@@ -64,16 +64,18 @@ QX/Surge 的目标 URL 正则统一将可识别 HTTP(S) authority 中的字面�
 
 源 Regex literal 只去除最外层 delimiter；仅结束分隔符后的后缀识别为 flags。逐字符保留主体中的转义、斜线、字符类、分组、量词和 lookaround，不作 case folding、全局 `\\/ → /`、捕获组重写；源后缀 flags 保留在 AST/IR，目标原生输出按下述目标/字段策略映射 flags。
 
-<!-- Modified: 2026-10-26 (chance). QX author confirms ims support; user restores only native Header/Body m/s. -->
+<!-- Modified: 2026-11-05 (chance). Restore Loon→QX source flags consistently with existing Surge outputs; preserve native QX input. -->
 
-2026-10-26 用户提供 Quantumult X 作者回复，确认 URL、request/response-header 和 request/response-body 正则均支持 `(?i)`、`(?m)`、`(?s)` 及组合，版本间支持一致。作者建议 URL 匹配通常省略 flags。用户进一步明确：继续忽略源 `i`，URL 仅保留正则主体；QX Header/Body 恢复源 `m`、`s`，组合按 `(?ms)` 输出，Header 值嵌入使用 `(?ms:pattern)` 保留局部作用域。没有源 flags 时不新增。Surge 按下述独立确认恢复 flags，不套用 QX 省略策略。
+2026-10-26 用户提供 Quantumult X 作者回复，确认 URL、request/response-header 和 request/response-body 正则均支持 `(?i)`、`(?m)`、`(?s)` 及组合，版本间支持一致。2026-11-05 用户明确恢复 Loon→Quantumult X 重写规则的全部源 flags：URL、Header、Body、Script matcher 与 helper 外层预筛选均保留 i/m/s，组合按固定顺序 `(?ims)` 输出，Header 值嵌入使用 `(?ims:pattern)` 保留局部作用域。不再省略 i 或 URL flags，不输出过期省略警告；没有源 flags 时不新增。Surge 的正文默认 m 补偿仍只作用于 Surge。
 
-上述 QX 省略 `i`、URL flags 仍是用户授权的语义例外，不能声称支持缺失，也不能声称与保留全部源 flags 完全等价。严格等价接口拒绝被省略的源 flags；QX Header/Body 仅含 m/s 时允许映射。源 AST/IR、作者原脚本和 JavaScript helper 内的 `RegExp(source, flags)` 保留原 flags。协议 Header 名称匹配所需的大小写处理和整头遍历标记不属于源 flags，不因本策略删除；无法安全限制在单字段的 Header 替换继续使用原有 helper/诊断边界。保留域名字面量的 `\.`，不自动给作者正则加锚点；域名点号按下述用户授权策略处理。
+源 AST/IR、作者脚本及 JavaScript helper 的 `RegExp(source, flags)` 保持原样。原生 Quantumult X 内容继续独立检查/复制，本次不重写其 flags、正则、动作或规则顺序，不套用 Loon flag 编译器。Header 字段边界、重复字段和复杂条件沿用既有 helper/诊断边界；域名字面点号沿用既有策略。
+
+Actions 同样修正暂停可莉来源的现有 QX 产物：从 Resource/Loon 快照定位唯一对应的 URL/Header/Body/Script 正则字段，仅恢复 flags，保留脚本地址、注释、顺序和其它内容，不恢复上游获取。歧义字段保留并记入 `.github/monitor/.runtime/qx-flags.json`；重复运行幂等，通过既有事务、QX 格式及最终 ICU 校验后发布。
 
 <!-- Modified: 2026-11-01 (chance). Restore Surge flags based on the supplied Miles / Surge Networks support email. -->
 Surge 官方支持邮件确认：`[URL Rewrite]`、`[Map Local]`、`[Script]`、`[Header Rewrite]` 的 pattern，以及 `[Body Rewrite]` 的 URL 和正文正则均使用 Apple ICU，支持 `(?i)`、`(?m)`、`(?s)`、`(?x)` 及组合，iOS/Mac 共用核心。恢复所有 Surge 输出路径的源 flags，包括 Rewrite v2、Script v2、原生 QX 转换和保留的窄 URL prefilter；不得再以未确认支持为由删除。Loon literal 后缀仍仅解析来源已支持的 i/m/s，映射为固定顺序 `(?ims)`；原生来源中的内联 x 及其作用域原样保留，不凭目标支持扩充来源语法，JS helper 不接受虚构的 `/pattern/x`。ICU 校验继续作为发布门禁。
 
-仅 Surge `[Body Rewrite]` 的正文 regex 默认开启 m，URL regex 没有该默认；所有字段默认关闭 s。Loon 源正文未启用 m 时显式输出 `(?-m)`（与 i/s 合并为 `(?i-m)`、`(?s-m)` 等），源有 m 则保留 m，避免 `^`/`$` 从整段边界扩大到每行边界；正文内的显式作用域仍可覆盖前置模式。该默认补偿只用于明确的 Loon Regex AST，不能把 Surge 原生正文默认强行改为关闭。无源 i/s/x 时不凭空开启；不改变 QX 的既有策略。官方正文默认说明：https://manual.nssurge.com/http/body-rewrite.html 。恢复模式不代表 ICU 与 JavaScript 的 Unicode/换行/匹配替换语义已获全量等价认证。
+仅 Surge `[Body Rewrite]` 的正文 regex 默认开启 m，URL regex 没有该默认；所有字段默认关闭 s。Loon 源正文未启用 m 时显式输出 `(?-m)`（与 i/s 合并为 `(?i-m)`、`(?s-m)` 等），源有 m 则保留 m，避免 `^`/`$` 从整段边界扩大到每行边界；正文内的显式作用域仍可覆盖前置模式。该默认补偿只用于明确的 Loon Regex AST，不能把 Surge 原生正文默认强行改为关闭。无源 i/s/x 时不凭空开启；QX 不采用此 Surge 默认补偿。官方正文默认说明：https://manual.nssurge.com/http/body-rewrite.html 。恢复模式不代表 ICU 与 JavaScript 的 Unicode/换行/匹配替换语义已获全量等价认证。
 
 本次用户授权的 Surge flags 修正同样覆盖暂停可莉来源的现有产物：Actions 从已保存的 Resource/Loon 快照恢复能唯一对应的 URL/Header/Body/Script 字段，不获取新插件、不取消暂停、不重新生成其它内容。保留脚本备份/API 地址，歧义字段保留并记入运行报告 `.github/monitor/.runtime/surge-flags.json`。变更通过原有事务与最终 ICU 校验后发布；重复运行幂等。
 
@@ -110,7 +112,7 @@ add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊�
 
 单条固定作者 jq 或文件 jq 优先使用原 URL matcher 和 QX jsonjq-request/response-body、Surge http-request/response-jq；不因可编译为 JavaScript、嵌套路径、flags 或同阶段其它声明自动迁为 Script。原生 matcher 无法表示的纯 jq 声明保持既有 Review/注释边界。
 
-动态路径/值、数组索引和复杂条件按各 action 的既有 native/必要 helper/Review 边界处理。固定对象路径的 JSON 批量动作原生优先，flags 不单独导致宽 matcher helper；仅仍省略 flags 的 QX 原生映射保留相应兼容说明；Surge 恢复 flags 后不再输出过期的省略警告。
+动态路径/值、数组索引和复杂条件按各 action 的既有 native/必要 helper/Review 边界处理。固定对象路径的 JSON 批量动作原生优先，flags 不单独导致宽 matcher helper；两端恢复源 flags 后均不再输出过期的省略警告。
 
 必要 JS runtime 支持的固定 JQ 子集可含 identity、固定对象赋值、del/delete-many、点分及 quoted bracket 路径，不支持任意完整 jq。一个 JQ action 成功才提交，失败回滚当前 action，先前 action 的提交不回滚，后续动作继续。原生 JQ 的错误行为不套用 JS helper 的事务语义。
 
@@ -194,9 +196,9 @@ QX 原生 URL Rewrite `reject` 按上传官方 sample.conf 返回空体 404；�
 
 Surge Script 的 pattern 含逗号、空白或引号时统一使用公共参数编码器，保持 Regex 反斜线；validator 按引号解析逗号分隔参数，拒绝截断、残缺或重复参数。该规则覆盖源 Script、legacy/v2 Rewrite helper 和复杂动作 helper。
 
-带 flags 的静态 URL 条件在 helper 外层预筛选中按当前授权策略仅输出主体，不附加 flags 前缀；这可能漏掉源 flags 本可匹配的请求，内部 JS 保留 flags 也不能弥补外层漏匹配，因此明确记录为临时兼容降级，不声称等价。固定 String/Raw String URL 相等条件直接编译为转义字面量并首尾锚定的 Regex，复用 QX/Surge 原生动作与 Script 声明；动态 String 不作静态相等映射。没有可安全下推的 URL 条件时可以使用合法宽匹配，但 helper 必须执行完整条件，且不能据此绕过合成响应的精确条件要求。
+带 flags 的静态 URL 条件在两端 helper 外层预筛选中保留源 flags 前缀，避免外层漏掉内部条件本可匹配的请求。固定 String/Raw String URL 相等条件直接编译为转义字面量并首尾锚定的 Regex，复用 QX/Surge 原生动作与 Script 声明；动态 String 不作静态相等映射。没有可安全下推的 URL 条件时可以使用合法宽匹配，但 helper 必须执行完整条件，且不能据此绕过合成响应的精确条件要求。
 
-QX 重定向统一使用官方原生 `<URL正则> url 302/307 <目标地址>`；存在可精确表达的请求条件时使用 `url-and-header`。URL 捕获 `${alias.N}` 转为 `$N`，保留源正则主体和规则顺序，flags 按当前临时策略省略映射。不得将原生 302/307 转成 redirect helper 或宽匹配 `^ url script-echo-response`；无法用原生语法完整表达的条件或模板保留源声明并诊断，不生成重定向脚本。
+QX 重定向统一使用官方原生 `<URL正则> url 302/307 <目标地址>`；存在可精确表达的请求条件时使用 `url-and-header`。URL 捕获 `${alias.N}` 转为 `$N`，保留源正则主体和规则顺序，flags 按 2.4 保留为内联模式。不得将原生 302/307 转成 redirect helper 或宽匹配 `^ url script-echo-response`；无法用原生语法完整表达的条件或模板保留源声明并诊断，不生成重定向脚本。
 
 QX 仅输出官方证明的 url/url-and-header、reject 系列、302/307、header/body/jsonjq/echo 及各 Script action。url-and-header 的 URL 先匹配，再检查 method/path/request headers。response-body Script 可同时返回 body/headers/status，但不能冒充只改 Header 的 action；echo-response 的宽 matcher 必须满足安全边界。
 
@@ -279,7 +281,7 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生成脚本/原生 jq 对照。覆盖命中/no-op、URL/method/headers/body/status、captures、动作顺序、阶段所有权、单次 `$done`、missing/null/false/空值、Unicode/转义/原型键、依赖失败隔离与事务回滚。条件证据分别统计 false-positive / false-negative evidence；finite fixture 不能单独证明 native-equivalent，仍须结构及官方能力依据。
 
-用户降级策略的目标预期与源全行为 oracle 分开，不据 flags 省略策略或 JQ 分条宣称源行为完全等价。Golden 在独立语义检查通过后仅用于发现输出漂移，不用更新 Golden 掩盖错误。真实 jq 编译和结果/错误传播同时验证。
+用户降级策略的目标预期与源全行为 oracle 分开，不据 flags 恢复或 JQ 分条宣称源行为完全等价。Golden 在独立语义检查通过后仅用于发现输出漂移，不用更新 Golden 掩盖错误。真实 jq 编译和结果/错误传播同时验证。
 
 验收包括上游预检/目录/转换一致选层、真实同正则独立规则保留、分条 JSON/JQ、错误 JQ 诊断作用域、README 来源分组/折叠及增减、完整 Action 和逐文件内容比较。零 Review/Issue 不等于全 Loon 语法或真实客户端行为已证明。
 

@@ -1983,7 +1983,8 @@ if(selectedCase==='conversion-policy.mjs') {
     assert.ok(pattern);
     const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
     for(const target of ['qx','surge']) {
-      const inlinePattern=target==='surge'?compileRegexForTarget(asts[0].condition.right,{target}).pattern:pattern;
+      // Modified: 2026-11-05 (chance). Both clients retain the source matcher flags.
+      const inlinePattern=compileRegexForTarget(asts[0].condition.right,{target}).pattern;
       const prefix=target==='qx'?inlinePattern+' url jsonjq-response-body ': 'http-response-jq '+inlinePattern+' ';
       const active=out[target].split('\n').filter(x=>x.startsWith(prefix));
       assert.equal(active.length,asts.length,name+' retains every independent same-regex JSON/JQ declaration');

@@ -461,7 +461,8 @@ function oneAction(
   if (conditionMode === "external-exact") {
     return { condition: null, action: ast.actions[0] };
   }
-  const condition: any = simpleUrlRewriteCondition(ast);
+  // Modified: 2026-11-05 (chance). Preserve source flags on the QX outer matcher as well as inside JS.
+  const condition: any = simpleUrlRewriteCondition(ast, { target: "qx" });
   if (!condition.ok) throw new Error(condition.reason);
   return { condition, action: ast.actions[0] };
 }
@@ -633,7 +634,7 @@ export function renderQxRejectScript(ast: any, options: any = {}): any {
   const externalExact: any = options.conditionMode === "external-exact";
   const condition: any = externalExact
     ? { pattern: null, notes: [] }
-    : simpleUrlRewriteCondition(ast);
+    : simpleUrlRewriteCondition(ast, { target: "qx" });
   if (!condition.ok && !externalExact) throw new Error(condition.reason);
   const action: any = ast.actions[0];
   if (!["reject", "reject_dict", "reject_array"].includes(action.name)) {
@@ -763,7 +764,7 @@ export function renderQxInlineMockScript(ast: any, options: any = {}): any {
   const externalExact: any = options.conditionMode === "external-exact";
   const condition: any = externalExact
     ? { pattern: null, notes: [] }
-    : simpleUrlRewriteCondition(ast);
+    : simpleUrlRewriteCondition(ast, { target: "qx" });
   if (!condition.ok && !externalExact) throw new Error(condition.reason);
   const mocks: any = ast.actions.filter((a: any): any =>
     /^(?:request|response)\.body\.mock$/.test(a.name),

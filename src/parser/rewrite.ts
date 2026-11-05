@@ -2139,12 +2139,7 @@ function nativeJsonPriorityPlan(ast: any, target: any): any {
   if (!matcher.ok) return null;
   const mapped: any = jsonPipelineToSafeNativeJq(ast);
   if (!mapped.ok) return null;
-  const note: any =
-    target === "qx" && ast.condition?.right?.flags
-      ? "# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags " +
-        ast.condition.right.flags +
-        "; user-authorized compatibility downgrade; matching semantics may differ.\n"
-      : "";
+  // Modified: 2026-11-05 (chance). Both targets preserve source URL flags; omit the retired downgrade warning.
   const mapping: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name];
   const line: any =
     target === "qx"
@@ -2153,7 +2148,6 @@ function nativeJsonPriorityPlan(ast: any, target: any): any {
   return {
     section: target === "qx" ? "rewrite" : "body",
     line,
-    ...(note ? { lines: [note.trim(), line] } : {}),
   };
 }
 export function planRewriteFeatureHelper(ast: any, target: any, ctx: any): any {
@@ -2176,7 +2170,7 @@ export function planRewriteFeatureHelper(ast: any, target: any, ctx: any): any {
       a.name.endsWith(".json.jq"),
     );
     const jqMatcher: any = jqCombination
-      ? simpleUrlRewriteCondition(ast)
+      ? simpleUrlRewriteCondition(ast, { target })
       : null;
     const narrowJq: any =
       jqCombination &&
@@ -2727,7 +2721,7 @@ export function qxDirectRewritePlan(
       notes: [],
     };
   } else {
-    condition = simpleUrlRewriteCondition(ast);
+    condition = simpleUrlRewriteCondition(ast, { target: "qx" });
     if (!condition.ok) return condition;
     condition = { ...condition, prefix: condition.pattern + " url " };
   }
@@ -2832,7 +2826,7 @@ export function qxDirectRewritePlan(
     const replacement: any = stringNode(action.args[1]);
     if (regex?.type !== "regex" || replacement === null)
       return unsupported(action.name + ": invalid body replacement arguments");
-    // Modified: 2026-10-26 (chance). Apply QX-only Header/Body m/s policy.
+    // Modified: 2026-11-05 (chance). Preserve all source ims flags in QX body matching.
     const bodyRegex: any = compileRegexForTarget(regex, {
       subject: "body",
       target: "qx",
@@ -3626,11 +3620,12 @@ function requestHeaderLinePattern(name: any, value: any = null): any {
   if (value === null) return field + "[^\\r\\n]*(?:\\r\\n|$)";
   return field + regexEscape(value) + "[ \\t]*(?:\\r\\n|$)";
 }
-function comparisonKey(node: any, { compatibility = false }: any = {}): any {
+function comparisonKey(node: any): any {
   const n: any = unwrap(node);
   if (n?.type !== "comparison" || n.left?.type !== "variable") return null;
   const url: any = urlComparisonRegex(n);
-  if (url && (compatibility || !url.regex.flags)) {
+  // Modified: 2026-11-05 (chance). Flagged URLs are native QX predicates, including helper prefilters.
+  if (url) {
     return {
       kind: "url-regex",
       key:
@@ -3639,7 +3634,7 @@ function comparisonKey(node: any, { compatibility = false }: any = {}): any {
         "\u0000" +
         String(url.regex.flags || ""),
       sourceFlags: String(url.regex.flags || ""),
-      pattern: compileRegexForTarget(url.regex).pattern,
+      pattern: compileRegexForTarget(url.regex, { target: "qx" }).pattern,
     };
   }
   if (n.left.name === "request.method" && n.operator === "==") {
@@ -3684,7 +3679,7 @@ function guaranteedPredicates(node: any): any {
   const n: any = unwrap(node);
   if (!n) return new Map();
   if (n.type === "comparison") {
-    const item: any = comparisonKey(n, { compatibility: true });
+    const item: any = comparisonKey(n);
     return item ? new Map([[item.key, item]]) : new Map();
   }
   if (n.type !== "logical") return new Map();
@@ -3720,11 +3715,11 @@ function selectHeaderPredicate(predicates: any): any {
   }
   return null;
 }
-function exactPredicates(node: any, options: any = {}): any {
+function exactPredicates(node: any): any {
   const n: any = unwrap(node);
   if (!n) return { ok: false, reason: "missing Rewrite condition" };
   if (n.type === "comparison") {
-    const item: any = comparisonKey(n, options);
+    const item: any = comparisonKey(n);
     if (!item || item.kind.startsWith("request-header-")) {
       return {
         ok: false,
@@ -3740,9 +3735,9 @@ function exactPredicates(node: any, options: any = {}): any {
         "exact QX matcher currently requires a comparison or AND-only condition",
     };
   }
-  const left: any = exactPredicates(n.left, options);
+  const left: any = exactPredicates(n.left);
   if (!left.ok) return left;
-  const right: any = exactPredicates(n.right, options);
+  const right: any = exactPredicates(n.right);
   if (!right.ok) return right;
   const merged: any = new Map([...left.predicates, ...right.predicates]);
   const urls: any = [...merged.values()].filter(
@@ -3809,7 +3804,7 @@ function matcherFromPredicates(predicates: any): any {
   };
 }
 export function qxExactRewriteMatcherPlan(ast: any, options: any = {}): any {
-  const exact: any = exactPredicates(ast?.condition, options);
+  const exact: any = exactPredicates(ast?.condition);
   if (!exact.ok) return exact;
   const plan: any = matcherFromPredicates(exact.predicates);
   if (!options.compatibility && plan.urlPattern === "^https?://") {
@@ -3819,9 +3814,7 @@ export function qxExactRewriteMatcherPlan(ast: any, options: any = {}): any {
   return {
     ...plan,
     exact: true,
-    compatibilityUnverified: [...exact.predicates.values()].some(
-      (p: any): any => Boolean(p.sourceFlags),
-    ),
+    compatibilityUnverified: false,
   };
 }
 export function qxRewriteMatcherPlan(ast: any): any {
@@ -4609,8 +4602,8 @@ function qxNativeHeaderPlan(ast: any): any {
         )
           return null;
         const field: any = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        // Modified: 2026-10-26 (chance). Restore only source m/s inside the
-        // Header value group. Keep source i omitted and field-name casing intact.
+        // Modified: 2026-11-05 (chance). Preserve source ims within the Header
+        // value group, independently of case-insensitive field-name matching.
         const compiled: any = compileRegexForTarget(regex, {
           subject: "header",
           target: "qx",
