@@ -15,9 +15,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.wakeup\.fun\/wakeup\/app\/bannerconf$ url reject-dict
+(?i)^https:\/\/api\.wakeup\.fun\/wakeup\/app\/bannerconf$ url reject-dict
 
-^https:\/\/api\.wakeup\.fun\/wakeup\/user\/mine$ url jsonjq-response-body 'del(.data.bannerItems)'
+(?i)^https:\/\/api\.wakeup\.fun\/wakeup\/user\/mine$ url jsonjq-response-body 'del(.data.bannerItems)'
 
 # [mitm]
 hostname = api.wakeup.fun

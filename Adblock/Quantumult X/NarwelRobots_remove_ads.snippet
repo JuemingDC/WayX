@@ -15,11 +15,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/cn-app\.narwaltech\.com\/operate\/appPosition\/listSplash\? url reject-dict
+(?i)^https:\/\/cn-app\.narwaltech\.com\/operate\/appPosition\/listSplash\? url reject-dict
 
-^https:\/\/cn-app\.narwaltech\.com\/operate\/cactivity\/listByResourceIds\?resourceIds=(user_center_banner|index_banner) url reject-dict
+(?i)^https:\/\/cn-app\.narwaltech\.com\/operate\/cactivity\/listByResourceIds\?resourceIds=(user_center_banner|index_banner) url reject-dict
 
-^https:\/\/store\.narwal\.com\/mall\/customPage\/getByPageKeyword\? url reject-dict
+(?i)^https:\/\/store\.narwal\.com\/mall\/customPage\/getByPageKeyword\? url reject-dict
 
 # [mitm]
 hostname = cn-app.narwaltech.com, store.narwal.com

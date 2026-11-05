@@ -15,11 +15,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/gl-cn-api\.ecovacs\.cn\/v3\/private\/ url jsonjq-response-body '.data.navigateInfoResponseList |= map(select(.positionType == "Robot" or .positionType == "Mine"))'
+(?i)^https:\/\/gl-cn-api\.ecovacs\.cn\/v3\/private\/ url jsonjq-response-body '.data.navigateInfoResponseList |= map(select(.positionType == "Robot" or .positionType == "Mine"))'
 
-^https:\/\/api-app\.dc-cn\.cn\.ecouser\.net\/api\/ecms\/app\/ad\/ url reject-dict
+(?i)^https:\/\/api-app\.dc-cn\.cn\.ecouser\.net\/api\/ecms\/app\/ad\/ url reject-dict
 
-^https:\/\/gl-cn-api\.ecovacs\.cn\/v1\/private\/ url reject-dict
+(?i)^https:\/\/gl-cn-api\.ecovacs\.cn\/v1\/private\/ url reject-dict
 
 # [mitm]
 hostname = gl-cn-api.ecovacs.cn, api-app.dc-cn.cn.ecouser.net

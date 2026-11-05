@@ -15,13 +15,13 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.kurobbs\.com\/config\/getOpenScreen$ url reject-dict
+(?i)^https:\/\/api\.kurobbs\.com\/config\/getOpenScreen$ url reject-dict
 
-^https:\/\/api\.kurobbs\.com\/config\/index\/windows$ url reject-dict
+(?i)^https:\/\/api\.kurobbs\.com\/config\/index\/windows$ url reject-dict
 
-^https:\/\/api\.kurobbs\.com\/config\/search\/getSearchConfig\? url reject-dict
+(?i)^https:\/\/api\.kurobbs\.com\/config\/search\/getSearchConfig\? url reject-dict
 
-^https:\/\/api\.kurobbs\.com\/forum\/app\/topic\/hotlist\? url reject-dict
+(?i)^https:\/\/api\.kurobbs\.com\/forum\/app\/topic\/hotlist\? url reject-dict
 
 # [mitm]
 hostname = api.kurobbs.com

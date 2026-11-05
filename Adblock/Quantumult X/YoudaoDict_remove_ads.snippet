@@ -17,13 +17,13 @@
 # Source declaration: ad-sdk-config.youdao.com
 
 # [rewrite_local]
-^https:\/\/dict\.youdao\.com\/homepage\/toolbar\/get\/ url jsonjq-response-body 'del(.data.vipTag)'
+(?i)^https:\/\/dict\.youdao\.com\/homepage\/toolbar\/get\/ url jsonjq-response-body 'del(.data.vipTag)'
 
-^https:\/\/dict\.youdao\.com\/vip\/activity\/startup\/ url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/startup\/ url reject-dict
 
-^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/configs\? url reject-dict
-^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/match\? url reject-dict
-^https:\/\/dict\.youdao\.com\/vip\/user\/paid\/guide\? url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/configs\? url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/vip\/activity\/retention\/match\? url reject-dict
+(?i)^https:\/\/dict\.youdao\.com\/vip\/user\/paid\/guide\? url reject-dict
 
 # [mitm]
 hostname = dict.youdao.com

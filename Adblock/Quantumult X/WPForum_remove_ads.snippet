@@ -15,9 +15,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/yesList\? url reject-dict
+(?i)^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/yesList\? url reject-dict
 
-^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/slideshow\? url jsonjq-response-body '.data |= map(select(.protocolId == 1))'
+(?i)^https:\/\/api\.wfdata\.club\/v2\/yesfeng\/slideshow\? url jsonjq-response-body '.data |= map(select(.protocolId == 1))'
 
 # [mitm]
 hostname = api.wfdata.club

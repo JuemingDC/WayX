@@ -15,11 +15,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.tdz5\.com\/search\/hotword\? url reject-dict
+(?i)^https:\/\/api\.tdz5\.com\/search\/hotword\? url reject-dict
 
-^https:\/\/api\.tdz5\.com\/ring\/hot\? url reject-dict
+(?i)^https:\/\/api\.tdz5\.com\/ring\/hot\? url reject-dict
 # 移除首页广告配置
-^https:\/\/api\.tdz5\.com\/base\/init\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-20acddd675b3/base_init.js
+(?i)^https:\/\/api\.tdz5\.com\/base\/init\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-20acddd675b3/base_init.js
 
 # [mitm]
 hostname = api.tdz5.com

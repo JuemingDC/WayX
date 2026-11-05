@@ -15,11 +15,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/marki\.markiapp\.com\/mkg\/MomStats\/getFlowWindowList$ url reject-dict
+(?i)^https:\/\/marki\.markiapp\.com\/mkg\/MomStats\/getFlowWindowList$ url reject-dict
 
-^https?:\/\/marki\.markiapp\.com\/mkg\/Advertising\/ url reject-dict
-^https:\/\/marki\.markiapp\.com\/mkg\/MomStats\/getIntegralAdv$ url reject-dict
-^https:\/\/market-callback\.markiapp\.com\/adcenter\/ url reject-dict
+(?i)^https?:\/\/marki\.markiapp\.com\/mkg\/Advertising\/ url reject-dict
+(?i)^https:\/\/marki\.markiapp\.com\/mkg\/MomStats\/getIntegralAdv$ url reject-dict
+(?i)^https:\/\/market-callback\.markiapp\.com\/adcenter\/ url reject-dict
 
 # [mitm]
 hostname = marki.markiapp.com, market-callback.markiapp.com

@@ -15,13 +15,13 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/banner\/list$ url reject-dict
+(?i)^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/banner\/list$ url reject-dict
 
-^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/latest$ url reject-dict
+(?i)^https:\/\/cniot\.roborock\.com\/api\/v1\/activity\/latest$ url reject-dict
 
-^https:\/\/cniot\.roborock\.com\/api\/v1\/app\/theme\/device\/icon\? url reject
+(?i)^https:\/\/cniot\.roborock\.com\/api\/v1\/app\/theme\/device\/icon\? url reject
 
-^https:\/\/api\.roborock\.com\/v2\/h5\.page\.item\.info\?id=4115$ url jsonjq-response-body '.data |= map(select(.title == "常用功能"))'
+(?i)^https:\/\/api\.roborock\.com\/v2\/h5\.page\.item\.info\?id=4115$ url jsonjq-response-body '.data |= map(select(.title == "常用功能"))'
 
 # [mitm]
 hostname = cniot.roborock.com, api.roborock.com

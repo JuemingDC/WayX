@@ -17,6 +17,6 @@ host, adsys.nineton.cn, reject
 host, adcdn.ccqyj.com, reject
 
 # [rewrite_local]
-^http:\/\/weatherapi\.ccqyj\.com\/server\/listsv\d$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_iReaderCityWeather_remove_ads/mock_0b0889689d.js
+(?i)^http:\/\/weatherapi\.ccqyj\.com\/server\/listsv\d$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_iReaderCityWeather_remove_ads/mock_0b0889689d.js
 
 # [mitm]

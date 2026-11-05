@@ -15,10 +15,10 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/95598\.csg\.cn\/mp\/mpaas\/mgw\.htm$ url jsonjq-response-body 'if .info | contains("RUBIK-TRACEID:") then .scene.page.areas |= map(select(.areaId | test("kingkong_|9grid_|message_|nearmap_|recommend_"))) else . end'
+(?i)^https:\/\/95598\.csg\.cn\/mp\/mpaas\/mgw\.htm$ url jsonjq-response-body 'if .info | contains("RUBIK-TRACEID:") then .scene.page.areas |= map(select(.areaId | test("kingkong_|9grid_|message_|nearmap_|recommend_"))) else . end'
 
-^https:\/\/95598\.csg\.cn\/mp\/ucs\/ma\/zt\/content\/queryHotInformations$ url reject-dict
-^https:\/\/95598\.csg\.cn\/mp\/mpaas\/rubik\/openapi\/rubik\/mobile\/getRubikScene$ url reject-dict
+(?i)^https:\/\/95598\.csg\.cn\/mp\/ucs\/ma\/zt\/content\/queryHotInformations$ url reject-dict
+(?i)^https:\/\/95598\.csg\.cn\/mp\/mpaas\/rubik\/openapi\/rubik\/mobile\/getRubikScene$ url reject-dict
 
 # [mitm]
 hostname = 95598.csg.cn

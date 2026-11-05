@@ -4,7 +4,7 @@
 # Icon: https://rucu6.pages.dev/Icons/app/youtube.png
 # Updated: 2026-10-22 20:55
 
-# Converted: 2026-11-03 06:40:00 +08:00
+# Converted: 2026-11-05 10:30:32 +08:00
 # Converted by: chance
 # Category: 插件
 # Source: https://rucu6.pages.dev/Plugins/youtube_gholts.lpx
@@ -12,22 +12,22 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/s\.youtube\.com\/api\/stats\/ads url reject
-^https:\/\/www\.youtube\.com\/(pagead|pcs)\/ url reject
+(?i)^https:\/\/s\.youtube\.com\/api\/stats\/ads url reject
+(?i)^https:\/\/www\.youtube\.com\/(pagead|pcs)\/ url reject
 # youtube_ad-break
-^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\/ad_break(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-0b8b47c8cd98/request_gholts.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player\/ad_break(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-0b8b47c8cd98/request_gholts.js
 # youtube_init
-^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-0b8b47c8cd98/request_gholts.js
+(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-0b8b47c8cd98/request_gholts.js
 # youtube_auto-hd
-^https?:\/\/[\w-]+\.googlevideo\.com\/videoplayback(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-0b8b47c8cd98/request_gholts.js
+(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/videoplayback(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-0b8b47c8cd98/request_gholts.js
 # youtube_log-event
-^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-0b8b47c8cd98/request_gholts.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-0b8b47c8cd98/request_gholts.js
 # youtube_response
-^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:navigation\/resolve_url|browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-9c6f6b0f1d9d/response_gholts.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:navigation\/resolve_url|browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-9c6f6b0f1d9d/response_gholts.js
 # youtube_key
-^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:config|log_event)(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-50fa8c762b13/key_gholts.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:config|log_event)(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-50fa8c762b13/key_gholts.js
 # youtube_ump
-^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-34e781175946/ump_gholts.js
+(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/rucu6.pages.dev-34e781175946/ump_gholts.js
 
 # [mitm]
 hostname = rr*.googlevideo.com, s.youtube.com, www.youtube.com, youtubei.googleapis.com

@@ -15,7 +15,7 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/newapi\.meishi\.cc\/indexnew\/home_feeds url jsonjq-response-body 'if .data.items then .data.items |= map(select(.type | . != "101" and . != "12")) else . end'
+(?i)^https:\/\/newapi\.meishi\.cc\/indexnew\/home_feeds url jsonjq-response-body 'if .data.items then .data.items |= map(select(.type | . != "101" and . != "12")) else . end'
 
 # [mitm]
 hostname = newapi.meishi.cc

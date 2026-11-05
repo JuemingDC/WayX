@@ -15,9 +15,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/fast\.jfgou\.com:1443\/api\/web\/v\d\/no\/app\/advertisement\/ url reject-dict
+(?i)^https:\/\/fast\.jfgou\.com:1443\/api\/web\/v\d\/no\/app\/advertisement\/ url reject-dict
 
-^https:\/\/jiafeigou-1251885898\.cos\.ap-guangzhou\.myqcloud\.com\/forever\/web_server\/app_config\/banner_\d+ url reject
+(?i)^https:\/\/jiafeigou-1251885898\.cos\.ap-guangzhou\.myqcloud\.com\/forever\/web_server\/app_config\/banner_\d+ url reject
 
 # [mitm]
 hostname = fast.jfgou.com, jiafeigou-1251885898.cos.ap-guangzhou.myqcloud.com

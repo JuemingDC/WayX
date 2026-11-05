@@ -15,22 +15,22 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.58moto\.com\/advert\/ url reject-dict
+(?i)^https:\/\/api\.58moto\.com\/advert\/ url reject-dict
 
-^https:\/\/api\.58moto\.com\/mall\/goods\/self\/list\? url reject-dict
-^https:\/\/api\.58moto\.com\/mall\/goods\/self\/homeList\? url reject-dict
+(?i)^https:\/\/api\.58moto\.com\/mall\/goods\/self\/list\? url reject-dict
+(?i)^https:\/\/api\.58moto\.com\/mall\/goods\/self\/homeList\? url reject-dict
 
-^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do$ url reject-dict
+(?i)^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do$ url reject-dict
 
-^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22025 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_5d411eca9d.js
+(?i)^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22025 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_5d411eca9d.js
 
-^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22038 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_5f0586b9b5.js
+(?i)^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22038 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_5f0586b9b5.js
 
-^https:\/\/api\.58moto\.com\/forum\/public\/labelController\.do\?action=20112 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_d94eec5583.js
+(?i)^https:\/\/api\.58moto\.com\/forum\/public\/labelController\.do\?action=20112 url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_MotorFans_remove_ads/mock_d94eec5583.js
 
-^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22004 url jsonjq-response-body 'del(.data.link)'
+(?i)^https:\/\/api\.58moto\.com\/forum\/public\/businessEssayController\.do\?action=22004 url jsonjq-response-body 'del(.data.link)'
 # 修改配置
-^https:\/\/api\.58moto\.com\/expands\/config\/appWholeConfig\?key=app_whole_config$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-28e7d9d5ad8f/MotorFans_remove_ads.js
+(?i)^https:\/\/api\.58moto\.com\/expands\/config\/appWholeConfig\?key=app_whole_config$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-28e7d9d5ad8f/MotorFans_remove_ads.js
 
 # [mitm]
 hostname = api.58moto.com

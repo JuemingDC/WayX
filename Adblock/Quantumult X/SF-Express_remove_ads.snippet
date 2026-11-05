@@ -15,13 +15,13 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/ad\/ url reject-dict
+(?i)^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/ad\/ url reject-dict
 
-^https:\/\/ucmp\.sf-express\.com\/proxy\/esgcempcore\/memberGoods\/pointMallService\/goodsList$ url reject-dict
+(?i)^https:\/\/ucmp\.sf-express\.com\/proxy\/esgcempcore\/memberGoods\/pointMallService\/goodsList$ url reject-dict
 
-^https:\/\/ucmp(-static)?\.sf-express\.com\/proxy\/ccspBase\/module-config\/(login\/)?query\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_SF-Express_remove_ads/mock_e3fe61f81a.js
+(?i)^https:\/\/ucmp(-static)?\.sf-express\.com\/proxy\/ccspBase\/module-config\/(login\/)?query\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_SF-Express_remove_ads/mock_e3fe61f81a.js
 
-^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/appHomeConfig\/query$ url jsonjq-response-body '.obj |= map(select(.position != 2))'
+(?i)^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/appHomeConfig\/query$ url jsonjq-response-body '.obj |= map(select(.position != 2))'
 
 # [mitm]
 hostname = ccsp-egmas.sf-express.com, ucmp.sf-express.com, ucmp-static.sf-express.com

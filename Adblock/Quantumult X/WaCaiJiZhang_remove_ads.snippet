@@ -15,11 +15,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ribbon\? url reject-dict
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ribbon\? url reject-dict
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/list\? url reject-dict
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/list\? url reject-dict
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ url reject-dict
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ url reject-dict
 
 # [mitm]
 hostname = jz.wacaijizhang.com

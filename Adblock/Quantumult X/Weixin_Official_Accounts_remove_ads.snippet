@@ -16,9 +16,9 @@
 host-suffix, wxs.qq.com, reject
 
 # [rewrite_local]
-^https:\/\/mp\.weixin\.qq\.com\/mp\/(cps_product_info|getappmsgad|jsmonitor|masonryfeed|relatedarticle)\? url reject-dict
+(?i)^https:\/\/mp\.weixin\.qq\.com\/mp\/(cps_product_info|getappmsgad|jsmonitor|masonryfeed|relatedarticle)\? url reject-dict
 
-^https:\/\/mp\.weixin\.qq\.com\/mp\/relatedsearchword url reject-dict
+(?i)^https:\/\/mp\.weixin\.qq\.com\/mp\/relatedsearchword url reject-dict
 
 # [mitm]
 hostname = mp.weixin.qq.com

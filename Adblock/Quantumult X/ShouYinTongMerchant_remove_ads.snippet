@@ -15,14 +15,14 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/syt\.leshuazf\.com\/merchant\/merchant\/showOpenScreenAd$ url reject-dict
+(?i)^https:\/\/syt\.leshuazf\.com\/merchant\/merchant\/showOpenScreenAd$ url reject-dict
 
-^https:\/\/m\.fqfin\.cn\/cls\/leshuapay\/preCredit\.json$ url reject-dict
-^https:\/\/syt\.leshuazf\.com\/merchant\/messageCenter\/stationLetterList$ url reject-dict
+(?i)^https:\/\/m\.fqfin\.cn\/cls\/leshuapay\/preCredit\.json$ url reject-dict
+(?i)^https:\/\/syt\.leshuazf\.com\/merchant\/messageCenter\/stationLetterList$ url reject-dict
 
-^https:\/\/syt\.leshuazf\.com\/merchant\/merchant\/getBannerConfig$ url reject-dict
+(?i)^https:\/\/syt\.leshuazf\.com\/merchant\/merchant\/getBannerConfig$ url reject-dict
 
-^https:\/\/syt\.leshuazf\.com\/merchant\/popup\/getPopupInfo$ url reject-dict
+(?i)^https:\/\/syt\.leshuazf\.com\/merchant\/popup\/getPopupInfo$ url reject-dict
 
 # [mitm]
 hostname = syt.leshuazf.com, m.fqfin.cn

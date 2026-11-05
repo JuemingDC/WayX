@@ -22,8 +22,8 @@ host, qh-material.taobao.com, reject
 host-suffix, admobile.top, reject
 
 # [rewrite_local]
-^https:?\/\/switch.jumpvg.com\/jump\/getlaunchad\/v2$ url jsonjq-response-body 'del(.data.adList)|.data.launchAd.showType=0'
-^https:?\/\/switch.jumpvg.com\/jump\/recommend\/ad_conf$ url jsonjq-response-body '.data=[]'
+(?i)^https:?\/\/switch.jumpvg.com\/jump\/getlaunchad\/v2$ url jsonjq-response-body 'del(.data.adList)|.data.launchAd.showType=0'
+(?i)^https:?\/\/switch.jumpvg.com\/jump\/recommend\/ad_conf$ url jsonjq-response-body '.data=[]'
 
 # [mitm]
 hostname = switch.jumpvg.com

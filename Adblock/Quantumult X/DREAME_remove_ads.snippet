@@ -15,15 +15,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/cn\.iot\.dreame\.tech:\d+\/dreame-product\/public\/advertisement\/ url reject-dict
+(?i)^https:\/\/cn\.iot\.dreame\.tech:\d+\/dreame-product\/public\/advertisement\/ url reject-dict
 
-^https:\/\/cn-mall\.dreame\.tech\/dreame-mall\/api\/v1\/tag\/list$ url reject-dict
+(?i)^https:\/\/cn-mall\.dreame\.tech\/dreame-mall\/api\/v1\/tag\/list$ url reject-dict
 
-^https:\/\/cn-wxmall\.dreame\.tech\/main\/goods\/get-topgoods$ url reject-dict
+(?i)^https:\/\/cn-wxmall\.dreame\.tech\/main\/goods\/get-topgoods$ url reject-dict
 
-^https:\/\/cn\.iot\.dreame\.tech:\d+\/dreame-product\/public\/common-plugin$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_DREAME_remove_ads/mock_a7216a4af7.js
+(?i)^https:\/\/cn\.iot\.dreame\.tech:\d+\/dreame-product\/public\/common-plugin$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_DREAME_remove_ads/mock_a7216a4af7.js
 
-^https:\/\/cn\.iot\.dreame\.tech:13267\/dreame-system\/dreame-app\/setting\/query$ url jsonjq-response-body 'del(.data.appIconConfig)'
+(?i)^https:\/\/cn\.iot\.dreame\.tech:13267\/dreame-system\/dreame-app\/setting\/query$ url jsonjq-response-body 'del(.data.appIconConfig)'
 
 # [mitm]
 hostname = cn-mall.dreame.tech, cn-wxmall.dreame.tech, cn.iot.dreame.tech

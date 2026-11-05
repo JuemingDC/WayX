@@ -15,10 +15,10 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/idgdata\.baidu\.com\/mc\/app\/api\/listterminal\? url reject-dict
-^https:\/\/idgdata\.baidu\.com\/operation\/api\/announce\/screen\/image_manage\? url reject-dict
+(?i)^https:\/\/idgdata\.baidu\.com\/mc\/app\/api\/listterminal\? url reject-dict
+(?i)^https:\/\/idgdata\.baidu\.com\/operation\/api\/announce\/screen\/image_manage\? url reject-dict
 
-^https:\/\/idgdata\.baidu\.com\/idgactivity\/api\/newuser\/info\? url reject-dict
+(?i)^https:\/\/idgdata\.baidu\.com\/idgactivity\/api\/newuser\/info\? url reject-dict
 
 # [mitm]
 hostname = idgdata.baidu.com

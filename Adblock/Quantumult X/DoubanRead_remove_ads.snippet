@@ -15,15 +15,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/read\.douban\.com\/api\/v2\/ads\/ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/ads\/ url reject-dict
 
-^https:\/\/read\.douban\.com\/api\/v2\/popup$ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/popup$ url reject-dict
 
-^https:\/\/read\.douban\.com\/api\/v2\/search\/hot_words$ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/search\/hot_words$ url reject-dict
 
-^https:\/\/read\.douban\.com\/api\/v2\/search\/hot_charts$ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/search\/hot_charts$ url reject-dict
 
-^https:\/\/read\.douban\.com\/api\/v2\/search\/rec_urls$ url reject-dict
+(?i)^https:\/\/read\.douban\.com\/api\/v2\/search\/rec_urls$ url reject-dict
 
 # [mitm]
 hostname = read.douban.com

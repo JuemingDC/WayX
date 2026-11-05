@@ -16,25 +16,25 @@
 host, apimall.qbb6.com, reject
 
 # [rewrite_local]
-^https:\/\/api\.qbb6\.com\/ad\/ url reject-dict
+(?i)^https:\/\/api\.qbb6\.com\/ad\/ url reject-dict
 
-^https:\/\/api\.qbb6\.com\/commons\/main\/tab\/info\/get\? url reject-dict
+(?i)^https:\/\/api\.qbb6\.com\/commons\/main\/tab\/info\/get\? url reject-dict
 
-^https:\/\/apicommunity\.qbb6\.com\/community\/recommend\/user\/get\? url reject-dict
+(?i)^https:\/\/apicommunity\.qbb6\.com\/community\/recommend\/user\/get\? url reject-dict
 
-^https:\/\/apipt\.qbb6\.com\/parenting\/pt\/home\/post\/card\/get\? url reject-dict
+(?i)^https:\/\/apipt\.qbb6\.com\/parenting\/pt\/home\/post\/card\/get\? url reject-dict
 
-^https:\/\/apipt\.qbb6\.com\/lib\/search\/hot\/keys\/v\d\? url reject-dict
+(?i)^https:\/\/apipt\.qbb6\.com\/lib\/search\/hot\/keys\/v\d\? url reject-dict
 
-^https:\/\/apiuser\.qbb6\.com\/user\/member\/info\/get\? url reject-dict
+(?i)^https:\/\/apiuser\.qbb6\.com\/user\/member\/info\/get\? url reject-dict
 
-^https:\/\/apimall\.qbb6\.com\/mall\/v\d\/goods\/count\? url reject-dict
-^https:\/\/apimall\.qbb6\.com\/mall\/homepage\/data\/get\/v\d$ url reject-dict
+(?i)^https:\/\/apimall\.qbb6\.com\/mall\/v\d\/goods\/count\? url reject-dict
+(?i)^https:\/\/apimall\.qbb6\.com\/mall\/homepage\/data\/get\/v\d$ url reject-dict
 # 精简我的页面
-^https:\/\/api\.qbb6\.com\/commons\/self\/button\/group\/get\/v\d\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-31c8920e3bcc/my.js
+(?i)^https:\/\/api\.qbb6\.com\/commons\/self\/button\/group\/get\/v\d\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-31c8920e3bcc/my.js
 
 # 精简育儿页面
-^https:\/\/apipt\.qbb6\.com\/parenting\/pt\/homepage\/get\/v\d\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-06a7c2ac7feb/homepage.js
+(?i)^https:\/\/apipt\.qbb6\.com\/parenting\/pt\/homepage\/get\/v\d\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-06a7c2ac7feb/homepage.js
 
 # [mitm]
 hostname = api.qbb6.com, apicommunity.qbb6.com, apipt.qbb6.com, apiuser.qbb6.com, apimall.qbb6.com

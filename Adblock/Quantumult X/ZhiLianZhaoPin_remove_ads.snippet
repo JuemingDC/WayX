@@ -16,11 +16,11 @@
 
 # [rewrite_local]
 ^https:\/\/(ask|cgate)\.zhaopin\.com\/operation\/ad\/ url reject
-^https:\/\/ask\.zhaopin\.com\/plat-zqa-server\/home\/\d\.\d\.\d\/getHomeContents\? url jsonjq-response-body 'delpaths([["data","templates",0,"data","banner"]])'
+(?i)^https:\/\/ask\.zhaopin\.com\/plat-zqa-server\/home\/\d\.\d\.\d\/getHomeContents\? url jsonjq-response-body 'delpaths([["data","templates",0,"data","banner"]])'
 
-^https:\/\/cgate\.zhaopin\.com\/resumeapi\/resumeCheck\/positionDetailBottomTipCheck$ url reject-dict
+(?i)^https:\/\/cgate\.zhaopin\.com\/resumeapi\/resumeCheck\/positionDetailBottomTipCheck$ url reject-dict
 
-^https:\/\/cgate\.zhaopin\.com\/bdp\/commercial\/queryLinkData$ url reject
+(?i)^https:\/\/cgate\.zhaopin\.com\/bdp\/commercial\/queryLinkData$ url reject
 
 # [mitm]
 hostname = ask.zhaopin.com, cgate.zhaopin.com

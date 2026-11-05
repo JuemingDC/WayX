@@ -15,11 +15,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/schedule-api\.julanling\.com\/api\d\/get_splash$ url reject-dict
+(?i)^https:\/\/schedule-api\.julanling\.com\/api\d\/get_splash$ url reject-dict
 
-^https:\/\/schedule-api\.julanling\.com\/api\d\/index_advert$ url reject-dict
+(?i)^https:\/\/schedule-api\.julanling\.com\/api\d\/index_advert$ url reject-dict
 
-^https:\/\/schedule-api\.julanling\.com\/api\d\/queryAdvertConfig$ url reject-dict
+(?i)^https:\/\/schedule-api\.julanling\.com\/api\d\/queryAdvertConfig$ url reject-dict
 
 # [mitm]
 hostname = schedule-api.julanling.com

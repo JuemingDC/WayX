@@ -16,13 +16,13 @@
 host, render-web.11222.cn, reject
 
 # [rewrite_local]
-^https:\/\/huichuan\.sm\.cn\/nativead url reject-dict
+(?i)^https:\/\/huichuan\.sm\.cn\/nativead url reject-dict
 
-^https:\/\/ocean\.shuqireader\.com\/api\/route\/iosReadPage\/adV2 url reject-dict
-^https:\/\/ocean\.shuqireader\.com\/api\/route\/ios\/readPage$ url reject-dict
-^https:\/\/ocean\.shuqireader\.com\/api\/render\/load\/resource url reject
+(?i)^https:\/\/ocean\.shuqireader\.com\/api\/route\/iosReadPage\/adV2 url reject-dict
+(?i)^https:\/\/ocean\.shuqireader\.com\/api\/route\/ios\/readPage$ url reject-dict
+(?i)^https:\/\/ocean\.shuqireader\.com\/api\/render\/load\/resource url reject
 # 移除书城横幅和阅读广告
-^https:\/\/ocean\.shuqireader\.com\/sqios\/render\/render\/page\/bookstore$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-b3647f0da5e1/ShuQiCenterReader_remove_ads.js
+(?i)^https:\/\/ocean\.shuqireader\.com\/sqios\/render\/render\/page\/bookstore$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-b3647f0da5e1/ShuQiCenterReader_remove_ads.js
 
 # [mitm]
 hostname = ocean.shuqireader.com, huichuan.sm.cn

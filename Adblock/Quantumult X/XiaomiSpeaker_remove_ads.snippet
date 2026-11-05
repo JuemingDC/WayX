@@ -15,11 +15,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/marketing-aibox\.v\.mitvos\.com\/advertise\/ url reject-dict
+(?i)^https:\/\/marketing-aibox\.v\.mitvos\.com\/advertise\/ url reject-dict
 
-^https:\/\/marketing-aibox\.v\.mitvos\.com\/payGuide\/halfScreenMulti\/(home|cache)\? url reject-dict
+(?i)^https:\/\/marketing-aibox\.v\.mitvos\.com\/payGuide\/halfScreenMulti\/(home|cache)\? url reject-dict
 
-^https:\/\/marketing-aibox\.v\.mitvos\.com\/payGuide\/tabPage\? url reject-dict
+(?i)^https:\/\/marketing-aibox\.v\.mitvos\.com\/payGuide\/tabPage\? url reject-dict
 
 # [mitm]
 hostname = marketing-aibox.v.mitvos.com

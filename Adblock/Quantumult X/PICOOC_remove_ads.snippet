@@ -15,15 +15,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api2\.picooc\.com\/v\d\/api\/focus\/strategy\/execute\? url reject-dict
+(?i)^https:\/\/api2\.picooc\.com\/v\d\/api\/focus\/strategy\/execute\? url reject-dict
 
-^https:\/\/api2\.picooc\.com\/v\d\/api\/dietGuide\/query\? url reject-dict
+(?i)^https:\/\/api2\.picooc\.com\/v\d\/api\/dietGuide\/query\? url reject-dict
 
-^https:\/\/api2\.picooc\.com\/program\/listMainProgram\? url reject-dict
+(?i)^https:\/\/api2\.picooc\.com\/program\/listMainProgram\? url reject-dict
 
-^https:\/\/a\.picooc\.com\/v\d\/api\/camp\/sys\/config\/coupon\/pattern\? url reject-dict
+(?i)^https:\/\/a\.picooc\.com\/v\d\/api\/camp\/sys\/config\/coupon\/pattern\? url reject-dict
 
-^https:\/\/api2\.picooc\.com\/v\d\/api\/account\/getTabsInfo\? url reject-dict
+(?i)^https:\/\/api2\.picooc\.com\/v\d\/api\/account\/getTabsInfo\? url reject-dict
 
 # [mitm]
 hostname = api2.picooc.com, a.picooc.com

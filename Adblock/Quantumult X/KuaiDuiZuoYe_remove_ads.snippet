@@ -16,16 +16,16 @@
 host, adx.zuoyebang.com, reject
 
 # [rewrite_local]
-^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ url reject-dict
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/init\/ad\/ url reject-dict
 
-^https:\/\/www\.kuaiduizuoye\.com\/activity\/init\/checkappconfig$ url reject-dict
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/activity\/init\/checkappconfig$ url reject-dict
 
-^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ url reject-dict
-^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ url reject-dict
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/appbannersv3$ url reject-dict
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/kdapi\/conf\/initbanner$ url reject-dict
 
-^https:\/\/www\.kuaiduizuoye\.com\/codesearch\/aid\/home$ url jsonjq-response-body 'del(.data.homeBannerList)'
+(?i)^https:\/\/www\.kuaiduizuoye\.com\/codesearch\/aid\/home$ url jsonjq-response-body 'del(.data.homeBannerList)'
 
-^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ url reject-dict
+(?i)^https:\/\/apivip\.kuaiduizuoye\.com\/viponline\/scancode\/mycard$ url reject-dict
 
 # [mitm]
 hostname = www.kuaiduizuoye.com, apivip.kuaiduizuoye.com

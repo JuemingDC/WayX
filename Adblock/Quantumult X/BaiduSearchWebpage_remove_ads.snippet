@@ -15,7 +15,7 @@
 
 # [rewrite_local]
 # 移除百度搜索首页信息流广告
-^https?:\/\/(www|m)\.baidu\.com\/?($|\?from=\w{8,9}) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-c5a7ae3bef67/BaiduSearchHomePage_remove_ads.js
+(?i)^https?:\/\/(www|m)\.baidu\.com\/?($|\?from=\w{8,9}) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-c5a7ae3bef67/BaiduSearchHomePage_remove_ads.js
 
 # [mitm]
 hostname = m.baidu.com, www.baidu.com

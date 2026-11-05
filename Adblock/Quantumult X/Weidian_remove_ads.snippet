@@ -15,34 +15,34 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/thor\.weidian\.com\/ares\/home\.splash\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/ares\/home\.splash\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/warlock\/recommend\.guessULike\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/warlock\/recommend\.guessULike\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/poseidon\/exhibit\.spaceJson\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/poseidon\/exhibit\.spaceJson\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/ares\/app\.dialog\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/ares\/app\.dialog\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/warlock\/recommend\.guessULike\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/warlock\/recommend\.guessULike\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/feedserver\/feed\.similarRecFeeds\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/feedserver\/feed\.similarRecFeeds\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/faith\/search\.hotRecShadowWord\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/faith\/search\.hotRecShadowWord\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/faith\/search\.getProcessTopics\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/faith\/search\.getProcessTopics\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/feedserver\/feed\.listGoodUsers\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/feedserver\/feed\.listGoodUsers\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/feedserver\/feed\.myFollow\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/feedserver\/feed\.myFollow\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/ares\/recommend\.getSpecialFocusList\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/ares\/recommend\.getSpecialFocusList\/ url reject-dict
 
-^https:\/\/thor\.weidian\.com\/ares\/collect\.recommendShop\/ url reject-dict
+(?i)^https:\/\/thor\.weidian\.com\/ares\/collect\.recommendShop\/ url reject-dict
 # 配置修改
-^https:\/\/thor\.weidian\.com\/appconf\/getAppConfig\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-fa4881c9a055/getAppConfig.js
+(?i)^https:\/\/thor\.weidian\.com\/appconf\/getAppConfig\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-fa4881c9a055/getAppConfig.js
 
 # 精简钱包区
-^https:\/\/thor\.weidian\.com\/wgs\/wallet\.query\.order\.entrance\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-99a63d4a727c/wallet.js
+(?i)^https:\/\/thor\.weidian\.com\/wgs\/wallet\.query\.order\.entrance\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-99a63d4a727c/wallet.js
 
 # [mitm]
 hostname = thor.weidian.com

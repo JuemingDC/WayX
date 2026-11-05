@@ -18,13 +18,13 @@
 
 # [rewrite_local]
 # YouTube去广告
-^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-0e06084d89ad/YouTube_remove_ads_response.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-0e06084d89ad/YouTube_remove_ads_response.js
 
 # 请求初始化
-^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a8704cadd8f8/YouTube_remove_ads_request.js
+(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a8704cadd8f8/YouTube_remove_ads_request.js
 
 # 请求日志事件
-^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a8704cadd8f8/YouTube_remove_ads_request.js
+(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-a8704cadd8f8/YouTube_remove_ads_request.js
 
 # [mitm]
 hostname = *.googlevideo.com, youtubei.googleapis.com

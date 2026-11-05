@@ -15,22 +15,22 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/abtest\/ads_v\d\? url reject-dict
-^https:\/\/cdn\.tiantiantiaosheng\.com\/props_config_prod\/ad_position_config\/ url reject-dict
-^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/adolescent_mode\/ url reject-dict
-^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/ad_sys\/ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/abtest\/ads_v\d\? url reject-dict
+(?i)^https:\/\/cdn\.tiantiantiaosheng\.com\/props_config_prod\/ad_position_config\/ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/adolescent_mode\/ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/ad_sys\/ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api\/user\/home_page\/activities$ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\/user\/home_page\/activities$ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/search\/base_info$ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api\d\/search\/base_info$ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api2\/medal_challenge_activity\/page_switch\? url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api2\/medal_challenge_activity\/page_switch\? url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api2\/training_plan\/recommended_list$ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api2\/training_plan\/recommended_list$ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api2\/user\/new_register_info$ url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api2\/user\/new_register_info$ url reject-dict
 
-^https:\/\/api\.tiantiantiaosheng\.com\/api2\/popup\/list\? url reject-dict
+(?i)^https:\/\/api\.tiantiantiaosheng\.com\/api2\/popup\/list\? url reject-dict
 
 # [mitm]
 hostname = api.tiantiantiaosheng.com, cdn.tiantiantiaosheng.com

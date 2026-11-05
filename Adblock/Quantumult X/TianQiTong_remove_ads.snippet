@@ -15,15 +15,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/forecast\.sina\.cn\/app\/overall\/switch\.php\? url reject-dict
-^https:\/\/tqt\.weibo\.cn\/business\/advert\/ url reject-dict
-^https:\/\/tqt\.weibo\.cn\/user\/device\/ad_multi_star\? url reject-dict
+(?i)^https:\/\/forecast\.sina\.cn\/app\/overall\/switch\.php\? url reject-dict
+(?i)^https:\/\/tqt\.weibo\.cn\/business\/advert\/ url reject-dict
+(?i)^https:\/\/tqt\.weibo\.cn\/user\/device\/ad_multi_star\? url reject-dict
 
-^https:\/\/tqt\.weibo\.cn\/operation\/activity\/ url reject-dict
+(?i)^https:\/\/tqt\.weibo\.cn\/operation\/activity\/ url reject-dict
 
-^https:\/\/tqt\.weibo\.cn\/master\/nav\/tab\? url jsonjq-response-body 'map(.tabs|=map(select(.type=="weather" or .type=="radar" or .type=="my")))'
+(?i)^https:\/\/tqt\.weibo\.cn\/master\/nav\/tab\? url jsonjq-response-body 'map(.tabs|=map(select(.type=="weather" or .type=="radar" or .type=="my")))'
 
-^https:\/\/tqt\.weibo\.cn\/api\/user\/user\/\d\.\d\/\?method=personal_center$ url reject-dict
+(?i)^https:\/\/tqt\.weibo\.cn\/api\/user\/user\/\d\.\d\/\?method=personal_center$ url reject-dict
 
 # [mitm]
 hostname = forecast.sina.cn, tqt.weibo.cn

@@ -15,18 +15,17 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/xapi\.duitang\.com\/napi\/ads\/\? url reject-dict
+(?i)^https:\/\/xapi\.duitang\.com\/napi\/ads\/\? url reject-dict
 
-^https:\/\/meta\.duitang\.com\/napi\/infra\/settings\/ url jsonjq-response-body 'del(.data.AD_LINKS)'
+(?i)^https:\/\/meta\.duitang\.com\/napi\/infra\/settings\/ url jsonjq-response-body 'del(.data.AD_LINKS)'
 
-^https:\/\/api-2\.duitang\.com\/napi\/vienna\/daren\/daren\/recommend\/ url reject-dict
+(?i)^https:\/\/api-2\.duitang\.com\/napi\/vienna\/daren\/daren\/recommend\/ url reject-dict
 
-^https:\/\/www\.duitang\.com\/napi\/hot\/search\/list\/ url reject-dict
+(?i)^https:\/\/www\.duitang\.com\/napi\/hot\/search\/list\/ url reject-dict
 
-^https:\/\/(www|api-2)\.duitang\.com\/napi\/home\/bottom_tab\/detail\/\? url jsonjq-response-body '.data.tabs |= map(select(.group == "home" or .group == "category" or .group == "me"))'
+(?i)^https:\/\/(www|api-2)\.duitang\.com\/napi\/home\/bottom_tab\/detail\/\? url jsonjq-response-body '.data.tabs |= map(select(.group == "home" or .group == "category" or .group == "me"))'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-^https:\/\/api-2\.duitang\.com\/napi\/settings\/ url jsonjq-response-body 'del(.data.SPLASH_SWING_OPEN,.data.STICKER_SEARCH_HOT_KEYWORDS,.data.REWARD_AD_PAG_EDITOR,.data.REWARD_AD_PHOTO_EDITOR,.data.REWARD_AD_CUTOUT_NUM,.data.MAIN_EVENTS,.data.QA_TOOLTIP_BOTTOM,.data.OC_FOLLOW_OFFICIAL,.data.AD_MENU_SELECTIONS,.data.FEATURE_TEMPLATES,.data.FEEDBACK_URL,.data.AVATAR_MALL_UPDATE,.data.WATERMARK_MALL_UPDATE,.data.OC_MALL_UPDATE,.data["3D_AVATAR_UPDATE"],.data.BENEFIT_LIST,.data.SHARE_BANNER)'
+(?i)^https:\/\/api-2\.duitang\.com\/napi\/settings\/ url jsonjq-response-body 'del(.data.SPLASH_SWING_OPEN,.data.STICKER_SEARCH_HOT_KEYWORDS,.data.REWARD_AD_PAG_EDITOR,.data.REWARD_AD_PHOTO_EDITOR,.data.REWARD_AD_CUTOUT_NUM,.data.MAIN_EVENTS,.data.QA_TOOLTIP_BOTTOM,.data.OC_FOLLOW_OFFICIAL,.data.AD_MENU_SELECTIONS,.data.FEATURE_TEMPLATES,.data.FEEDBACK_URL,.data.AVATAR_MALL_UPDATE,.data.WATERMARK_MALL_UPDATE,.data.OC_MALL_UPDATE,.data["3D_AVATAR_UPDATE"],.data.BENEFIT_LIST,.data.SHARE_BANNER)'
 
 # [mitm]
 hostname = www.duitang.com, api-2.duitang.com, meta.duitang.com

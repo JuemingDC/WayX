@@ -16,7 +16,7 @@
 host, ad.iot.360.cn, reject
 
 # [rewrite_local]
-^https:\/\/app\.home\.360\.cn\/v1\/config\/custom_config url reject-dict
+(?i)^https:\/\/app\.home\.360\.cn\/v1\/config\/custom_config url reject-dict
 
 # [mitm]
 hostname = app.home.360.cn

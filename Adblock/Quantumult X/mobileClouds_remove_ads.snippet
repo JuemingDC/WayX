@@ -16,10 +16,10 @@
 
 # [rewrite_local]
 # 移除开屏广告
-^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-9858236b7366/mobileClouds_remove_ads.js
+(?i)^https:\/\/jzts\.cmpassport\.com\/personalized\/getPushContent url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-9858236b7366/mobileClouds_remove_ads.js
 
 # 移除应用内广告
-^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-9858236b7366/mobileClouds_remove_ads.js
+(?i)^https:\/\/ad\.mcloud\.139\.com\/advertapi\/adv-filter\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-9858236b7366/mobileClouds_remove_ads.js
 
 # [mitm]
 hostname = jzts.cmpassport.com, ad.mcloud.139.com

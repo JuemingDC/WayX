@@ -15,16 +15,16 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/get\? url reject-dict
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/get\? url reject-dict
 
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByTypeV2\? url jsonjq-response-body 'del(.list[] | select(.bannerChannelName == "活动"))'
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getAllBannerPage\? url jsonjq-response-body 'del(.data[] | select(.bannerChannelName == "活动"))'
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByTypeV2\? url jsonjq-response-body 'del(.list[] | select(.bannerChannelName == "活动"))'
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getAllBannerPage\? url jsonjq-response-body 'del(.data[] | select(.bannerChannelName == "活动"))'
 
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByType\? url reject-dict
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/banner\/common\/getBannerByType\? url reject-dict
 
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/merchant\/ad\/ url reject-dict
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/merchant\/ad\/ url reject-dict
 
-^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/activity\/pendant\? url reject-dict
+(?i)^https:\/\/api\.kmovie\.gifshow\.com\/rest\/n\/kmovie\/app\/resource\/activity\/pendant\? url reject-dict
 
 # [mitm]
 hostname = api.kmovie.gifshow.com

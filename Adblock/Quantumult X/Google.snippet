@@ -14,8 +14,8 @@
 # [filter_local]
 
 # [rewrite_local]
-^https?:\/\/(www.)?(g|google)\.cn url 307 https://www.google.com
-^https?:\/\/(ditu|maps)\.google\.cn url 307 https://maps.google.com
+(?i)^https?:\/\/(www.)?(g|google)\.cn url 307 https://www.google.com
+(?i)^https?:\/\/(ditu|maps)\.google\.cn url 307 https://maps.google.com
 
 # [mitm]
 hostname = www.google.cn

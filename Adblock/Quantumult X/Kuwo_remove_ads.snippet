@@ -29,12 +29,12 @@ ip-cidr, 111.206.98.63/32, reject
 ^http:\/\/vip\d\.kuwo\.cn\/vip\/v\d\/sysinfo\?op=getRePayAndDoPayBox url reject-dict
 
 ^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/album\/adBar\/ url reject-dict
-^https:\/\/vip\d\.kuwo\.cn\/commercia\/vipconf\/projectPage\/getPageContent url reject-dict
-^https:\/\/tingshu\.kuwo\.cn\/v2\/api\/pay\/user\/info url reject-dict
+(?i)^https:\/\/vip\d\.kuwo\.cn\/commercia\/vipconf\/projectPage\/getPageContent url reject-dict
+(?i)^https:\/\/tingshu\.kuwo\.cn\/v2\/api\/pay\/user\/info url reject-dict
 
-^https:\/\/appi\.kuwo\.cn\/kuwopay\/personal\/cells url reject-dict
+(?i)^https:\/\/appi\.kuwo\.cn\/kuwopay\/personal\/cells url reject-dict
 
-^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/tingshu\/index\/radio url jsonjq-response-body 'walk(if type == "object" and .type == "stripAdvert" then del(.child) else . end)'
+(?i)^http:\/\/wapi\.kuwo\.cn\/openapi\/v\d\/tingshu\/index\/radio url jsonjq-response-body 'walk(if type == "object" and .type == "stripAdvert" then del(.child) else . end)'
 
 # [mitm]
 hostname = appi.kuwo.cn, mc.tencentmusic.com, vip*.kuwo.cn, tingshu.kuwo.cn

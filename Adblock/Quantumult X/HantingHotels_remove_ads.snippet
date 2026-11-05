@@ -15,19 +15,19 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/hweb-manager\.huazhu\.com\/notice\/getAppPopupNotifyAlert$ url reject-dict
+(?i)^https:\/\/hweb-manager\.huazhu\.com\/notice\/getAppPopupNotifyAlert$ url reject-dict
 
-^https:\/\/hweb-hotel\.huazhu\.com\/home\/getHomeLoinBanner$ url reject-dict
+(?i)^https:\/\/hweb-hotel\.huazhu\.com\/home\/getHomeLoinBanner$ url reject-dict
 
-^https:\/\/hweb-hotel\.huazhu\.com\/\/home\/querySelectHotel$ url reject-dict
+(?i)^https:\/\/hweb-hotel\.huazhu\.com\/\/home\/querySelectHotel$ url reject-dict
 
-^https:\/\/hweb-hotel\.huazhu\.com\/home\/queryHotelBrand$ url reject-dict
+(?i)^https:\/\/hweb-hotel\.huazhu\.com\/home\/queryHotelBrand$ url reject-dict
 
-^https:\/\/hweb-manager\.huazhu\.com\/hotels\/ad\/getHotelListNoticeMerge$ url reject-dict
+(?i)^https:\/\/hweb-manager\.huazhu\.com\/hotels\/ad\/getHotelListNoticeMerge$ url reject-dict
 
-^https:\/\/res-pub\.huazhu\.com\/frontconf\/homeconfig_45\/\w+\.json$ url jsonjq-response-body 'if has("content") and (.content | type) == "object" then .content |= with_entries(select(.key == "topBanner" or .key == "topBannerImages")) else . end'
+(?i)^https:\/\/res-pub\.huazhu\.com\/frontconf\/homeconfig_45\/\w+\.json$ url jsonjq-response-body 'if has("content") and (.content | type) == "object" then .content |= with_entries(select(.key == "topBanner" or .key == "topBannerImages")) else . end'
 
-^https:\/\/res-pub\.huazhu\.com\/frontconf\/tabbarconfig_45\/\w+\.json$ url jsonjq-response-body '.content.tabbar |= map(select(.attributes.tabName == "首页" or .attributes.tabName == "服务" or .attributes.tabName == "我的"))'
+(?i)^https:\/\/res-pub\.huazhu\.com\/frontconf\/tabbarconfig_45\/\w+\.json$ url jsonjq-response-body '.content.tabbar |= map(select(.attributes.tabName == "首页" or .attributes.tabName == "服务" or .attributes.tabName == "我的"))'
 
 # [mitm]
 hostname = hweb-manager.huazhu.com, hweb-hotel.huazhu.com, res-pub.huazhu.com

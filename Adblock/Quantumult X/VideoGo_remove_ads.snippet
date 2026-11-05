@@ -15,12 +15,12 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.ys7\.com\/api\/ads url reject
-^https:\/\/i\.ys7\.com\/api\/user\/tabList url reject-dict
-^https:\/\/api\.ys7\.com\/v3\/config\/service\/entrance\/bannerInfo url reject-dict
-^https:\/\/api\.ys7\.com\/v3\/intelligent-app\/apps\/linkage url reject-dict
-^https:\/\/api\.ys7\.com\/v3\/configurations\/gray\/info\?grayTypes=185 url reject-dict
-^https:\/\/api\.ys7\.com\/v3\/videoclips\/square\/video\/query url reject-dict
+(?i)^https:\/\/api\.ys7\.com\/api\/ads url reject
+(?i)^https:\/\/i\.ys7\.com\/api\/user\/tabList url reject-dict
+(?i)^https:\/\/api\.ys7\.com\/v3\/config\/service\/entrance\/bannerInfo url reject-dict
+(?i)^https:\/\/api\.ys7\.com\/v3\/intelligent-app\/apps\/linkage url reject-dict
+(?i)^https:\/\/api\.ys7\.com\/v3\/configurations\/gray\/info\?grayTypes=185 url reject-dict
+(?i)^https:\/\/api\.ys7\.com\/v3\/videoclips\/square\/video\/query url reject-dict
 
 # [mitm]
 hostname = api.ys7.com, i.ys7.com

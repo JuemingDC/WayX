@@ -15,10 +15,10 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.818ps\.com\/v4\/advertisement\/ url reject-dict
+(?i)^https:\/\/api\.818ps\.com\/v4\/advertisement\/ url reject-dict
 
-^https:\/\/api\.818ps\.com\/v4\/popup\/ url reject-dict
-^https:\/\/api\.818ps\.com\/v4\/festival\/newYear\/pop\? url reject-dict
+(?i)^https:\/\/api\.818ps\.com\/v4\/popup\/ url reject-dict
+(?i)^https:\/\/api\.818ps\.com\/v4\/festival\/newYear\/pop\? url reject-dict
 
 # [mitm]
 hostname = api.818ps.com

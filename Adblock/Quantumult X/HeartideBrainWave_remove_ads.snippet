@@ -15,26 +15,26 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.psy-1\.com\/cosleep\/startup\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/startup\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/ad\/ url reject-dict
-^https:\/\/api\.psy-1\.com\/cosleep\/user\/identity\/ad\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/ad\/ url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/user\/identity\/ad\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/discover\/ad$ url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/discover\/ad$ url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/home\/activity\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/home\/activity\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/ad\/ url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/ad\/ url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/my\/ad\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/my\/ad\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/search\/config\? url reject-dict
-^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/search\/ranks\? url reject-dict
-^https:\/\/api\.psy-1\.com\/cosleep\/search\/inputs\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/search\/config\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/search\/ranks\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/search\/inputs\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/sleeps\/guides\/banner\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/sleeps\/guides\/banner\? url reject-dict
 
-^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/search\/ranks\/items\? url reject-dict
+(?i)^https:\/\/api\.psy-1\.com\/cosleep\/newborn\/search\/ranks\/items\? url reject-dict
 
 # [mitm]
 hostname = api.psy-1.com

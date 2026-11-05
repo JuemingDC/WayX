@@ -15,12 +15,12 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/richmanrules\.ksedt\.com\/serverConfig\/3\/adConfig\.json url reject-dict
-^https:\/\/gouche\.ksedt\.com\/config\/popup\/info$ url reject-dict
-^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfallBidding\/find$ url reject-dict
-^https:\/\/op\.ksedt\.com\/jxedtLive\/liveIntroduceResource url reject-dict
-^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfall\/find$ url reject-dict
-http-response url jsonjq-response-body 'del(.["^https:\\/\\/api\\"]["ksedt\\"]["com\\/api\\/config\\/"])'
+(?i)^https:\/\/richmanrules\.ksedt\.com\/serverConfig\/3\/adConfig\.json url reject-dict
+(?i)^https:\/\/gouche\.ksedt\.com\/config\/popup\/info$ url reject-dict
+(?i)^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfallBidding\/find$ url reject-dict
+(?i)^https:\/\/op\.ksedt\.com\/jxedtLive\/liveIntroduceResource url reject-dict
+(?i)^https:\/\/richmanrules\.ksedt\.com\/intellectWaterfall\/find$ url reject-dict
+(?i)http-response url jsonjq-response-body 'del(.["^https:\\/\\/api\\"]["ksedt\\"]["com\\/api\\/config\\/"])'
 
 # [mitm]
 hostname = richmanrules.ksedt.com, gouche.ksedt.com, muses.ksedt.com, op.ksedt.com, api.ksedt.com

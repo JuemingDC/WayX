@@ -15,13 +15,12 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/www\.imxingzhe\.com\/api\/v1\/pop\/window\/\? url reject-dict
+(?i)^https:\/\/www\.imxingzhe\.com\/api\/v1\/pop\/window\/\? url reject-dict
 
-^https:\/\/www\.imxingzhe\.com\/api\/v4\/account\/get_user_info\? url jsonjq-response-body 'del(.banner)'
+(?i)^https:\/\/www\.imxingzhe\.com\/api\/v4\/account\/get_user_info\? url jsonjq-response-body 'del(.banner)'
 
-# [WayX] COMPATIBILITY LIMITATION: native URL matcher temporarily omits Loon flags i; user-authorized compatibility downgrade; matching semantics may differ.
-^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body 'del(.banners,.ad)'
-^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body '.display_areas |= map(select(.name == "赛事" or .name == "行者帮" or .name == "头条" or .name == "排行榜" or .name == "约伴"))'
+(?i)^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body 'del(.banners,.ad)'
+(?i)^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body '.display_areas |= map(select(.name == "赛事" or .name == "行者帮" or .name == "头条" or .name == "排行榜" or .name == "约伴"))'
 
 # [mitm]
 hostname = www.imxingzhe.com

@@ -15,9 +15,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.wmpvp\.com\/api\/v1\/config\/promote$ url jsonjq-response-body 'del(.data.ad)'
+(?i)^https:\/\/api\.wmpvp\.com\/api\/v1\/config\/promote$ url jsonjq-response-body 'del(.data.ad)'
 
-^https:\/\/appactivity\.wmpvp\.com\/hotsearch\/all\? url reject-dict
+(?i)^https:\/\/appactivity\.wmpvp\.com\/hotsearch\/all\? url reject-dict
 
 # [mitm]
 hostname = api.wmpvp.com, appactivity.wmpvp.com

@@ -15,15 +15,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetSplashAds\? url reject-dict
+(?i)^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetSplashAds\? url reject-dict
 
-^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppGetAttentionInfos\? url reject-dict
+(?i)^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppGetAttentionInfos\? url reject-dict
 
-^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetBannerAds\? url reject-dict
+(?i)^https:\/\/app-api-32\.ihaique\.net\/api\/app\/v\d\/appad\/cmd\/AppadGetBannerAds\? url reject-dict
 
-^https:\/\/g\.ihaique\.net\/alcidae\/info\/index\.html$ url reject
+(?i)^https:\/\/g\.ihaique\.net\/alcidae\/info\/index\.html$ url reject
 
-^https:\/\/shop151522958\.youzan\.com\/v\d\/showcase\/homepage\? url reject
+(?i)^https:\/\/shop151522958\.youzan\.com\/v\d\/showcase\/homepage\? url reject
 
 # [mitm]
 hostname = app-api-32.ihaique.net, g.ihaique.net, shop151522958.youzan.com

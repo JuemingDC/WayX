@@ -15,13 +15,13 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/jz\.wacaijizhang\.com\/sensor\/config\/iOS\.conf\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Wacai_remove_ads/mock_c98bad3d47.js
+(?i)^https:\/\/jz\.wacaijizhang\.com\/sensor\/config\/iOS\.conf\? url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Wacai_remove_ads/mock_c98bad3d47.js
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ url reject-dict
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/banners\/ url reject-dict
 
-^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ url reject-dict
+(?i)^https:\/\/jz\.wacaijizhang\.com\/api\/resource\/universal\/fetch$ url reject-dict
 
-^https:\/\/jz\.wacaijizhang\.com\/activity\/ url reject
+(?i)^https:\/\/jz\.wacaijizhang\.com\/activity\/ url reject
 
 # [mitm]
 hostname = jz.wacaijizhang.com

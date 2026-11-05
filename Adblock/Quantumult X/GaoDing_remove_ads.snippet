@@ -15,17 +15,17 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/v\d\/delivery-pits\/ios-splash\/modules$ url reject-dict
+(?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/v\d\/delivery-pits\/ios-splash\/modules$ url reject-dict
 
-^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/delivery-pits\/(template|mine|home)-page-dialog\/modules$ url reject-dict
+(?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/delivery-pits\/(template|mine|home)-page-dialog\/modules$ url reject-dict
 
-^https:\/\/www\.gaoding\.com\/api\/v\d\/cp\/search-words\/v2\/placeholder url reject-dict
+(?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/cp\/search-words\/v2\/placeholder url reject-dict
 
-^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/template\/resources$ url jsonjq-response-body '.pits |= map(select(.module_type != "BANNER"))'
+(?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/template\/resources$ url jsonjq-response-body '.pits |= map(select(.module_type != "BANNER"))'
 
-^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/app_mine\/resources$ url jsonjq-response-body '.pits |= map(select(.module_type != "BANNER"))'
+(?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/app_mine\/resources$ url jsonjq-response-body '.pits |= map(select(.module_type != "BANNER"))'
 
-^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/(templates|all_editor_tools)\/resources$ url jsonjq-response-body 'walk(if type == "object" and .badge_img_url? then .badge_img_url="" else . end)'
+(?i)^https:\/\/www\.gaoding\.com\/api\/v\d\/oc\/exhibitions\/(templates|all_editor_tools)\/resources$ url jsonjq-response-body 'walk(if type == "object" and .badge_img_url? then .badge_img_url="" else . end)'
 
 # [mitm]
 hostname = www.gaoding.com

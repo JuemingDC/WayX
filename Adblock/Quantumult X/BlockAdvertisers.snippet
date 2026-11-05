@@ -462,10 +462,10 @@ host-suffix, tobidad.com, reject
 host, ep7.facebook.com, reject
 
 # [rewrite_local]
-^https:\/\/video-dsp\.pddpic\.com\/market-dsp-video\/ url reject
-^https:\/\/t-dsp\.pinduoduo\.com\/dspcb\/i\/mrk_ url reject
-^https:\/\/images\.pinduoduo\.com\/mrk\/ url reject
-^https:\/\/images\.pinduoduo\.com\/marketing_api\/ url reject
+(?i)^https:\/\/video-dsp\.pddpic\.com\/market-dsp-video\/ url reject
+(?i)^https:\/\/t-dsp\.pinduoduo\.com\/dspcb\/i\/mrk_ url reject
+(?i)^https:\/\/images\.pinduoduo\.com\/mrk\/ url reject
+(?i)^https:\/\/images\.pinduoduo\.com\/marketing_api\/ url reject
 
 # [mitm]
 hostname = video-dsp.pddpic.com, t-dsp.pinduoduo.com, images.pinduoduo.com

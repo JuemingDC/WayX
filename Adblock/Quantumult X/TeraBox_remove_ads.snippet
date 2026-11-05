@@ -16,12 +16,12 @@
 host, ymg-api.terabox.com, reject
 
 # [rewrite_local]
-^https:\/\/www\.terabox\.com\/adx\/ url reject-dict
-^https:\/\/www\.terabox\.com\/api\/ad\/ url reject-dict
+(?i)^https:\/\/www\.terabox\.com\/adx\/ url reject-dict
+(?i)^https:\/\/www\.terabox\.com\/api\/ad\/ url reject-dict
 
-^https:\/\/www\.terabox\.com\/api\/page\/tips\? url reject-dict
+(?i)^https:\/\/www\.terabox\.com\/api\/page\/tips\? url reject-dict
 
-^https:\/\/www\.terabox\.com\/rest\/1\.0\/task\/common\/inttips\? url reject-dict
+(?i)^https:\/\/www\.terabox\.com\/rest\/1\.0\/task\/common\/inttips\? url reject-dict
 
 # [mitm]
 hostname = www.terabox.com

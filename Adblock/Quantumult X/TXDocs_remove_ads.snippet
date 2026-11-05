@@ -15,9 +15,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/tianshu\.qq\.com\/open\/ts_access\/GetAds\? url reject-dict
+(?i)^https:\/\/tianshu\.qq\.com\/open\/ts_access\/GetAds\? url reject-dict
 
-^https:\/\/h5\.qzone\.qq\.com\/p\/adboss\/api\/json\/ts_access\/GetAds$ url reject-dict
+(?i)^https:\/\/h5\.qzone\.qq\.com\/p\/adboss\/api\/json\/ts_access\/GetAds$ url reject-dict
 
 # [mitm]
 hostname = tianshu.qq.com, h5.qzone.qq.com

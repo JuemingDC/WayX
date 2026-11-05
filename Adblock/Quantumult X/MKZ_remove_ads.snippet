@@ -15,15 +15,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/read\/v\d url reject-dict
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/story\/read\/v\d url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/read\/v\d url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/story\/read\/v\d url reject-dict
 
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/task\/motivate\/v\d url reject-dict
 
-^https:\/\/base\.mkzcdn\.com\/advert\/app\/user\/slide\d\/v\d\/ url reject-dict
+(?i)^https:\/\/base\.mkzcdn\.com\/advert\/app\/user\/slide\d\/v\d\/ url reject-dict
 # 配置修改
-^https:\/\/base\.mkzcdn\.com\/app\/config\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-34857e13ac47/MKZ_remove_ads.js
+(?i)^https:\/\/base\.mkzcdn\.com\/app\/config\/ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-34857e13ac47/MKZ_remove_ads.js
 
 # [mitm]
 hostname = base.mkzcdn.com

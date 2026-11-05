@@ -15,20 +15,20 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/userapi\.qiekj\.com\/slot\/get$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/slot\/get$ url reject-dict
 
-^https:\/\/userapi\.qiekj\.com\/appTitle\/get$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/appTitle\/get$ url reject-dict
 
-^https:\/\/userapi\.qiekj\.com\/local-life\/tab-order$ url jsonjq-response-body 'setpath(["data"]; "[]")'
-^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsCategoryList$ url jsonjq-response-body 'setpath(["data"]; "[]")'
+(?i)^https:\/\/userapi\.qiekj\.com\/local-life\/tab-order$ url jsonjq-response-body 'setpath(["data"]; "[]")'
+(?i)^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsCategoryList$ url jsonjq-response-body 'setpath(["data"]; "[]")'
 
-^https:\/\/userapi\.qiekj\.com\/integralRecord\/integralDailStatistics$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/integralRecord\/integralDailStatistics$ url reject-dict
 
-^https:\/\/userapi\.qiekj\.com\/local-life\/category$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/local-life\/category$ url reject-dict
 
-^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsPage$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/integralGoods\/queryIntegralGoodsPage$ url reject-dict
 
-^https:\/\/userapi\.qiekj\.com\/task\/list$ url reject-dict
+(?i)^https:\/\/userapi\.qiekj\.com\/task\/list$ url reject-dict
 
 # [mitm]
 hostname = userapi.qiekj.com

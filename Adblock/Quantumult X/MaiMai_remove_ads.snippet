@@ -15,15 +15,15 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/(h3\.)?open\.taou\.com\/maimai\/adshow\? url reject-dict
+(?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/adshow\? url reject-dict
 
-^https:\/\/(h3\.)?open\.taou\.com\/maimai\/pay\/v5\/check_gift\? url reject-dict
+(?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/pay\/v5\/check_gift\? url reject-dict
 
-^https:\/\/(h3\.)?open\.taou\.com\/maimai\/go_gossip_darwin\/external\/v2\/query_flow_cards\? url reject-dict
+(?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/go_gossip_darwin\/external\/v2\/query_flow_cards\? url reject-dict
 
-^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? url jsonjq-response-body 'del(.feeds)'
+(?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? url jsonjq-response-body 'del(.feeds)'
 # 移除信息流和评论区大块广告
-^https:\/\/(h3\.)?open\.taou\.com\/maimai\/(feed|gossip)\/v\d\/(focus_feed|gossip_detail_comment|feed_detail_comment?)\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-88e0dafed4cd/MaiMai_remove_ads.js
+(?i)^https:\/\/(h3\.)?open\.taou\.com\/maimai\/(feed|gossip)\/v\d\/(focus_feed|gossip_detail_comment|feed_detail_comment?)\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-88e0dafed4cd/MaiMai_remove_ads.js
 
 # [mitm]
 hostname = open.taou.com, h3.open.taou.com

@@ -15,9 +15,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/dlabel\.ctaiot\.com\/api\/spreadstart\/list\.json\? url reject-dict
+(?i)^https:\/\/dlabel\.ctaiot\.com\/api\/spreadstart\/list\.json\? url reject-dict
 
-^https:\/\/dlabel\.ctaiot\.com\/api\/spread\/journey\/select\.json\? url reject-dict
+(?i)^https:\/\/dlabel\.ctaiot\.com\/api\/spread\/journey\/select\.json\? url reject-dict
 
 # [mitm]
 hostname = dlabel.ctaiot.com

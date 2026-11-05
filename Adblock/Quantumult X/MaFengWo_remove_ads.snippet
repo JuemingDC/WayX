@@ -16,11 +16,11 @@
 host, advert.mafengwo.cn, reject
 
 # [rewrite_local]
-^https:\/\/mapi\.mafengwo\.cn\/discovery\/get_index\/v7\? url jsonjq-response-body '.data.list |= map(select(.data.business_type != "gdcpm"))'
+(?i)^https:\/\/mapi\.mafengwo\.cn\/discovery\/get_index\/v7\? url jsonjq-response-body '.data.list |= map(select(.data.business_type != "gdcpm"))'
 
-^https:\/\/mapi\.mafengwo\.cn\/sales\/home\/get_header\/v3\? url jsonjq-response-body '.data.list[] |= ( .data |= del(.banners) )'
+(?i)^https:\/\/mapi\.mafengwo\.cn\/sales\/home\/get_header\/v3\? url jsonjq-response-body '.data.list[] |= ( .data |= del(.banners) )'
 
-^https:\/\/mapi\.mafengwo\.cn\/user\/growth\/get_growth_tip\/v1\? url reject-dict
+(?i)^https:\/\/mapi\.mafengwo\.cn\/user\/growth\/get_growth_tip\/v1\? url reject-dict
 
 # [mitm]
 hostname = mapi.mafengwo.cn

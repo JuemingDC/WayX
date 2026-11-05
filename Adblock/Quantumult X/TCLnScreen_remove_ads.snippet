@@ -15,17 +15,17 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/ads\/ url reject-dict
+(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/ads\/ url reject-dict
 
-^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\/banner$ url reject-dict
+(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\/banner$ url reject-dict
 
-^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/config\/function\? url jsonjq-response-body '.data |= map(select(.module == "tools"))'
+(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/config\/function\? url jsonjq-response-body '.data |= map(select(.module == "tools"))'
 
-^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/searchrank$ url reject-dict
+(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/searchrank$ url reject-dict
 
-^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\? url reject-dict
+(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/v\d\/selection\? url reject-dict
 
-^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/message\/v\d\/activity\? url reject-dict
+(?i)^https:\/\/tcast-o\.api\.leiniao\.com\/tcast\/message\/v\d\/activity\? url reject-dict
 
 # [mitm]
 hostname = tcast-o.api.leiniao.com

@@ -15,9 +15,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.sofascore\.com\/api\/v\d\/dsp\/country\/[A-Z]{2}$ url reject-dict
+(?i)^https:\/\/api\.sofascore\.com\/api\/v\d\/dsp\/country\/[A-Z]{2}$ url reject-dict
 
-^https:\/\/api\.sofascore\.com\/api\/v\d\/trending\/grid\/tiles\/[A-Z]{2}$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Sofascore_remove_ads/mock_fff85ea961.js
+(?i)^https:\/\/api\.sofascore\.com\/api\/v\d\/trending\/grid\/tiles\/[A-Z]{2}$ url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Kelee_Sofascore_remove_ads/mock_fff85ea961.js
 
 # [mitm]
 hostname = api.sofascore.com

@@ -15,9 +15,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.pinterest\.com\/v\d\/feeds\/home\/\? url jsonjq-response-body '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
+(?i)^https:\/\/api\.pinterest\.com\/v\d\/feeds\/home\/\? url jsonjq-response-body '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
 
-^https:\/\/api\.pinterest\.com\/v\d\/pins\/\d+\/related\/modules\/\? url jsonjq-response-body '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
+(?i)^https:\/\/api\.pinterest\.com\/v\d\/pins\/\d+\/related\/modules\/\? url jsonjq-response-body '.data |= map(select(.is_promoted == false or .is_promoted == "false"))'
 
 # [mitm]
 hostname = api.pinterest.com

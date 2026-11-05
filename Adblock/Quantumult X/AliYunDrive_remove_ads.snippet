@@ -16,12 +16,12 @@
 ip-cidr, 203.107.1.1/24, reject
 
 # [rewrite_local]
-^https:\/\/member\.alipan\.com\/v2\/activity\/sign_in_luckyBottle url reject-dict
-^https:\/\/api\.alipan\.com\/adrive\/v1\/file\/getTopFolders url reject-dict
+(?i)^https:\/\/member\.alipan\.com\/v2\/activity\/sign_in_luckyBottle url reject-dict
+(?i)^https:\/\/api\.alipan\.com\/adrive\/v1\/file\/getTopFolders url reject-dict
 # 移除阿里云盘广告
-^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(news|widgets) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-37eca0771b70/AliYunDrive_remove_ads.js
+(?i)^https:\/\/(biz)?api\.alipan\.com\/apps\/v\d\/users?\/home\/(news|widgets) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-37eca0771b70/AliYunDrive_remove_ads.js
 # 移除阿里云盘广告
-^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-37eca0771b70/AliYunDrive_remove_ads.js
+(?i)^https:\/\/member\.alipan\.com\/v1\/users\/onboard_list url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Script/Adblock/kelee.one-37eca0771b70/AliYunDrive_remove_ads.js
 
 # [mitm]
 hostname = api.alipan.com, member.alipan.com, bizapi.alipan.com

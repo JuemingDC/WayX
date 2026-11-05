@@ -15,11 +15,11 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/pan-api\.bitqiu\.com\/activity\/getPromoteGuide$ url reject-dict
+(?i)^https:\/\/pan-api\.bitqiu\.com\/activity\/getPromoteGuide$ url reject-dict
 
-^http:\/\/pan-api\.bitqiu\.com\/activity\/getUrlList$ url reject-dict
+(?i)^http:\/\/pan-api\.bitqiu\.com\/activity\/getUrlList$ url reject-dict
 
-^https:\/\/pan-api\.bitqiu\.com\/activity\/guides$ url reject-dict
+(?i)^https:\/\/pan-api\.bitqiu\.com\/activity\/guides$ url reject-dict
 
 # [mitm]
 hostname = pan-api.bitqiu.com

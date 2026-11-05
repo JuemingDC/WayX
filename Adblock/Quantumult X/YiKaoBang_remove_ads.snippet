@@ -15,9 +15,9 @@
 # [filter_local]
 
 # [rewrite_local]
-^https:\/\/api\.yikaobang\.com\.cn\/index\.php\/client\/main\/ads\? url reject-dict
+(?i)^https:\/\/api\.yikaobang\.com\.cn\/index\.php\/client\/main\/ads\? url reject-dict
 
-^https:\/\/api\.yikaobang\.com\.cn\/index\.php\/client\/Main\/startPage\? url reject-dict
+(?i)^https:\/\/api\.yikaobang\.com\.cn\/index\.php\/client\/Main\/startPage\? url reject-dict
 
 # [mitm]
 hostname = api.yikaobang.com.cn
