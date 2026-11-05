@@ -94,40 +94,6 @@
           }
         ],
         "diagnostics": []
-      },
-      "loon": {
-        "version": 1,
-        "sourceClient": "loon",
-        "targetClient": "loon",
-        "sourceView": "analysis-input",
-        "analysisSourceSha256": "34ad9b82cb0ab2c2f86c1a1e8a1fe08d5f3fee564d90386fd4581b6f77712517",
-        "operations": [
-          {
-            "id": "api:0",
-            "rule": "complete",
-            "kind": "completion",
-            "source": {
-              "api": "$done",
-              "start": 22893,
-              "end": 22913,
-              "line": 3,
-              "column": 22798,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          }
-        ],
-        "diagnostics": []
       }
     }
   },

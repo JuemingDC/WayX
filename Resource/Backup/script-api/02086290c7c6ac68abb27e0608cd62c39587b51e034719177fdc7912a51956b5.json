@@ -39,66 +39,6 @@
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
-      "qx": {
-        "version": 1,
-        "sourceClient": "qx",
-        "targetClient": "qx",
-        "sourceView": "analysis-input",
-        "analysisSourceSha256": "41cf1074770cdef3948baa12ff4a8db9045d1cac888714c8b7e69909eb531bc9",
-        "operations": [
-          {
-            "id": "api:0",
-            "rule": "request.url",
-            "kind": "context",
-            "source": {
-              "api": "$request.url",
-              "start": 50,
-              "end": 62,
-              "line": 2,
-              "column": 11,
-              "access": "read",
-              "memberPath": [
-                "url"
-              ]
-            },
-            "canonical": "request.url",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:1",
-            "rule": "complete",
-            "kind": "completion",
-            "source": {
-              "api": "$done",
-              "start": 345,
-              "end": 363,
-              "line": 13,
-              "column": 1,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          }
-        ],
-        "diagnostics": []
-      },
       "surge": {
         "version": 1,
         "sourceClient": "qx",

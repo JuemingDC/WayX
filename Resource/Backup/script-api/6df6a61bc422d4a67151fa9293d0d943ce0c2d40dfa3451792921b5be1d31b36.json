@@ -158,66 +158,6 @@
           }
         ],
         "diagnostics": []
-      },
-      "loon": {
-        "version": 1,
-        "sourceClient": "loon",
-        "targetClient": "loon",
-        "sourceView": "analysis-input",
-        "analysisSourceSha256": "a957df12593369f6ce111a79619ba88cdad4870aa18b639ff1942a92d441bb18",
-        "operations": [
-          {
-            "id": "api:0",
-            "rule": "response.body",
-            "kind": "context",
-            "source": {
-              "api": "$response.body",
-              "start": 45,
-              "end": 59,
-              "line": 2,
-              "column": 23,
-              "access": "read",
-              "memberPath": [
-                "body"
-              ]
-            },
-            "canonical": "response.body",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:1",
-            "rule": "complete",
-            "kind": "completion",
-            "source": {
-              "api": "$done",
-              "start": 170,
-              "end": 207,
-              "line": 9,
-              "column": 1,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          }
-        ],
-        "diagnostics": []
       }
     }
   },

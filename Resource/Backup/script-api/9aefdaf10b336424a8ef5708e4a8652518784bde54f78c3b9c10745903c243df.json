@@ -39,66 +39,6 @@
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
-      "qx": {
-        "version": 1,
-        "sourceClient": "qx",
-        "targetClient": "qx",
-        "sourceView": "analysis-input",
-        "analysisSourceSha256": "7a85dc4dabb4c048a2c9231c17580df96d94c478479a54e3be33346c64e7d6ec",
-        "operations": [
-          {
-            "id": "api:0",
-            "rule": "response.body",
-            "kind": "context",
-            "source": {
-              "api": "$response.body",
-              "start": 39,
-              "end": 53,
-              "line": 5,
-              "column": 22,
-              "access": "read",
-              "memberPath": [
-                "body"
-              ]
-            },
-            "canonical": "response.body",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:1",
-            "rule": "complete",
-            "kind": "completion",
-            "source": {
-              "api": "$done",
-              "start": 94,
-              "end": 128,
-              "line": 7,
-              "column": 1,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          }
-        ],
-        "diagnostics": []
-      },
       "surge": {
         "version": 1,
         "sourceClient": "qx",

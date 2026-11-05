@@ -19,7 +19,7 @@
     "Rule/Quantumult X/WayX/cn/cn.list": "84a178fe0007b34ab0ed97b365c5623cf3575f04b08417c4f9179bd330db260e",
     "Rule/Quantumult X/WayX/proxy/proxy.list": "7beda00e59f31cbf6cc293bebf886436a834db673f4c634d0edb1000be62f8a7",
     "Rule/Quantumult X/WayX/adblock/adblock.list": "92b0ad9322a4704ac8f97b23570ce6a1006a21d1d04375d77784ecc173d24c5c",
-    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": "935ad6a655819950943f034e289607a4ba38fca9e5acb25ada677cbc1833b16e",
+    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": "5111c650f8c55c6d40a2576d00cccf7c881bd55b3b6618e54bbc53ef50391caa",
     "Rule/Surge/WayX/google/google.list": "912e0c6188e8ba45b52e86b262bb46ce9f2c31cb29b0cbe28a13f04e5482eaa9",
     "Rule/Surge/WayX/youtube/youtube.list": "1f5a9d6d4d357d6b2c8f012f624ff96eb05d525bc83557144bb78f48f3dde038",
     "Rule/Surge/WayX/ai/ai.list": "f893455d270cd10e7881a7d514c3b4c2db1848c2371aeb8afb370ba2efc047d5",
@@ -41,7 +41,7 @@
     "Rule/Surge/WayX/cn/cn.list": "5497cb470ea27b05114075a6e9b751107a3645a8a008d4e6896bc8a000c9625d",
     "Rule/Surge/WayX/proxy/proxy.list": "7f15b6b5b7589fc088ff7a74ba64cdb72bf74679197afd3abd2f7379bf7d0b9e",
     "Rule/Surge/WayX/adblock/adblock.list": "3ee83666712bffdfa5008859199bf9a1af18fa3f5cd84fe6ccc21c8547bd2c11",
-    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": "8a3830496b13ea912abc627871dcb02317b25d8d785832a44bbcb5f89f7152e8",
+    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": "476463170b522f8b90417035f905a49c35d935919ab0e2438e6867f8804eb460",
     "Rule/Quantumult X/WayX/filterfix/filterfix.list": "bc2f4b0be6d4d4f0a9c490b2f4e3259cabeda3ae6cd729a4c7d32d76fc1edffd",
     "Rule/Surge/WayX/filterfix/filterfix.dconf": "ba43f26b47a1eb7f9b8659d65da7c41e5a9639f23a6a8b20b673c559359befeb"
   },
@@ -64,7 +64,7 @@
     "Rule/Quantumult X/WayX/cn/cn.list": 127886,
     "Rule/Quantumult X/WayX/proxy/proxy.list": 34232,
     "Rule/Quantumult X/WayX/adblock/adblock.list": 290262,
-    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": 148126,
+    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": 148070,
     "Rule/Surge/WayX/google/google.list": 897,
     "Rule/Surge/WayX/youtube/youtube.list": 182,
     "Rule/Surge/WayX/ai/ai.list": 675,
@@ -86,7 +86,7 @@
     "Rule/Surge/WayX/cn/cn.list": 127886,
     "Rule/Surge/WayX/proxy/proxy.list": 34232,
     "Rule/Surge/WayX/adblock/adblock.list": 290262,
-    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": 148126,
+    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": 148070,
     "Rule/Quantumult X/WayX/filterfix/filterfix.list": 63,
     "Rule/Surge/WayX/filterfix/filterfix.dconf": 63
   },
@@ -140,7 +140,7 @@
       "max_age_days": 7,
       "timeout": 8,
       "fetched_url": "https://ruleset.skk.moe/List/domainset/reject.conf",
-      "sha256": "d740654cc02083f45d09a2f6e592ee23204192ae0af4afad9ceee9503e6ee3fb"
+      "sha256": "78c91b324d75303779d53e9511e4382e192111e329f7c15a254e224e5b5d73d1"
     },
     {
       "id": "mihomo-proxy",
@@ -479,7 +479,7 @@
       ],
       "timeout": 8,
       "fetched_url": "https://ruleset.skk.moe/List/non_ip/domestic.conf",
-      "sha256": "33346c9173e9af4230d654eec45c37154c17e8d0240977eb853f535abce3858e"
+      "sha256": "0af51e348f438c4e66dce60f132e20aa7bac476664591f8ba383ed62e28819ed"
     },
     {
       "id": "sukka-media-ip",

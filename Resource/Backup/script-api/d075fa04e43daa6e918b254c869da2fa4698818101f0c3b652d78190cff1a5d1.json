@@ -39,66 +39,6 @@
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
-      "qx": {
-        "version": 1,
-        "sourceClient": "qx",
-        "targetClient": "qx",
-        "sourceView": "analysis-input",
-        "analysisSourceSha256": "77267bc9bdcc8a2bc8eb1e70fffaeee0fb0c097a076bc9040b6c430acf051f3c",
-        "operations": [
-          {
-            "id": "api:0",
-            "rule": "request.headers",
-            "kind": "context",
-            "source": {
-              "api": "$request.headers",
-              "start": 14,
-              "end": 30,
-              "line": 1,
-              "column": 15,
-              "access": "read",
-              "memberPath": [
-                "headers"
-              ]
-            },
-            "canonical": "request.headers",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$request.headers",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:1",
-            "rule": "complete",
-            "kind": "completion",
-            "source": {
-              "api": "$done",
-              "start": 107,
-              "end": 123,
-              "line": 4,
-              "column": 1,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          }
-        ],
-        "diagnostics": []
-      },
       "surge": {
         "version": 1,
         "sourceClient": "qx",
