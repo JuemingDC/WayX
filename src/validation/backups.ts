@@ -121,18 +121,23 @@ export async function validateSourceBackups(root: string) {
   for (const [file, record] of Object.entries<any>(index.adapters ?? {})) {
     try {
       if (
-        !/^(?:Script\/Api\/(?:qx|loon|surge|egern)-to-(?:qx|loon|surge|egern)\/[a-f0-9]{64}\.js|Script\/Adblock\/[a-zA-Z0-9_.-]+-[a-f0-9]{12}\/[\p{L}\p{N}_.-]+)$/u.test(
+        !/^(?:Script\/Api\/(?:qx|loon|surge|egern)-to-(?:qx|loon|surge|egern)\/[a-f0-9]{64}\.js|Script\/Adblock\/[a-zA-Z0-9_.-]+-[a-f0-9]{12}\/(?:qx\/|surge\/)?[\p{L}\p{N}_.-]+|(?:Adblock|Module|Rule)\/(?:Quantumult X|Surge)\/[^/]+\/[^/]+\/[^/]+\.js)$/u.test(
           file,
         ) ||
         file !== record.path
       )
         throw Error("Invalid API adapter path");
       if (
-        file.startsWith("Script/Adblock/") &&
+        (record.logicalPath ?? file).startsWith("Script/Adblock/") &&
         (!["loon", "qx"].includes(record.from) ||
-          file !== universalScriptPath(record.sourceUrl) ||
+          (record.logicalPath ?? file) !==
+            universalScriptPath(record.sourceUrl, record.targetClient) ||
           (JSON.stringify(record.targets) !==
-            JSON.stringify(scriptTargetsForSource(record.from)) &&
+            JSON.stringify(
+              record.targetClient
+                ? [record.targetClient]
+                : scriptTargetsForSource(record.from),
+            ) &&
             // Modified: 2026-11-02 (chance). Previously published programs
             // remain verifiable until Actions replaces their legacy metadata.
             !(
@@ -149,7 +154,7 @@ export async function validateSourceBackups(root: string) {
           record.sha256
       )
         throw Error("Missing or corrupted API adapter");
-      if (file.startsWith("Script/Adblock/"))
+      if (file.endsWith(".js") || file.startsWith("Script/Adblock/"))
         new vm.Script(bytes.toString(), { filename: file });
     } catch (e: any) {
       add(file, "api-adapter-integrity", e.message);

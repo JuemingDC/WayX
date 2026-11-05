@@ -2226,7 +2226,7 @@ export function planRewriteFeatureHelper(ast: any, target: any, ctx: any): any {
           surgeRegexParameter(plan.pattern) +
           ",script-path=" +
           url +
-          (plan.requiresBody ? ",requires-body=true,max-size=-1" : "") +
+          (plan.requiresBody ? ",requires-body=true" : "") +
           (plan.fullHeaderMode ? ",full-header-mode=true" : "") +
           (payload.value ? ",argument=" + payload.value : "");
     ctx.generatedScripts.set(filename, plan.script);

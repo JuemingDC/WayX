@@ -1702,15 +1702,6 @@ function dynamicScriptOptionBindings(
   }
   return { ok: true };
 }
-// 上游错误 / 转换失败案例：omitting a source default used Surge's 5s
-// timeout. Source syntax matters: legacy HTTP=10s, v2 HTTP=20s, v2 tasks=300s.
-function sourceScriptDefaultTimeout({ sourceSyntax = "v2", phase }: any): any {
-  return ["request", "response"].includes(phase)
-    ? sourceSyntax === "legacy"
-      ? 10
-      : 20
-    : 300;
-}
 export function surgeScriptV2Plan(
   ast: any,
   {
@@ -1778,7 +1769,6 @@ export function surgeScriptV2Plan(
   params.push("script-path=" + scriptUrl);
   if (scriptOptionBoolean(ast, "requires_body", false)) {
     params.push("requires-body=true");
-    params.push("max-size=-1");
   }
   if (scriptOptionBoolean(ast, "binary_body_mode", false))
     params.push("binary-body-mode=true");
@@ -1795,7 +1785,7 @@ export function surgeScriptV2Plan(
           timeout.name,
       );
     params.push("timeout=" + placeholder);
-  } else params.push("timeout=" + sourceScriptDefaultTimeout(ast));
+  }
   const argument: any = ast.script.argument;
   if (argument?.type === "string" || argument?.type === "raw-string") {
     params.push("argument=" + JSON.stringify(argument.value));
@@ -1992,7 +1982,7 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
   ];
   if (sc.requiresBody) {
     params.push("requires-body=true");
-    params.push("max-size=" + (sc.maxSize || "-1"));
+    if (sc.maxSize) params.push("max-size=" + sc.maxSize);
   }
   if (sc.binaryBodyMode) params.push("binary-body-mode=true");
   if (sc.timeout) {
@@ -2012,7 +2002,7 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
     } else {
       params.push("timeout=" + sc.timeout);
     }
-  } else params.push("timeout=" + sourceScriptDefaultTimeout(ir));
+  }
   if (sc.argument) {
     const refs: any = parseLegacyLoonPluginObjectRefs(sc.argument);
     if (refs) {

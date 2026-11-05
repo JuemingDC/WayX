@@ -22,7 +22,8 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     const result=Object.assign({},value);
     if(value.headers!==undefined)result.headers=headers(value.headers);
     if(own(value,target.responseStatus)){result[source.responseStatus]=status(value[target.responseStatus]);if(source.responseStatus!==target.responseStatus)delete result[target.responseStatus];}
-    if(config.binary){
+    // Modified: 2026-11-05 (chance). Target-provided BufferSource determines binary conversion.
+    if(config.binary||binary(value.bodyBytes)||binary(value.body)){
       const valueBytes=target.binaryField==='bodyBytes'?value.bodyBytes:value.body;
       if(valueBytes!==undefined){const b=bytes(valueBytes);if(source.binaryField==='bodyBytes'){result.bodyBytes=buffer(b);delete result.body;}else{result.body=b;delete result.bodyBytes;}}
     }
@@ -48,6 +49,7 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   }
   function done(value){
     if(completed)return;
+    if(['task','network','generic'].includes(config.phase))return finish(value??{});
     if(value===undefined||value===null)return finish({});
     if(value===response||value===request){
       const out={};for(const k of ['url','headers','body','bodyBytes','h2_trailers',source.responseStatus])if(own(value,k))out[k]=value[k];
@@ -158,19 +160,19 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   if(config.argumentSchema&&config.argumentSchema.kind==='object'&&typeof argument==='string')argument=JSON.parse(argument);
   const script=config.from==='qx'?undefined:Object.assign({},host.script,{name:config.name||host.script&&host.script.name});
   if(script&&script.startTime!==undefined){const t=script.startTime;script.startTime=t instanceof Date?t:new Date(t*1000);}
-  const environment=Object.assign({},host.environment);delete environment['surge-version'];delete environment['surge-build'];delete environment['stash-version'];
+  const environment=Object.assign({},host.environment);
   const overlay={
     $request:request,$response:response,$done:done,$script:script,
-    $task:config.from==='qx'?{fetch:taskFetch}:undefined,$httpClient:config.from==='qx'?undefined:http,
-    $prefs:config.from==='qx'?prefs:undefined,$persistentStore:config.from==='qx'?undefined:store,
-    $notify:config.from==='qx'?notify:undefined,$notification:config.from==='qx'?undefined:{post:notify},
-    $argument:argument,$environment:environment,$loon:config.from==='loon'?(host.loon||'Loon (WayX API compatibility)'):undefined,
+    $task:config.to==='qx'||config.from==='qx'?{fetch:taskFetch}:undefined,$httpClient:http,
+    $prefs:config.to==='qx'||config.from==='qx'?prefs:undefined,$persistentStore:store,
+    $notify:config.to==='qx'||config.from==='qx'?notify:undefined,$notification:{post:notify},
+    $argument:argument,$environment:environment,$loon:config.to==='loon'?host.loon:undefined,
   };
   if(config.from==='loon'){
     overlay.$utils=(${scriptCompression})(host,config);
     overlay.$crypto=(${scriptCrypto})(host,config);
   }
-  if(config.from==='loon')overlay.setInterval=(fn,delay,...args)=>host.setTimeout(fn,delay,...args);
+  // Modified: 2026-11-05 (chance). Keep native target timers; do not emulate Loon one-shot interval semantics.
   overlay.TextDecoder=host.codecs.TextDecoder;
   let standards;for(const name of ['URL','URLSearchParams']){
     const set=value=>Object.defineProperty(overlay,name,{value,writable:true,enumerable:true,configurable:true});

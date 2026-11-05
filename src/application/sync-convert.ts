@@ -1,3 +1,4 @@
+import { publishLayout } from "./release-layout.ts";
 import { refreshFrozenSurgeFlags } from "./surge-flags.ts";
 import { refreshFrozenQxFlags } from "./qx-flags.ts";
 import { readJson } from "../publish/transaction.ts";
@@ -268,6 +269,7 @@ async function deferCatalogEntries(
   }
 }
 export async function runCatalogSync({
+  layout = false,
   root = ROOT,
   entryOptions = {},
   log = console.log,
@@ -404,6 +406,8 @@ export async function runCatalogSync({
         nativeInputs: nativeQxPlan?.inputs ?? [],
         log,
       });
+    // Modified: 2026-11-05 (chance). Migrate all client outputs and script references before the final index/validation.
+    if (publishable && layout) await publishLayout(root);
     await writeReadmePlan(root);
   } catch (error: any) {
     publishable = false;
@@ -432,7 +436,7 @@ export async function runCatalogSync({
   return { ...summary, failures: structuredFailures };
 }
 async function main(): Promise<any> {
-  const result: any = await runCatalogSync();
+  const result: any = await runCatalogSync({ layout: true });
   if (process.env.GITHUB_OUTPUT)
     await fs.appendFile(
       process.env.GITHUB_OUTPUT,

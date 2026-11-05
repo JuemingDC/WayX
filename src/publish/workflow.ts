@@ -805,7 +805,7 @@ async function catalogRowMetadata(root: any, category: any): Promise<any> {
     for (const field of ["qx", "surge"]) {
       const value: any = entry?.[field];
       if (typeof value !== "string" || !value.trim()) continue;
-      const key: any = stemOf(value.trim());
+      const key: any = value.split("/").length >= 3 ? value.split("/").slice(0,2).join("/") : stemOf(value.trim());
       if (!order.has(key)) order.set(key, index);
       if (!sources.has(key) && typeof entry.source === "string")
         sources.set(key, entry.source);
@@ -849,7 +849,7 @@ async function scanCategory(root: any, category: any): Promise<any> {
     }
     const fallback: any = stemOf(rel);
     const name: any = extractResourceName(text, fallback);
-    const key: any = rowKey(category, rel);
+    const key: any = rel.split("/").length >= 5 ? rel.split("/")[2] + "/" + rel.split("/")[3] : rowKey(category, rel);
     const row: any = rows.get(key) ?? { key, qx: null, surge: null };
     const item: any = { rel, name, text, ext };
     if (category === "BoxJs") {

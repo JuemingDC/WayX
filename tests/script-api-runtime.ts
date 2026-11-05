@@ -345,7 +345,7 @@ try {
     },
     log: () => {},
   });
-  assert.equal(r.scriptApi.universal, 1);
+  assert.equal(r.scriptApi.universal, 2);
   assert.deepEqual(await validateSourceBackups(root), []);
   const index = JSON.parse(
     await fs.readFile(path.join(root, "Resource/Backup/index.json"), "utf8"),
@@ -367,7 +367,7 @@ for (const [from, to] of directions) {
   const source =
     from === "qx"
       ? "function Env(){this.read=k=>$prefs.valueForKey(k);this.done=v=>$done(v);}const env=new Env();const key=input;env.done({body:env.read(key)});"
-      : 'class Env{isLoon(){return typeof $loon!=="undefined";}read(k){return $persistentStore.read(k);}done(v){$done(v)}}const env=new Env();if(!env.isLoon())throw Error("wrong facade");env.done({body:env.read(input)});';
+      : 'class Env{isLoon(){return typeof $loon!=="undefined";}read(k){return $persistentStore.read(k);}done(v){$done(v)}}const env=new Env();if(env.isLoon())throw Error("fake source identity");env.done({body:env.read(input)});';
   const r = execute(source, from, to, {
     input: "dynamic",
     $response: {},

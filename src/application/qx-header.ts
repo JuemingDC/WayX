@@ -1,6 +1,7 @@
 import { surgeRegexParameter, normalizeUrlRegexForTarget } from "../domain/core.ts";
 // Modified: 2026-11-03 (chance). Lower isolated native-QX conjunctions after backup/API binding, within the existing publication transaction.
 import crypto from "node:crypto";
+import { universalScriptPath } from "../parser/universal-script.ts";
 import {
   disjointUrls,
   parseQxHeaderPredicate,
@@ -257,7 +258,14 @@ export function prepareQxHeaderRewrites({
         const file = script[2].startsWith(rawBase + "/")
           ? decodeURI(script[2].slice(rawBase.length + 1))
           : "";
-        if (index.adapters?.[file]?.from !== "qx" || !changes.has(file))
+        const sourceAdapter = index.adapters?.[file];
+        // Modified: 2026-11-05 (chance). Conditional Surge hooks bind the Surge program, never the fixed QX file.
+        if (sourceAdapter?.targetClient === "qx") {
+          const surgeFile = universalScriptPath(sourceAdapter.sourceUrl, "surge");
+          if (index.adapters[surgeFile] && changes.has(surgeFile)) script[2] = rawBase + "/" + surgeFile;
+          else reason = "Missing target-specific Surge API program";
+        }
+        if (sourceAdapter?.from !== "qx" || !changes.has(file))
           reason =
             "Conditional script requires a freshly built shared QX API adapter";
       }

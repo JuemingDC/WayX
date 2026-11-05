@@ -52,7 +52,8 @@ export function inspectScriptApis(source: string) {
   const refs = collectScriptApiReferences(tree, checker);
   const problems: ApiProblem[] = [];
   try {
-    new vm.Script(source);
+    // Modified: 2026-11-05 (chance). Proxy entrypoints execute inside a function; top-level return is legal there.
+    new vm.Script("(function(){\n" + source + "\n})");
   } catch (e: any) {
     problems.push({
       api: "syntax",
@@ -77,7 +78,7 @@ export function planScriptApiConversion(
   if (
     !["loon", "qx"].includes(options.from) ||
     !["qx", "loon", "surge"].includes(options.to) ||
-    !["request", "response", "echo"].includes(options.phase)
+    !["request", "response", "echo", "task", "network", "generic"].includes(options.phase)
   )
     problems.push({
       api: "scope",

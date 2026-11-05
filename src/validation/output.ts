@@ -909,6 +909,7 @@ export function validateSurgeRuleSection(
 export function validateSurgeModule(
   text: any,
   entry: any = { id: "module" },
+  { uniqueScripts = false }: { uniqueScripts?: boolean } = {},
 ): any {
   const allowedSections: any = new Set([
     "General",
@@ -933,6 +934,8 @@ export function validateSurgeModule(
     throw new Error(`${entry.id}: Surge module missing #!desc`);
   if (!/^#!category=WayX$/m.test(text))
     throw new Error(`${entry.id}: Surge module must declare #!category=WayX`);
+  // Modified: 2026-11-05 (chance). Final published modules reject duplicate script identities.
+  const scriptNames = new Set<string>();
   let current: any = null;
   let hasBodyRewrite: any = false;
   let hasInlineMapLocal: any = false;
@@ -1065,6 +1068,9 @@ export function validateSurgeModule(
         throw new Error(
           `${entry.id}: invalid Surge [Script] declaration: ${line}`,
         );
+      const scriptName = declaration[1].trim();
+      if (uniqueScripts && scriptNames.has(scriptName)) throw Error(entry.id + ": duplicate Surge script name: " + scriptName);
+      scriptNames.add(scriptName);
       const body: any = declaration[2];
       const params: any = parseSurgeParameters(
         body,

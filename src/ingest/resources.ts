@@ -14,6 +14,12 @@ const settings = JSON.parse(
   textMaxBytes: number;
   binaryMaxBytes: number;
 };
+// Modified: 2026-11-05 (chance). Stop requesting known permanently unavailable files.
+const disabledSources: Record<string, string> = JSON.parse(readFileSync(new URL("../../config/unavailable-sources.json", import.meta.url), "utf8")).disabled;
+export function unavailableSource(url: string) {
+  const u = new URL(url); u.hash = "";
+  return disabledSources[u.href] ?? null;
+}
 export const WAYX_FETCH_UA = process.env.WAYX_FETCH_UA || settings.userAgent;
 export const FETCH_LIMITS = Object.freeze({
   text: settings.textMaxBytes,
@@ -96,6 +102,8 @@ export async function requestOriginal(
   headers: Headers;
   finalUrl: string;
 }> {
+  const disabled = unavailableSource(url);
+  if (disabled) throw Object.assign(Error("Source disabled: " + disabled), { code: "ERR_SOURCE_DISABLED" });
   const source = assertHttpUrl(url),
     maxBytes = options.maxBytes ?? FETCH_LIMITS.binary,
     timeoutMs = options.timeoutMs ?? settings.timeoutMs;

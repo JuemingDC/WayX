@@ -1,3 +1,5 @@
+import { disableUnavailableDeclarations } from "../domain/source-health.ts";
+import { emitScriptApiProgram } from "../emit/script-api-program.ts";
 import { scriptRuntimePolicyVersion } from "../domain/script-api.ts";
 import { collectScriptApiReferences } from "../parser/script-api-ir.ts";
 import { inspectScriptApis } from "../parser/script-api.ts";
@@ -5,10 +7,7 @@ import { inspectScriptApis } from "../parser/script-api.ts";
 // from author JS, with one stable source-URL sidecar and integrity manifest.
 import { scriptApiDefinitions } from "../domain/script-api.ts";
 // Modified: 2026-11-02 (chance). Persist source-specific supported hosts and the authorized conversion directions.
-import {
-  scriptTargetsForSource,
-  scriptConversionDirections,
-} from "../parser/universal-script.ts";
+import { scriptConversionDirections } from "../parser/universal-script.ts";
 // Modified: 2026-11-02 (chance). Refresh API mapping and source-level priority evidence with each production report.
 import {
   scriptApiMapping,
@@ -23,8 +22,8 @@ const scriptProblemCategory = (api: string) =>
       ? "declaration-unresolved"
       : "api-capability";
 import { scriptCapabilityBoundaries } from "../parser/script-boundaries.ts";
-// Modified: 2026-11-01 (chance). Adblock-only publication groups by original URL,
-// emits one source-named three-client program and rebinds every proven context.
+// Modified: 2026-11-05 (chance). Group Adblock/Module references by source URL
+// and compose independent target programs for every available invocation context.
 import crypto from "node:crypto";
 import path from "node:path";
 import { readOptional } from "../publish/transaction.ts";
@@ -187,9 +186,9 @@ export async function prepareScriptApiAdapters(
   }
   const groups = new Map<string, any>();
   for (const artifact of artifacts) {
-    // Module/configuration utilities remain byte-backed native scripts, outside this task.
+    // Modified: 2026-11-05 (chance). Adblock and Module use the same target API policy.
     if (
-      !artifact.relative.startsWith("Adblock/") ||
+      !/^(?:Adblock|Module)\//.test(artifact.relative) ||
       !/\.(?:snippet|sgmodule)$/.test(artifact.relative)
     )
       continue;
@@ -208,24 +207,7 @@ export async function prepareScriptApiAdapters(
         record = index.objects[index.latest[url]];
       if (record?.kind !== "script") continue;
       const mode = scriptReferencePhase(artifact.text, ref);
-      if (mode.phase === "task") {
-        counts.excluded++;
-        diagnostics.push({
-          artifact: artifact.relative,
-          sourceUrl: url,
-          to,
-          status: "excluded",
-          features: [],
-          problems: [
-            {
-              api: "scope",
-              reason: "Only HTTP adblock scripts are in scope",
-              solution: "Retain native task scripts",
-            },
-          ],
-        });
-        continue;
-      }
+      // Modified: 2026-11-05 (chance). Module/task scripts follow the same target API rules; provenance is optional.
       const group = groups.get(url) ?? {
         sourceUrl: url,
         record,
@@ -240,7 +222,7 @@ export async function prepareScriptApiAdapters(
       // Names are retained only when observable; a URL reused by different tags is
       // not inherently ambiguous. Runtime selects request/response without URL forks.
       if (declared.length) group.profiles.push(...declared);
-      else if (from === "qx" && to === "qx")
+      else if (to === "qx" || !from)
         group.profiles.push({
           phase: mode.phase,
           binary: false,
@@ -251,6 +233,7 @@ export async function prepareScriptApiAdapters(
     }
   }
   const plans = new Map<string, Record<string, ScriptBinding>>();
+  const disabled = new Map<string, Set<string>>();
   for (const group of groups.values()) {
     const { sourceUrl, record } = group;
     const raw =
@@ -260,20 +243,31 @@ export async function prepareScriptApiAdapters(
     let result: any;
     const sourceText = new TextDecoder("utf8", { fatal: false }).decode(raw);
 
-    if (group.from.size !== 1 || !group.profiles.length)
-      result = {
-        status: "blocked",
-        features: [],
-        problems: [
-          {
-            api: "source-profile",
-            reason: "No unique source platform and HTTP declaration profile",
-            solution:
-              "Register the source runtime and original adblock HTTP declaration",
-          },
-        ],
-      };
-    else {
+    // Modified: 2026-11-05 (chance). Infer a usable API family when provenance is absent or mixed;
+    // actual target declarations supply phase/body data and never block by attribution alone.
+    if (group.from.size !== 1) {
+      const inventory = inspectScriptApis(sourceText);
+      const inferred = inventory.paths.some((p: string) =>
+        /^\$(?:task|prefs|notify)(?:\.|$)/.test(p),
+      )
+        ? "qx"
+        : inventory.paths.some(
+              (p: string) => p === "$loon" || p.startsWith("$loon."),
+            ) || group.from.has("loon")
+          ? "loon"
+          : group.refs.some((r: any) => r.to === "qx")
+            ? "qx"
+            : "surge";
+      group.from = new Set([inferred]);
+    }
+    if (!group.profiles.length)
+      group.profiles = group.refs.map((r: any) => ({
+        phase: r.mode.phase,
+        responseBody: r.mode.body,
+        binary: false,
+        binaryKnown: true,
+      }));
+    {
       try {
         result = planUniversalAdblockScript(
           new TextDecoder("utf8", { fatal: true }).decode(raw),
@@ -365,34 +359,43 @@ export async function prepareScriptApiAdapters(
       sha256: digest(apiPlanText),
       sourceSha256: record.sha256,
     };
-    const file = universalScriptPath(sourceUrl),
-      prior = adapters[file];
-    if (prior && prior.sourceUrl !== sourceUrl)
-      throw Error("Universal script URL identity collision: " + file);
-    if (result.status === "universal") {
-      changes.set(file, result.code);
-      adapters[file] = {
-        path: file,
-        sourceUrl,
-        sourceSha256: record.sha256,
-        sha256: digest(result.code),
-        from: [...group.from][0],
-        directionPolicyVersion: 1,
-        targets: scriptTargetsForSource([...group.from][0] as ScriptPlatform),
-        conversionTargets: scriptTargetsForSource(
-          [...group.from][0] as ScriptPlatform,
-        ).filter((target) => target !== [...group.from][0]),
-        contexts: result.contexts,
-        features: result.features,
-        runtimePolicyVersion: scriptRuntimePolicyVersion,
-      };
-      counts.universal++;
-    }
+    const programs = new Map<string, { file: string; code: string }>();
+    if (result.status === "universal")
+      for (const to of ["qx", "surge"]) {
+        const contexts = Object.fromEntries(
+          Object.entries<any>(result.contexts).filter(
+            ([, targets]) => targets[to],
+          ),
+        );
+        for (const targets of Object.values<any>(contexts))
+          targets[to].name ??= path.posix.basename(new URL(sourceUrl).pathname);
+        if (!Object.keys(contexts).length) continue;
+        const file = universalScriptPath(sourceUrl, to);
+        const code = emitScriptApiProgram(sourceText, contexts, to);
+        programs.set(to, { file, code });
+        changes.set(file, code);
+        adapters[file] = {
+          path: file,
+          sourceUrl,
+          sourceSha256: record.sha256,
+          sha256: digest(code),
+          from: [...group.from][0],
+          targetClient: to,
+          directionPolicyVersion: 2,
+          targets: [to],
+          conversionTargets: [to],
+          contexts,
+          features: result.features,
+          runtimePolicyVersion: scriptRuntimePolicyVersion,
+        };
+        counts.universal++;
+      }
     for (const { artifact, ref, to, mode } of group.refs) {
+      const file = programs.get(to)?.file;
       const sourceRef = sourceUrl + new URL(ref.value).hash;
       const previous = index.bindings?.[artifact.relative]?.[sourceRef];
       let binding: ScriptBinding | undefined;
-      if (result.status === "universal") {
+      if (result.status === "universal" && file) {
         const binary = result.features.some((p: string) =>
           /^\$(?:request|response)\.bodyBytes(?:\.|$)/.test(p),
         );
@@ -408,11 +411,10 @@ export async function prepareScriptApiAdapters(
         }
       } else {
         counts[result.status === "excluded" ? "excluded" : "blocked"]++;
-        // Incompatible updates retain an earlier verified universal program. During
-        // migration, preserve an already working legacy adapter rather than regress it.
-        if (prior)
-          binding = previous?.path === file ? previous : { path: file };
-        else if (previous && adapters[previous.path]) binding = previous;
+        // Modified: 2026-11-05 (chance). Do not publish an incompatible raw fallback.
+        // Keep a prior verified target binding only if it still exists in this transaction.
+        if (result.status !== "excluded" && previous && adapters[previous.path])
+          binding = previous;
       }
       diagnostics.push({
         artifact: artifact.relative,
@@ -447,6 +449,14 @@ export async function prepareScriptApiAdapters(
           ? { path: binding.path, retained: result.status !== "universal" }
           : {}),
       });
+      // Modified: 2026-11-05 (chance). An invalid conversion without a verified
+      // predecessor disables only its declarations; never publish incompatible raw code.
+      if (result.status === "blocked" && !binding) {
+        const urls = disabled.get(artifact.relative) ?? new Set<string>();
+        for (const url of [ref.value, sourceUrl, rawBase + "/" + record.path])
+          urls.add(url.split("#")[0]);
+        disabled.set(artifact.relative, urls);
+      }
       if (binding) {
         const artifactPlans = plans.get(artifact.relative) ?? {};
         artifactPlans[ref.value] = binding;
@@ -459,14 +469,20 @@ export async function prepareScriptApiAdapters(
   }
   for (const artifact of artifacts) {
     const values = plans.get(artifact.relative);
-    if (!values) continue;
+    if (!values && !disabled.has(artifact.relative)) continue;
+    const text = applyScriptBindings(
+      String(changes.get(artifact.relative) ?? artifact.text),
+      values ?? {},
+      rawBase,
+    );
     changes.set(
       artifact.relative,
-      applyScriptBindings(
-        String(changes.get(artifact.relative) ?? artifact.text),
-        values,
-        rawBase,
-      ),
+      disableUnavailableDeclarations(
+        text,
+        disabled.get(artifact.relative) ?? new Set(),
+        undefined,
+        "script conversion failed; see script-api-status.json",
+      ).text,
     );
   }
   // Modified: 2026-11-02 (chance). Retirement is performed once after all

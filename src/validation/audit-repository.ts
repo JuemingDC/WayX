@@ -153,7 +153,7 @@ for (const file of files) {
   if (rp.endsWith(".sgmodule")) {
     if (rp.startsWith("Adblock/Surge/")) {
       try {
-        validateSurgeModule(text, { id: rp });
+        validateSurgeModule(text, { id: rp }, { uniqueScripts: rp.split("/").length >= 5 });
         validated.surge++;
       } catch (error: any) {
         add(file, 1, "surge-adblock-validator", error?.message || error);

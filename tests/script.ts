@@ -121,7 +121,7 @@ assert.equal(surgeLegacy.ok,true);
 assert.equal(surgeLegacy.section,'script');
 assert.equal(
   surgeLegacy.line,
-  'Resp = type=http-response,pattern=^https://api\\.example\\.com,script-path=https://example.com/resp.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=9,argument={"mode":"x"}'
+  'Resp = type=http-response,pattern=^https://api\\.example\\.com,script-path=https://example.com/resp.js,requires-body=true,binary-body-mode=true,timeout=9,argument={"mode":"x"}'
 );
 
 const disabledIr=legacyScriptToSemanticIr(
@@ -251,7 +251,7 @@ const surgeV2=planSurgeScript(v2Ir,{
   argumentTable:{byId:new Map()},
 });
 assert.equal(surgeV2.ok,true);
-assert.match(surgeV2.line,/^V2 = type=http-response,pattern=api,script-path=https:\/\/example\.com\/v2\.js,requires-body=true,max-size=-1,binary-body-mode=true,timeout=20$/);
+assert.match(surgeV2.line,/^V2 = type=http-response,pattern=api,script-path=https:\/\/example\.com\/v2\.js,requires-body=true,binary-body-mode=true$/);
 
 console.log('Script IR target planner contract passed');
 }
@@ -285,11 +285,11 @@ if (selectedCase==='script-ir-target-planners.mjs') {
     ['generic then script("https://example.test/a.js")',300],
   ];
   const {parseScriptDeclaration,buildSurgeArgumentTable}=await import('../src/index.ts');
-  for(const [source,seconds] of cases) {
+  for(const [source] of cases) {
     const ir=parseScriptDeclaration(source);
     const out=planSurgeScript(ir);
     assert.equal(out.ok,true,source);
-    assert.deepEqual(out.line.match(/timeout=[^,]+/g),['timeout='+seconds]);
+    assert.doesNotMatch(out.line,/timeout=/,'use the target default when the source omitted a timeout');
     assert.equal(ir.options.some(o=>o.name==='timeout'),false,'the source IR keeps an omitted timeout omitted');
     const qx=planQxScript(ir);
     assert.equal(qx.ok,true);
@@ -309,10 +309,10 @@ if (selectedCase==='script-ir-target-planners.mjs') {
   }
   for(const option of ['requires_body=true','binary_body_mode=true','requires_body=false, binary_body_mode=true']) {
     const out=planSurgeScript(parseScriptDeclaration('request if ${url} ~= /api/ then script("a.js") with '+option));
-    assert.match(out.line,/,timeout=20$/);
+    assert.match(out.line,/$/);
     assert.equal(out.line.includes('requires-body=true'),option.startsWith('requires_body=true'));
   }
-  console.log('Source Script timeout defaults passed: legacy HTTP 10s, v2 HTTP 20s, v2 non-HTTP 300s; explicit/dynamic values retained');
+  console.log('Target Script defaults passed: omitted timeouts/body limits remain omitted; explicit/dynamic values retained');
 }
 
 if(selectedCase==='script-ir-target-planners.mjs') {

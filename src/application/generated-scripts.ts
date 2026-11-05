@@ -9,7 +9,7 @@ const generated = (file: string) =>
   (/^Script\/Api\/(?:qx|loon|surge|egern)-to-(?:qx|loon|surge|egern)\/[a-f0-9]{64}\.js$/.test(
     file,
   ) ||
-    /^Script\/Adblock\/[a-zA-Z0-9_.-]+-[a-f0-9]{12}\/[\p{L}\p{N}_.-]+$/u.test(
+    /^Script\/Adblock\/[a-zA-Z0-9_.-]+-[a-f0-9]{12}\/(?:qx\/|surge\/)?[\p{L}\p{N}_.-]+$/u.test(
       file,
     ) ||
     /^Script\/(?:[\w.-]+\/)*legacy\/[\w.-]+\.(?:js|mjs|cjs)$/.test(file) ||

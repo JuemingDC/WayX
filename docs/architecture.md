@@ -1,6 +1,6 @@
 # TypeScript architecture
 
-Modified: 2026-11-03 (chance).
+Modified: 2026-11-05 (chance).
 
 WayX uses one Node.js TypeScript application. Install the locked dependencies with `npm ci`; Node must satisfy package.json. Node executes erasable TypeScript directly; `npm run typecheck` checks the source without emitting a second implementation.
 
@@ -42,7 +42,7 @@ Daily synchronization does not run developer suites or canonical regeneration ag
 
 config/fetch.json contains the single Surge UA and limits. WAYX_FETCH_UA overrides the same value everywhere. This default is an actual observed Surge UA from the supplied HAR; application version numbers do not identify an exact network UA. Proxy variables are inherited by the CLI via Node's environment-proxy support. There is no direct-network fallback.
 
-The fetch service bounds the decoded response stream, retries transient failures only and captures exact input bytes. Modified: 2026-11-01 (chance). Snapshots share exact response bytes across conversion and persistent backup, including URL fragment variants. They seal after backup acquisition and verify hashes on replay. Original author scripts are archived byte for byte. HTTP adblock scripts from Loon/QX are composed with the ScriptHub-derived API compatibility runtime without rewriting their business body; other scripts keep verified raw backup references. Production directions are Loon→QX, Loon→Surge and QX→Surge, with the source-native branch retained in the shared file. See source-backups.md and script-api-compatibility.md.
+The fetch service bounds the decoded response stream, retries transient failures only and captures exact input bytes. Modified: 2026-11-01 (chance). Snapshots share exact response bytes across conversion and persistent backup, including URL fragment variants. They seal after backup acquisition and verify hashes on replay. Original author scripts are archived byte for byte. HTTP adblock scripts from Loon/QX are composed with the ScriptHub-derived API compatibility runtime without changing their business operations; publication strips installation comments. Module/task scripts use the same API lowering. Production directions are Loon→QX, Loon→Surge and QX→Surge, with separate target programs. See source-backups.md and script-api-compatibility.md.
 
 .lpxe and unknown binary inputs are archived under Resource/Encrypted/Loon/<id>/<sha>. Original URL, byte size, format and SHA-256 are recorded. Activity is tracked in .github/sources/opaque-state.json; validators verify the archive before acknowledging a skipped conversion. Existing output remains intact; a new opaque-only source has no invented target. Successful plaintext acquisition clears active opaque status while preserving historical bytes. Invalid ordinary text remains a source failure.
 
@@ -50,7 +50,7 @@ The author's #!source directive remains unchanged in both targets. Loon's URL-bi
 
 ## Runtime adapters and maintenance
 
-`src/domain/script-api.ts` owns API layouts and descriptive contracts; parser inventory never authorizes mappings by proving author values. `src/emit/script-api-runtime.ts` adapts actual calls and `src/emit/script-api-program.ts` composes the untouched body once. Pinned providers and required licenses remain under src/vendor and vendor. Runtime policy 4 includes the explicitly accepted Surge omissions; compatibility output is not device certification.
+`src/domain/script-api.ts` owns API layouts and descriptive contracts; parser inventory never authorizes mappings by proving author values. `src/emit/script-api-runtime.ts` adapts actual calls and `src/emit/script-api-program.ts` composes the untouched body once. Pinned providers and required licenses remain under src/vendor and vendor. Runtime policy 5 includes the explicitly accepted Surge omissions; compatibility output is not device certification.
 
 Current specifications live in docs/script-api; superseded designs are available through Git history. Removed experiments are not alternate production entry points. TypeScript rejects unused locals and parameters. Historical backup/adapter validation remains for retained published artifacts; generated cleanup runs only after final reference rebinding in the existing Actions transaction.
 
@@ -59,3 +59,7 @@ Current specifications live in docs/script-api; superseded designs are available
 Edit source registries or implementation, rather than generated target files. Preserve the existing semantic exceptions in .github/CONVERSION_SPEC.md; a successful TypeScript compile or jq compile alone does not prove source equivalence. Keep client-facing author JavaScript as JavaScript.
 
 Per-source transactions restore owned files on failure. New unsupported plaintext sources are deferred and existing baselines retained. Failed rollback blocks publication. Monitoring commits its mirror and state together, rejects incomplete GitHub comparisons, and sends conditional HTTP requests only when the local mirror is intact. Publication requires current machine evidence and an unchanged destination HEAD.
+
+## Target publication layout
+
+Converted artifacts live under `type/Quantumult X/source-author/app/` or `type/Surge/source-author/app/`, with the configuration and its readable `.js` files together. Aggregated Rule outputs use WayX as the author. `.github/sources/layout-state.json` records reversible internal working-path mappings; `prepare` restores that view before acquisition, while the successful sync publishes only the final client tree. This is staging inside one existing pipeline, not a second converter. Source archives are excluded from layout/code cleanup. See target-publication.md.

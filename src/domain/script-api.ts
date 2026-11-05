@@ -2,7 +2,8 @@
 // target lowering, runtime layouts and per-operation publication evidence.
 export type ScriptClient = "qx" | "loon" | "surge";
 // Modified: 2026-11-02 (chance). Shared provider composition and scope revision.
-export const scriptRuntimePolicyVersion = 4;
+// Modified: 2026-11-05 (chance). Target-specific execution, optional provenance and selective providers.
+export const scriptRuntimePolicyVersion = 5;
 // Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
 // from adblock conversion, inventories and remaining-work priorities.
 export const excludedAdblockScriptApis = Object.freeze([

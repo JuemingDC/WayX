@@ -1,3 +1,5 @@
+import { unavailableSource } from "../ingest/resources.ts";
+import { disableUnavailableDeclarations } from "../domain/source-health.ts";
 import { prepareQxHeaderRewrites } from "./qx-header.ts";
 import { compactGeneratedPluginComments } from "../domain/output-comments.ts";
 import { pruneGeneratedScripts } from "./generated-scripts.ts";
@@ -89,6 +91,7 @@ export async function refreshSourceBackups(
     throw Error("Invalid backup index");
   const index: BackupIndex = structuredClone(prior),
     changes = new Map<string, string | Uint8Array | null>();
+  const disabledSources = new Set<string>();
   const failures: any[] = [],
     sources: any[] = [],
     pending = new Map<string, Promise<BackupObject | null>>();
@@ -169,9 +172,13 @@ export async function refreshSourceBackups(
         key,
         (async () => {
           usedScripts.add(key);
+          if (unavailableSource(key)) { disabledSources.add(key); return null; }
           try {
             return store(key, await resources.fetchBytes(key), "script");
           } catch (error: any) {
+            if (error.status === 404 || error.status === 410 || error.code === "ERR_SOURCE_DISABLED") {
+              disabledSources.add(key); return null;
+            }
             const cached = index.objects[prior.latest[key]];
             if (cached) await verify(cached);
             failures.push({
@@ -202,7 +209,7 @@ export async function refreshSourceBackups(
     } catch {
       return;
     }
-    for (const ref of sourceScriptUrls(text, url)) requested.add(ref);
+    for (const ref of sourceScriptUrls(text, url)) if (!unavailableSource(ref)) requested.add(ref); else disabledSources.add(sourceKey(ref));
   }
   // Read the exact run response when acquired, otherwise archive the frozen/retained source snapshot with explicit provenance.
   for (const entry of catalog) {
@@ -279,6 +286,7 @@ export async function refreshSourceBackups(
     for (const [, url] of text.matchAll(
       /^# Source:\s*(https?:\/\/\S+)\s*$/gm,
     )) {
+      if (unavailableSource(url)) { disabledSources.add(sourceKey(url)); continue; }
       if (seenSources.has(sourceKey(url)) || own(url)) continue;
       seenSources.add(sourceKey(url));
       try {
@@ -307,6 +315,16 @@ export async function refreshSourceBackups(
   const urls = [...requested];
   for (let i = 0; i < urls.length; i += 8)
     await Promise.all(urls.slice(i, i + 8).map(script));
+  // Modified: 2026-11-05 (chance). Keep intact sibling rules; comment only failed dependencies.
+  const originalReference = (value: string) => {
+    const local = ownPath(value);
+    return local ? index.objects[local]?.url ?? index.adapters?.[local]?.sourceUrl ?? value : value;
+  };
+  for (const artifact of artifacts) {
+    for (const ref of artifact.refs) if (/^https?:\/\//.test(ref.value) && unavailableSource(originalReference(ref.value))) disabledSources.add(sourceKey(originalReference(ref.value)));
+    const result = disableUnavailableDeclarations(artifact.text, disabledSources, originalReference);
+    if (result.disabled) { artifact.text = result.text; artifact.refs = scriptReferences(result.text); changes.set(artifact.relative, result.text); }
+  }
   let rewritten = 0,
     unresolved = 0;
   for (const { relative, text } of artifacts) {
@@ -366,6 +384,7 @@ export async function refreshSourceBackups(
       excluded: scriptApi.excluded,
     },
     unresolvedReferences: unresolved,
+    disabledSources: [...disabledSources],
     failures,
   };
   changes.set(

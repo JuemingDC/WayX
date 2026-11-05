@@ -271,7 +271,7 @@ assert.equal(new url.URLSearchParams("?x=%E4%B8%AD+y").get("x"), "中 y");
 // Execute unchanged API calls through both real common-program destinations.
 for (const to of ["qx", "surge"] as const) {
   const source =
-    'const encoded=$crypto.aes.encrypt(new TextEncoder().encode("通用"),{mode:"gcm",key:new Uint8Array(16),iv:new Uint8Array(12)});const plain=$crypto.aes.decrypt(encoded.ciphertext,{mode:"gcm",key:new Uint8Array(16),iv:new Uint8Array(12),tag:encoded.tag});const url=new URL("../next?x=1","https://example.test/a/");url.searchParams.append("x","2");$done({body:new TextDecoder().decode(plain)+":"+url.href+":"+new TextDecoder("gbk").decode(new Uint8Array([214,208]))});';
+    'const encoded=$crypto.aes.encrypt(new TextEncoder().encode("通用"),{mode:"gcm",key:new Uint8Array(16),iv:new Uint8Array(12)});const plain=$crypto.aes.decrypt(encoded.ciphertext,{mode:"gcm",key:new Uint8Array(16),iv:new Uint8Array(12),tag:encoded.tag});const Decoder=TextDecoder;const url=new URL("../next?x=1","https://example.test/a/");url.searchParams.append("x","2");$done({body:new TextDecoder().decode(plain)+":"+url.href+":"+new Decoder("gbk").decode(new Uint8Array([214,208]))});';
   const p = pair(source, {
     from: "loon",
     to,
@@ -308,7 +308,7 @@ vm.runInNewContext(qxPlan.code!, {
 });
 assert.equal(
   qxResult.body,
-  "https://xn--fsqu00a.xn--0zwm56d/?q=%E4%B8%AD:undefined",
+  "https://xn--fsqu00a.xn--0zwm56d/?q=%E4%B8%AD:object",
 );
 assert.ok(qxPlan.code!.includes(qxSource));
 // Providers execute with dynamic source generation disabled and no host pollution.

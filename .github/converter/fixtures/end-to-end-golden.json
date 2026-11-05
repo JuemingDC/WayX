@@ -1,6 +1,6 @@
 {
-  "version": 13,
-  "modified": "2026-11-05 (chance): restore Loon→QX source flags; reviewed baseline diff contains only URL flag prefixes and retired omission warnings; Surge unchanged.",
+  "version": 14,
+  "modified": "2026-11-05 (chance): target-native timeout/body defaults; independent baseline diffs contain only removal of forced source performance settings; QX unchanged.",
   "stamp": "2026-09-29 12:00:00 +08:00",
   "cases": {
     "HTTPDNS": {
@@ -21,9 +21,9 @@
     },
     "PinDuoDuo": {
       "qxSha256": "a346a8ac1b8ca6a0d01cf7662e7fab1adb87f05b6b8c21f059d638ed744edea5",
-      "surgeSha256": "6daf1984f4cb21fa4b8f950db557b003b24b7aff29bd1899418bd639922995ed",
+      "surgeSha256": "c68388971cb0d6aa3e82e5a23a0d4ea4c64eed907f8049cdf9c11aeb27971840",
       "qxBytes": 5458,
-      "surgeBytes": 6824,
+      "surgeBytes": 6801,
       "sourceScriptCount": 1,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -38,9 +38,9 @@
     },
     "MyBlockAds": {
       "qxSha256": "27ff8978a72100ade0242e8f74e69523fb7fa0f878c2b1b757f8f4db57a37ba2",
-      "surgeSha256": "6af7204dd676ecc00f431c71fd331bf3d3c0c346515125d908284b777fe3db7b",
+      "surgeSha256": "02956fc1db9c2f3b200560b9e03803d2a22a0c14321b9109488512e03356f7b0",
       "qxBytes": 24311,
-      "surgeBytes": 34024,
+      "surgeBytes": 33657,
       "sourceScriptCount": 9,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -56,9 +56,9 @@
     },
     "JingDong": {
       "qxSha256": "f59b0897cd0bd1f3dd793f3eb0e0e4dd115442e2ed4ec011ff14e4c8942dc680",
-      "surgeSha256": "5bd01a017173d5a7f43c06859036acaaec96e3c8c4df3b33b0cd911cce74ffb9",
+      "surgeSha256": "7082c84bb5d94e7ae6eb69caab8a04ceb47d979e2f89c051f92ab287cd03b05c",
       "qxBytes": 2011,
-      "surgeBytes": 2425,
+      "surgeBytes": 2356,
       "sourceScriptCount": 3,
       "generatedScriptCount": 0,
       "qxReview": 0,

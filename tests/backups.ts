@@ -1,4 +1,5 @@
 // Modified: 2026-11-01 (chance). Exercise byte preservation, URI identity, declaration-only rebinding, missing-source retention and integrity failures.
+import {publishLayout,prepareWorkingLayout} from "../src/application/release-layout.ts";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -26,7 +27,7 @@ try {
  const record=backupObject(url,bytes,"script");
  assert.deepEqual(await fs.readFile(path.join(root,record.path)),bytes);
  const saved=await fs.readFile(path.join(root,"Adblock/Quantumult X/raw.snippet"),"utf8");
- assert.ok(saved.includes(record.path+'#arg=x'));assert.ok(saved.includes('# Original '+url));assert.ok(saved.includes('url 302 '+url));
+ assert.ok(saved.includes('/qx/') && saved.includes('#arg=x'));assert.ok(saved.includes('# Original '+url));assert.ok(saved.includes('url 302 '+url));
  const compacted=await fs.readFile(path.join(root,"Adblock/Quantumult X/managed.snippet"),"utf8");
  assert.equal(compacted,managed.replace('# Target: Quantumult X\n','').replace('# [WayX] Source Script timeout ignored for Quantumult X.\n',''));
  await fs.rm(path.join(root,"Adblock/Quantumult X/managed.snippet"));
@@ -40,6 +41,11 @@ try {
  const updatedIndex=JSON.parse(await fs.readFile(path.join(root,"Resource/Backup/index.json"),"utf8"));
  assert.notEqual(updatedIndex.objects[record.path].sha256,record.sha256);
  assert.equal((await validateSourceBackups(root)).length,0);
+ // Modified: 2026-11-05 (chance). Final target copies and restored adapters retain exact archive/API checksums.
+ await publishLayout(root);
+ assert.deepEqual(await validateSourceBackups(root),[]);
+ await prepareWorkingLayout(root);
+ assert.deepEqual(await validateSourceBackups(root),[]);
  const offline={fetchBytes:async()=>{throw Error("404");},cachedBytes:async()=>null};
  const retry=await refreshSourceBackups(root,{resources:offline,log:()=>{}});assert.equal(retry.backedUpScripts,1);assert.equal(retry.failures.length,1);assert.equal(await fs.readFile(path.join(root,"Adblock/Quantumult X/raw.snippet"),"utf8"),saved);
  assert.equal(backupObject(url,Buffer.from('new'),"script").path,record.path);

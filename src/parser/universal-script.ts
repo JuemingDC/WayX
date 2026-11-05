@@ -12,7 +12,7 @@ import {
 } from "./script-api.ts";
 import { emitScriptApiProgram } from "../emit/script-api-program.ts";
 export type UniversalProfile = {
-  phase: "request" | "response" | "echo";
+  phase: "request" | "response" | "echo" | "task";
   binary?: boolean;
   binaryKnown?: boolean;
   responseBody?: boolean;
@@ -35,7 +35,7 @@ export function scriptTargetsForSource(
       ? ["qx", "surge"]
       : [];
 }
-export function universalScriptPath(url: string) {
+export function universalScriptPath(url: string, target?: string) {
   const u = new URL(url);
   u.hash = "";
   let original = u.pathname.split("/").filter(Boolean).at(-1) ?? "script.js";
@@ -50,7 +50,7 @@ export function universalScriptPath(url: string) {
     "-" +
     crypto.createHash("sha256").update(u.href).digest("hex").slice(0, 12) +
     "/" +
-    name
+    (target ? target + "/" : "") + name
   );
 }
 export function planUniversalAdblockScript(
@@ -83,28 +83,8 @@ export function planUniversalAdblockScript(
       (p) => (p.phase === "response" ? "response" : "request") === role,
     );
     if (!candidates.length) continue;
-    const signatures = [
-      ...new Set(
-        candidates.map((p) =>
-          JSON.stringify({
-            phase: p.phase,
-            binary: !!p.binary,
-          }),
-        ),
-      ),
-    ];
-    if (
-      signatures.length !== 1 ||
-      candidates.some((p) => p.binaryKnown === false)
-    ) {
-      problems.push({
-        api: "source-profile",
-        reason: "The same URL has ambiguous HTTP declaration context",
-        solution:
-          "Register distinguishable phase/binary/name/argument metadata",
-      });
-      continue;
-    }
+    // Modified: 2026-11-05 (chance). Optional provenance is descriptive, not an API conversion gate.
+    // Read binary input from actual target values rather than requiring one source declaration profile.
     const names = [...new Set(candidates.map((p) => p.name).filter(Boolean))];
     const schemas = [
       ...new Set(
@@ -113,6 +93,7 @@ export function planUniversalAdblockScript(
     ];
     const profile = {
       ...candidates[0],
+      binary: false,
       name: names.length === 1 ? names[0] : undefined,
       argumentSchema:
         schemas.length === 1 ? candidates[0].argumentSchema : undefined,

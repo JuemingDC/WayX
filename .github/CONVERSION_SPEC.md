@@ -162,7 +162,7 @@ Modified: 2026-11-01 (chance). 作者 Script 从原 URL 拉取并按原始字节
 
 QX 强制启用可表示的作者 Script：固定 false、默认关闭及动态 enable 均输出活动声明并说明用户策略；注释源行仍关闭。QX 不输出未证明的 enable/timeout/debug/argument Rewrite 字段；binary_body_mode 按既有说明省略。Cron task 只输出官方 sample 证明的字段。Surge 遵循源 enable，使用已支持 timeout/debug/body/binary 字段。
 
-Surge 没有显式 timeout 时：legacy HTTP 取源默认 10 秒；Script v2 的 Request/Response 取源默认 20 秒，Cron/Network Changed/Generic 取源默认 300 秒；旧版非 HTTP 类型取源默认 300 秒。显式合法静态/动态 timeout 保留；QX 的省略策略不因 Surge 默认值变化而改变。
+Modified: 2026-11-05 (chance). Surge 没有显式 timeout 时使用目标原生默认，不复制 Loon 的 10/20/300 秒默认。没有显式正文大小限制时不自动添加 max-size=-1；发布迁移移除历史强加的默认性能选项。显式合法静态/动态设置仍按目标支持处理，QX 不输出未支持参数。
 
 目标不支持的合法作者 argument 直接省略，保留原 task、作者 URL 和受支持选项，并说明省略，不以参数无法编码丢弃整条 task。QX HTTP/非 HTTP 均省略 argument；Surge 支持的 String/PluginObject 参数按既有编码保留，合法但无法编码则省略。无效源结构/绑定仍诊断，不以目标省略掩盖错误。
 
@@ -455,3 +455,14 @@ Modified: 2026-11-03 (chance). Author: chance. Category: Adblock / Rewrite / QX�
 3. **优先级及风险边界**：Surge 先执行原生 Header/URL Rewrite 和 Map Local，再进入 Script，且同一阶段 HTTP Script 首条匹配占用脚本执行机会。第二种兼容分支无法证明与宽泛、跨主机正则或已有原生 Mock 的完整执行顺序等价；这类残余阴影风险要在规范中明确，不得宣称整份合集全量等价。原生 QX 和已转换的作者脚本保持原样，生成助手由现有引用闭包管理，重复同步不得复制脚本/原生规则。
 
 回归应覆盖合并后唯一原生规则、原来源 Header/注释保留、动作相同与不同的区分、不同 URL 的 Header 命中和未命中、真实宽泛前缀相交、显式同主机冲突继续 REVIEW、重复运行幂等及 Surge 输出校验。Surge 官方依据：https://manual.nssurge.com/http/url-rewrite.html 、https://manual.nssurge.com/http/map-local.html 、https://manual.nssurge.com/http/overview.html 、https://manual.nssurge.com/scripting/http-request.html 。
+
+
+## 2.28 目标目录、可执行脚本与失效来源（2026-11-05）
+
+Modified: 2026-11-05 (chance). 当前用户要求覆盖旧版共享三端脚本、强制来源声明及源客户端性能默认策略。
+
+转换产物统一为 `类型/Quantumult X或Surge/来源作者/应用/配置或脚本`。脚本与应用配置同目录，原文件名优先，生成助手采用阶段和 URL/操作的可读名称；不把摘要或编号当公开脚本名。类型包括 Adblock、Module、Rule，聚合规则作者为 WayX。配置索引、原件索引、API 绑定和链接一起迁移；`layout-state.json` 记录可逆内部工作视图，只有最终目录发布。原始输入备份不清理/改写。
+
+原作者业务操作继续保留；交付 JS 只留可执行代码和必须的法律声明，安装示例、配置段、无作用说明、开发标记移出脚本。QX/Surge 分别生成程序，只组合实际需要的 provider。缺少或混合来源/原声明不单独阻断：根据已有代码与目标调用上下文适配 API，binary 从实际目标值识别；函数入口允许顶层 return，最终组合仍必须通过语法和运行契约检查。不能以忽略真实错误换取通过。
+
+目标保持真实客户端识别、原生 timers、默认超时和正文限制，不注入虚假 Loon 身份，不模拟 Loon 特有单次 interval 或强加不限正文。Surge 发布脚本名称唯一。已知永久失效 URL 登记在 config/unavailable-sources.json，整文件不获取；部分脚本/依赖失效只注释对应声明，保留其它活动内容。所有变更完成并验证后才一次提交运行 Actions。

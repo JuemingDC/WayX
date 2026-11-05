@@ -1,6 +1,7 @@
 // Modified: 2026-10-30 (chance). One TypeScript application owns checks, gates
 // and publication; GitHub Actions only dispatches commands and stores artifacts.
 import fs from "node:fs/promises";
+import { prepareWorkingLayout } from "./release-layout.ts";
 import path from "node:path";
 import { spawnSync, execFileSync } from "node:child_process";
 import crypto from "node:crypto";
@@ -135,6 +136,8 @@ export async function executeChecks(
   if (failed) throw Error(`${stage}: ${failed} check(s) require review`);
 }
 export async function prepare() {
+  // Modified: 2026-11-05 (chance). Restore converter working paths before acquisition; only the final client layout is published.
+  await prepareWorkingLayout(process.cwd());
   await fs.mkdir(runtime, { recursive: true });
   await fs.rm(runtime + "/validation-results.json", { force: true });
   const branches = run(["git", "ls-remote", "--heads", "origin"], true)
@@ -205,21 +208,12 @@ export async function syntaxChecks(
       for (const f of result.split("\0")) changed.add(f);
     }
   }
-  for (const file of await listFiles("Script")) {
-    const relative = "Script/" + file;
-    // Modified: 2026-11-01 (chance). Universal proxy scripts use classic JS,
-    // not this repository's type=module semantics, regardless of source suffix.
-    const shared = relative.startsWith("Script/Adblock/");
-    if (
-      (shared || file.endsWith(".js")) &&
-      (!changedScripts || changed.has(relative))
-    )
-      checks.push([
-        "syntax:" + relative,
-        shared
-          ? ["node", "src/cli.ts", "script-syntax", relative]
-          : ["node", "--check", relative],
-      ]);
+  // Modified: 2026-11-05 (chance). Colocated target scripts receive the same classic-JS check as legacy working helpers.
+  for (const directory of ["Script", "Adblock", "Module", "Rule"]) for (const file of await listFiles(directory)) {
+    const relative = directory + "/" + file;
+    const isProgram = file.endsWith(".js") || (directory === "Script" && file.startsWith("Adblock/"));
+    if (isProgram && (!changedScripts || changed.has(relative) || directory !== "Script"))
+      checks.push(["syntax:" + relative, ["node", "src/cli.ts", "script-syntax", relative]]);
   }
   return checks;
 }

@@ -5,7 +5,8 @@ export function scriptReferences(text: string): ScriptReference[] {
   const result: ScriptReference[] = [];
   let offset = 0;
   for (const line of text.split(/(?<=\n)/)) {
-    if (!/^\s*(?:#|;|\/\/)/.test(line)) {
+    // Modified: 2026-11-05 (chance). Conditional Surge declarations remain active resource operands.
+    if (!/^\s*(?:#(?!\!REQUIREMENT)|;|\/\/)/.test(line)) {
       const patterns = [
         /(?:^|[,\s])script-path\s*=\s*("[^"]+"|'[^']+'|[^,\s]+)/g,
         /\burl(?:-and-header)?\s+script-(?:request-(?:header|body)|response-(?:header|body)|(?:analyze-)?echo-response)\s+(\S+)/g,

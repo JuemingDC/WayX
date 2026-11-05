@@ -4,7 +4,7 @@ Modified: 2026-11-03 (chance). 当前维护方式为 ScriptHub 派生的运行�
 
 ## 范围
 
-生产方向只有 Loon→Quantumult X、Loon→Surge、Quantumult X→Surge。每个源 URL 一个原文件名的共用脚本，原正文一次；原插件和脚本字节保存在 Resource/Backup。配置控制、任务、Module 工具和 Egern 不提供新 API 适配。DNS、GeoIP、ASN 等工具 API 不参与转换、操作清单、未实现能力统计或后续计划。原作者正文不删除，不添加对应兼容绑定。
+生产方向只有 Loon→Quantumult X、Loon→Surge、Quantumult X→Surge。按目标客户端和应用分别输出原文件名脚本，原业务操作不改；原插件和脚本字节保存在 Resource/Backup。Adblock 与 Module（含任务）统一使用目标 API 适配；Egern 保持原生。DNS、GeoIP、ASN 等工具 API 不参与转换、操作清单、未实现能力统计或后续计划。原作者业务操作不删除；发布脚本移除安装说明与非必要声明，保留许可。
 
 ## 上游和修正
 
@@ -12,7 +12,7 @@ Modified: 2026-11-03 (chance). 当前维护方式为 ScriptHub 派生的运行�
 
 ## 通用调用
 
-动态对象、键名、函数包装、类和 Env 的 this 交给 JavaScript 执行。编译阶段只检查语法、授权方向、HTTP phase/binary 声明。API inventory 仅记录引用与能力，不对作者的实参、别名、分支逐项证明或白名单放行。target.capability 明确区分运行时适配、需要原生、未实现和未分类。
+动态对象、键名、函数包装、类和 Env 的 this 交给 JavaScript 执行。编译阶段检查最终函数包装语法、授权方向和目标 API；来源/原声明不唯一不构成阻断。目标输入决定 phase/binary。API inventory 仅记录引用与能力，不对作者的实参、别名、分支逐项证明或白名单放行。target.capability 明确区分运行时适配、需要原生、未实现和未分类。
 
 Header 采用大小写无关、小写字典策略，这是接受的兼容规范化；不保持原键大小写和重复大小写键。HTTP 支持动态方法、并发、Promise/callback、二进制和动态结果，错误继续传播。原生 QX 已解码文本保留；外端字节按实际可用的 TextDecoder 处理 charset，不可用则明确拒绝。Loon body-base64 转真实字节，node 映射目标单次请求的 policy；$done 先校验后锁定提交，允许作者捕获校验错误后重试。QX 未说明参数按用户要求省略；原构造表达式、副作用及异常不被移除。
 
@@ -26,10 +26,12 @@ Loon 全量清空存储映射到真实 QX removeAllValues，Surge 无对应 SDK 
 
 ## 文件与验证
 
-原件 Resource/Backup/script/<URL SHA>/<原名>；共用文件 Script/Adblock/<来源主机>-<URL摘要>/<原名>；外部 API 清单 Resource/Backup/script-api/<URL SHA>.json。索引校验原件和清单摘要。
+原件 Resource/Backup/script/<URL SHA>/<原名>；目标文件 类型/Quantumult X或Surge/来源作者/应用/原名.js；外部 API 清单 Resource/Backup/script-api/<URL SHA>.json。索引校验原件和清单摘要。
 
-报告 runtimePolicyVersion=4、validationMode=api-runtime-compatibility 表示 API 适配器已组合并通过契约测试，不表示作者所有业务路径已在设备上执行。验证使用独立 API 向量、模拟原生传输和合成备份事务；实际生产原件及产物仅由 Actions 更新。
+报告 runtimePolicyVersion=5、validationMode=api-runtime-compatibility 表示 API 适配器已组合并通过契约测试，不表示作者所有业务路径已在设备上执行。验证使用独立 API 向量、模拟原生传输和合成备份事务；实际生产原件及产物仅由 Actions 更新。
 
 ## 旧生成文件清理
 
 Modified: 2026-11-02 (chance). Actions 在最终引用重绑定后清理没有引用的旧生成文件；生成器与清理器共用文件名归属规则。冻结源、手工脚本、脚本相对依赖和来源 URL 都参与保留判断，正在使用的旧 mock 或 Module 适配文件继续保留。原始备份不删除，清理文件清单写入 Resource/Backup/status.json 的 scriptCleanup。
+
+2026-11-05（chance）修订：生产脚本固定到实际客户端，不注入虚假的 `$loon`、不模拟 Loon 单次 interval，不附加源默认 10/20/300 秒或不限正文大小。源码中实际用到的压缩、AES、URL、旧编码依赖才组合进对应目标程序；QX fetch 在 Surge 需要按动态 charset 解码时，解码器属于实际传输依赖。失败来源的调用声明注释停用，完整失效来源停止获取。没有客户端实测时不把语法/契约测试描述为实机认证。
