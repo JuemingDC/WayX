@@ -1,0 +1,737 @@
+{
+  "version": 1,
+  "sourceUrl": "https://rucu6.pages.dev/Scripts/general/node-check.js",
+  "sourceSha256": "54a005001826f4d631df89c62250445d08ef9a009d56b8a9c394ebb3ba31afc7",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "54a005001826f4d631df89c62250445d08ef9a009d56b8a9c394ebb3ba31afc7",
+    "operations": [
+      {
+        "api": "$environment",
+        "access": "read",
+        "start": 576,
+        "end": 588,
+        "line": 23,
+        "column": 23,
+        "members": [
+          "$environment"
+        ]
+      },
+      {
+        "api": "$environment.params",
+        "access": "read",
+        "start": 608,
+        "end": 627,
+        "line": 23,
+        "column": 55,
+        "members": [
+          "$environment",
+          "params"
+        ]
+      },
+      {
+        "api": "$environment.params",
+        "access": "read",
+        "start": 630,
+        "end": 649,
+        "line": 23,
+        "column": 77,
+        "members": [
+          "$environment",
+          "params"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 4278,
+        "end": 4413,
+        "line": 147,
+        "column": 19,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 4420,
+        "end": 4862,
+        "line": 154,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 4927,
+        "end": 4950,
+        "line": 174,
+        "column": 35,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9395,
+        "end": 9751,
+        "line": 303,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9790,
+        "end": 10012,
+        "line": 313,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 5,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "request": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "54a005001826f4d631df89c62250445d08ef9a009d56b8a9c394ebb3ba31afc7",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment",
+              "start": 576,
+              "end": 588,
+              "line": 23,
+              "column": 23,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.params",
+              "start": 608,
+              "end": 627,
+              "line": 23,
+              "column": 55,
+              "access": "read",
+              "memberPath": [
+                "params"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.params",
+              "start": 630,
+              "end": 649,
+              "line": 23,
+              "column": 77,
+              "access": "read",
+              "memberPath": [
+                "params"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 4278,
+              "end": 4413,
+              "line": 147,
+              "column": 19,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 4420,
+              "end": 4862,
+              "line": 154,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 4927,
+              "end": 4950,
+              "line": 174,
+              "column": 35,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9395,
+              "end": 9751,
+              "line": 303,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9790,
+              "end": 10012,
+              "line": 313,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "54a005001826f4d631df89c62250445d08ef9a009d56b8a9c394ebb3ba31afc7",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment",
+              "start": 576,
+              "end": 588,
+              "line": 23,
+              "column": 23,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.params",
+              "start": 608,
+              "end": 627,
+              "line": 23,
+              "column": 55,
+              "access": "read",
+              "memberPath": [
+                "params"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.params",
+              "start": 630,
+              "end": 649,
+              "line": 23,
+              "column": 77,
+              "access": "read",
+              "memberPath": [
+                "params"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 4278,
+              "end": 4413,
+              "line": 147,
+              "column": 19,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 4420,
+              "end": 4862,
+              "line": 154,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 4927,
+              "end": 4950,
+              "line": 174,
+              "column": 35,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9395,
+              "end": 9751,
+              "line": 303,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9790,
+              "end": 10012,
+              "line": 313,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "54a005001826f4d631df89c62250445d08ef9a009d56b8a9c394ebb3ba31afc7",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment",
+              "start": 576,
+              "end": 588,
+              "line": 23,
+              "column": 23,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.params",
+              "start": 608,
+              "end": 627,
+              "line": 23,
+              "column": 55,
+              "access": "read",
+              "memberPath": [
+                "params"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.params",
+              "start": 630,
+              "end": 649,
+              "line": 23,
+              "column": 77,
+              "access": "read",
+              "memberPath": [
+                "params"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 4278,
+              "end": 4413,
+              "line": 147,
+              "column": 19,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 4420,
+              "end": 4862,
+              "line": 154,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 4927,
+              "end": 4950,
+              "line": 174,
+              "column": 35,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9395,
+              "end": 9751,
+              "line": 303,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9790,
+              "end": 10012,
+              "line": 313,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

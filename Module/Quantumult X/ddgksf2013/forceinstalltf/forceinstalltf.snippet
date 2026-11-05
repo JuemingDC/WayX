@@ -1,0 +1,23 @@
+# Name: forceinstalltf
+# Updated: 2026-11-01 21:23:26 +08:00
+# Copied by: chance
+# Source Authors: 墨鱼 / ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/ForceInstallTF.conf
+// ==UserScript==
+// @Name              M系列Mac解除iOS TF軟件下載限制
+// @Author            Skyxim
+// @TgChannel         https://t.me/ddgksf2021
+// @WechatID          公眾號墨魚手記
+// @UpdateTime        2022-03-12
+// @ScriptURL         https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/Function/ForceInstallTF.conf
+// ==/UserScript==
+
+
+# [mitm]
+hostname = testflight.apple.com
+
+# [rewrite_local]
+^https:\/\/testflight\.apple\.com((\/v3\/accounts\/.+?\/apps$)|(\/v2\/accounts\/.+?\/apps\/.+?\/builds\/.+)) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/forceinstalltf/ForceInstall.js

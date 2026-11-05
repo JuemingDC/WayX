@@ -1,0 +1,17 @@
+#!name=节点检测工具
+#!desc=进行节点阻断、地理位置、节点解锁、入口落地查询。
+#!category=WayX
+
+# Author: xream[https://github.com/xream], Keywos[https://github.com/Keywos], KOP-XIAO[https://github.com/KOP-XIAO], dcpengx[https://github.com/dcpengx], RavelloH[https://github.com/RavelloH], RuCu6[https://github.com/RuCu6]
+# Icon: https://rucu6.pages.dev/Icons/common/nodecheck.png
+# Updated: 2026-10-05 12:30
+
+# Converted: 2026-11-05 13:54:21 +08:00
+# Converted by: chance
+# Source: https://rucu6.pages.dev/Plugins/nodecheck.lpx
+
+[Script]
+节点阻断查询 = type=generic,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/RuCu6/nodecheck/node-check.js
+入口落地查询 = type=generic,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/RuCu6/nodecheck/network-in-out-query.js
+地理位置查询 = type=generic,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/RuCu6/nodecheck/location-detection.js
+节点解锁查询 = type=generic,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/RuCu6/nodecheck/node-unlock-detection.js

@@ -1,0 +1,27 @@
+# Name: 彩云天气Pro
+# Updated: 2026-11-01 21:23:21 +08:00
+# Copied by: chance
+# Source Authors: 树先生
+# Category: Adblock
+# Managed by: WayX Native QX
+
+# Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/caiyun.snippet
+# Upstream name = 彩云天气Pro
+# Upstream desc = 去除广告
+# Upstream author = RuCu6
+
+# [filter_local]
+host, abyss.cyapi.cn, reject
+host, ad.cyapi.cn, reject
+
+# [rewrite_local]
+^https:\/\/biz\.cyapi\.cn\/(p\/v1\/entries|p\/v1\/trial_card\/info|v2\/product) url reject-dict
+^https:\/\/starplucker\.cyapi\.cn\/v3\/(config\/cypage\/\w+\/conditions|notification\/message_center|operation\/homefeatures) url reject-dict
+
+^https:\/\/api\.caiyunapp\.com\/v1\/activity\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/ishowshu/caiyun/caiyun.js
+^https:\/\/biz\.cyapi\.cn\/(api\/v1\/user_detail|p\/v1\/vip_info|v2\/user) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/ishowshu/caiyun/caiyun.js
+^https:\/\/wrapper\.cyapi\.cn\/v1\/activity\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/ishowshu/caiyun/caiyun.js
+^https:\/\/wrapper\.cyapi\.cn\/v1\/(nafp\/origin_images|satellite)\? url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/ishowshu/caiyun/caiyun.js
+
+# [mitm]
+hostname = api.caiyunapp.com, *.cyapi.cn

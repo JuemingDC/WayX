@@ -1,0 +1,34 @@
+#!name=YouTube去广告隐藏Shorts版@Aioneas
+# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/Youtube.png
+# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: YouTube去广告隐藏Shorts版@Aioneas
+# Updated: 2026-11-01 21:23:24 +08:00
+# Copied by: chance
+# Source Authors: 怎么肥事
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/Youtube.snippet
+# Upstream author=DivineEngine + app2smile + Maasea + ddgksf2013 + Aioneas + Oneasai + ZenmoFeiShi
+# Upstream name=YouTube去广告隐藏Shorts版@Aioneas
+# Upstream desc=基于稳定版，额外去除首页Shorts，去除首页shorts区块，去除视频播内嵌购推荐卡
+
+[URL Rewrite]
+^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+?&ctier=L(&.+?),ctier,(.+) https://$1$2$3 302
+
+[Map Local]
+^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback\?)).+&oad data-type=text data="" status-code=200
+^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads data-type=text data="" status-code=200
+^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) data-type=text data="" status-code=200
+^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext data-type=text data="" status-code=200
+
+[Script]
+zenmofeishi_youtube_1 = type=http-response,pattern=^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ZenmoFeiShi/youtube/youtube.response.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% *.googlevideo.com, redirector*.googlevideo.com, www.youtube.com, s.youtube.com, youtubei.googleapis.com

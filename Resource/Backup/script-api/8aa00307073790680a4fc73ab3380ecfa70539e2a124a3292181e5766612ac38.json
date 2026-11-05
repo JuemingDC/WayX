@@ -382,15 +382,9 @@
         ]
       }
     ],
-    "diagnostics": [
-      {
-        "api": "syntax",
-        "reason": "Illegal return statement",
-        "solution": "Repair upstream classic JavaScript syntax"
-      }
-    ]
+    "diagnostics": []
   },
-  "runtimePolicyVersion": 4,
+  "runtimePolicyVersion": 5,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
@@ -1206,13 +1200,7 @@
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "syntax",
-            "reason": "Illegal return statement",
-            "solution": "Repair upstream classic JavaScript syntax"
-          }
-        ]
+        "diagnostics": []
       },
       "surge": {
         "version": 1,
@@ -2026,31 +2014,9 @@
             "diagnostics": []
           }
         ],
-        "diagnostics": [
-          {
-            "api": "syntax",
-            "reason": "Illegal return statement",
-            "solution": "Repair upstream classic JavaScript syntax"
-          }
-        ]
+        "diagnostics": []
       }
     }
   },
-  "diagnostics": [
-    {
-      "api": "syntax",
-      "reason": "Illegal return statement",
-      "solution": "Repair upstream classic JavaScript syntax"
-    },
-    {
-      "api": "syntax",
-      "reason": "Illegal return statement",
-      "solution": "Repair upstream classic JavaScript syntax"
-    },
-    {
-      "api": "syntax",
-      "reason": "Illegal return statement",
-      "solution": "Repair upstream classic JavaScript syntax"
-    }
-  ]
+  "diagnostics": []
 }

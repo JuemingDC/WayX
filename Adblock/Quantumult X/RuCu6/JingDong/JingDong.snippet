@@ -1,0 +1,28 @@
+# Name: 京东
+# Description: 商品详情页面触发比价。
+# Author: 小白脸, githubdulong[https://github.com/githubdulong/Script], RuCu6[https://github.com/RuCu6], Maasea[https://github.com/Maasea/sgmodule]
+# Icon: https://rucu6.pages.dev/Icons/app/jingdong.png
+# Updated: 2026-08-30 10:10
+
+# Converted: 2026-11-05 10:30:32 +08:00
+# Converted by: chance
+# Category: 去广告
+# Source: https://rucu6.pages.dev/Plugins/jingdong.lpx
+
+# [filter_local]
+# [WayX] Quantumult X unsupported Rule type commented out; Rule conversion does not use Script fallback
+# Source declaration: AND, ((DOMAIN, api.m.jd.com), (PROTOCOL, TCP)), REJECT-NO-DROP
+
+# [rewrite_local]
+(?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:cartCouponRecommendGoods|intelligentRecommendSku|obtainGrowingInfo|recommendShop|searchBoxWord|stationPullService|uniformRecommend) url reject-dict
+(?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig url jsonjq-response-body 'setpath(["data","JDMessage","socketmonitor","isSocketEstablishedAhead"]; 0) | setpath(["data","JDMessage","socketmonitor","isSocketReport"]; 0) | setpath(["data","JDHttpToolKit","httpdns","httpdns"]; 0)'
+(?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=cart url jsonjq-response-body 'del(.cartLocationMap.loc_emptyCartFloor2,.emptyCartRecommendFloor)'
+# manmanbuy_cookies
+(?i)^https:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/JingDong/manmanbuy_ck.js
+# jingdong_noad
+(?i)^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/JingDong/jingdong.js
+# jd_price
+(?i)^https:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/JingDong/jd_price.js
+
+# [mitm]
+hostname = apapia-sqk-weblogic.manmanbuy.com, api.m.jd.com, in.m.jd.com

@@ -1,0 +1,1298 @@
+{
+  "version": 1,
+  "sourceUrl": "https://rucu6.pages.dev/Scripts/general/node-unlock-detection.js",
+  "sourceSha256": "2202b0f80546f9ff90c5e972bc3f111322952550512b9c17bc370ba1c025714f",
+  "sourceClients": [
+    "loon"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "2202b0f80546f9ff90c5e972bc3f111322952550512b9c17bc370ba1c025714f",
+    "operations": [
+      {
+        "api": "$environment.params",
+        "access": "read",
+        "start": 1093,
+        "end": 1112,
+        "line": 24,
+        "column": 19,
+        "members": [
+          "$environment",
+          "params"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 4357,
+        "end": 4412,
+        "line": 182,
+        "column": 5,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 5090,
+        "end": 5145,
+        "line": 206,
+        "column": 5,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$httpClient.post",
+        "access": "call",
+        "start": 6285,
+        "end": 7474,
+        "line": 243,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "post"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 7746,
+        "end": 8292,
+        "line": 288,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 8652,
+        "end": 10091,
+        "line": 321,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "$httpClient.post",
+        "access": "call",
+        "start": 10742,
+        "end": 11640,
+        "line": 381,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "post"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 12002,
+        "end": 12697,
+        "line": 420,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 13074,
+        "end": 15686,
+        "line": 454,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 14632,
+        "end": 15561,
+        "line": 477,
+        "column": 9,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 16041,
+        "end": 17633,
+        "line": 521,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 19187,
+        "end": 20863,
+        "line": 740,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 19788,
+        "end": 20710,
+        "line": 758,
+        "column": 9,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      },
+      {
+        "api": "$httpClient.get",
+        "access": "call",
+        "start": 21492,
+        "end": 22024,
+        "line": 807,
+        "column": 5,
+        "members": [
+          "$httpClient",
+          "get"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 5,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "request": {
+      "qx": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "qx",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "2202b0f80546f9ff90c5e972bc3f111322952550512b9c17bc370ba1c025714f",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.params",
+              "start": 1093,
+              "end": 1112,
+              "line": 24,
+              "column": 19,
+              "access": "read",
+              "memberPath": [
+                "params"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 4357,
+              "end": 4412,
+              "line": 182,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5090,
+              "end": 5145,
+              "line": 206,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.post",
+              "start": 6285,
+              "end": 7474,
+              "line": 243,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 7746,
+              "end": 8292,
+              "line": 288,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 8652,
+              "end": 10091,
+              "line": 321,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.post",
+              "start": 10742,
+              "end": 11640,
+              "line": 381,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 12002,
+              "end": 12697,
+              "line": 420,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 13074,
+              "end": 15686,
+              "line": 454,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 14632,
+              "end": 15561,
+              "line": 477,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 16041,
+              "end": 17633,
+              "line": 521,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 19187,
+              "end": 20863,
+              "line": 740,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 19788,
+              "end": 20710,
+              "line": 758,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 21492,
+              "end": 22024,
+              "line": 807,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$task.fetch",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "surge": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "2202b0f80546f9ff90c5e972bc3f111322952550512b9c17bc370ba1c025714f",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.params",
+              "start": 1093,
+              "end": 1112,
+              "line": 24,
+              "column": 19,
+              "access": "read",
+              "memberPath": [
+                "params"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 4357,
+              "end": 4412,
+              "line": 182,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5090,
+              "end": 5145,
+              "line": 206,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.post",
+              "start": 6285,
+              "end": 7474,
+              "line": 243,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 7746,
+              "end": 8292,
+              "line": 288,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 8652,
+              "end": 10091,
+              "line": 321,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.post",
+              "start": 10742,
+              "end": 11640,
+              "line": 381,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 12002,
+              "end": 12697,
+              "line": 420,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 13074,
+              "end": 15686,
+              "line": 454,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 14632,
+              "end": 15561,
+              "line": 477,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 16041,
+              "end": 17633,
+              "line": 521,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 19187,
+              "end": 20863,
+              "line": 740,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 19788,
+              "end": 20710,
+              "line": 758,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 21492,
+              "end": 22024,
+              "line": 807,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      },
+      "loon": {
+        "version": 1,
+        "sourceClient": "loon",
+        "targetClient": "loon",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "2202b0f80546f9ff90c5e972bc3f111322952550512b9c17bc370ba1c025714f",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$environment.params",
+              "start": 1093,
+              "end": 1112,
+              "line": 24,
+              "column": 19,
+              "access": "read",
+              "memberPath": [
+                "params"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 4357,
+              "end": 4412,
+              "line": 182,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5090,
+              "end": 5145,
+              "line": 206,
+              "column": 5,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.post",
+              "start": 6285,
+              "end": 7474,
+              "line": 243,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 7746,
+              "end": 8292,
+              "line": 288,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 8652,
+              "end": 10091,
+              "line": 321,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.post",
+              "start": 10742,
+              "end": 11640,
+              "line": 381,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "post"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 12002,
+              "end": 12697,
+              "line": 420,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 13074,
+              "end": 15686,
+              "line": 454,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 14632,
+              "end": 15561,
+              "line": 477,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 16041,
+              "end": 17633,
+              "line": 521,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 19187,
+              "end": 20863,
+              "line": 740,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 19788,
+              "end": 20710,
+              "line": 758,
+              "column": 9,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "http.request",
+            "kind": "http",
+            "source": {
+              "api": "$httpClient.get",
+              "start": 21492,
+              "end": 22024,
+              "line": 807,
+              "column": 5,
+              "access": "call",
+              "memberPath": [
+                "get"
+              ]
+            },
+            "canonical": "http.request -> success(status,body)|failure",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$httpClient",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}
