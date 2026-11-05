@@ -20,3 +20,5 @@ Modified: 2026-11-05 (chance). 每次 Actions 同步归档插件正文及其直�
 本地回归：`node tests/backups.ts`。本地只测试隔离夹具，不抓取或提交生产归档；实际源字节由 Actions 拉取。
 
 Modified: 2026-11-05 (chance). Loon→QX、Loon→Surge、QX→Surge 使用独立目标程序，任务和 Module 工具同样参与 API 适配。发布目录及下次同步的还原流程见 [target-publication.md](target-publication.md)。脚本仅包含生效代码与必要许可，安装声明和原注释仍在原始归档。Resource/Backup/script-api-status.json 记录适配结果、原因和方案。缺少来源或声明不阻断转换；真实语法错误且无有效旧版本时仅停用对应声明。
+
+Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。

@@ -160,6 +160,31 @@ export async function validateSourceBackups(root: string) {
       add(file, "api-adapter-integrity", e.message);
     }
   }
+  // Modified: 2026-11-05 (chance). Native QX published scripts must match archived author bytes exactly.
+  const layout = await readJson<any>(
+    path.join(root, ".github/sources/layout-state.json"),
+    { scripts: {} },
+  );
+  for (const [file, entry] of Object.entries<any>(
+    layout.phase === "published" ? layout.scripts : {},
+  )) {
+    if (
+      !file.includes("/Quantumult X/") ||
+      !entry.logical.startsWith("Resource/Backup/script/")
+    )
+      continue;
+    const bytes = await readOptional(safePath(root, file));
+    if (
+      !bytes ||
+      crypto.createHash("sha256").update(bytes).digest("hex") !==
+        index.objects[entry.logical]?.sha256
+    )
+      add(
+        file,
+        "native-script-integrity",
+        "Native QX script differs from archived source",
+      );
+  }
   for (const [url, file] of Object.entries<any>(index.latest))
     if (index.objects[file]?.url !== url)
       add("Resource/Backup/index.json", "backup-source-index", url);

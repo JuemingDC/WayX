@@ -258,16 +258,13 @@ export function prepareQxHeaderRewrites({
         const file = script[2].startsWith(rawBase + "/")
           ? decodeURI(script[2].slice(rawBase.length + 1))
           : "";
-        const sourceAdapter = index.adapters?.[file];
-        // Modified: 2026-11-05 (chance). Conditional Surge hooks bind the Surge program, never the fixed QX file.
-        if (sourceAdapter?.targetClient === "qx") {
-          const surgeFile = universalScriptPath(sourceAdapter.sourceUrl, "surge");
-          if (index.adapters[surgeFile] && changes.has(surgeFile)) script[2] = rawBase + "/" + surgeFile;
-          else reason = "Missing target-specific Surge API program";
-        }
-        if (sourceAdapter?.from !== "qx" || !changes.has(file))
-          reason =
-            "Conditional script requires a freshly built shared QX API adapter";
+        // Modified: 2026-11-05 (chance). QX keeps raw author bytes; only the Surge
+        // conditional hook resolves the freshly built QX-to-Surge API program.
+        const sourceUrl = index.adapters?.[file]?.sourceUrl ?? index.objects?.[file]?.url;
+        const surgeFile = sourceUrl ? universalScriptPath(sourceUrl, "surge") : "";
+        if (index.adapters?.[surgeFile]?.from === "qx" && changes.has(surgeFile))
+          script[2] = rawBase + "/" + surgeFile;
+        else reason = "Conditional script requires a fresh QX-to-Surge API program";
       }
       if (reason) {
         report.push({

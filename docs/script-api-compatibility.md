@@ -35,3 +35,5 @@ Loon 全量清空存储映射到真实 QX removeAllValues，Surge 无对应 SDK 
 Modified: 2026-11-02 (chance). Actions 在最终引用重绑定后清理没有引用的旧生成文件；生成器与清理器共用文件名归属规则。冻结源、手工脚本、脚本相对依赖和来源 URL 都参与保留判断，正在使用的旧 mock 或 Module 适配文件继续保留。原始备份不删除，清理文件清单写入 Resource/Backup/status.json 的 scriptCleanup。
 
 2026-11-05（chance）修订：生产脚本固定到实际客户端，不注入虚假的 `$loon`、不模拟 Loon 单次 interval，不附加源默认 10/20/300 秒或不限正文大小。源码中实际用到的压缩、AES、URL、旧编码依赖才组合进对应目标程序；QX fetch 在 Surge 需要按动态 charset 解码时，解码器属于实际传输依赖。失败来源的调用声明注释停用，完整失效来源停止获取。没有客户端实测时不把语法/契约测试描述为实机认证。
+
+Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。

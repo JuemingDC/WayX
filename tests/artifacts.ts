@@ -84,8 +84,8 @@ function preservesReference(text, ref, artifact) {
   const validBound=bound && backupIndex.adapters?.[bound]?.sourceUrl===url;
   const archived=backupIndex.latest[url];
   const validArchive=archived && backupIndex.objects[archived]?.kind==='script' && backupIndex.objects[archived]?.url===url;
-  return Boolean((validBound && text.includes(rawBase+bound+fragment)) ||
-    (validArchive && text.includes(rawBase+archived+fragment)));
+  return Boolean((validBound && text.includes(rawBase+bound.split("/").map(encodeURIComponent).join("/")+fragment)) ||
+    (validArchive && text.includes(rawBase+archived.split("/").map(encodeURIComponent).join("/")+fragment)));
 }
 
 for(const entry of catalog){

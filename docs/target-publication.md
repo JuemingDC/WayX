@@ -13,3 +13,5 @@ Source attribution and a unique original HTTP declaration are not prerequisites.
 Known permanently unavailable whole-file sources are disabled in `config/unavailable-sources.json` and are not requested. Only declarations requiring unavailable resources are commented; unaffected rules remain active. A repaired source is explicitly removed from the disabled map before acquisition resumes.
 
 Final checks cover readable paths, reference closure, script syntax, duplicate Surge script identities, raw archive checksums, and the reversible next-run layout. All code, registry and test changes are prepared before one final Actions publication.
+
+Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。

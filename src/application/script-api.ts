@@ -60,7 +60,13 @@ export async function prepareScriptApiAdapters(
   const adapters = index.adapters ?? {},
     bindings: any = structuredClone(index.bindings ?? {}),
     diagnostics: any[] = [],
-    counts = { adapted: 0, blocked: 0, excluded: 0, universal: 0 };
+    counts = {
+      adapted: 0,
+      blocked: 0,
+      excluded: 0,
+      universal: 0,
+      nativeCopied: 0,
+    };
   const apiPlans: Record<
     string,
     { path: string; sha256: string; sourceSha256: string }
@@ -228,7 +234,24 @@ export async function prepareScriptApiAdapters(
           binary: false,
           responseBody: mode.body,
         });
-      group.refs.push({ artifact, ref, to, mode });
+      // Modified: 2026-11-05 (chance). Native QX references copy archived author bytes; a shared Loon URL does not change that ownership.
+      group.refs.push({
+        artifact,
+        ref,
+        to,
+        mode,
+        nativeCopy: to === "qx" && !entry,
+        needsSurge:
+          to === "qx" &&
+          !entry &&
+          artifacts.some(
+            (a: any) =>
+              a.relative ===
+              artifact.relative
+                .replace(/\/Quantumult ?X\//, "/Surge/")
+                .replace(/\.snippet$/, ".sgmodule"),
+          ),
+      });
       groups.set(url, group);
     }
   }
@@ -269,11 +292,19 @@ export async function prepareScriptApiAdapters(
       }));
     {
       try {
-        result = planUniversalAdblockScript(
-          new TextDecoder("utf8", { fatal: true }).decode(raw),
-          [...group.from][0] as ScriptPlatform,
-          group.profiles,
-        );
+        result = group.refs.every((r: any) => r.nativeCopy && !r.needsSurge)
+          ? {
+              status: "native-copy",
+              features: [],
+              problems: [],
+              contexts: {},
+              operationPlans: {},
+            }
+          : planUniversalAdblockScript(
+              new TextDecoder("utf8", { fatal: true }).decode(raw),
+              [...group.from][0] as ScriptPlatform,
+              group.profiles,
+            );
       } catch (e: any) {
         result = {
           status: "blocked",
@@ -329,6 +360,16 @@ export async function prepareScriptApiAdapters(
         members: reference.members,
       };
     });
+    // Modified: 2026-11-05 (chance). Inventories contain cross-client API plans only.
+    for (const roles of [result.contexts ?? {}, result.operationPlans ?? {}])
+      for (const targets of Object.values<any>(roles))
+        for (const to of Object.keys(targets))
+          if (
+            !scriptConversionDirections.some(
+              (d) => d.from === [...group.from][0] && d.to === to,
+            )
+          )
+            delete targets[to];
     const apiPlanPath =
       "Resource/Backup/script-api/" + digest(sourceUrl) + ".json";
     const apiPlanText =
@@ -362,6 +403,20 @@ export async function prepareScriptApiAdapters(
     const programs = new Map<string, { file: string; code: string }>();
     if (result.status === "universal")
       for (const to of ["qx", "surge"]) {
+        if (
+          !group.refs.some(
+            (r: any) =>
+              (r.to === to && !r.nativeCopy) ||
+              (to === "surge" && r.needsSurge),
+          )
+        )
+          continue;
+        if (
+          !scriptConversionDirections.some(
+            (d) => d.from === [...group.from][0] && d.to === to,
+          )
+        )
+          continue;
         const contexts = Object.fromEntries(
           Object.entries<any>(result.contexts).filter(
             ([, targets]) => targets[to],
@@ -390,12 +445,15 @@ export async function prepareScriptApiAdapters(
         };
         counts.universal++;
       }
-    for (const { artifact, ref, to, mode } of group.refs) {
+    for (const { artifact, ref, to, mode, nativeCopy } of group.refs) {
       const file = programs.get(to)?.file;
       const sourceRef = sourceUrl + new URL(ref.value).hash;
       const previous = index.bindings?.[artifact.relative]?.[sourceRef];
       let binding: ScriptBinding | undefined;
-      if (result.status === "universal" && file) {
+      if (nativeCopy) {
+        binding = { path: record.path };
+        counts.nativeCopied++;
+      } else if (result.status === "universal" && file) {
         const binary = result.features.some((p: string) =>
           /^\$(?:request|response)\.bodyBytes(?:\.|$)/.test(p),
         );
@@ -421,9 +479,9 @@ export async function prepareScriptApiAdapters(
         sourceUrl,
         from: [...group.from],
         to,
-        status: result.status,
+        status: nativeCopy ? "native-copy" : result.status,
         features: result.features,
-        problems: result.problems.map((p: any) => ({
+        problems: (nativeCopy ? [] : result.problems).map((p: any) => ({
           ...p,
           category:
             result.status === "excluded"
@@ -433,7 +491,7 @@ export async function prepareScriptApiAdapters(
 
         // Modified: 2026-11-02 (chance). QX omissions are informational metadata,
         // never parameter errors or extra declarations in the author script.
-        ...(result.contexts
+        ...(!nativeCopy && result.contexts
           ? {
               omittedParameters: [
                 ...new Set(
@@ -451,7 +509,7 @@ export async function prepareScriptApiAdapters(
       });
       // Modified: 2026-11-05 (chance). An invalid conversion without a verified
       // predecessor disables only its declarations; never publish incompatible raw code.
-      if (result.status === "blocked" && !binding) {
+      if (!nativeCopy && result.status === "blocked" && !binding) {
         const urls = disabled.get(artifact.relative) ?? new Set<string>();
         for (const url of [ref.value, sourceUrl, rawBase + "/" + record.path])
           urls.add(url.split("#")[0]);

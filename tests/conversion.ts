@@ -1851,7 +1851,9 @@ for(const [target,file] of [
  ['qx','Adblock/Quantumult X/YouTube_remove_ads.snippet'],
  ['surge','Adblock/Surge/SeasunJX3_remove_ads.sgmodule'],
 ]){
- const text=await fs.readFile(file,'utf8');validateConversionMetadata(text,entry,target);
+ // Modified: 2026-11-05 (chance). Existing validator fixtures follow the published app-directory manifest.
+ const layout=JSON.parse(await fs.readFile('.github/sources/layout-state.json','utf8'));
+ const text=await fs.readFile(layout.phase==='published' ? layout.artifacts[file] ?? file : file,'utf8');validateConversionMetadata(text,entry,target);
  if(target==='qx')validateQX(text,entry);else validateSurgeModule(text,entry);
 }
 validateQX(qx+'\n# [task_local]\nevent-interaction https://example.com/tool.js, tag=Tool, enabled=true\n',entry);

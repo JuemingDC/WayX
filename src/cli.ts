@@ -196,7 +196,8 @@ try {
     case "script-syntax": {
       if (!args[0]) throw Error("Missing script path");
       const { Script } = await import("node:vm");
-      new Script(await fs.readFile(args[0], "utf8"), { filename: args[0] });
+      // Modified: 2026-11-05 (chance). Validate native proxy entrypoints in their function context without rewriting their bytes.
+      new Script("(function(){\n" + await fs.readFile(args[0], "utf8") + "\n})", { filename: args[0] });
       console.log("Classic JavaScript syntax passed: " + args[0]);
       break;
     }

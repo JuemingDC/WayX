@@ -382,6 +382,8 @@ export async function refreshSourceBackups(
       adapted: scriptApi.adapted,
       blocked: scriptApi.blocked,
       excluded: scriptApi.excluded,
+      // Modified: 2026-11-05 (chance). Native direct copies are not API conversions.
+      nativeCopied: scriptApi.nativeCopied,
     },
     unresolvedReferences: unresolved,
     disabledSources: [...disabledSources],

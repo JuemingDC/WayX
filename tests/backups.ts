@@ -27,7 +27,7 @@ try {
  const record=backupObject(url,bytes,"script");
  assert.deepEqual(await fs.readFile(path.join(root,record.path)),bytes);
  const saved=await fs.readFile(path.join(root,"Adblock/Quantumult X/raw.snippet"),"utf8");
- assert.ok(saved.includes('/qx/') && saved.includes('#arg=x'));assert.ok(saved.includes('# Original '+url));assert.ok(saved.includes('url 302 '+url));
+ assert.ok(saved.includes('/Resource/Backup/script/') && saved.includes('#arg=x'));assert.ok(saved.includes('# Original '+url));assert.ok(saved.includes('url 302 '+url));
  const compacted=await fs.readFile(path.join(root,"Adblock/Quantumult X/managed.snippet"),"utf8");
  assert.equal(compacted,managed.replace('# Target: Quantumult X\n','').replace('# [WayX] Source Script timeout ignored for Quantumult X.\n',''));
  await fs.rm(path.join(root,"Adblock/Quantumult X/managed.snippet"));

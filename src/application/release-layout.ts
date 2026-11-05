@@ -361,6 +361,14 @@ export async function publishLayout(
     occupied.set(dest, logical);
     perApp.set(logical, dest);
     state.scripts[dest] = { logical, owner };
+    // Modified: 2026-11-05 (chance). Native QX author scripts are byte copies,
+    // including comments/BOM/line endings; no API wrapper or body rewriting.
+    const nativeCopy = state.artifacts[owner].includes("/Quantumult X/") && index.objects?.[logical]?.kind === "script";
+    if (nativeCopy) {
+      if (validateCode) new vm.Script("(function(){\n" + bytes.toString() + "\n})", {filename:dest});
+      changes.set(dest, bytes);
+      return dest;
+    }
     // Dependency discovery operates on executable text, not install instructions in comments.
     let code = validateCode
       ? executableScript(bytes.toString())

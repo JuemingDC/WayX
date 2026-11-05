@@ -345,7 +345,8 @@ try {
     },
     log: () => {},
   });
-  assert.equal(r.scriptApi.universal, 2);
+  assert.equal(r.scriptApi.universal, 1);
+  assert.equal(r.scriptApi.nativeCopied, 1);
   assert.deepEqual(await validateSourceBackups(root), []);
   const index = JSON.parse(
     await fs.readFile(path.join(root, "Resource/Backup/index.json"), "utf8"),

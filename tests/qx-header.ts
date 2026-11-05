@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {parseQxHeaderPredicate as parse, headerPredicateRuntime, disjointUrls, headerArgumentPrefix} from '../src/domain/qx-header.ts';
 import {prepareQxHeaderRewrites} from '../src/application/qx-header.ts';
 import {convertNativeQxToSurge} from '../src/emit/conversion.ts';
-import {planUniversalAdblockScript} from '../src/parser/universal-script.ts';
+import {planUniversalAdblockScript, universalScriptPath} from '../src/parser/universal-script.ts';
 import {validateSurgeModule} from '../src/validation/output.ts';
 const match=vm.runInNewContext('('+headerPredicateRuntime+')');
 const predicate=parse('leisu*');
@@ -79,8 +79,11 @@ assert.match(incompatible.output,/REVIEW REQUIRED/);
 const body='// author remains intact\n$done({body:"changed"});';
 const program=planUniversalAdblockScript(body,'qx',[{phase:'response',responseBody:true}]);
 assert.equal(program.status,'universal');assert.ok(program.code!.includes(body));
-const file='Script/Adblock/test-123456789abc/script.js';
-const p=plan(['^https://example\\.test/ad (?i)\\r\\nUser-Agent:\\s*QQSportsV3\\/ url-and-header script-response-body '+rawBase+'/'+file],{changes:[[file,program.code]],index:{adapters:{[file]:{from:'qx'}}}});
+// Modified: 2026-11-05 (chance). QX points at original bytes; the guard binds the independent Surge adapter.
+const sourceUrl='https://author.test/script.js';
+const file='Resource/Backup/script/'+ 'a'.repeat(64) +'/script.js';
+const surgeFile=universalScriptPath(sourceUrl,'surge');
+const p=plan(['^https://example\\.test/ad (?i)\\r\\nUser-Agent:\\s*QQSportsV3\\/ url-and-header script-response-body '+rawBase+'/'+file],{changes:[[surgeFile,program.code]],index:{objects:{[file]:{url:sourceUrl}},adapters:{[surgeFile]:{from:'qx',targetClient:'surge',sourceUrl}}}});
 assert.equal(p.report[0].status,'converted');
 const argument=p.output.match(/argument=(\S+)/)![1];assert.ok(argument.startsWith(headerArgumentPrefix));
 for(const [ua,expected] of [['QQSportsV3/1','changed'],['other',undefined]]) {

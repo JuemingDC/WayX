@@ -559,8 +559,8 @@ for(const asset of manual.assets){
 
 const qzxy=manual.assets.find(asset=>asset.id==='QZXY');
 assert.ok(qzxy,'QZXY must be explicitly declared as hand-maintained');
-assert.equal(qzxy.qx,'Adblock/Quantumult X/QZXY.snippet');
-assert.equal(qzxy.surge,'Adblock/Surge/QZXY.sgmodule');
+assert.match(qzxy.qx,/^Adblock\/Quantumult X\/[^/]+\/QZXY\/QZXY\.snippet$/);
+assert.match(qzxy.surge,/^Adblock\/Surge\/[^/]+\/QZXY\/QZXY\.sgmodule$/);
 
 console.log('Manual asset contract passed: '+manual.assets.map(asset=>asset.id).join(', '));
 }

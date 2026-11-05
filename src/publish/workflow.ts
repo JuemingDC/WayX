@@ -365,6 +365,13 @@ export function mergeNativeQxSources(
   ];
   for (const source of sources) {
     out.push("# Source: " + source.url);
+    // Modified: 2026-11-05 (chance). Valid native QX bodies are copied verbatim;
+    // normalization/commented diagnostics are reserved for invalid source formats.
+    try {
+      validateQX(out.concat(source.text).join("\n"), {id:name ?? "native_qx"});
+      out.push(source.text);
+      continue;
+    } catch { /* Existing targeted format repairs below retain source evidence. */ }
     let section: string | null = null;
     for (const original of repairNativeQxSource(source).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n")) {
       // Modified: 2026-11-01 (chance). Repair known foreign filter type spellings in native snippets (observed DOMAIN rows in Naisi); preserve operands and policy verbatim.

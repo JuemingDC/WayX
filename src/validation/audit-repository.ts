@@ -1,3 +1,4 @@
+import { readJson } from "../publish/transaction.ts";
 import { validateSourceBackups } from "./backups.ts";
 import { opaqueEntries } from "../ingest/formats.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript validation layer; preserve source behavior.
@@ -27,6 +28,20 @@ const validated: any = { qx: 0, surge: 0, loon: 0 };
 const artifacts: any = {};
 const catalog: any = JSON.parse(
   await fs.readFile(".github/sources/loon.json", "utf8"),
+);
+// Modified: 2026-11-05 (chance). Native QX copies retain valid BOM/line endings and source comments.
+const layout = await readJson<any>(
+  path.join(ROOT, ".github/sources/layout-state.json"),
+  { scripts: {} },
+);
+const nativeCopies = new Set(
+  Object.entries<any>(layout.scripts)
+    .filter(
+      ([file, r]) =>
+        file.includes("/Quantumult X/") &&
+        r.logical.startsWith("Resource/Backup/script/"),
+    )
+    .map(([file]) => file),
 );
 const managed: any = new Map(
   catalog.flatMap((entry: any): any => [
@@ -86,9 +101,14 @@ for (const file of files) {
   } catch {
     continue;
   }
-  if (text.charCodeAt(0) === 0xfeff) add(file, 1, "bom", "UTF-8 BOM present");
+  if (!nativeCopies.has(rp) && text.charCodeAt(0) === 0xfeff)
+    add(file, 1, "bom", "UTF-8 BOM present");
   // Modified: 2026-11-01 (chance). Shared adblock programs preserve embedded author line endings; parse every shared program independently in the checksum audit.
-  if (!rp.startsWith("Script/Adblock/") && /\r/.test(text))
+  if (
+    !nativeCopies.has(rp) &&
+    !rp.startsWith("Script/Adblock/") &&
+    /\r/.test(text)
+  )
     add(file, 1, "crlf", "CR/CRLF newline present");
   const lines: any = text.split("\n");
   artifacts[rp] = validationArtifactDigest(text);
