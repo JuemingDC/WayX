@@ -1,5 +1,5 @@
 # Name: Emby增强[墨鱼整理版]
-# Updated: 2026-11-01 21:23:26 +08:00
+# Updated: 2026-11-06 09:42:44 +08:00
 # Copied by: chance
 # Source Authors: 墨鱼 / ddgksf2013
 # Category: Module
@@ -32,7 +32,7 @@ hostname = mb3admin.com, *.emby.wtf, *.plusmedia.site
 # > 打开外部播放器
 \/plugin\/scheme url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/embyplugin/emby-plugin.js
 # > 资源路径伪静态
-(\/[Vv]ideos\/\d+\/stream\/.+\?.+&filename)|(\/[Vv]ideos\/\d+\/\w{32}\/[Ss]ubtitles\/\d+\/.+\?.+&filename) url script-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/embyplugin/emby-plugin.js
+(\/[Vv]ideos\/\d+\/stream\/.+\?.+&filename)|(\/[Vv]ideos\/\d+\/\w{32}\/[Ss]ubtitles\/\d+\/.+\?.+&filename) url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/embyplugin/emby-plugin.js
 # > 下载文件重命名
 (\/[Vv]ideos\/\d+\/stream\?.+&filename)|(\/[Vv]ideos\/\d+\/\w{32}\/[Ss]ubtitles\/.+&filename) url script-response-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/embyplugin/download_file_rename.js
 # > 解决QX抓取某些公益服该请求乱码问题
