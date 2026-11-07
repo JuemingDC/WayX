@@ -1925,8 +1925,8 @@
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js": {
       "path": "Resource/Backup/script-api/d081c9f5d4c720632ae64f775626c4c973ce67bd361de8794c6e1ef67d4f74a2.json",
-      "sha256": "c064912e433d1ca33c167d4b161334b03c6d2a4f433b586cd23e8d5c384cce60",
-      "sourceSha256": "0a4677ca05a373375cdec1ad7b9d7664cc7d5795f86acea5df4b3647b93103a2"
+      "sha256": "ace99e37aa4aa635177376a47dfdb89307a5a7b021fbd87e2c523af385803968",
+      "sourceSha256": "48bd012c7a98c804c6a4d0608ffe00034bec7ed8c52921f96c451968fece53dd"
     },
     "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/hlwxx_remove_ads.js": {
       "path": "Resource/Backup/script-api/4b8d1b919e60e42746a00dfe7d1317765aef73c85e7eaba9c30746a2c05d1e65.json",
@@ -2162,11 +2162,11 @@
       }
     ]
   },
-  "adapted": 954,
+  "adapted": 955,
   "blocked": 0,
   "excluded": 0,
   "universal": 342,
-  "nativeCopied": 437,
+  "nativeCopied": 438,
   "diagnostics": [
     {
       "artifact": "Adblock/Quantumult X/Kelee/12306_remove_ads/12306_remove_ads.snippet",
@@ -29851,6 +29851,63 @@
       ],
       "problems": [],
       "path": "Adblock/Quantumult X/ZenmoFeiShi/helloobike/easybike-ad.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Quantumult X/ZenmoFeiShi/helloobike/helloobike.snippet",
+      "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js",
+      "from": [
+        "qx"
+      ],
+      "to": "qx",
+      "status": "native-copy",
+      "features": [
+        "$done",
+        "$notify",
+        "$prefs",
+        "$prefs.removeValueForKey",
+        "$prefs.setValueForKey",
+        "$prefs.valueForKey",
+        "$request",
+        "$response",
+        "global",
+        "global.crypto",
+        "require",
+        "window",
+        "window.crypto",
+        "window.msCrypto"
+      ],
+      "problems": [],
+      "path": "Adblock/Quantumult X/ZenmoFeiShi/helloobike/easybike-ad.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Surge/ZenmoFeiShi/helloobike/helloobike.sgmodule",
+      "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js",
+      "from": [
+        "qx"
+      ],
+      "to": "surge",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$notify",
+        "$prefs",
+        "$prefs.removeValueForKey",
+        "$prefs.setValueForKey",
+        "$prefs.valueForKey",
+        "$request",
+        "$response",
+        "global",
+        "global.crypto",
+        "require",
+        "window",
+        "window.crypto",
+        "window.msCrypto"
+      ],
+      "problems": [],
+      "omittedParameters": [],
+      "path": "Adblock/Surge/ZenmoFeiShi/helloobike/easybike-ad.js",
       "retained": false
     },
     {

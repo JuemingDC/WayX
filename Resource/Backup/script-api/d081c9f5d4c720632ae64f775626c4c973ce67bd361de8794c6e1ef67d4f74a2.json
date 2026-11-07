@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/easybike-ad.js",
-  "sourceSha256": "0a4677ca05a373375cdec1ad7b9d7664cc7d5795f86acea5df4b3647b93103a2",
+  "sourceSha256": "48bd012c7a98c804c6a4d0608ffe00034bec7ed8c52921f96c451968fece53dd",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "0a4677ca05a373375cdec1ad7b9d7664cc7d5795f86acea5df4b3647b93103a2",
+    "sha256": "48bd012c7a98c804c6a4d0608ffe00034bec7ed8c52921f96c451968fece53dd",
     "operations": [
       {
         "api": "$prefs",
@@ -194,9 +194,9 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 48198,
-        "end": 48206,
-        "line": 421,
+        "start": 50640,
+        "end": 50648,
+        "line": 459,
         "column": 29,
         "members": [
           "$request"
@@ -205,9 +205,9 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 48223,
-        "end": 48231,
-        "line": 421,
+        "start": 50665,
+        "end": 50673,
+        "line": 459,
         "column": 54,
         "members": [
           "$request"
@@ -216,9 +216,9 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 48234,
-        "end": 48242,
-        "line": 421,
+        "start": 50676,
+        "end": 50684,
+        "line": 459,
         "column": 65,
         "members": [
           "$request"
@@ -227,9 +227,9 @@
       {
         "api": "$response",
         "access": "read",
-        "start": 48484,
-        "end": 48493,
-        "line": 424,
+        "start": 50926,
+        "end": 50935,
+        "line": 462,
         "column": 39,
         "members": [
           "$response"
@@ -238,9 +238,9 @@
       {
         "api": "$response",
         "access": "read",
-        "start": 48510,
-        "end": 48519,
-        "line": 424,
+        "start": 50952,
+        "end": 50961,
+        "line": 462,
         "column": 65,
         "members": [
           "$response"
@@ -249,9 +249,9 @@
       {
         "api": "$response",
         "access": "read",
-        "start": 48607,
-        "end": 48616,
-        "line": 426,
+        "start": 51049,
+        "end": 51058,
+        "line": 464,
         "column": 22,
         "members": [
           "$response"
@@ -260,9 +260,9 @@
       {
         "api": "window",
         "access": "read",
-        "start": 55202,
-        "end": 55208,
-        "line": 542,
+        "start": 57716,
+        "end": 57722,
+        "line": 581,
         "column": 218,
         "members": [
           "window"
@@ -271,9 +271,9 @@
       {
         "api": "window.crypto",
         "access": "read",
-        "start": 55210,
-        "end": 55223,
-        "line": 542,
+        "start": 57724,
+        "end": 57737,
+        "line": 581,
         "column": 226,
         "members": [
           "window",
@@ -283,9 +283,9 @@
       {
         "api": "window.crypto",
         "access": "read",
-        "start": 55228,
-        "end": 55241,
-        "line": 542,
+        "start": 57742,
+        "end": 57755,
+        "line": 581,
         "column": 244,
         "members": [
           "window",
@@ -295,9 +295,9 @@
       {
         "api": "window",
         "access": "read",
-        "start": 55395,
-        "end": 55401,
-        "line": 542,
+        "start": 57909,
+        "end": 57915,
+        "line": 581,
         "column": 411,
         "members": [
           "window"
@@ -306,9 +306,9 @@
       {
         "api": "window.msCrypto",
         "access": "read",
-        "start": 55403,
-        "end": 55418,
-        "line": 542,
+        "start": 57917,
+        "end": 57932,
+        "line": 581,
         "column": 419,
         "members": [
           "window",
@@ -318,9 +318,9 @@
       {
         "api": "window.msCrypto",
         "access": "read",
-        "start": 55423,
-        "end": 55438,
-        "line": 542,
+        "start": 57937,
+        "end": 57952,
+        "line": 581,
         "column": 439,
         "members": [
           "window",
@@ -330,9 +330,9 @@
       {
         "api": "global",
         "access": "read",
-        "start": 55464,
-        "end": 55470,
-        "line": 542,
+        "start": 57978,
+        "end": 57984,
+        "line": 581,
         "column": 480,
         "members": [
           "global"
@@ -341,9 +341,9 @@
       {
         "api": "global.crypto",
         "access": "read",
-        "start": 55472,
-        "end": 55485,
-        "line": 542,
+        "start": 57986,
+        "end": 57999,
+        "line": 581,
         "column": 488,
         "members": [
           "global",
@@ -353,9 +353,9 @@
       {
         "api": "global.crypto",
         "access": "read",
-        "start": 55490,
-        "end": 55503,
-        "line": 542,
+        "start": 58004,
+        "end": 58017,
+        "line": 581,
         "column": 506,
         "members": [
           "global",
@@ -365,9 +365,9 @@
       {
         "api": "require",
         "access": "read",
-        "start": 55528,
-        "end": 55535,
-        "line": 542,
+        "start": 58042,
+        "end": 58049,
+        "line": 581,
         "column": 544,
         "members": [
           "require"
@@ -376,9 +376,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 118180,
-        "end": 118199,
-        "line": 561,
+        "start": 120694,
+        "end": 120713,
+        "line": 600,
         "column": 90,
         "members": [
           "$done"
@@ -396,7 +396,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "0a4677ca05a373375cdec1ad7b9d7664cc7d5795f86acea5df4b3647b93103a2",
+        "analysisSourceSha256": "48bd012c7a98c804c6a4d0608ffe00034bec7ed8c52921f96c451968fece53dd",
         "operations": [
           {
             "id": "api:0",
@@ -800,9 +800,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 48198,
-              "end": 48206,
-              "line": 421,
+              "start": 50640,
+              "end": 50648,
+              "line": 459,
               "column": 29,
               "access": "read",
               "memberPath": []
@@ -824,9 +824,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 48223,
-              "end": 48231,
-              "line": 421,
+              "start": 50665,
+              "end": 50673,
+              "line": 459,
               "column": 54,
               "access": "read",
               "memberPath": []
@@ -848,9 +848,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 48234,
-              "end": 48242,
-              "line": 421,
+              "start": 50676,
+              "end": 50684,
+              "line": 459,
               "column": 65,
               "access": "read",
               "memberPath": []
@@ -872,9 +872,9 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 48484,
-              "end": 48493,
-              "line": 424,
+              "start": 50926,
+              "end": 50935,
+              "line": 462,
               "column": 39,
               "access": "read",
               "memberPath": []
@@ -896,9 +896,9 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 48510,
-              "end": 48519,
-              "line": 424,
+              "start": 50952,
+              "end": 50961,
+              "line": 462,
               "column": 65,
               "access": "read",
               "memberPath": []
@@ -920,9 +920,9 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 48607,
-              "end": 48616,
-              "line": 426,
+              "start": 51049,
+              "end": 51058,
+              "line": 464,
               "column": 22,
               "access": "read",
               "memberPath": []
@@ -944,9 +944,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window",
-              "start": 55202,
-              "end": 55208,
-              "line": 542,
+              "start": 57716,
+              "end": 57722,
+              "line": 581,
               "column": 218,
               "access": "read",
               "memberPath": []
@@ -968,9 +968,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window.crypto",
-              "start": 55210,
-              "end": 55223,
-              "line": 542,
+              "start": 57724,
+              "end": 57737,
+              "line": 581,
               "column": 226,
               "access": "read",
               "memberPath": [
@@ -994,9 +994,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window.crypto",
-              "start": 55228,
-              "end": 55241,
-              "line": 542,
+              "start": 57742,
+              "end": 57755,
+              "line": 581,
               "column": 244,
               "access": "read",
               "memberPath": [
@@ -1020,9 +1020,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window",
-              "start": 55395,
-              "end": 55401,
-              "line": 542,
+              "start": 57909,
+              "end": 57915,
+              "line": 581,
               "column": 411,
               "access": "read",
               "memberPath": []
@@ -1044,9 +1044,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window.msCrypto",
-              "start": 55403,
-              "end": 55418,
-              "line": 542,
+              "start": 57917,
+              "end": 57932,
+              "line": 581,
               "column": 419,
               "access": "read",
               "memberPath": [
@@ -1070,9 +1070,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window.msCrypto",
-              "start": 55423,
-              "end": 55438,
-              "line": 542,
+              "start": 57937,
+              "end": 57952,
+              "line": 581,
               "column": 439,
               "access": "read",
               "memberPath": [
@@ -1096,9 +1096,9 @@
             "kind": "unmapped",
             "source": {
               "api": "global",
-              "start": 55464,
-              "end": 55470,
-              "line": 542,
+              "start": 57978,
+              "end": 57984,
+              "line": 581,
               "column": 480,
               "access": "read",
               "memberPath": []
@@ -1120,9 +1120,9 @@
             "kind": "unmapped",
             "source": {
               "api": "global.crypto",
-              "start": 55472,
-              "end": 55485,
-              "line": 542,
+              "start": 57986,
+              "end": 57999,
+              "line": 581,
               "column": 488,
               "access": "read",
               "memberPath": [
@@ -1146,9 +1146,9 @@
             "kind": "unmapped",
             "source": {
               "api": "global.crypto",
-              "start": 55490,
-              "end": 55503,
-              "line": 542,
+              "start": 58004,
+              "end": 58017,
+              "line": 581,
               "column": 506,
               "access": "read",
               "memberPath": [
@@ -1172,9 +1172,9 @@
             "kind": "unmapped",
             "source": {
               "api": "require",
-              "start": 55528,
-              "end": 55535,
-              "line": 542,
+              "start": 58042,
+              "end": 58049,
+              "line": 581,
               "column": 544,
               "access": "read",
               "memberPath": []
@@ -1196,9 +1196,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 118180,
-              "end": 118199,
-              "line": 561,
+              "start": 120694,
+              "end": 120713,
+              "line": 600,
               "column": 90,
               "access": "call",
               "memberPath": []
@@ -1224,7 +1224,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "0a4677ca05a373375cdec1ad7b9d7664cc7d5795f86acea5df4b3647b93103a2",
+        "analysisSourceSha256": "48bd012c7a98c804c6a4d0608ffe00034bec7ed8c52921f96c451968fece53dd",
         "operations": [
           {
             "id": "api:0",
@@ -1628,9 +1628,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 48198,
-              "end": 48206,
-              "line": 421,
+              "start": 50640,
+              "end": 50648,
+              "line": 459,
               "column": 29,
               "access": "read",
               "memberPath": []
@@ -1652,9 +1652,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 48223,
-              "end": 48231,
-              "line": 421,
+              "start": 50665,
+              "end": 50673,
+              "line": 459,
               "column": 54,
               "access": "read",
               "memberPath": []
@@ -1676,9 +1676,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 48234,
-              "end": 48242,
-              "line": 421,
+              "start": 50676,
+              "end": 50684,
+              "line": 459,
               "column": 65,
               "access": "read",
               "memberPath": []
@@ -1700,9 +1700,9 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 48484,
-              "end": 48493,
-              "line": 424,
+              "start": 50926,
+              "end": 50935,
+              "line": 462,
               "column": 39,
               "access": "read",
               "memberPath": []
@@ -1724,9 +1724,9 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 48510,
-              "end": 48519,
-              "line": 424,
+              "start": 50952,
+              "end": 50961,
+              "line": 462,
               "column": 65,
               "access": "read",
               "memberPath": []
@@ -1748,9 +1748,9 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 48607,
-              "end": 48616,
-              "line": 426,
+              "start": 51049,
+              "end": 51058,
+              "line": 464,
               "column": 22,
               "access": "read",
               "memberPath": []
@@ -1772,9 +1772,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window",
-              "start": 55202,
-              "end": 55208,
-              "line": 542,
+              "start": 57716,
+              "end": 57722,
+              "line": 581,
               "column": 218,
               "access": "read",
               "memberPath": []
@@ -1796,9 +1796,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window.crypto",
-              "start": 55210,
-              "end": 55223,
-              "line": 542,
+              "start": 57724,
+              "end": 57737,
+              "line": 581,
               "column": 226,
               "access": "read",
               "memberPath": [
@@ -1822,9 +1822,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window.crypto",
-              "start": 55228,
-              "end": 55241,
-              "line": 542,
+              "start": 57742,
+              "end": 57755,
+              "line": 581,
               "column": 244,
               "access": "read",
               "memberPath": [
@@ -1848,9 +1848,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window",
-              "start": 55395,
-              "end": 55401,
-              "line": 542,
+              "start": 57909,
+              "end": 57915,
+              "line": 581,
               "column": 411,
               "access": "read",
               "memberPath": []
@@ -1872,9 +1872,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window.msCrypto",
-              "start": 55403,
-              "end": 55418,
-              "line": 542,
+              "start": 57917,
+              "end": 57932,
+              "line": 581,
               "column": 419,
               "access": "read",
               "memberPath": [
@@ -1898,9 +1898,9 @@
             "kind": "unmapped",
             "source": {
               "api": "window.msCrypto",
-              "start": 55423,
-              "end": 55438,
-              "line": 542,
+              "start": 57937,
+              "end": 57952,
+              "line": 581,
               "column": 439,
               "access": "read",
               "memberPath": [
@@ -1924,9 +1924,9 @@
             "kind": "unmapped",
             "source": {
               "api": "global",
-              "start": 55464,
-              "end": 55470,
-              "line": 542,
+              "start": 57978,
+              "end": 57984,
+              "line": 581,
               "column": 480,
               "access": "read",
               "memberPath": []
@@ -1948,9 +1948,9 @@
             "kind": "unmapped",
             "source": {
               "api": "global.crypto",
-              "start": 55472,
-              "end": 55485,
-              "line": 542,
+              "start": 57986,
+              "end": 57999,
+              "line": 581,
               "column": 488,
               "access": "read",
               "memberPath": [
@@ -1974,9 +1974,9 @@
             "kind": "unmapped",
             "source": {
               "api": "global.crypto",
-              "start": 55490,
-              "end": 55503,
-              "line": 542,
+              "start": 58004,
+              "end": 58017,
+              "line": 581,
               "column": 506,
               "access": "read",
               "memberPath": [
@@ -2000,9 +2000,9 @@
             "kind": "unmapped",
             "source": {
               "api": "require",
-              "start": 55528,
-              "end": 55535,
-              "line": 542,
+              "start": 58042,
+              "end": 58049,
+              "line": 581,
               "column": 544,
               "access": "read",
               "memberPath": []
@@ -2024,9 +2024,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 118180,
-              "end": 118199,
-              "line": 561,
+              "start": 120694,
+              "end": 120713,
+              "line": 600,
               "column": 90,
               "access": "call",
               "memberPath": []

@@ -1,11 +1,11 @@
 # Name: media_cn
-# Updated: 2026-11-01 13:23:11 UTC
+# Updated: 2026-11-07 01:01:13 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-collaborate-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-documents-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-cn.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1496
+# Rules: 1506
 # Managed by: WayX Rule Aggregator
 
 host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,direct
@@ -327,6 +327,7 @@ host-suffix,activity-zhendingtech.com,direct
 host-suffix,adbkwai.com,direct
 host-suffix,adkwai.com,direct
 host-suffix,adukwai.com,direct
+host-suffix,ai-indeed.com,direct
 host-suffix,aichongzoo.cn,direct
 host-suffix,aihst8.com,direct
 host-suffix,aireads.cn,direct
@@ -1060,6 +1061,7 @@ host-suffix,newstjk.com,direct
 host-suffix,nextstudios.com,direct
 host-suffix,nextvid.net,direct
 host-suffix,nextworkshop.net,direct
+host-suffix,nikke-en.com,direct
 host-suffix,nikkigames.cn,direct
 host-suffix,nlark.com,direct
 host-suffix,nnthink.com,direct
@@ -1179,6 +1181,12 @@ host-suffix,seasungames.cn,direct
 host-suffix,seasungames.com,direct
 host-suffix,seasunwbl.com,direct
 host-suffix,segmentfault.com,direct
+host-suffix,senseaudio.cn,direct
+host-suffix,senseavatar.com,direct
+host-suffix,sensecore.cn,direct
+host-suffix,sensefoundry.cn,direct
+host-suffix,sensenova.cn,direct
+host-suffix,sensetime.com,direct
 host-suffix,sfacg.com,direct
 host-suffix,sgamer.com,direct
 host-suffix,share123.top,direct
@@ -1410,6 +1418,7 @@ host-suffix,xiaoaiassist.com,direct
 host-suffix,xiaochuankeji.cn,direct
 host-suffix,xiaoheihe.cn,direct
 host-suffix,xiaohongshu.com,direct
+host-suffix,xiaohuanxiong.com,direct
 host-suffix,xiaomimimo.com,direct
 host-suffix,xiaoyuzhoufm.com,direct
 host-suffix,xiezuocat.com,direct
@@ -1473,6 +1482,7 @@ host-suffix,yximg.cn,direct
 host-suffix,yximgs.com,direct
 host-suffix,yxwsgame.com,direct
 host-suffix,yy.com,direct
+host-suffix,yyeshop.cn,direct
 host-suffix,yysls.cn,direct
 host-suffix,yystatic.com,direct
 host-suffix,yystv.cn,direct
