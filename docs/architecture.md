@@ -46,7 +46,7 @@ The fetch service bounds the decoded response stream, retries transient failures
 
 .lpxe and unknown binary inputs are archived under Resource/Encrypted/Loon/<id>/<sha>. Original URL, byte size, format and SHA-256 are recorded. Activity is tracked in .github/sources/opaque-state.json; validators verify the archive before acknowledging a skipped conversion. Existing output remains intact; a new opaque-only source has no invented target. Successful plaintext acquisition clears active opaque status while preserving historical bytes. Invalid ordinary text remains a source failure.
 
-The author's #!source directive remains unchanged in both targets. Loon's URL-binding digest and the archive's content digest have separate meanings. Modified: 2026-11-08 (chance). Kelee discovery, plugin acquisition and conversion are resumed by explicit user instruction; .github/sources/kelee-pause.json now has paused=false.
+The author's #!source directive remains unchanged in both targets. Loon's URL-binding digest and the archive's content digest have separate meanings. Modified: 2026-11-08 (chance). Kelee discovery and plugin-body acquisition/conversion are paused again by explicit user instruction after HTTP 403; .github/sources/kelee-pause.json has paused=true.
 
 ## Runtime adapters and maintenance
 
@@ -65,3 +65,5 @@ Per-source transactions restore owned files on failure. New unsupported plaintex
 Converted artifacts live under `type/Quantumult X/source-author/app/` or `type/Surge/source-author/app/`, with the configuration and its readable `.js` files together. Aggregated Rule outputs use WayX as the author. `.github/sources/layout-state.json` records reversible internal working-path mappings; `prepare` restores that view before acquisition, while the successful sync publishes only the final client tree. This is staging inside one existing pipeline, not a second converter. Source archives are excluded from layout/code cleanup. See target-publication.md.
 
 Modified: 2026-11-08 (chance). 可莉目录接口在 Actions 返回 403 时，保留已登记条目并继续按原始 URL 拉取插件正文，不据此增删目录。目录监控明确记录 DEFERRED（succeeded=false），不更新旧镜像，不声称目录已刷新；官方规范及其它必需监控失败仍阻止发布。仅有既有可莉条目且官方目录返回 403 时允许此隔离，401、格式损坏及无既有目录仍失败。
+
+Modified: 2026-11-08 (chance). 可莉现已重新暂停。暂停时目录发现、插件正文拉取和转换均不运行，备份流程也不补拉未登记的可莉插件正文；现有产物和原始备份保留。既有脚本依赖备份策略保持不变。

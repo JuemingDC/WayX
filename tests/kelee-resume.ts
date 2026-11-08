@@ -1,5 +1,6 @@
 // Modified: 2026-11-08 (chance). Directory 403 retains membership, but actual
 // registered plugin acquisition resumes; unavailable discovery is never called fresh.
+import { refreshSourceBackups } from "../src/application/backups.ts";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -100,8 +101,31 @@ try {
       fetchText: async () => "{malformed json",
     }),
   );
-  await write('.github/sources/loon.json',[]);
-  await assert.rejects(refreshCatalog(root,{rucu6ListUrl:'',fetchText:failed}),/HTTP 403/);
+  // Modified: 2026-11-08 (chance). Re-pausing prevents backup-only plugin requests too.
+  await write(".github/sources/kelee-pause.json", { paused: true });
+  await fs.writeFile(
+    path.join(root, "Adblock/Quantumult X/Manual.snippet"),
+    "# Source: https://kelee.one/Tool/Loon/Lpx/Unregistered.lpx\n# [rewrite_local]\n^https://example.test/ url reject\n",
+  );
+  let pausedFetches = 0;
+  await refreshSourceBackups(root, {
+    catalog: [entry],
+    resources: {
+      cachedBytes: async () => null,
+      fetchBytes: async () => {
+        pausedFetches++;
+        throw Error("Paused plugin requested");
+      },
+    },
+    log: () => {},
+  });
+  assert.equal(pausedFetches, 0);
+  await write(".github/sources/kelee-pause.json", { paused: false });
+  await write(".github/sources/loon.json", []);
+  await assert.rejects(
+    refreshCatalog(root, { rucu6ListUrl: "", fetchText: failed }),
+    /HTTP 403/,
+  );
   console.log(
     "Kelee resume: unavailable directory retained, actual plugin fetched, explicit monitor deferral/no mirror advancement, authorization/schema failures remain fatal",
   );

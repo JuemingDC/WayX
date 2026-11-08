@@ -1,6 +1,6 @@
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript ingest layer; preserve source behavior.
 // Modified: 2026-11-08 (chance). The registry controls acquisition/conversion;
-// Kelee is resumed by explicit user instruction, with optional future pauses retained.
+// Kelee is paused again by explicit user instruction after upstream HTTP 403.
 import fs from "node:fs/promises";
 import path from "node:path";
 export async function keleePaused(root: string): Promise<boolean> {

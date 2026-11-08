@@ -1,3 +1,4 @@
+import {keleePaused, isKeleeSource} from "../ingest/source-pause.ts";
 import { unavailableSource } from "../ingest/resources.ts";
 import { disableUnavailableDeclarations } from "../domain/source-health.ts";
 import { prepareQxHeaderRewrites } from "./qx-header.ts";
@@ -91,6 +92,7 @@ export async function refreshSourceBackups(
     throw Error("Invalid backup index");
   const index: BackupIndex = structuredClone(prior),
     changes = new Map<string, string | Uint8Array | null>();
+  const pauseKelee = await keleePaused(root);
   const disabledSources = new Set<string>();
   const failures: any[] = [],
     sources: any[] = [],
@@ -286,6 +288,8 @@ export async function refreshSourceBackups(
     for (const [, url] of text.matchAll(
       /^# Source:\s*(https?:\/\/\S+)\s*$/gm,
     )) {
+      // Modified: 2026-11-08 (chance). A pause also covers unregistered Kelee plugin-body origins found in retained headers.
+      if (pauseKelee && isKeleeSource(url)) continue;
       if (unavailableSource(url)) { disabledSources.add(sourceKey(url)); continue; }
       if (seenSources.has(sourceKey(url)) || own(url)) continue;
       seenSources.add(sourceKey(url));
