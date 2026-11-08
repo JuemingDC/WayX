@@ -331,6 +331,17 @@ export async function runMonitor(root = process.cwd()) {
     const paused = await keleePaused(root);
     for (const src of cfg.sources) {
       if (paused && src.id === "kelee-plugin-directory") continue;
+      // Modified: 2026-11-08 (chance). Directory discovery is deferred explicitly
+      // after a recorded 403; do not advance its mirror or pretend it was checked.
+      // All specification/source-monitor failures continue to block publication.
+      if (src.id === "kelee-plugin-directory" && src.url === "https://hub.kelee.one/list.json") {
+        const discovery = await readJson<any>(path.join(root,".github/monitor/.runtime/catalog-discovery.json"),{});
+        const d = discovery.keleeDiscovery;
+        if (!paused && d?.source === src.url && d.complete === false && d.status === 403 && d.retainedEntries > 0) {
+          results.push({source:src,changed:false,succeeded:false,deferred:true,message:"Directory HTTP 403; registered plugins are still acquired; previous mirror retained"});
+          continue;
+        }
+      }
       let stage = "fetch-and-mirror";
       try {
         const result = await monitorSource(
@@ -397,11 +408,11 @@ export async function runMonitor(root = process.cwd()) {
       "",
       `- Checked at: \`${new Date().toISOString()}\``,
       "",
-      "Every source result belongs to this run. Failed monitoring blocks publication; documentation changes require review.",
+      "Every source result belongs to this run. Required monitoring failures block publication; directory-only deferrals are explicit and retain the old mirror. Documentation changes require review.",
       "",
       ...results.map(
         (r) =>
-          `- ${r.source.id}: ${r.succeeded ? "OK" : "FAILED"}; changed=${r.changed}; ${r.message}`,
+          `- ${r.source.id}: ${r.deferred ? "DEFERRED" : r.succeeded ? "OK" : "FAILED"}; changed=${r.changed}; ${r.message}`,
       ),
       "",
     ];

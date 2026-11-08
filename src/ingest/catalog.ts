@@ -379,7 +379,29 @@ export async function refreshCatalog(
   let staticEntries = fixed,
     feed = "",
     rucuFeed: string | null = null;
-  if (!paused) feed = await fetchText(listUrl);
+  // Modified: 2026-11-08 (chance). A directory-only HTTP 403 must not pause
+  // registered plugin acquisition or retire entries that could not be rediscovered.
+  let keleeDiscovery: any = { complete: !paused, source: listUrl };
+  if (!paused) {
+    try {
+      feed = await fetchText(listUrl);
+    } catch (error: any) {
+      const retained = previous.filter((e) => isKeleeSource(e.source));
+      if (
+        error.status !== 403 ||
+        listUrl !== DEFAULT_LIST_URL ||
+        !retained.length
+      )
+        throw error;
+      keleeDiscovery = {
+        complete: false,
+        source: listUrl,
+        status: 403,
+        retainedEntries: retained.length,
+        reason: error.message,
+      };
+    }
+  }
   if (rucu6ListUrl) {
     if (
       rucu6ListUrl !== DEFAULT_RUCU6_LIST_URL &&
@@ -404,12 +426,16 @@ export async function refreshCatalog(
     ];
   }
   const frozen = previous.filter((e) => isKeleeSource(e.source)),
-    [combined, metadata] = paused
-      ? [
-          [...frozen, ...staticEntries.filter((e) => !isKeleeSource(e.source))],
-          frozen.map((e, order) => ({ ...e, order })),
-        ]
-      : buildCatalog(JSON.parse(feed), previous, staticEntries);
+    [combined, metadata] =
+      paused || !keleeDiscovery.complete
+        ? [
+            [
+              ...frozen,
+              ...staticEntries.filter((e) => !isKeleeSource(e.source)),
+            ],
+            frozen.map((e, order) => ({ ...e, order })),
+          ]
+        : buildCatalog(JSON.parse(feed), previous, staticEntries);
   validateCombined(combined);
   const desired = JSON.stringify(combined, null, 2) + "\n";
   if (check) {
@@ -417,16 +443,17 @@ export async function refreshCatalog(
       await readOptional(path.join(root, ".github/sources/loon.json"))
     )?.toString();
     if (desired !== current) throw Error("Plugin catalog is stale");
-    return { count: combined.length, paused };
+    return { count: combined.length, paused, keleeDiscovery };
   }
   const changes: Map<string, string | null> = await prunePlan(root, combined);
   changes.set(".github/sources/loon.json", desired);
   const runtime = ".github/monitor/.runtime/";
-  if (!paused)
+  if (!paused && keleeDiscovery.complete)
     changes.set(
       runtime + "kelee-feed.json",
       JSON.stringify({ source: listUrl, text: feed }) + "\n",
     );
+  if (!keleeDiscovery.complete) changes.set(runtime + "kelee-feed.json", null);
   if (rucuFeed !== null)
     changes.set(
       runtime + "rucu6-feed.json",
@@ -455,6 +482,7 @@ export async function refreshCatalog(
       {
         version: 1,
         source: listUrl,
+        keleeDiscovery,
         added: combined.filter((e) => !old.has(e.source)),
         removed: previous.filter((e) => !latest.has(e.source)),
         updated: combined.filter(
@@ -470,11 +498,16 @@ export async function refreshCatalog(
   changes.set(
     runtime + "kelee-catalog.json",
     JSON.stringify(
-      { source: listUrl, count: metadata.length, plugins: metadata },
+      {
+        source: listUrl,
+        complete: keleeDiscovery.complete,
+        count: metadata.length,
+        plugins: metadata,
+      },
       null,
       2,
     ) + "\n",
   );
   await commitFiles(root, changes);
-  return { count: combined.length, paused };
+  return { count: combined.length, paused, keleeDiscovery };
 }
