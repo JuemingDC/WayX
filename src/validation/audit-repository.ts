@@ -115,6 +115,9 @@ for (const file of files) {
   if (managed.has(rp)) {
     const { entry, target } = managed.get(rp);
     try {
+      // Modified: 2026-11-08 (chance). Publication must finish the managed timestamp migration.
+      if (/^# Converted:[^\r\n]*\r?\n# Converted by: chance(?:\r?\n|$)/m.test(text))
+        throw Error("Legacy conversion timestamp remains; expected Updated");
       validateConversionMetadata(text, entry, target);
     } catch (error: any) {
       add(file, 1, "conversion-metadata", error.message);

@@ -15,7 +15,8 @@ export function compactGeneratedPluginComments(
     .split("\n")
     .filter((line) => {
       const value = line.trim();
-      if (/^# Converted:/.test(value)) metadata = true;
+      // Modified: 2026-11-08 (chance). Recognize update-only and legacy metadata stanzas.
+      if (/^# (?:Updated|Converted):/.test(value)) metadata = true;
       else if (!/^# (?:Converted by:|Category:|Source:|Target:)/.test(value))
         metadata = false;
       if (protectedLines.has(value)) return true;

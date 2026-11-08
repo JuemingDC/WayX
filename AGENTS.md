@@ -45,3 +45,5 @@
 - Modified: 2026-11-05 (chance). Skip known dead whole-file origins in config/unavailable-sources.json. Comment only declarations depending on unavailable resources, preserving unaffected siblings and raw source evidence. Complete code/tests/spec changes and local verification before one final remote update and Actions run.
 
 Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。
+
+- Modified: 2026-11-08 (chance). Resume Kelee directory discovery, plugin acquisition/conversion and monitoring; kelee-pause.json is false by explicit user instruction. Emit Updated timestamps only and migrate existing owned timestamp stanzas at publication. Preserve author/native/raw bytes and independent update dates for unchanged artifacts.

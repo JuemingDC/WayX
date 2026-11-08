@@ -1,3 +1,4 @@
+// Modified: 2026-11-08 (chance). Emit update timestamps only; no separate conversion time.
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript emit layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -88,7 +89,7 @@ function meta({
   sourceFile = "",
 }: any = {}): any {
   return [
-    stamp ? `// Converted: ${stamp}` : null,
+    stamp ? `// Updated: ${stamp}` : null,
     "// Converted by: chance",
     category ? `// Category: ${category}` : "// Category: Rewrite / Mock",
     sourceLine ? `// Source Loon: ${sourceLine}` : null,
@@ -310,7 +311,7 @@ function surgeMockMetadata({
   sourceFile = "",
 }: any = {}): any {
   return [
-    stamp ? "// Converted: " + stamp : null,
+    stamp ? "// Updated: " + stamp : null,
     "// Converted by: chance",
     "// Category: " + (category || "Rewrite / Request Mock"),
     sourceLine ? "// Source Loon: " + sourceLine : null,
@@ -443,7 +444,7 @@ function qxSemanticMetadata({
   sourceLine = "",
 }: any = {}): any {
   return [
-    stamp ? "// Converted: " + stamp : null,
+    stamp ? "// Updated: " + stamp : null,
     "// Converted by: chance",
     category ? "// Category: " + category : "// Category: Rewrite / Script",
     sourceLine ? "// Source Loon: " + sourceLine : null,
@@ -1407,7 +1408,7 @@ function renderRewriteScript(
         ? "{headers:__wayxHeaders}"
         : "{body:__wayxBody}";
   const lines: any = [
-    stamp ? "// Converted: " + stamp : null,
+    stamp ? "// Updated: " + stamp : null,
     "// Converted by: chance",
     "// Category: " + (category || "Rewrite / Loon Feature Collection"),
     sourceLine ? "// Source Loon: " + sourceLine : null,

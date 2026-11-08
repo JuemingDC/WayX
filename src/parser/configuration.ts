@@ -4,7 +4,7 @@
 // Category: Converter / configuration
 
 // Source configuration IR and target adapters (General / MITM)
-// Converted: 2026-10-03
+// Updated: 2026-10-03
 // Author: chance
 // Category: Converter / Configuration / Semantic IR
 export function parseConfigurationDeclaration(

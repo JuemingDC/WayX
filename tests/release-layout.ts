@@ -43,7 +43,7 @@ try {
   );
   await write(
     "Adblock/Quantumult X/Demo.snippet",
-    `# Name: Demo\n# [rewrite_local]\n^https://example.test/api url script-response-body ${raw + script}\n# [mitm]\nhostname = example.test\n`,
+    `# Name: Demo\n# Converted: 2026-11-01\n# Converted by: chance\n# [rewrite_local]\n^https://example.test/api url script-response-body ${raw + script}\n# [mitm]\nhostname = example.test\n`,
   );
   await write(
     "Resource/Loon/demo.lpx",
@@ -112,6 +112,9 @@ try {
     "utf8",
   );
   assert.ok(qx.includes("Adblock/Quantumult%20X/Kelee/Demo/ads.js"));
+  // Modified: 2026-11-08 (chance). Header migration cannot shift script operand offsets.
+  assert.match(qx,/^# Updated: 2026-11-01$/m);
+  assert.doesNotMatch(qx,/^# Converted:/m);
   const published = await fs.readFile(
     path.join(root, "Adblock/Quantumult X/Kelee/Demo/ads.js"),
     "utf8",

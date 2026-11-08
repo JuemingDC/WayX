@@ -1,13 +1,13 @@
 {
-  "version": 14,
-  "modified": "2026-11-05 (chance): target-native timeout/body defaults; independent baseline diffs contain only removal of forced source performance settings; QX unchanged.",
+  "version": 15,
+  "modified": "2026-11-08 (chance): Updated timestamp label only; independent legacy-normalized hashes match every prior golden byte and semantic count.",
   "stamp": "2026-09-29 12:00:00 +08:00",
   "cases": {
     "HTTPDNS": {
-      "qxSha256": "104577cc45f073ea97af87f19710ba4c3914fe84de54ee75c73dd0a689e83289",
-      "surgeSha256": "1a35855fd7329d029b645aa19f1b68f23d97e3806ee2af13bc990b0f76f9a8ca",
-      "qxBytes": 8019,
-      "surgeBytes": 12066,
+      "qxSha256": "0df296f36215f4a786fe26e4d35a902ca7af0cd12960df8a6cb50fc1673a409a",
+      "surgeSha256": "23031055a6d8c39bf589dcda0692fddc868167a45dcd49b9e4288580feb371c5",
+      "qxBytes": 8017,
+      "surgeBytes": 12064,
       "sourceScriptCount": 0,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -20,10 +20,10 @@
       ]
     },
     "PinDuoDuo": {
-      "qxSha256": "a346a8ac1b8ca6a0d01cf7662e7fab1adb87f05b6b8c21f059d638ed744edea5",
-      "surgeSha256": "c68388971cb0d6aa3e82e5a23a0d4ea4c64eed907f8049cdf9c11aeb27971840",
-      "qxBytes": 5458,
-      "surgeBytes": 6801,
+      "qxSha256": "3c265af917b4f2550af73da2476619f71fefc1007da2a58c59cf2c02fe5b5016",
+      "surgeSha256": "e31ec489b2c78a9bdc6a7003733015e33ad6c6aa3646d55af4c09117aa3cd948",
+      "qxBytes": 5456,
+      "surgeBytes": 6799,
       "sourceScriptCount": 1,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -37,10 +37,10 @@
       ]
     },
     "MyBlockAds": {
-      "qxSha256": "27ff8978a72100ade0242e8f74e69523fb7fa0f878c2b1b757f8f4db57a37ba2",
-      "surgeSha256": "02956fc1db9c2f3b200560b9e03803d2a22a0c14321b9109488512e03356f7b0",
-      "qxBytes": 24311,
-      "surgeBytes": 33657,
+      "qxSha256": "c6cb9700fcea760f918304eca45e94649b247534ede38169aae2226f360abdb4",
+      "surgeSha256": "3e037ae38830cb2dac9badc01c5965bf7bc50b8183da4cdbf2ab8397c42b706b",
+      "qxBytes": 24309,
+      "surgeBytes": 33655,
       "sourceScriptCount": 9,
       "generatedScriptCount": 0,
       "qxReview": 0,
@@ -55,10 +55,10 @@
       ]
     },
     "JingDong": {
-      "qxSha256": "f59b0897cd0bd1f3dd793f3eb0e0e4dd115442e2ed4ec011ff14e4c8942dc680",
-      "surgeSha256": "7082c84bb5d94e7ae6eb69caab8a04ceb47d979e2f89c051f92ab287cd03b05c",
-      "qxBytes": 2011,
-      "surgeBytes": 2356,
+      "qxSha256": "2073100bb9e8ca4987ffd59925061832d6c9ee7ffb59fde5af22cb6d7777b8e3",
+      "surgeSha256": "0737a4d65db7ff950cc788cbb1b281ad52fe15089ceccf9ecb020bcf830809e4",
+      "qxBytes": 2009,
+      "surgeBytes": 2354,
       "sourceScriptCount": 3,
       "generatedScriptCount": 0,
       "qxReview": 0,

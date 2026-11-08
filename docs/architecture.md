@@ -46,7 +46,7 @@ The fetch service bounds the decoded response stream, retries transient failures
 
 .lpxe and unknown binary inputs are archived under Resource/Encrypted/Loon/<id>/<sha>. Original URL, byte size, format and SHA-256 are recorded. Activity is tracked in .github/sources/opaque-state.json; validators verify the archive before acknowledging a skipped conversion. Existing output remains intact; a new opaque-only source has no invented target. Successful plaintext acquisition clears active opaque status while preserving historical bytes. Invalid ordinary text remains a source failure.
 
-The author's #!source directive remains unchanged in both targets. Loon's URL-binding digest and the archive's content digest have separate meanings. Kelee remains paused in .github/sources/kelee-pause.json; this migration does not resume it.
+The author's #!source directive remains unchanged in both targets. Loon's URL-binding digest and the archive's content digest have separate meanings. Modified: 2026-11-08 (chance). Kelee discovery, plugin acquisition and conversion are resumed by explicit user instruction; .github/sources/kelee-pause.json now has paused=false.
 
 ## Runtime adapters and maintenance
 

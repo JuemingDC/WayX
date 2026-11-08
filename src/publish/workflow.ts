@@ -85,7 +85,12 @@ export function conversionStampFromText(
   text: any,
   { trim = false }: any = {},
 ): any {
-  const match: any = String(text ?? "").match(/^# Converted:\s*(.+)$/m);
+  // Modified: 2026-11-08 (chance). Prefer the managed update timestamp;
+  // read the old label only to migrate existing publications without date churn.
+  const value = String(text ?? "");
+  const match: any = value.match(/^# (?:Updated|Converted):[ \t]*([^\r\n]+)\r?\n# Converted by: chance(?:\r?\n|$)/m)
+    ?? value.match(/^# Updated:[ \t]*([^\r\n]+)$/m)
+    ?? value.match(/^# Converted:[ \t]*([^\r\n]+)$/m);
   if (!match) return null;
   return trim ? match[1].trim() : match[1];
 }
@@ -99,11 +104,11 @@ export function firstConversionStamp(
   }
   return null;
 }
-// Conversion timestamps describe a write, not a content change. Compare each
-// artifact independently so changing one rule/helper cannot rewrite its peers.
+// Modified: 2026-11-08 (chance). Ignore update dates for content comparisons;
+// each artifact changes its own update time only when its content changes.
 function artifactContent(text: any): any {
   if (text === null || text === undefined) return text;
-  return String(text).replace(/^(#|\/\/) Converted:[^\n]*/gm, "$1 Converted:");
+  return String(text).replace(/^(#|\/\/) (?:Updated|Converted):[^\n]*/gm, "$1 Updated:");
 }
 async function managedFileExists(file: any): Promise<any> {
   try {

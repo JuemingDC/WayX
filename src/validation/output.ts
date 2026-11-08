@@ -1,3 +1,4 @@
+// Modified: 2026-11-08 (chance). Emit update timestamps only; no separate conversion time.
 // Modified: 2026-11-03 (chance). Section labels describe current TypeScript responsibilities.
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript validation layer; preserve source behavior.
 // Consolidated: 2026-10-03
@@ -120,7 +121,7 @@ export function renderQxSnippetHeader(
   }
   out.push(
     "",
-    `# Converted: ${stamp}`,
+    `# Updated: ${stamp}`,
     "# Converted by: chance",
     `# Category: ${entry.category}`,
     `# Source: ${entry.source}`,
@@ -154,7 +155,7 @@ export function renderSurgeModuleHeader(
   out.push(...original);
   out.push(
     "",
-    "# Converted: " + stamp,
+    "# Updated: " + stamp,
     "# Converted by: chance",
     "# Source: " + entry.source,
   );
@@ -168,7 +169,7 @@ export function validateConversionMetadata(
   target: any,
 ): any {
   const common: any = [
-    /^# Converted:\s*.+$/m,
+    /^# (?:Updated|Converted):\s*.+$/m,
     /^# Converted by:\s*chance\s*$/m,
     /^# Source:\s*.+$/m,
   ];

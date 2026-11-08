@@ -512,8 +512,8 @@ assert.deepEqual(firstStages,[
   'validate-qx',
   'validate-surge',
 ]);
-assert.match(first.qx,/^# Converted: 2026-10-01 12:00:00 \+08:00$/m);
-assert.match(first.surge,/^# Converted: 2026-10-01 12:00:00 \+08:00$/m);
+assert.match(first.qx,/^# Updated: 2026-10-01 12:00:00 \+08:00$/m);
+assert.match(first.surge,/^# Updated: 2026-10-01 12:00:00 \+08:00$/m);
 
 const rerunStages=[];
 const second=convertPluginWithContext(entry,source,context,{
@@ -532,8 +532,8 @@ assert.deepEqual(rerunStages,[
   'validate-qx',
   'validate-surge',
 ]);
-assert.match(second.qx,/^# Converted: 2026-10-01 12:01:00 \+08:00$/m);
-assert.match(second.surge,/^# Converted: 2026-10-01 12:01:00 \+08:00$/m);
+assert.match(second.qx,/^# Updated: 2026-10-01 12:01:00 \+08:00$/m);
+assert.match(second.surge,/^# Updated: 2026-10-01 12:01:00 \+08:00$/m);
 assert.notEqual(first.qx,second.qx);
 assert.notEqual(first.surge,second.surge);
 
@@ -1266,7 +1266,7 @@ function generatedScriptSemantics(map){
     name,
     String(body)
       .split('\n')
-      .filter(line => !/^\/\/ (?:Converted:|Converted by:|Category:)/.test(line))
+      .filter(line => !/^\/\/ (?:Updated:|Converted:|Converted by:|Category:)/.test(line))
       .join('\n'),
   ]);
 }

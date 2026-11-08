@@ -1,6 +1,6 @@
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript validation layer; preserve source behavior.
 // Manifest-scoped conversion policy CLI; delegates all syntax to target validators.
-// Converted: 2026-10-03
+// Updated: 2026-10-03
 // Author: chance
 // Category: Converter / Validation / CLI
 import fs from "node:fs/promises";

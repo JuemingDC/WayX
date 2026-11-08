@@ -70,14 +70,14 @@ QX/Surge 的目标 URL 正则统一将可识别 HTTP(S) authority 中的字面�
 
 源 AST/IR、作者脚本及 JavaScript helper 的 `RegExp(source, flags)` 保持原样。原生 Quantumult X 内容继续独立检查/复制，本次不重写其 flags、正则、动作或规则顺序，不套用 Loon flag 编译器。Header 字段边界、重复字段和复杂条件沿用既有 helper/诊断边界；域名字面点号沿用既有策略。
 
-Actions 同样修正暂停可莉来源的现有 QX 产物：从 Resource/Loon 快照定位唯一对应的 URL/Header/Body/Script 正则字段，仅恢复 flags，保留脚本地址、注释、顺序和其它内容，不恢复上游获取。歧义字段保留并记入 `.github/monitor/.runtime/qx-flags.json`；重复运行幂等，通过既有事务、QX 格式及最终 ICU 校验后发布。
+仅在来源暂停时，Actions 额外修正保留的 QX 产物：从 Resource/Loon 快照定位唯一对应的 URL/Header/Body/Script 正则字段，仅恢复 flags，保留脚本地址、注释、顺序和其它内容，不恢复上游获取。歧义字段保留并记入 `.github/monitor/.runtime/qx-flags.json`；重复运行幂等，通过既有事务、QX 格式及最终 ICU 校验后发布。
 
 <!-- Modified: 2026-11-01 (chance). Restore Surge flags based on the supplied Miles / Surge Networks support email. -->
 Surge 官方支持邮件确认：`[URL Rewrite]`、`[Map Local]`、`[Script]`、`[Header Rewrite]` 的 pattern，以及 `[Body Rewrite]` 的 URL 和正文正则均使用 Apple ICU，支持 `(?i)`、`(?m)`、`(?s)`、`(?x)` 及组合，iOS/Mac 共用核心。恢复所有 Surge 输出路径的源 flags，包括 Rewrite v2、Script v2、原生 QX 转换和保留的窄 URL prefilter；不得再以未确认支持为由删除。Loon literal 后缀仍仅解析来源已支持的 i/m/s，映射为固定顺序 `(?ims)`；原生来源中的内联 x 及其作用域原样保留，不凭目标支持扩充来源语法，JS helper 不接受虚构的 `/pattern/x`。ICU 校验继续作为发布门禁。
 
 仅 Surge `[Body Rewrite]` 的正文 regex 默认开启 m，URL regex 没有该默认；所有字段默认关闭 s。Loon 源正文未启用 m 时显式输出 `(?-m)`（与 i/s 合并为 `(?i-m)`、`(?s-m)` 等），源有 m 则保留 m，避免 `^`/`$` 从整段边界扩大到每行边界；正文内的显式作用域仍可覆盖前置模式。该默认补偿只用于明确的 Loon Regex AST，不能把 Surge 原生正文默认强行改为关闭。无源 i/s/x 时不凭空开启；QX 不采用此 Surge 默认补偿。官方正文默认说明：https://manual.nssurge.com/http/body-rewrite.html 。恢复模式不代表 ICU 与 JavaScript 的 Unicode/换行/匹配替换语义已获全量等价认证。
 
-本次用户授权的 Surge flags 修正同样覆盖暂停可莉来源的现有产物：Actions 从已保存的 Resource/Loon 快照恢复能唯一对应的 URL/Header/Body/Script 字段，不获取新插件、不取消暂停、不重新生成其它内容。保留脚本备份/API 地址，歧义字段保留并记入运行报告 `.github/monitor/.runtime/surge-flags.json`。变更通过原有事务与最终 ICU 校验后发布；重复运行幂等。
+仅在来源暂停时，Surge flags 修正覆盖保留的现有产物：Actions 从已保存的 Resource/Loon 快照恢复能唯一对应的 URL/Header/Body/Script 字段，不获取新插件、不取消暂停、不重新生成其它内容。保留脚本备份/API 地址，歧义字段保留并记入运行报告 `.github/monitor/.runtime/surge-flags.json`。变更通过原有事务与最终 ICU 校验后发布；重复运行幂等。
 
 动态 Regex 只接受完整 `/pattern/flags` 或语义 Regex 节点，不执行表达式、不二次展开变量，缺失或无效值不匹配；生成 helper 保留解析出的 `i/m/s`。
 
@@ -176,7 +176,7 @@ Script v2 path/tag/img_url 必须是固定 String/Raw String，真实模板或�
 
 Rule 使用独立 target-neutral IR，仅输出官方已确认的 type/policy/参数。除下面列出的用户策略外保留源 policy；Surge 的 PROXY 需要外部 Module 参数绑定，QX 保留字面 policy 名。不用 HTTP Rewrite Script 冒充 QX 网络层缺失的 Rule 类型。未知或不能安全表达的类型注释并诊断。
 
-Loon build 1008+ 的 `DOMAIN-WILDCARD` 使用完整域名 Glob 匹配，支持 `*`（含零字符、跨点）、`?`（一个字符）、`[abc]`、`[0-9]` 和 `[!abc]`/`[^abc]`。Surge 使用官方 `DOMAIN-WILDCARD` 原样保留 pattern（包括逻辑子规则），沿用 policy 绑定及 matching 增强；不得降为 DOMAIN-SUFFIX 或 URL-REGEX。QX 按用户确认，将所有形式的 `DOMAIN-WILDCARD` 统一直接映射为 `host-wildcard`，完整保留 pattern，包括字符集合、范围及否定集合；不添加 pattern 形式判断、Review 拦截或 HTTP Script。类型命名与分段格式仍遵循上传的《示例配置(1).txt》。原注释、禁用状态、作者、转换时间与分类沿用共同输出逻辑。
+Loon build 1008+ 的 `DOMAIN-WILDCARD` 使用完整域名 Glob 匹配，支持 `*`（含零字符、跨点）、`?`（一个字符）、`[abc]`、`[0-9]` 和 `[!abc]`/`[^abc]`。Surge 使用官方 `DOMAIN-WILDCARD` 原样保留 pattern（包括逻辑子规则），沿用 policy 绑定及 matching 增强；不得降为 DOMAIN-SUFFIX 或 URL-REGEX。QX 按用户确认，将所有形式的 `DOMAIN-WILDCARD` 统一直接映射为 `host-wildcard`，完整保留 pattern，包括字符集合、范围及否定集合；不添加 pattern 形式判断、Review 拦截或 HTTP Script。类型命名与分段格式仍遵循上传的《示例配置(1).txt》。原注释、禁用状态、作者、更新时间与分类沿用共同输出逻辑。
 
 依据：Loon https://nsloon.app/docs/Rule/domain_rule/；Surge https://manual.nssurge.com/rules/domain.html；QX 为用户上传官方示例。Script Hub Beta `b31b010d111aa81e8b89635f08d401c960d29538` 的 Loon/Surge DOMAIN-WILDCARD 保留逻辑仅作实现参考，不替代上述目标官方依据。
 
@@ -368,9 +368,9 @@ Modified: 2026-11-01 (chance). Actions 内原生 QX 走格式校验与复制路�
 
 Modified: 2026-11-01 (chance). 转换范围为去广告插件的 HTTP 脚本，不处理修改客户端配置的 API。每源 URL 共用一个源名脚本，保留授权目标及来源原生分支，详细约束见 2.23。原 JS 始终按字节备份；API 规划独立于配置转换，不得以声明可转换推断脚本 API 全量兼容。
 
-## 2.19 可莉来源暂停（2026-10-29）
+## 2.19 可莉来源暂停与恢复（2026-11-08）
 
-用户要求暂停拉取可莉插件。`sources/kelee-pause.json` 的 paused=true 同时冻结目录获取、插件同步、依赖重取/重新转换及目录监控，保留 loon.json 中的可莉条目和现有源文件、QX/Surge 产物、脚本依赖及监控镜像。暂停不代表来源退出，不因目录不可用清理已有产物。其他来源继续更新；不自动按期限恢复，需用户明确恢复后将 paused 设为 false。Modified: 2026-11-01 (chance). 本次用户明确要求全仓库脚本备份和引用替换，因此备份步骤可读取已保留的可莉插件快照、刷新其脚本正文并重绑定现有活动脚本地址；不恢复其目录发现或重新转换，插件快照明确标记 retained-repository-snapshot。本次三端通用脚本生成也可使用这些保留声明和已备份 JS，更新脚本引用；不恢复目录或插件正文拉取。
+Modified: 2026-11-08 (chance). 用户已明确恢复可莉拉取：`sources/kelee-pause.json` 的 paused=false，恢复目录发现、插件正文获取、依赖更新、转换及目录监控。可选暂停机制保留，来源归档和加密来源的保留策略继续生效。
 
 ## 2.20 字节获取、加密插件与来源声明
 
@@ -390,7 +390,7 @@ Modified: 2026-11-01 (chance). 转换范围为去广告插件的 HTTP 脚本，�
 
 补全只在 QX/Surge 目标声明头使用现有 `# Icon: URL` 注释约定，并保留图标集来源；不添加未获目标官方证明的活动图标指令，不据此宣称客户端必定显示模块图标。图片引用原作者地址，不镜像图片。Loon 原件、规则和动作、时间戳以及 `#!source` 不改；活动脚本资源链接在统一备份步骤按 2.22 重绑定，来源注释中的原地址保留。
 
-图标集通过统一获取器和运行快照拉取一次，监控复用本轮输入并保存原始集合内容。正常转换在目标比较前补全，metadata-only icons 命令仅补全登记的受管目标；重复执行保持稳定，未匹配列表保留在报告中。可莉暂停继续阻止源和依赖获取。
+图标集通过统一获取器和运行快照拉取一次，监控复用本轮输入并保存原始集合内容。正常转换在目标比较前补全，metadata-only icons 命令仅补全登记的受管目标；重复执行保持稳定，未匹配列表保留在报告中。暂停开关为 true 时阻止源和依赖获取；2026-11-08 用户已明确恢复，可莉当前使用正常获取流程。
 
 ## 2.22 插件正文与源脚本持久备份
 
@@ -468,3 +468,5 @@ Modified: 2026-11-05 (chance). 当前用户要求覆盖旧版共享三端脚本�
 目标保持真实客户端识别、原生 timers、默认超时和正文限制，不注入虚假 Loon 身份，不模拟 Loon 特有单次 interval 或强加不限正文。Surge 发布脚本名称唯一。已知永久失效 URL 登记在 config/unavailable-sources.json，整文件不获取；部分脚本/依赖失效只注释对应声明，保留其它活动内容。所有变更完成并验证后才一次提交运行 Actions。
 
 Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。
+
+Modified: 2026-11-08 (chance). WayX 生成元数据只输出 `Updated`（更新时间），不再输出独立的 `Converted` 时间。已有自有时间段在最终发布时迁移；作者原注释、原生 QX 副本和原始备份不改写。日期仅在对应内容更新时改变，不因重复同步刷新其它文件的日期。

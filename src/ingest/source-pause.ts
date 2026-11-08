@@ -1,6 +1,6 @@
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript ingest layer; preserve source behavior.
-// Modified: 2026-10-29 (chance). Freeze Kelee acquisition/conversion without
-// removing catalog entries or touching their checked-in artifacts.
+// Modified: 2026-11-08 (chance). The registry controls acquisition/conversion;
+// Kelee is resumed by explicit user instruction, with optional future pauses retained.
 import fs from "node:fs/promises";
 import path from "node:path";
 export async function keleePaused(root: string): Promise<boolean> {
