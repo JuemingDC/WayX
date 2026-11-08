@@ -3662,11 +3662,7 @@
                                     console.log("YouTube key recovery: " + storeError);
                                 }
                             }
-                            $done({
-                                status: 200,
-                                headers: { "Content-Type": "text/plain" },
-                                body: new Uint8Array(),
-                            });
+                            $done();
                         }
                     }
                     umpMain();

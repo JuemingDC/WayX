@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://rucu6.pages.dev/Scripts/youtube/request_gholts.js",
-  "sourceSha256": "b1daa514032c933b4942f7b72d5c2b5f4c95f4262592d3f5d1fe42750cd29061",
+  "sourceSha256": "4b70d6ea9565842dbb94bf632074e9da3e2bdba72d91f4f93a2354ca3bc665eb",
   "sourceClients": [
     "loon"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "b1daa514032c933b4942f7b72d5c2b5f4c95f4262592d3f5d1fe42750cd29061",
+    "sha256": "4b70d6ea9565842dbb94bf632074e9da3e2bdba72d91f4f93a2354ca3bc665eb",
     "operations": [
       {
         "api": "$persistentStore.read",
@@ -114,10 +114,10 @@
       {
         "api": "$request.url.split",
         "access": "call",
-        "start": 11477,
-        "end": 11500,
-        "line": 331,
-        "column": 14,
+        "start": 11469,
+        "end": 11492,
+        "line": 330,
+        "column": 20,
         "members": [
           "$request",
           "url",
@@ -127,9 +127,9 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 11663,
-        "end": 11671,
-        "line": 334,
+        "start": 11655,
+        "end": 11663,
+        "line": 333,
         "column": 70,
         "members": [
           "$request"
@@ -138,9 +138,9 @@
       {
         "api": "$request.method",
         "access": "read",
-        "start": 11806,
-        "end": 11821,
-        "line": 337,
+        "start": 11798,
+        "end": 11813,
+        "line": 336,
         "column": 13,
         "members": [
           "$request",
@@ -150,9 +150,9 @@
       {
         "api": "$request.method",
         "access": "read",
-        "start": 11835,
-        "end": 11850,
-        "line": 337,
+        "start": 11827,
+        "end": 11842,
+        "line": 336,
         "column": 42,
         "members": [
           "$request",
@@ -162,9 +162,9 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 11906,
-        "end": 11914,
-        "line": 338,
+        "start": 11898,
+        "end": 11906,
+        "line": 337,
         "column": 42,
         "members": [
           "$request"
@@ -173,10 +173,10 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 11970,
-        "end": 11978,
-        "line": 339,
-        "column": 54,
+        "start": 11974,
+        "end": 11982,
+        "line": 338,
+        "column": 66,
         "members": [
           "$request"
         ]
@@ -184,9 +184,9 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 12363,
-        "end": 12371,
-        "line": 347,
+        "start": 12328,
+        "end": 12336,
+        "line": 345,
         "column": 79,
         "members": [
           "$request"
@@ -195,9 +195,9 @@
       {
         "api": "$request.url",
         "access": "read",
-        "start": 12453,
-        "end": 12465,
-        "line": 349,
+        "start": 12418,
+        "end": 12430,
+        "line": 347,
         "column": 52,
         "members": [
           "$request",
@@ -207,9 +207,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 12550,
-        "end": 12569,
-        "line": 353,
+        "start": 12515,
+        "end": 12534,
+        "line": 351,
         "column": 7,
         "members": [
           "$done"
@@ -218,21 +218,10 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 12694,
-        "end": 12716,
-        "line": 357,
-        "column": 9,
-        "members": [
-          "$done"
-        ]
-      },
-      {
-        "api": "$done",
-        "access": "call",
-        "start": 12731,
-        "end": 12738,
-        "line": 358,
-        "column": 14,
+        "start": 12612,
+        "end": 12619,
+        "line": 354,
+        "column": 7,
         "members": [
           "$done"
         ]
@@ -249,7 +238,7 @@
         "sourceClient": "loon",
         "targetClient": "qx",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "b1daa514032c933b4942f7b72d5c2b5f4c95f4262592d3f5d1fe42750cd29061",
+        "analysisSourceSha256": "4b70d6ea9565842dbb94bf632074e9da3e2bdba72d91f4f93a2354ca3bc665eb",
         "operations": [
           {
             "id": "api:0",
@@ -479,10 +468,10 @@
             "kind": "context",
             "source": {
               "api": "$request.url.split",
-              "start": 11477,
-              "end": 11500,
-              "line": 331,
-              "column": 14,
+              "start": 11469,
+              "end": 11492,
+              "line": 330,
+              "column": 20,
               "access": "call",
               "memberPath": [
                 "url",
@@ -506,9 +495,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 11663,
-              "end": 11671,
-              "line": 334,
+              "start": 11655,
+              "end": 11663,
+              "line": 333,
               "column": 70,
               "access": "read",
               "memberPath": []
@@ -530,9 +519,9 @@
             "kind": "context",
             "source": {
               "api": "$request.method",
-              "start": 11806,
-              "end": 11821,
-              "line": 337,
+              "start": 11798,
+              "end": 11813,
+              "line": 336,
               "column": 13,
               "access": "read",
               "memberPath": [
@@ -556,9 +545,9 @@
             "kind": "context",
             "source": {
               "api": "$request.method",
-              "start": 11835,
-              "end": 11850,
-              "line": 337,
+              "start": 11827,
+              "end": 11842,
+              "line": 336,
               "column": 42,
               "access": "read",
               "memberPath": [
@@ -582,9 +571,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 11906,
-              "end": 11914,
-              "line": 338,
+              "start": 11898,
+              "end": 11906,
+              "line": 337,
               "column": 42,
               "access": "read",
               "memberPath": []
@@ -606,10 +595,10 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 11970,
-              "end": 11978,
-              "line": 339,
-              "column": 54,
+              "start": 11974,
+              "end": 11982,
+              "line": 338,
+              "column": 66,
               "access": "read",
               "memberPath": []
             },
@@ -630,9 +619,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 12363,
-              "end": 12371,
-              "line": 347,
+              "start": 12328,
+              "end": 12336,
+              "line": 345,
               "column": 79,
               "access": "read",
               "memberPath": []
@@ -654,9 +643,9 @@
             "kind": "context",
             "source": {
               "api": "$request.url",
-              "start": 12453,
-              "end": 12465,
-              "line": 349,
+              "start": 12418,
+              "end": 12430,
+              "line": 347,
               "column": 52,
               "access": "read",
               "memberPath": [
@@ -680,9 +669,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 12550,
-              "end": 12569,
-              "line": 353,
+              "start": 12515,
+              "end": 12534,
+              "line": 351,
               "column": 7,
               "access": "call",
               "memberPath": []
@@ -704,34 +693,10 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 12694,
-              "end": 12716,
-              "line": 357,
-              "column": 9,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:19",
-            "rule": "complete",
-            "kind": "completion",
-            "source": {
-              "api": "$done",
-              "start": 12731,
-              "end": 12738,
-              "line": 358,
-              "column": 14,
+              "start": 12612,
+              "end": 12619,
+              "line": 354,
+              "column": 7,
               "access": "call",
               "memberPath": []
             },
@@ -754,7 +719,7 @@
         "sourceClient": "loon",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "b1daa514032c933b4942f7b72d5c2b5f4c95f4262592d3f5d1fe42750cd29061",
+        "analysisSourceSha256": "4b70d6ea9565842dbb94bf632074e9da3e2bdba72d91f4f93a2354ca3bc665eb",
         "operations": [
           {
             "id": "api:0",
@@ -984,10 +949,10 @@
             "kind": "context",
             "source": {
               "api": "$request.url.split",
-              "start": 11477,
-              "end": 11500,
-              "line": 331,
-              "column": 14,
+              "start": 11469,
+              "end": 11492,
+              "line": 330,
+              "column": 20,
               "access": "call",
               "memberPath": [
                 "url",
@@ -1011,9 +976,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 11663,
-              "end": 11671,
-              "line": 334,
+              "start": 11655,
+              "end": 11663,
+              "line": 333,
               "column": 70,
               "access": "read",
               "memberPath": []
@@ -1035,9 +1000,9 @@
             "kind": "context",
             "source": {
               "api": "$request.method",
-              "start": 11806,
-              "end": 11821,
-              "line": 337,
+              "start": 11798,
+              "end": 11813,
+              "line": 336,
               "column": 13,
               "access": "read",
               "memberPath": [
@@ -1061,9 +1026,9 @@
             "kind": "context",
             "source": {
               "api": "$request.method",
-              "start": 11835,
-              "end": 11850,
-              "line": 337,
+              "start": 11827,
+              "end": 11842,
+              "line": 336,
               "column": 42,
               "access": "read",
               "memberPath": [
@@ -1087,9 +1052,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 11906,
-              "end": 11914,
-              "line": 338,
+              "start": 11898,
+              "end": 11906,
+              "line": 337,
               "column": 42,
               "access": "read",
               "memberPath": []
@@ -1111,10 +1076,10 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 11970,
-              "end": 11978,
-              "line": 339,
-              "column": 54,
+              "start": 11974,
+              "end": 11982,
+              "line": 338,
+              "column": 66,
               "access": "read",
               "memberPath": []
             },
@@ -1135,9 +1100,9 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 12363,
-              "end": 12371,
-              "line": 347,
+              "start": 12328,
+              "end": 12336,
+              "line": 345,
               "column": 79,
               "access": "read",
               "memberPath": []
@@ -1159,9 +1124,9 @@
             "kind": "context",
             "source": {
               "api": "$request.url",
-              "start": 12453,
-              "end": 12465,
-              "line": 349,
+              "start": 12418,
+              "end": 12430,
+              "line": 347,
               "column": 52,
               "access": "read",
               "memberPath": [
@@ -1185,9 +1150,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 12550,
-              "end": 12569,
-              "line": 353,
+              "start": 12515,
+              "end": 12534,
+              "line": 351,
               "column": 7,
               "access": "call",
               "memberPath": []
@@ -1209,34 +1174,10 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 12694,
-              "end": 12716,
-              "line": 357,
-              "column": 9,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:19",
-            "rule": "complete",
-            "kind": "completion",
-            "source": {
-              "api": "$done",
-              "start": 12731,
-              "end": 12738,
-              "line": 358,
-              "column": 14,
+              "start": 12612,
+              "end": 12619,
+              "line": 354,
+              "column": 7,
               "access": "call",
               "memberPath": []
             },

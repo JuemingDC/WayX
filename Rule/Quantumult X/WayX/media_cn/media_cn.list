@@ -1,11 +1,11 @@
 # Name: media_cn
-# Updated: 2026-11-07 01:01:13 UTC
+# Updated: 2026-11-08 00:50:06 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-collaborate-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-documents-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-cn.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1506
+# Rules: 1505
 # Managed by: WayX Rule Aggregator
 
 host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,direct
@@ -828,7 +828,6 @@ host-suffix,img-space.com,direct
 host-suffix,img4399.com,direct
 host-suffix,imgo.tv,direct
 host-suffix,immomo.com,direct
-host-suffix,in.th,direct
 host-suffix,inke.cn,direct
 host-suffix,inkuai.com,direct
 host-suffix,inkwai.com,direct

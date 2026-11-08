@@ -1,16 +1,18 @@
 # Name: ai
-# Updated: 2026-10-28 21:52:33 UTC
+# Updated: 2026-11-08 00:50:06 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.json ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-intelligence.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/meta.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list ; https://ruleset.skk.moe/List/ip/ai.conf ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/ai.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 675
+# Rules: 679
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe
 DOMAIN,chat.openai.com.cdn.cloudflare.net
 DOMAIN,copilotprodattachments.blob.core.windows.net
+DOMAIN,http-intake.logs.us5.datadoghq.com
+DOMAIN,o1158394.ingest.us.sentry.io
 DOMAIN,o33249.ingest.us.sentry.io
 DOMAIN,openaiassets.blob.core.windows.net
 DOMAIN,openaicomproductionae4b.blob.core.windows.net
@@ -26,6 +28,7 @@ DOMAIN,gspe1-ssl.ls.apple.com
 DOMAIN,o33249.ingest.sentry.io
 DOMAIN,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 DOMAIN,ppl-ai-file-upload.s3.amazonaws.com
+DOMAIN,production-copilot-host-westus.webpubsub.azure.com
 DOMAIN,server.self-serve.windsurf.com
 DOMAIN,webchannel-alkalimakersuite-pa.clients6.google.com
 DOMAIN,ai.google.dev
@@ -198,6 +201,7 @@ DOMAIN-SUFFIX,generativeai.google
 DOMAIN-SUFFIX,githubcopilot.com
 DOMAIN-SUFFIX,grazie.ai
 DOMAIN-SUFFIX,grok.com
+DOMAIN-SUFFIX,grokbot.com
 DOMAIN-SUFFIX,grokipedia.com
 DOMAIN-SUFFIX,groq.com
 DOMAIN-SUFFIX,h2o.ai
