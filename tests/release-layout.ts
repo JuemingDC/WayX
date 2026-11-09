@@ -50,7 +50,9 @@ try {
     "[Script]\nhttp-response ^https://example.test/a script-path=https://example.test/ads.js,timeout=10,max-size=-1\n",
   );
   const sg = `#!name=Demo\n#!desc=Demo\n#!category=WayX\n[Script]\nDemo = type=http-response,pattern=^https://example.test/a,timeout=10,max-size=-1,script-path=${raw + surgeScript}\nDemo = type=http-response,pattern=^https://example.test/b,timeout=20,script-path=${raw + surgeScript}\n`;
-  await write("Adblock/Surge/Demo.sgmodule", sg);
+  // Modified: 2026-11-09 (chance). Retained module arguments must reach the leading header during publication.
+  const withArguments = sg.replace("#!category=WayX\n", "#!category=WayX\n# Author: chance\n#!arguments=CLIENT:Telegram\n#!arguments-desc=Client\n");
+  await write("Adblock/Surge/Demo.sgmodule", withArguments);
   await write("Rule/QuantumultX/demo.list", "host, example.test, direct\n");
   await write(
     "Resource/Backup/index.json",
@@ -133,6 +135,7 @@ try {
     path.join(root, "Adblock/Surge/Kelee/Demo/Demo.sgmodule"),
     "utf8",
   );
+  assert.match(surgePublished, /^#!category=WayX\n#!arguments=CLIENT:Telegram\n#!arguments-desc=Client\n# Author: chance$/m);
   assert.match(surgePublished, /timeout=10,max-size=-1/);
   assert.doesNotMatch(surgePublished, /timeout=20/);
   await prepareWorkingLayout(root);

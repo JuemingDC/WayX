@@ -2,6 +2,7 @@
 // paths internal; publish one type/client/author/app tree with colocated scripts.
 // A reversible manifest restores the working view before the next acquisition.
 import { migrateUpdateMetadata } from "../domain/update-metadata.ts";
+import { normalizeSurgeModuleHeader } from "../domain/surge-module-header.ts";
 import path from "node:path";
 import crypto from "node:crypto";
 import vm from "node:vm";
@@ -433,6 +434,8 @@ export async function publishLayout(
     // Modified: 2026-11-08 (chance). Migrate retained timestamp headers after operand offsets are consumed.
     next = migrateUpdateMetadata(rewrite(next, state.artifacts), logical.endsWith(".snippet") && /^# Managed by: WayX Native QX\r?$/m.test(text));
     if (logical.endsWith(".sgmodule")) {
+      // Modified: 2026-11-09 (chance). Publish parameter directives before ordinary comments.
+      next = normalizeSurgeModuleHeader(next);
       // Modified: 2026-11-05 (chance). Retire inferred defaults only with source evidence;
       // native settings and explicitly declared source values remain authoritative.
       const entry = catalog.find((e) => logical === "Adblock/Surge/" + e.surge);
