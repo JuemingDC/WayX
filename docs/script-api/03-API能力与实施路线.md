@@ -17,7 +17,7 @@ DNS、GeoIP、ASN、配置控制、任务和 Module 工具不参与新增 API �
 | QX fetch→Surge 字节响应            | 依据 charset 使用标准 TextDecoder；缺省 UTF-8，未知标签明确失败                      | UTF-8、旧编码及错误路径                                                 |
 | `$persistentStore` / `$prefs`      | 动态 String 键值、默认来源名称、显式 null/undefined 删除                             | 真实目标 SDK 返回值；不把空字符串当删除                                 |
 | Loon `$persistentStore.remove()`   | QX 调用真实 removeAllValues；Loon 保留原生 remove                                    | 全量清空不以部分已见键集合模拟                                          |
-| `$notification.post` / `$notify`   | 字段映射；Surge 忽略通知点击行为；QX 未说明附加参数省略                              | 来源实参构造副作用与目标通知参数                                        |
+| `$notification.post` / `$notify`   | 字段映射；保留有实例支持的链接、剪贴板与远程媒体                              | 来源实参构造副作用与目标通知参数                                        |
 | `$done`                            | 动态完成对象、状态格式、字节、synthetic response 包装；先校验再锁定提交              | 校验错误后重试、只提交一次、原生抛错、echo 声明                         |
 | Loon `setTimeout/setInterval`      | 真实目标宿主调度；不强加 Loon 特有单次 interval                                         | 回调、毫秒单位、附加参数与源 API presence                               |
 | UTF-8 / Base64                     | 独立标准实现，原生能力可用时优先                                                     | 编码、BOM、流式、fatal、品牌及非法输入                                  |
@@ -45,7 +45,7 @@ DNS、GeoIP、ASN、配置控制、任务和 Module 工具不参与新增 API �
 
 Modified: 2026-11-02 (chance). 用户明确授权以继续执行为优先：Surge 全量清空存储操作忽略，返回 undefined，不删除部分键、不报告清空成功。HTTP ALPN 和完成结果 h2_trailers/node/policy 字段省略，正常请求和完成继续执行。
 
-通知忽略 delay、openUrl、clipboard 等点击行为，立即提交标题、副标题、正文。远程图片映射 media-url；PNG/JPEG/GIF/WebP Data URI 或裸 Base64 经签名识别映射 media-base64/media-base64-mime，无法识别的媒体省略。实参构造照常执行；不读取已忽略的点击选项 getter，不捕获作者业务代码或网络错误来假放行。
+Modified: 2026-11-10 (chance). 通知保留 openUrl/clipboard 与 QX open-url/update-pasteboard，分别映射 Surge 官方 action/url/text；两种动作同时给出时优先剪贴板。QX 目标保留两字段。通知仅忽略 delay，立即提交。远程图片映射 media-url；PNG/JPEG/GIF/WebP Data URI 或裸 Base64 经签名识别映射 media-base64/media-base64-mime，无法识别的媒体省略。实参构造照常执行；不读取未知选项 getter，不捕获作者业务代码或网络错误来假放行。
 
 Header 继续使用大小写无关的查找、设置、删除和匹配。原始字段大小写仍按既定小写字典兼容政策规范化。
 
@@ -63,4 +63,11 @@ ScriptHub 固定基线为 b943361f11be5795b3eb10f9cc4e5497642922fc，复用 faca
 
 独立向量覆盖算法、返回形状、异常和异步行为；合成程序覆盖三方向及备份事务。runtimePolicyVersion=7、validationMode=api-runtime-compatibility。**整批实现、规范和测试完成后，才统一运行一次 Actions**，同事务刷新原件、共用 JS、API 清单和引用。
 
-主要依据：[Loon API](https://nsloon.app/docs/Script/script_api/)、[Script V2](https://nsloon.app/docs/Script/script_v2/)、[QX 作者仓库](https://github.com/crossutility/Quantumult-X)、[Surge API](https://manual.nssurge.com/scripting/api.html)、[provider 固定版本与许可](../../vendor/script-api-providers/README.md)。
+主要依据：[Loon API](https://nsloon.app/docs/Script/script_api/)、[Script V2](https://nsloon.app/docs/Script/script_v2/)、[QX 作者仓库](https://github.com/crossutility/Quantumult-X)、[Loon Script API](https://nsloon.app/docs/Script/script_api/)、[Surge API](https://manual.nssurge.com/scripting/api.html)、[provider 固定版本与许可](../../vendor/script-api-providers/README.md)。
+
+## 实例支持的 API 修正（2026-11-10，chance）
+
+- QX 请求二进制体使用 `bodyBytes: ArrayBuffer`；Loon 字节视图和 Base64 请求在转 QX 时切换字段，保留 byteOffset/byteLength。QX→Surge 将 bodyBytes 转为 Uint8Array body。文本 body 优先，避免同时提交两种正文。
+- 通知按来源字段读取并映射；Loon 字符串链接保留，远程媒体按目标字段提交；QX 不新增无证据的内嵌图片选项。
+- 证据：[NSNanoCat fetch](https://github.com/NSNanoCat/util/blob/49e40678c71f5075f451bf9aea6a91fd5c75ca5f/polyfill/fetch.mjs)、[NSNanoCat notification](https://github.com/NSNanoCat/util/blob/3cfb2cac62f0331344a44ea7e3d0b18ce7c82058/lib/notification.mjs)、[Loon Script API](https://nsloon.app/docs/Script/script_api/)、[Surge API](https://manual.nssurge.com/scripting/api.html)。GitHub 实现是兼容依据，不等于本项目已经客户端实测。
+- 已复查存储、HTTP 选项/响应、完成值和环境信息：QX timeout 的实例使用 Promise.race，不能据此证明原生参数支持；Surge 无原生全量清空接口，ALPN/额外完成字段及缺失环境信息仍不伪造。

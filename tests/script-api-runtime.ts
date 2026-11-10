@@ -253,8 +253,8 @@ for (const [from, to] of directions) {
   ]);
   if (from === "loon") assert.deepEqual(writes[2], ["named", "source-name"]);
 }
-// Unknown QX notification parameters are omitted after construction, on native
-// and converted branches; errors are propagated instead of catch-and-pass.
+// Modified: 2026-11-10 (chance). Native notification options pass through;
+// unknown converted options are omitted after argument construction.
 for (const to of ["qx", "surge"]) {
   let call: any;
   const r = execute(
@@ -267,7 +267,7 @@ for (const to of ["qx", "surge"]) {
       $notification: { post: (...a: any[]) => (call = a) },
     },
   );
-  assert.equal(call.length, 3);
+  assert.equal(call.length, to === "qx" ? 4 : 3);
   assert.equal(r.out.body, "2");
 }
 assert.throws(
@@ -411,13 +411,13 @@ for (const [from, to] of directions) {
     $response: {},
     $task: {
       fetch: (o: any) => {
-        sent = o.body;
+        sent = to === "qx" ? o.bodyBytes : o.body;
         return Promise.resolve({ statusCode: 200, headers: {}, body: "" });
       },
     },
     $httpClient: {
       post: (o: any, cb: any) => {
-        sent = o.body;
+        sent = to === "qx" ? o.bodyBytes : o.body;
         cb(null, { status: 200, headers: {} }, "");
       },
     },
@@ -535,9 +535,9 @@ execute(
 );
 await new Promise((r) => setTimeout(r, 0));
 assert.equal(omitted.bodyBytes, undefined);
-assert.equal(omitted.body, undefined);
+assert.deepEqual(Array.from(omitted.body), [8]);
 assert.equal(omitted.timeout, undefined);
-assert.deepEqual(effects, ["timeout", "opts"]); // Unknown getter is not an API argument.
+assert.deepEqual(effects, ["timeout", "opts", "getter"]); // bodyBytes is a supported API field.
 // A getter on a documented field is evaluated by the API boundary normally.
 for (const to of ["qx", "surge"] as const) {
   let sent: any;
@@ -576,9 +576,7 @@ for (const to of ["qx", "surge"] as const) {
   );
   await new Promise((r) => setTimeout(r, 0));
   assert.deepEqual(
-    Array.from(
-      sent.body instanceof ArrayBuffer ? new Uint8Array(sent.body) : sent.body,
-    ),
+    Array.from(to === "qx" ? new Uint8Array(sent.bodyBytes) : sent.body),
     [0, 128, 255],
   );
   assert.equal(sent["body-base64"], undefined);
@@ -786,7 +784,7 @@ execute(
     },
   },
 );
-assert.deepEqual(flat(notice[3]), {});
+assert.deepEqual(flat(notice[3]), { action: "clipboard", text: "copy me" });
 for (const option of [
   { openUrl: "https://test/", clipboard: "both" },
   { mediaUrl: "data:image/png;base64,AA==" },
@@ -800,7 +798,10 @@ for (const option of [
       option,
       $notification: {
         post(...args: any[]) {
-          assert.deepEqual(flat(args[3]), {});
+          assert.deepEqual(
+            flat(args[3] || {}),
+            "clipboard" in option ? { action: "clipboard", text: "both" } : {},
+          );
         },
       },
     },
@@ -874,7 +875,7 @@ Object.defineProperty(bare, "$dns", {
 });
 vm.runInNewContext(scoped.code!, bare);
 console.log(
-  "SDK omission contracts passed: real QX clear-all, ignored Surge clear-all/click/delay/ALPN/trailers, inline notification media and excluded service isolation",
+  "SDK omission contracts passed: real QX clear-all, ignored Surge clear-all/delay/ALPN/trailers, inline notification media and excluded service isolation",
 );
 // Foreign-realm ArrayBuffers use the same completion and transport byte fields.
 const foreignBuffer = vm.runInNewContext("new Uint8Array([9,1,2,8]).buffer");
@@ -888,7 +889,7 @@ assert.deepEqual(
 );
 
 // Modified: 2026-11-02 (chance). Source option construction still executes;
-// omitted click metadata getters are never needed to post the notification.
+// unknown metadata getters are never needed to post the notification.
 for (const mediaUrl of ["iVBORw0KGgo=", "data:image/png;base64,iVBORw0KGgo="]) {
   let posted: any;
   const result = execute(
@@ -899,8 +900,8 @@ for (const mediaUrl of ["iVBORw0KGgo=", "data:image/png;base64,iVBORw0KGgo="]) {
       $response: {},
       options: {
         mediaUrl,
-        get openUrl() {
-          throw Error("ignored click option");
+        get unknown() {
+          throw Error("unknown notification option");
         },
       },
       $notification: {
@@ -934,72 +935,262 @@ assert.equal(clearing.out.body, "continued");
 // Modified: 2026-11-10 (chance). QX official request-header sample returns path;
 // Surge requires a complete URL. Preserve raw escaping, authority and query bytes.
 for (const [url, expectedPath, nextPath] of [
-  ["https://example.test:8443/old%2fpart?q=a%2Bb", "/old%2fpart?q=a%2Bb", "/new%2Fpart?q=a%2Bb"],
+  [
+    "https://example.test:8443/old%2fpart?q=a%2Bb",
+    "/old%2fpart?q=a%2Bb",
+    "/new%2Fpart?q=a%2Bb",
+  ],
   ["http://[2001:db8::1]:8080?x=1", "/?x=1", "//other.test/still-a-path?x=2"],
   ["https://example.test", "/", "/api2/abc?k=v"],
 ]) {
-  const input = {url, headers:{Host:"example.test"}};
+  const input = { url, headers: { Host: "example.test" } };
   const result = execute(
     'if($request.scheme!==expectedScheme||$request.path!==expectedPath)throw Error("missing QX context");const out={};out[inputKey]=nextPath;$done(out);',
-    "qx", "surge", {$request:input, expectedPath, expectedScheme:url.split(":")[0], inputKey:"path", nextPath}, "request",
+    "qx",
+    "surge",
+    {
+      $request: input,
+      expectedPath,
+      expectedScheme: url.split(":")[0],
+      inputKey: "path",
+      nextPath,
+    },
+    "request",
   );
   assert.equal(result.out.url, url.match(/^https?:\/\/[^/?#]+/)![0] + nextPath);
   assert.equal(result.out.path, undefined);
   assert.equal(input.url, url);
 }
 const mutatedPath = execute(
-  '$request.path="/mutated?x=1";$done($request);', "qx", "surge",
-  {$request:{url:"https://example.test/old",headers:{}}}, "request",
+  '$request.path="/mutated?x=1";$done($request);',
+  "qx",
+  "surge",
+  { $request: { url: "https://example.test/old", headers: {} } },
+  "request",
 );
 assert.equal(mutatedPath.out.url, "https://example.test/mutated?x=1");
 const nativePath = execute(
-  '$done({path:"/native?x=1"});', "qx", "qx",
-  {$request:{url:"https://example.test/old",path:"/old",scheme:"https",headers:{}}}, "request",
+  '$done({path:"/native?x=1"});',
+  "qx",
+  "qx",
+  {
+    $request: {
+      url: "https://example.test/old",
+      path: "/old",
+      scheme: "https",
+      headers: {},
+    },
+  },
+  "request",
 );
 assert.equal(nativePath.out.path, "/native?x=1");
 for (const path of [42, "https://other.test/", "/bad\r\nHeader:value"]) {
-  assert.throws(() => execute('$done({path:input});', "qx", "surge",
-    {$request:{url:"https://example.test/old"}, input:path}, "request"), /QX request path/);
+  assert.throws(
+    () =>
+      execute(
+        "$done({path:input});",
+        "qx",
+        "surge",
+        { $request: { url: "https://example.test/old" }, input: path },
+        "request",
+      ),
+    /QX request path/,
+  );
 }
-console.log("Official QX request path: source context, dynamic completion, authority/query preservation and Surge URL output passed");
+console.log(
+  "Official QX request path: source context, dynamic completion, authority/query preservation and Surge URL output passed",
+);
 
 // Modified: 2026-11-10 (chance). Upstream QX libraries retain URL completion;
 // same-origin and cross-origin changes must reach the actual target unchanged.
-const toQxUrl = execute('$done({url:"https://example.test/new%2Fpath?x=a%2Bb"});', "loon", "qx",
-  {$request:{url:"https://example.test/old",headers:{}}}, "request");
-assert.deepEqual(flat(toQxUrl.out), {url:"https://example.test/new%2Fpath?x=a%2Bb"});
-const changedOrigin = execute('$done({url:"https://other.test/new",headers:{"X-Test":"kept"}});', "loon", "qx",
-  {$request:{url:"https://example.test/old",headers:{}}}, "request");
-assert.deepEqual(flat(changedOrigin.out), {url:"https://other.test/new",headers:{"x-test":"kept"}});
+const toQxUrl = execute(
+  '$done({url:"https://example.test/new%2Fpath?x=a%2Bb"});',
+  "loon",
+  "qx",
+  { $request: { url: "https://example.test/old", headers: {} } },
+  "request",
+);
+assert.deepEqual(flat(toQxUrl.out), {
+  url: "https://example.test/new%2Fpath?x=a%2Bb",
+});
+const changedOrigin = execute(
+  '$done({url:"https://other.test/new",headers:{"X-Test":"kept"}});',
+  "loon",
+  "qx",
+  { $request: { url: "https://example.test/old", headers: {} } },
+  "request",
+);
+assert.deepEqual(flat(changedOrigin.out), {
+  url: "https://other.test/new",
+  headers: { "x-test": "kept" },
+});
 const officialRequestShape = execute(
   'const h=$request.headers;h["X-Changed"]="yes";$done({path:"/api2/abc?k=v",headers:h});',
-  "qx", "surge", {$request:{url:"https://example.test/old",headers:{"User-Agent":"kept"}}}, "request",
+  "qx",
+  "surge",
+  {
+    $request: {
+      url: "https://example.test/old",
+      headers: { "User-Agent": "kept" },
+    },
+  },
+  "request",
 );
 assert.deepEqual(flat(officialRequestShape.out), {
-  url:"https://example.test/api2/abc?k=v",headers:{"user-agent":"kept","x-changed":"yes"},
+  url: "https://example.test/api2/abc?k=v",
+  headers: { "user-agent": "kept", "x-changed": "yes" },
 });
-const nativeMutablePath = execute('$request.path="/new";$done($request);', "qx", "qx",
-  {$request:{url:"https://example.test/old",path:"/old",scheme:"https",headers:{}}}, "request");
-assert.equal(nativeMutablePath.out.path,"/new");
+const nativeMutablePath = execute(
+  '$request.path="/new";$done($request);',
+  "qx",
+  "qx",
+  {
+    $request: {
+      url: "https://example.test/old",
+      path: "/old",
+      scheme: "https",
+      headers: {},
+    },
+  },
+  "request",
+);
+assert.equal(nativeMutablePath.out.path, "/new");
 
 // Primary implementation evidence: NSNanoCat/util lib/done.mjs explicitly
 // retains url in Quantumult X; retained YouTube QX request scripts return a
 // googlevideo -> init-stream.maasea.workers.dev Worker redirect as {url}.
-for (const [from,to] of [["loon","qx"],["qx","surge"]]) {
+for (const [from, to] of [
+  ["loon", "qx"],
+  ["qx", "surge"],
+]) {
   for (const url of [
     "https://other.test/new%2Fpath?x=a%2Bb",
     "http://example.test/new?x=1",
     "https://example.test:8443/new",
     "https://init-stream.maasea.workers.dev/?target=https%3A%2F%2Frr.googlevideo.com%2Finitplayback",
   ]) {
-    const result=execute('$done({url:input,headers:{"X-Test":"kept"},body:"payload"});',from,to,
-      {$request:{url:"https://example.test/old",headers:{}},input:url},"request");
-    assert.equal(result.out.url,url);
-    assert.equal(result.out.body,"payload");
-    assert.equal(result.out.headers["x-test"],"kept");
-    const mutated=execute('$request.url=input;$done($request);',from,to,
-      {$request:{url:"https://example.test/old",headers:{}},input:url},"request");
-    assert.equal(mutated.out.url,url,"derived old path cannot override the changed URL");
+    const result = execute(
+      '$done({url:input,headers:{"X-Test":"kept"},body:"payload"});',
+      from,
+      to,
+      {
+        $request: { url: "https://example.test/old", headers: {} },
+        input: url,
+      },
+      "request",
+    );
+    assert.equal(result.out.url, url);
+    assert.equal(result.out.body, "payload");
+    assert.equal(result.out.headers["x-test"], "kept");
+    const mutated = execute(
+      "$request.url=input;$done($request);",
+      from,
+      to,
+      {
+        $request: { url: "https://example.test/old", headers: {} },
+        input: url,
+      },
+      "request",
+    );
+    assert.equal(
+      mutated.out.url,
+      url,
+      "derived old path cannot override the changed URL",
+    );
   }
 }
-console.log("QX URL completion: host/protocol/port/Worker changes and whole-context mutation preserved");
+console.log(
+  "QX URL completion: host/protocol/port/Worker changes and whole-context mutation preserved",
+);
+
+// Modified: 2026-11-10 (chance). Exercise example-backed notification fields
+// across production directions, including unknown getters and immediate delivery.
+for (const [from, to] of directions) {
+  for (const copy of [undefined, "copy value"]) {
+    let posted: any;
+    const option =
+      from === "qx"
+        ? {
+            "open-url": "demo://item/1",
+            "media-url": "https://test/image.png",
+            "update-pasteboard": copy,
+          }
+        : {
+            openUrl: "demo://item/1",
+            mediaUrl: "https://test/image.png",
+            clipboard: copy,
+          };
+    Object.defineProperty(option, "unknown", {
+      get() {
+        throw Error("unknown option read");
+      },
+    });
+    execute(
+      from === "qx"
+        ? '$notify("t","s","b",option);$done({});'
+        : '$notification.post("t","s","b",option,5000);$done({});',
+      from,
+      to,
+      {
+        option,
+        $response: {},
+        $notify: (...args: any[]) => {
+          posted = args;
+        },
+        $notification: {
+          post: (...args: any[]) => {
+            posted = args;
+          },
+        },
+      },
+    );
+    assert.equal(posted.length, 4);
+    assert.deepEqual(
+      flat(posted[3]),
+      to === "qx"
+        ? {
+            "open-url": "demo://item/1",
+            "media-url": "https://test/image.png",
+            ...(copy === undefined ? {} : { "update-pasteboard": copy }),
+          }
+        : {
+            action: copy === undefined ? "open-url" : "clipboard",
+            ...(copy === undefined ? { url: "demo://item/1" } : { text: copy }),
+            "media-url": "https://test/image.png",
+          },
+    );
+  }
+}
+for (const to of ["qx", "surge"] as const) {
+  let sent: any;
+  execute(
+    '$task.fetch({url:"https://test/",method:"POST",bodyBytes:payload}).then(()=>$done({}));',
+    "qx",
+    to,
+    {
+      payload: new Uint8Array([99, 0, 128, 255, 98]).subarray(1, 4),
+      $response: {},
+      $task: {
+        fetch: (o: any) => {
+          sent = o;
+          return Promise.resolve({ statusCode: 200, headers: {}, body: "" });
+        },
+      },
+      $httpClient: {
+        post: (o: any, cb: any) => {
+          sent = o;
+          cb(null, { status: 200, headers: {} }, "");
+        },
+      },
+    },
+  );
+  await new Promise((r) => setTimeout(r, 0));
+  assert.deepEqual(
+    Array.from(to === "qx" ? new Uint8Array(sent.bodyBytes) : sent.body),
+    [0, 128, 255],
+  );
+  assert.equal(to === "qx" ? sent.body : sent.bodyBytes, undefined);
+}
+console.log(
+  "Example-backed QX binary requests and notification open/media/clipboard mappings passed",
+);

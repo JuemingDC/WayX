@@ -422,7 +422,7 @@ Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无
 
 ## 2.25 备份、清单与验证
 
-Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与维护边界维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 映射真实 QX removeAllValues；Surge 忽略全量清空和通知点击行为，保留通知内容与支持的媒体字段。runtimePolicyVersion=4、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
+Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与维护边界维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 映射真实 QX removeAllValues；Surge 忽略全量清空和通知延时，保留通知内容与支持的媒体字段。runtimePolicyVersion=8、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
 
 测试由 API 契约、标准向量、模拟原生网络及合成备份事务组成；覆盖动态输入、Env 接收者、Header 操作、七方法/失败/并发、字节、存储和通知，并以独立 zlib 向量验证压缩和损坏输入；原生 QX clear-all 保留，Surge 无清空存储 API 时不以已见键集合模拟。不得用源脚本的具体语法分支堆叠测试放行清单。Rule/Rewrite/Module 的已有转换职责不受影响。
 
@@ -432,7 +432,7 @@ Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与
 
 Modified: 2026-11-02 (chance). 旧生成脚本清理在所有声明重绑定后、同一备份发布事务中执行。仅管理 API/Adblock 生成目录、生成器共享文件名规则及 legacy 目录；未标记为生成的作者/手工脚本不因无引用而删除。根据最终产物、冻结源声明、保留的手工脚本和脚本间相对/完整/编码 URL 建立引用闭包，保留传递依赖与仍作为来源 URL 的文件；无根引用的旧生成文件和孤立循环才移除。同步清理 adapters/bindings 的悬空记录，原始 Resource/Backup 字节不删除，status.json 记录 scriptCleanup。正在使用的 Rewrite mock/helper 和 Module 方向适配文件不按年代或目录整批删除。
 
-Modified: 2026-11-02 (chance). 用户新授权覆盖此前 Surge 严格阻断策略：全量清空存储操作忽略、返回 undefined；HTTP ALPN 与完成值 h2_trailers/node/policy 省略。通知忽略延时和所有点击行为，立即提交内容，远程媒体及可识别内嵌图片映射官方 media-url 或 media-base64/media-base64-mime。Header 匹配保持大小写无关。源版本/构建/路径字段不恢复、不阻断转换，以规范和兼容性报告说明；保留实际可得信息及兼容 presence，不通过源码猜测删除业务分支。这些明确接受的降级不等于严格语义一致；普通业务异常、网络错误和加密错误不得吞掉。
+Modified: 2026-11-02 (chance). 用户新授权覆盖此前 Surge 严格阻断策略：全量清空存储操作忽略、返回 undefined；HTTP ALPN 与完成值 h2_trailers/node/policy 省略。通知忽略延时，保留有实例支持的链接与剪贴板动作，立即提交内容，远程媒体及可识别内嵌图片映射官方 media-url 或 media-base64/media-base64-mime。Header 匹配保持大小写无关。源版本/构建/路径字段不恢复、不阻断转换，以规范和兼容性报告说明；保留实际可得信息及兼容 presence，不通过源码猜测删除业务分支。这些明确接受的降级不等于严格语义一致；普通业务异常、网络错误和加密错误不得吞掉。
 
 Modified: 2026-11-03 (chance). 当前实现只维护运行时 API 契约，不保留旧 author-composition 实验、静态证明参数或未使用的选项目录；历史设计查阅 Git。原始归档及仍被引用的旧适配文件保留完整性验证，只有现有 Actions 引用闭包清理确认无用后才删除。
 
@@ -474,3 +474,5 @@ Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保�
 Modified: 2026-11-10 (chance). Adblock、Module 的 `Updated` 复制上游明确标注的更新时间（如 `#!date`、`@UpdateTime`），不得使用拉取、复制或转换时钟；上游未标注时写“上游未标注”，合并多个来源时保留各不相同的原始日期。原生 QX 只修改 WayX 外层日期，原作者正文和原始备份逐字节保留；暂停来源以现存源快照修正自有日期，不恢复拉取。Rule 每次成功同步刷新当天更新时间。手工维护内容保留作者日期。
 
 Modified: 2026-11-08 (chance). 可莉目录接口在 Actions 返回 403 时，保留已登记条目并继续按原始 URL 拉取插件正文，不据此增删目录。目录监控明确记录 DEFERRED（succeeded=false），不更新旧镜像，不声称目录已刷新；官方规范及其它必需监控失败仍阻止发布。仅有既有可莉条目且官方目录返回 403 时允许此隔离，401、格式损坏及无既有目录仍失败。
+
+Modified: 2026-11-10 (chance). runtimePolicyVersion=8：以官方 Surge API 与 NSNanoCat/util 的 fetch/notification 主实现为依据，恢复 QX HTTP bodyBytes 双向转换及通知 open-url/media-url/update-pasteboard 字段。Loon openUrl/clipboard 对应 Surge action/url/text 与 QX open-url/update-pasteboard；Surge 单动作冲突时剪贴板优先。保留字节视图范围与原业务实参求值，未知 getter 不读取；不模拟通知 delay、不把库 Promise.race 当作 QX 原生 timeout 证据。证据及保留边界见 docs/script-api/03-API能力与实施路线.md。原生 QX 仍逐字节复制，自动产物由 Actions 发布。

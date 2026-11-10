@@ -5,7 +5,8 @@ export type ScriptClient = "qx" | "loon" | "surge";
 // Modified: 2026-11-05 (chance). Target-specific execution, optional provenance and selective providers.
 // Modified: 2026-11-10 (chance). Official QX path/scheme context and request-result lowering.
 // Modified: 2026-11-10 (chance). Preserve URL completion across origins; do not infer unsupported APIs from omitted examples.
-export const scriptRuntimePolicyVersion = 7;
+// Modified: 2026-11-10 (chance). Restore binary HTTP payloads and example-backed notification options.
+export const scriptRuntimePolicyVersion = 8;
 // Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
 // from adblock conversion, inventories and remaining-work priorities.
 export const excludedAdblockScriptApis = Object.freeze([
@@ -93,8 +94,8 @@ export const scriptHostLayouts: Record<ScriptClient, ScriptHostLayout> = {
     },
     notification: {
       root: "$notify",
-      open: null,
-      media: null,
+      open: "open-url",
+      media: "media-url",
       action: null,
       openAction: null,
       stringLink: false,
@@ -235,7 +236,8 @@ const definitions: Omit<ScriptApiDefinition, "proof">[] = [
     source: { qx: "$request." + field },
     canonical: "request." + field,
     value: "String",
-    lowering: "actual HTTP URL scheme and raw path/query; QX path results become Surge url",
+    lowering:
+      "actual HTTP URL scheme and raw path/query; QX path results become Surge url",
   })),
   ...(["headers", "body"] as const).map((field) => ({
     id: "response." + field,
@@ -366,7 +368,7 @@ const definitions: Omit<ScriptApiDefinition, "proof">[] = [
     canonical: "notify(title,subtitle,body,openURL?,mediaURL?)",
     value: "notification request; delivery is not guaranteed",
     lowering:
-      "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+      "example-backed open/media/clipboard fields; official Surge actions; no simulated notification delay",
   },
   {
     id: "argument",
@@ -528,15 +530,3 @@ export const scriptApiDefinitions: readonly ScriptApiDefinition[] =
       });
     }),
   );
-
-// Modified: 2026-11-02 (chance). Undocumented QX notification parameters
-// are omitted on source and destination branches; expression effects stay intact.
-export function omitScriptNotificationOptions(
-  from: ScriptClient,
-  to: ScriptClient,
-) {
-  return (
-    scriptHostLayouts[from].notification.root === "$notify" ||
-    scriptHostLayouts[to].notification.root === "$notify"
-  );
-}

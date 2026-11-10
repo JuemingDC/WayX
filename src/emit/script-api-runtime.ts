@@ -91,14 +91,17 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(!config.apiPlan.methods.includes(verb))return fail('HTTP method unavailable: '+verb);
     const req={url:input.url};
     if(own(input,'headers'))req.headers=Object.assign({},input.headers);
-    if(own(input,'body')){const value=input.body;req.body=binary(value)?(target.http.style==='promise'?buffer(value):bytes(value)):value;}
+    // Modified: 2026-11-10 (chance). QX binary requests use bodyBytes; preserve view offsets in both directions.
+    let requestBody=own(input,'body')?input.body:undefined;
+    if(requestBody===undefined&&style==='promise'&&own(input,'bodyBytes'))requestBody=input.bodyBytes;
+    if(requestBody!==undefined){if(binary(requestBody))req[target.binaryField]=target.http.style==='promise'?buffer(requestBody):bytes(requestBody);else req.body=requestBody;}
     const mapped={};
     for(const semantic of ['redirect','cookie','tls'])mapped[target.http[semantic]]=own(options,http[semantic])?options[http[semantic]]:http.defaults[semantic];
     if(own(options,http.policy))mapped[target.http.policy]=options[http.policy]===http.directPolicy?target.http.directPolicy:options[http.policy];
     if(style==='callback'&&input['body-base64']&&config.from!==config.to){
       if(typeof input.body!=='string')fail('body-base64 requires a String body');
       const raw=host.codecs.atob(input.body),data=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)data[i]=raw.charCodeAt(i);
-      req.body=target.http.style==='promise'?buffer(data):data;
+      delete req.body;req[target.binaryField]=target.http.style==='promise'?buffer(data):data;
     }
     if(target.http.style==='promise'){
       req.method=verb.toUpperCase();req.opts=mapped;
@@ -157,13 +160,17 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   if(config.from==='qx'&&config.to==='surge')prefs.removeAllValues=()=>undefined;
   if(config.from==='qx'&&config.to==='qx'&&host.prefs&&typeof host.prefs.removeAllValues==='function')prefs.removeAllValues=host.prefs.removeAllValues.bind(host.prefs);
   function notify(title='',subtitle='',body='',option,delay){
-    if(config.apiPlan.omitNotificationOptions)return target.notification.root==='$notify'?host.notifyQx(title,subtitle,body):host.notify.post(title,subtitle,body);
-    if(config.from===config.to)return host.notify.post(title,subtitle,body,option,delay);
+    // Modified: 2026-11-10 (chance). Map example-backed QX notification options and official Surge actions.
+    if(config.from===config.to)return config.to==='qx'?host.notifyQx(title,subtitle,body,option):host.notify.post(title,subtitle,body,option,delay);
     const raw=typeof option==='object'&&option!==null?option:{},mapped={};
-    const media=raw.mediaUrl;
+    const open=typeof option==='string'&&source.notification.stringLink?option:raw[source.notification.open];
+    const copy=raw[config.from==='qx'?'update-pasteboard':'clipboard'];
+    if(typeof open==='string'){if(config.to==='surge'){mapped.action='open-url';mapped.url=open;}else mapped[target.notification.open]=open;}
+    if(typeof copy==='string'){if(config.to==='surge'){delete mapped.url;mapped.action='clipboard';mapped.text=copy;}else if(config.to==='qx')mapped['update-pasteboard']=copy;}
+    const media=raw[source.notification.media];
     if(typeof media==='string'){
-      if(/^https?:\/\//i.test(media))mapped['media-url']=media;
-      else{
+      if(/^https?:\/\//i.test(media))mapped[target.notification.media]=media;
+      else if(config.to==='surge'){
         const uri=/^data:(image\/(?:png|jpeg|gif|webp));base64,([\s\S]*)$/i.exec(media);
         let data=uri?uri[2]:media,decoded;
         try{decoded=host.codecs.atob(data);}catch{}
@@ -173,7 +180,8 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
         }
       }
     }
-    return host.notify.post(title,subtitle,body,mapped);
+    const post=config.to==='qx'?host.notifyQx:host.notify.post.bind(host.notify);
+    return Object.keys(mapped).length?post(title,subtitle,body,mapped):post(title,subtitle,body);
   }
   let argument=config.from==='qx'||target.argument==='absent'?undefined:host.argument;
   if(config.argumentSchema&&config.argumentSchema.kind==='object'&&typeof argument==='string')argument=JSON.parse(argument);
