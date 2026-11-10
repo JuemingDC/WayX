@@ -963,14 +963,14 @@ for (const path of [42, "https://other.test/", "/bad\r\nHeader:value"]) {
 }
 console.log("Official QX request path: source context, dynamic completion, authority/query preservation and Surge URL output passed");
 
-// Modified: 2026-11-10 (chance). Loon URL changes must not leak an undocumented
-// url completion field into QX; the supported same-origin form is path.
-const toQxPath = execute('$done({url:"https://example.test/new%2Fpath?x=a%2Bb"});', "loon", "qx",
+// Modified: 2026-11-10 (chance). Upstream QX libraries retain URL completion;
+// same-origin and cross-origin changes must reach the actual target unchanged.
+const toQxUrl = execute('$done({url:"https://example.test/new%2Fpath?x=a%2Bb"});', "loon", "qx",
   {$request:{url:"https://example.test/old",headers:{}}}, "request");
-assert.deepEqual(flat(toQxPath.out), {path:"/new%2Fpath?x=a%2Bb"});
-const unsupportedOrigin = execute('$done({url:"https://other.test/new",headers:{"X-Test":"kept"}});', "loon", "qx",
+assert.deepEqual(flat(toQxUrl.out), {url:"https://example.test/new%2Fpath?x=a%2Bb"});
+const changedOrigin = execute('$done({url:"https://other.test/new",headers:{"X-Test":"kept"}});', "loon", "qx",
   {$request:{url:"https://example.test/old",headers:{}}}, "request");
-assert.deepEqual(flat(unsupportedOrigin.out), {headers:{"x-test":"kept"}});
+assert.deepEqual(flat(changedOrigin.out), {url:"https://other.test/new",headers:{"x-test":"kept"}});
 const officialRequestShape = execute(
   'const h=$request.headers;h["X-Changed"]="yes";$done({path:"/api2/abc?k=v",headers:h});',
   "qx", "surge", {$request:{url:"https://example.test/old",headers:{"User-Agent":"kept"}}}, "request",
@@ -981,3 +981,25 @@ assert.deepEqual(flat(officialRequestShape.out), {
 const nativeMutablePath = execute('$request.path="/new";$done($request);', "qx", "qx",
   {$request:{url:"https://example.test/old",path:"/old",scheme:"https",headers:{}}}, "request");
 assert.equal(nativeMutablePath.out.path,"/new");
+
+// Primary implementation evidence: NSNanoCat/util lib/done.mjs explicitly
+// retains url in Quantumult X; retained YouTube QX request scripts return a
+// googlevideo -> init-stream.maasea.workers.dev Worker redirect as {url}.
+for (const [from,to] of [["loon","qx"],["qx","surge"]]) {
+  for (const url of [
+    "https://other.test/new%2Fpath?x=a%2Bb",
+    "http://example.test/new?x=1",
+    "https://example.test:8443/new",
+    "https://init-stream.maasea.workers.dev/?target=https%3A%2F%2Frr.googlevideo.com%2Finitplayback",
+  ]) {
+    const result=execute('$done({url:input,headers:{"X-Test":"kept"},body:"payload"});',from,to,
+      {$request:{url:"https://example.test/old",headers:{}},input:url},"request");
+    assert.equal(result.out.url,url);
+    assert.equal(result.out.body,"payload");
+    assert.equal(result.out.headers["x-test"],"kept");
+    const mutated=execute('$request.url=input;$done($request);',from,to,
+      {$request:{url:"https://example.test/old",headers:{}},input:url},"request");
+    assert.equal(mutated.out.url,url,"derived old path cannot override the changed URL");
+  }
+}
+console.log("QX URL completion: host/protocol/port/Worker changes and whole-context mutation preserved");

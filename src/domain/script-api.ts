@@ -4,7 +4,8 @@ export type ScriptClient = "qx" | "loon" | "surge";
 // Modified: 2026-11-02 (chance). Shared provider composition and scope revision.
 // Modified: 2026-11-05 (chance). Target-specific execution, optional provenance and selective providers.
 // Modified: 2026-11-10 (chance). Official QX path/scheme context and request-result lowering.
-export const scriptRuntimePolicyVersion = 6;
+// Modified: 2026-11-10 (chance). Preserve URL completion across origins; do not infer unsupported APIs from omitted examples.
+export const scriptRuntimePolicyVersion = 7;
 // Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
 // from adblock conversion, inventories and remaining-work priorities.
 export const excludedAdblockScriptApis = Object.freeze([

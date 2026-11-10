@@ -48,17 +48,12 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
       if(typeof out.path!=='string'||!out.path.startsWith('/')||/[\r\n]/.test(out.path))fail('QX request path must be an absolute request path');
       if(config.to!=='qx'){
         if(!originalRequest)fail('QX request path requires the original HTTP URL');
-        out.url=originalRequest[1]+'://'+originalRequest[2]+out.path;delete out.path;
+        // Modified: 2026-11-10 (chance). Preserve an explicitly changed URL, including another origin; stale context.path must not overwrite it.
+        if(!own(out,'url')||out.url===(host.request&&host.request.url))out.url=originalRequest[1]+'://'+originalRequest[2]+out.path;
+        delete out.path;
       }
     }
-    // QX's official request result documents path, not an absolute url field.
-    // Same-origin changes map to path; unsupported origin changes follow the
-    // existing policy of omitting undocumented QX completion parameters.
-    if(config.to==='qx'&&own(out,'url')){
-      const next=requestParts(out.url);
-      if(!synthetic&&config.phase==='request'&&!own(out,'path')&&next&&originalRequest&&next[1].toLowerCase()===originalRequest[1].toLowerCase()&&next[2]===originalRequest[2])out.path=rawPath(next);
-      delete out.url;
-    }
+    // Modified: 2026-11-10 (chance). QX URL completion is retained, as used by upstream QX libraries and Worker redirect scripts.
     if(own(out,'statusCode')&&!own(out,'status'))out.status=out.statusCode;
     delete out.statusCode;
     if(own(out,'status'))out.status=target.completion.statusEncoding==='line'?statusLine(out.status):status(out.status);

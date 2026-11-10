@@ -9,7 +9,7 @@ DNS、GeoIP、ASN、配置控制、任务和 Module 工具不参与新增 API �
 | 来源 API/行为                      | 通用处理                                                                             | 验证依据                                                                |
 | ---------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
 | `$request` / `$response`           | 来源字段、状态、声明控制的文本/字节视图、准确 BufferSource 切片                      | 动态对象、别名、跨 realm 和字节视图                                     |
-| QX 请求路径 | 从真实 URL 提供 scheme/path；path 完成值转 Surge url；Loon 同源 URL 转 QX path | 官方 request-header sample，端口/IPv6/查询/转义/动态返回测试 |
+| QX 请求路径 | 从真实 URL 提供 scheme/path；path 完成值转 Surge url；完整 URL 修改透传，保留跨域/协议/端口变化 | 官方 request-header sample，端口/IPv6/查询/转义/动态返回测试 |
 | Header 字典                        | ScriptHub 派生的小写、大小写无关 Proxy；补齐删除、has、Symbol、descriptor 和原型操作 | 独立 Header 操作契约；不修改原生字典                                    |
 | `$httpClient` / `$task.fetch`      | 七方法、来源默认值、单位、node/policy、Promise/callback、并发、拒绝和缺失响应        | 模拟原生传输的成功、失败、并发和动态入参                                |
 | Loon `body-base64`                 | API 边界解码成目标真实字节 body                                                      | 任意二进制、切片及类型错误                                              |
@@ -51,7 +51,7 @@ Header 继续使用大小写无关的查找、设置、删除和匹配。原始�
 
 源软件版本、构建号、脚本 sourcePath 等元数据不恢复、不作为转换阻断，包装器用注释说明省略；保留兼容 presence 和实际可得的时间/名称。不会依据作者源码猜测并注释业务条件。任意作者逻辑直接依赖不存在的元数据，仍属于业务逻辑而非可安全删除的接口参数。
 
-Modified: 2026-11-10 (chance). QX 官方请求修改返回 path；同源 URL 变化转换为 path。跨域 URL 修改无官方示例支持，按既有未说明参数省略政策处理，保留其它受支持字段；不输出未经证实的 url 完成值。
+Modified: 2026-11-10 (chance). QX 完成值保留 url，包括域名、协议和端口变化；path 修改另作对应转换。开源实现依据为 [NSNanoCat/util 的 QX done 分支](https://github.com/NSNanoCat/util/blob/main/lib/done.mjs) 和已归档的 QX YouTube Worker 重定向调用。官方示例未列出某字段，不构成自动省略该字段的理由；开源实例与官方签名、客户端实测分别说明。
 
 以上是用户明确接受的语义降级，不能继续称为严格等价。正常参数类型错误、认证失败、网络失败及作者自身异常仍保留。
 
@@ -61,6 +61,6 @@ ScriptHub 固定基线为 b943361f11be5795b3eb10f9cc4e5497642922fc，复用 faca
 
 `vendor/script-api-providers` 保存锁文件、完整许可、构建程序及 manifest。库独立作用域、延迟初始化，不污染宿主 globals，不运行时下载或依赖 Node。按声明的来源客户端整体加入能力，不扫描具体作者的调用决定是否带库。包体、标准修订和库版本是需要维护的实际成本。
 
-独立向量覆盖算法、返回形状、异常和异步行为；合成程序覆盖三方向及备份事务。runtimePolicyVersion=6、validationMode=api-runtime-compatibility。**整批实现、规范和测试完成后，才统一运行一次 Actions**，同事务刷新原件、共用 JS、API 清单和引用。
+独立向量覆盖算法、返回形状、异常和异步行为；合成程序覆盖三方向及备份事务。runtimePolicyVersion=7、validationMode=api-runtime-compatibility。**整批实现、规范和测试完成后，才统一运行一次 Actions**，同事务刷新原件、共用 JS、API 清单和引用。
 
 主要依据：[Loon API](https://nsloon.app/docs/Script/script_api/)、[Script V2](https://nsloon.app/docs/Script/script_v2/)、[QX 作者仓库](https://github.com/crossutility/Quantumult-X)、[Surge API](https://manual.nssurge.com/scripting/api.html)、[provider 固定版本与许可](../../vendor/script-api-providers/README.md)。
