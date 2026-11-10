@@ -17,9 +17,18 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
   const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&/^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value);if(m)return status(Number(m[1]));return fail('invalid HTTP status');};
   const statusLine=value=>{const code=status(value);return typeof value==='string'?value:'HTTP/1.1 '+code+' '+({200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error'}[code]||'Status');};
-  function view(value){
+  // Modified: 2026-11-10 (chance). QX request context and completion use path;
+  // retain raw URL bytes instead of resolving a path as a new authority.
+  const requestParts=value=>typeof value==='string'?/^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value):null;
+  const originalRequest=requestParts(host.request&&host.request.url);
+  const rawPath=parts=>parts[3]?(parts[3][0]==='?'?'/':'')+parts[3]:'/';
+  function view(value,requestRole=false){
     if(value===undefined)return undefined;
     const result=Object.assign({},value);
+    if(requestRole&&config.from==='qx'&&originalRequest){
+      if(!own(result,'scheme'))result.scheme=originalRequest[1].toLowerCase();
+      if(!own(result,'path'))result.path=rawPath(originalRequest);
+    }
     if(value.headers!==undefined)result.headers=headers(value.headers);
     if(own(value,target.responseStatus)){result[source.responseStatus]=status(value[target.responseStatus]);if(source.responseStatus!==target.responseStatus)delete result[target.responseStatus];}
     // Modified: 2026-11-05 (chance). Target-provided BufferSource determines binary conversion.
@@ -29,12 +38,27 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     }
     return result;
   }
-  const request=view(host.request),response=view(host.response);
+  const request=view(host.request,true),response=view(host.response);
   let completed=false;
   const finish=value=>{completed=true;return host.done(value);};
   function message(value,synthetic){
     if(!value||typeof value!=='object'||Array.isArray(value))return fail('completion requires an object');
     const out=Object.assign({},value);
+    if(!synthetic&&config.phase==='request'&&config.from==='qx'&&own(out,'path')){
+      if(typeof out.path!=='string'||!out.path.startsWith('/')||/[\r\n]/.test(out.path))fail('QX request path must be an absolute request path');
+      if(config.to!=='qx'){
+        if(!originalRequest)fail('QX request path requires the original HTTP URL');
+        out.url=originalRequest[1]+'://'+originalRequest[2]+out.path;delete out.path;
+      }
+    }
+    // QX's official request result documents path, not an absolute url field.
+    // Same-origin changes map to path; unsupported origin changes follow the
+    // existing policy of omitting undocumented QX completion parameters.
+    if(config.to==='qx'&&own(out,'url')){
+      const next=requestParts(out.url);
+      if(!synthetic&&config.phase==='request'&&!own(out,'path')&&next&&originalRequest&&next[1].toLowerCase()===originalRequest[1].toLowerCase()&&next[2]===originalRequest[2])out.path=rawPath(next);
+      delete out.url;
+    }
     if(own(out,'statusCode')&&!own(out,'status'))out.status=out.statusCode;
     delete out.statusCode;
     if(own(out,'status'))out.status=target.completion.statusEncoding==='line'?statusLine(out.status):status(out.status);
@@ -42,7 +66,7 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(own(out,'bodyBytes')){out.body=bytes(out.bodyBytes);delete out.bodyBytes;}
     if(binary(out.body)){if(target.binaryField==='bodyBytes'){out.bodyBytes=buffer(out.body);delete out.body;}else out.body=bytes(out.body);}
     if(config.to==='surge')for(const key of ['h2_trailers','node','policy'])delete out[key];
-    for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort',...(config.to==='loon'?['h2_trailers']:[])].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
+    for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort',...(config.to==='qx'&&config.phase==='request'&&!synthetic?['path']:[]),...(config.to==='loon'?['h2_trailers']:[])].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
     if(target.completion.synthetic==='flat')delete out.abort;
     if(target.completion.synthetic==='flat'&&!synthetic&&config.phase==='response'&&own(out,'headers')&&!own(out,'body')&&!own(out,'bodyBytes')&&config.responseBody)fail('QX response-body requires body with changed headers');
     return out;
@@ -52,7 +76,7 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(['task','network','generic'].includes(config.phase))return finish(value??{});
     if(value===undefined||value===null)return finish({});
     if(value===response||value===request){
-      const out={};for(const k of ['url','headers','body','bodyBytes','h2_trailers',source.responseStatus])if(own(value,k))out[k]=value[k];
+      const out={};for(const k of ['url','headers','body','bodyBytes','h2_trailers',...(config.from==='qx'&&config.phase==='request'?['path']:[]),source.responseStatus])if(own(value,k))out[k]=value[k];
       value=out;
     }
     if(typeof value==='string')value={body:value};

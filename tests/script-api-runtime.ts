@@ -930,3 +930,54 @@ const clearing = execute(
   },
 );
 assert.equal(clearing.out.body, "continued");
+
+// Modified: 2026-11-10 (chance). QX official request-header sample returns path;
+// Surge requires a complete URL. Preserve raw escaping, authority and query bytes.
+for (const [url, expectedPath, nextPath] of [
+  ["https://example.test:8443/old%2fpart?q=a%2Bb", "/old%2fpart?q=a%2Bb", "/new%2Fpart?q=a%2Bb"],
+  ["http://[2001:db8::1]:8080?x=1", "/?x=1", "//other.test/still-a-path?x=2"],
+  ["https://example.test", "/", "/api2/abc?k=v"],
+]) {
+  const input = {url, headers:{Host:"example.test"}};
+  const result = execute(
+    'if($request.scheme!==expectedScheme||$request.path!==expectedPath)throw Error("missing QX context");const out={};out[inputKey]=nextPath;$done(out);',
+    "qx", "surge", {$request:input, expectedPath, expectedScheme:url.split(":")[0], inputKey:"path", nextPath}, "request",
+  );
+  assert.equal(result.out.url, url.match(/^https?:\/\/[^/?#]+/)![0] + nextPath);
+  assert.equal(result.out.path, undefined);
+  assert.equal(input.url, url);
+}
+const mutatedPath = execute(
+  '$request.path="/mutated?x=1";$done($request);', "qx", "surge",
+  {$request:{url:"https://example.test/old",headers:{}}}, "request",
+);
+assert.equal(mutatedPath.out.url, "https://example.test/mutated?x=1");
+const nativePath = execute(
+  '$done({path:"/native?x=1"});', "qx", "qx",
+  {$request:{url:"https://example.test/old",path:"/old",scheme:"https",headers:{}}}, "request",
+);
+assert.equal(nativePath.out.path, "/native?x=1");
+for (const path of [42, "https://other.test/", "/bad\r\nHeader:value"]) {
+  assert.throws(() => execute('$done({path:input});', "qx", "surge",
+    {$request:{url:"https://example.test/old"}, input:path}, "request"), /QX request path/);
+}
+console.log("Official QX request path: source context, dynamic completion, authority/query preservation and Surge URL output passed");
+
+// Modified: 2026-11-10 (chance). Loon URL changes must not leak an undocumented
+// url completion field into QX; the supported same-origin form is path.
+const toQxPath = execute('$done({url:"https://example.test/new%2Fpath?x=a%2Bb"});', "loon", "qx",
+  {$request:{url:"https://example.test/old",headers:{}}}, "request");
+assert.deepEqual(flat(toQxPath.out), {path:"/new%2Fpath?x=a%2Bb"});
+const unsupportedOrigin = execute('$done({url:"https://other.test/new",headers:{"X-Test":"kept"}});', "loon", "qx",
+  {$request:{url:"https://example.test/old",headers:{}}}, "request");
+assert.deepEqual(flat(unsupportedOrigin.out), {headers:{"x-test":"kept"}});
+const officialRequestShape = execute(
+  'const h=$request.headers;h["X-Changed"]="yes";$done({path:"/api2/abc?k=v",headers:h});',
+  "qx", "surge", {$request:{url:"https://example.test/old",headers:{"User-Agent":"kept"}}}, "request",
+);
+assert.deepEqual(flat(officialRequestShape.out), {
+  url:"https://example.test/api2/abc?k=v",headers:{"user-agent":"kept","x-changed":"yes"},
+});
+const nativeMutablePath = execute('$request.path="/new";$done($request);', "qx", "qx",
+  {$request:{url:"https://example.test/old",path:"/old",scheme:"https",headers:{}}}, "request");
+assert.equal(nativeMutablePath.out.path,"/new");

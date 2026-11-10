@@ -3,7 +3,8 @@
 export type ScriptClient = "qx" | "loon" | "surge";
 // Modified: 2026-11-02 (chance). Shared provider composition and scope revision.
 // Modified: 2026-11-05 (chance). Target-specific execution, optional provenance and selective providers.
-export const scriptRuntimePolicyVersion = 5;
+// Modified: 2026-11-10 (chance). Official QX path/scheme context and request-result lowering.
+export const scriptRuntimePolicyVersion = 6;
 // Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
 // from adblock conversion, inventories and remaining-work priorities.
 export const excludedAdblockScriptApis = Object.freeze([
@@ -225,6 +226,15 @@ const definitions: Omit<ScriptApiDefinition, "proof">[] = [
           : "String",
     lowering:
       "identity; dictionary operations require their own case/duplicate/framing contract",
+  })),
+  // Modified: 2026-11-10 (chance). Derive documented QX request fields from the actual target URL.
+  ...(["scheme", "path"] as const).map((field) => ({
+    id: "request." + field,
+    kind: "context" as const,
+    source: { qx: "$request." + field },
+    canonical: "request." + field,
+    value: "String",
+    lowering: "actual HTTP URL scheme and raw path/query; QX path results become Surge url",
   })),
   ...(["headers", "body"] as const).map((field) => ({
     id: "response." + field,
