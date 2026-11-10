@@ -774,8 +774,10 @@
                     }
                 }
                 else if (url.includes("Comic/GetCommonBanner")) {
-                    if (obj?.data?.jump_url !== "") {
-                        $done({ status: "HTTP/1.1 204 No Content", body: "", headers: "" });
+                    const jumpUrl = obj?.data?.jump_url ?? "";
+                    const type = Number(obj?.data?.type);
+                    if (jumpUrl !== "" && type !== 4 && type !== 8) {
+                        $done({ status: "HTTP/1.1 204 No Content", body: "" });
                     }
                 }
                 body = JSON.stringify(obj);
