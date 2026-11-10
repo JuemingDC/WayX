@@ -340,7 +340,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 7,
+  "runtimePolicyVersion": 8,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
@@ -663,7 +663,7 @@
             "target": {
               "capability": "runtime",
               "api": "$notify",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "lowering": "example-backed open/media/clipboard fields; official Surge actions; no simulated notification delay",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -1387,7 +1387,7 @@
             "target": {
               "capability": "runtime",
               "api": "$notification.post",
-              "lowering": "explicit option fields from layouts; QX optional arguments omitted; no delay/clipboard invention",
+              "lowering": "example-backed open/media/clipboard fields; official Surge actions; no simulated notification delay",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",

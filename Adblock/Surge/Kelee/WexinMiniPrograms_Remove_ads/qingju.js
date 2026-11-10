@@ -189,7 +189,7 @@
             } return out; }
             return { TextEncoder, TextDecoder, atob, btoa };
         })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), utils: typeof $utils === 'undefined' ? undefined : $utils, crypto: typeof $crypto === 'undefined' ? undefined : $crypto, compression: undefined, aes: undefined, url: undefined };
-    const __wayxContexts = { "response": { "surge": { "phase": "response", "responseBody": true, "binary": false, "binaryKnown": true, "name": "滴滴青桔去广告", "from": "loon", "to": "surge", "apiPlan": { "version": 1, "omitNotificationOptions": false, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"], "source": { "responseStatus": "status", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } }, "runtimePolicyVersion": 7, "omittedParameters": [] } } }, __wayxConfig = __wayxContexts[__wayxHost.response === undefined ? 'request' : 'response']?.[__wayxTarget];
+    const __wayxContexts = { "response": { "surge": { "phase": "response", "responseBody": true, "binary": false, "binaryKnown": true, "name": "滴滴青桔去广告", "from": "loon", "to": "surge", "apiPlan": { "version": 1, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"], "source": { "responseStatus": "status", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } }, "runtimePolicyVersion": 8, "omittedParameters": [] } } }, __wayxConfig = __wayxContexts[__wayxHost.response === undefined ? 'request' : 'response']?.[__wayxTarget];
     if (!__wayxConfig)
         throw new Error('Unregistered HTTP source/target declaration');
     if (__wayxTarget === 'surge' && __wayxConfig.from === 'qx' && typeof __wayxHost.argument === 'string' && __wayxHost.argument.startsWith("wayx_qx_header_v1=")) {
@@ -399,9 +399,14 @@
             const req = { url: input.url };
             if (own(input, 'headers'))
                 req.headers = Object.assign({}, input.headers);
-            if (own(input, 'body')) {
-                const value = input.body;
-                req.body = binary(value) ? (target.http.style === 'promise' ? buffer(value) : bytes(value)) : value;
+            let requestBody = own(input, 'body') ? input.body : undefined;
+            if (requestBody === undefined && style === 'promise' && own(input, 'bodyBytes'))
+                requestBody = input.bodyBytes;
+            if (requestBody !== undefined) {
+                if (binary(requestBody))
+                    req[target.binaryField] = target.http.style === 'promise' ? buffer(requestBody) : bytes(requestBody);
+                else
+                    req.body = requestBody;
             }
             const mapped = {};
             for (const semantic of ['redirect', 'cookie', 'tls'])
@@ -414,7 +419,8 @@
                 const raw = host.codecs.atob(input.body), data = new Uint8Array(raw.length);
                 for (let i = 0; i < raw.length; i++)
                     data[i] = raw.charCodeAt(i);
-                req.body = target.http.style === 'promise' ? buffer(data) : data;
+                delete req.body;
+                req[target.binaryField] = target.http.style === 'promise' ? buffer(data) : data;
             }
             if (target.http.style === 'promise') {
                 req.method = verb.toUpperCase();
@@ -553,16 +559,33 @@
         if (config.from === 'qx' && config.to === 'qx' && host.prefs && typeof host.prefs.removeAllValues === 'function')
             prefs.removeAllValues = host.prefs.removeAllValues.bind(host.prefs);
         function notify(title = '', subtitle = '', body = '', option, delay) {
-            if (config.apiPlan.omitNotificationOptions)
-                return target.notification.root === '$notify' ? host.notifyQx(title, subtitle, body) : host.notify.post(title, subtitle, body);
             if (config.from === config.to)
-                return host.notify.post(title, subtitle, body, option, delay);
+                return config.to === 'qx' ? host.notifyQx(title, subtitle, body, option) : host.notify.post(title, subtitle, body, option, delay);
             const raw = typeof option === 'object' && option !== null ? option : {}, mapped = {};
-            const media = raw.mediaUrl;
+            const open = typeof option === 'string' && source.notification.stringLink ? option : raw[source.notification.open];
+            const copy = raw[config.from === 'qx' ? 'update-pasteboard' : 'clipboard'];
+            if (typeof open === 'string') {
+                if (config.to === 'surge') {
+                    mapped.action = 'open-url';
+                    mapped.url = open;
+                }
+                else
+                    mapped[target.notification.open] = open;
+            }
+            if (typeof copy === 'string') {
+                if (config.to === 'surge') {
+                    delete mapped.url;
+                    mapped.action = 'clipboard';
+                    mapped.text = copy;
+                }
+                else if (config.to === 'qx')
+                    mapped['update-pasteboard'] = copy;
+            }
+            const media = raw[source.notification.media];
             if (typeof media === 'string') {
                 if (/^https?:\/\//i.test(media))
-                    mapped['media-url'] = media;
-                else {
+                    mapped[target.notification.media] = media;
+                else if (config.to === 'surge') {
                     const uri = /^data:(image\/(?:png|jpeg|gif|webp));base64,([\s\S]*)$/i.exec(media);
                     let data = uri ? uri[2] : media, decoded;
                     try {
@@ -578,7 +601,8 @@
                     }
                 }
             }
-            return host.notify.post(title, subtitle, body, mapped);
+            const post = config.to === 'qx' ? host.notifyQx : host.notify.post.bind(host.notify);
+            return Object.keys(mapped).length ? post(title, subtitle, body, mapped) : post(title, subtitle, body);
         }
         let argument = config.from === 'qx' || target.argument === 'absent' ? undefined : host.argument;
         if (config.argumentSchema && config.argumentSchema.kind === 'object' && typeof argument === 'string')
