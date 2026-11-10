@@ -476,3 +476,5 @@ Modified: 2026-11-10 (chance). Adblock、Module 的 `Updated` 复制上游明确
 Modified: 2026-11-08 (chance). 可莉目录接口在 Actions 返回 403 时，保留已登记条目并继续按原始 URL 拉取插件正文，不据此增删目录。目录监控明确记录 DEFERRED（succeeded=false），不更新旧镜像，不声称目录已刷新；官方规范及其它必需监控失败仍阻止发布。仅有既有可莉条目且官方目录返回 403 时允许此隔离，401、格式损坏及无既有目录仍失败。
 
 Modified: 2026-11-10 (chance). runtimePolicyVersion=8：以官方 Surge API 与 NSNanoCat/util 的 fetch/notification 主实现为依据，恢复 QX HTTP bodyBytes 双向转换及通知 open-url/media-url/update-pasteboard 字段。Loon openUrl/clipboard 对应 Surge action/url/text 与 QX open-url/update-pasteboard；Surge 单动作冲突时剪贴板优先。保留字节视图范围与原业务实参求值，未知 getter 不读取；不模拟通知 delay、不把库 Promise.race 当作 QX 原生 timeout 证据。证据及保留边界见 docs/script-api/03-API能力与实施路线.md。原生 QX 仍逐字节复制，自动产物由 Actions 发布。
+
+Modified: 2026-11-10 (chance). 原生 QX commit/tree 发现通过共享资源传输使用 Actions GITHUB_TOKEN；仅向精确 https://api.github.com origin 自动添加认证，不发送至 raw/第三方来源，不覆盖显式认证。sync 步骤显式注入 token，避免匿名 REST 配额导致全事务失败。保留原子发布与真实失败门禁；403 不自动认定来源失效，也不恢复已暂停可莉来源。

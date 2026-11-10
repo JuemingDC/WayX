@@ -101,6 +101,9 @@ jobs:
         id: loon_sync
         if: steps.catalog.outcome == 'success'
         continue-on-error: true
+        # Modified: 2026-11-10 (chance). Native QX commit/tree discovery needs authenticated REST quota.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: node src/cli.ts sync 2>&1 | tee .github/monitor/.runtime/loon-sync.log
 
       - name: Verify complete generated repository

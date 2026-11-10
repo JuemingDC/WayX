@@ -718,6 +718,24 @@ const {targetRegexCapability,compileRegexForTarget}=await import('../src/domain/
 const root=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-resource-'));
 const originalFetch=globalThis.fetch;
 try {
+  // Modified: 2026-11-10 (chance). Only GitHub's HTTPS API receives the token;
+  // explicit caller auth stays authoritative and missing credentials stay absent.
+  const previousToken=process.env.GITHUB_TOKEN;
+  try {
+    process.env.GITHUB_TOKEN='fixture-token';
+    const captured:any[]=[];
+    globalThis.fetch=async(url,options)=>{captured.push([String(url),new Headers(options?.headers).get('Authorization')]);return new Response('ok');};
+    for(const url of ['https://api.github.com/repos/author/repo/commits/main','https://raw.githubusercontent.com/author/repo/main/file','https://api.github.com.attacker.test/file','http://api.github.com/repos/author/repo'])await fetchOriginalBytes(url);
+    assert.deepEqual(captured.map(x=>x[1]),['Bearer fixture-token',null,null,null]);
+    await fetchOriginalBytes('https://api.github.com/repos/author/repo',{headers:{Authorization:'Bearer caller-token'}});
+    assert.equal(captured.at(-1)[1],'Bearer caller-token');
+    delete process.env.GITHUB_TOKEN;
+    await fetchOriginalBytes('https://api.github.com/repos/author/repo');
+    assert.equal(captured.at(-1)[1],null);
+  } finally {
+    if(previousToken===undefined)delete process.env.GITHUB_TOKEN;else process.env.GITHUB_TOKEN=previousToken;
+    globalThis.fetch=originalFetch;
+  }
   assert.equal(FETCH_LIMITS.text,128*1024*1024);
   assert.equal(FETCH_LIMITS.binary,512*1024*1024);
   let calls=0,cancelled=false;

@@ -122,6 +122,11 @@ export async function requestOriginal(
       timer = setTimeout(() => controller.abort(deadline), timeoutMs);
     try {
       const headers = new Headers(options.headers);
+      // Modified: 2026-11-10 (chance). Authenticate GitHub REST snapshots with
+      // the Actions token only at the exact HTTPS API origin, never upstream hosts.
+      if (new URL(source).origin === "https://api.github.com" &&
+          process.env.GITHUB_TOKEN && !headers.has("Authorization"))
+        headers.set("Authorization", "Bearer " + process.env.GITHUB_TOKEN);
       headers.set("User-Agent", WAYX_FETCH_UA);
       if (options.accept || !headers.has("Accept"))
         headers.set("Accept", options.accept ?? "*/*");
