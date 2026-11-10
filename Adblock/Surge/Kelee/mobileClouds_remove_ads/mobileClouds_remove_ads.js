@@ -189,7 +189,7 @@
             } return out; }
             return { TextEncoder, TextDecoder, atob, btoa };
         })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), utils: typeof $utils === 'undefined' ? undefined : $utils, crypto: typeof $crypto === 'undefined' ? undefined : $crypto, compression: undefined, aes: undefined, url: undefined };
-    const __wayxContexts = { "response": { "surge": { "phase": "response", "responseBody": true, "binary": false, "binaryKnown": true, "name": "mobileClouds_remove_ads.js", "from": "loon", "to": "surge", "apiPlan": { "version": 1, "omitNotificationOptions": false, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"], "source": { "responseStatus": "status", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } }, "runtimePolicyVersion": 5, "omittedParameters": [] } } }, __wayxConfig = __wayxContexts[__wayxHost.response === undefined ? 'request' : 'response']?.[__wayxTarget];
+    const __wayxContexts = { "response": { "surge": { "phase": "response", "responseBody": true, "binary": false, "binaryKnown": true, "name": "mobileClouds_remove_ads.js", "from": "loon", "to": "surge", "apiPlan": { "version": 1, "omitNotificationOptions": false, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"], "source": { "responseStatus": "status", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } }, "runtimePolicyVersion": 6, "omittedParameters": [] } } }, __wayxConfig = __wayxContexts[__wayxHost.response === undefined ? 'request' : 'response']?.[__wayxTarget];
     if (!__wayxConfig)
         throw new Error('Unregistered HTTP source/target declaration');
     if (__wayxTarget === 'surge' && __wayxConfig.from === 'qx' && typeof __wayxHost.argument === 'string' && __wayxHost.argument.startsWith("wayx_qx_header_v1=")) {
@@ -260,10 +260,19 @@
             return value; const m = typeof value === 'string' && /^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value); if (m)
             return status(Number(m[1])); return fail('invalid HTTP status'); };
         const statusLine = value => { const code = status(value); return typeof value === 'string' ? value : 'HTTP/1.1 ' + code + ' ' + ({ 200: 'OK', 201: 'Created', 204: 'No Content', 301: 'Moved Permanently', 302: 'Found', 304: 'Not Modified', 400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found', 500: 'Internal Server Error' }[code] || 'Status'); };
-        function view(value) {
+        const requestParts = value => typeof value === 'string' ? /^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value) : null;
+        const originalRequest = requestParts(host.request && host.request.url);
+        const rawPath = parts => parts[3] ? (parts[3][0] === '?' ? '/' : '') + parts[3] : '/';
+        function view(value, requestRole = false) {
             if (value === undefined)
                 return undefined;
             const result = Object.assign({}, value);
+            if (requestRole && config.from === 'qx' && originalRequest) {
+                if (!own(result, 'scheme'))
+                    result.scheme = originalRequest[1].toLowerCase();
+                if (!own(result, 'path'))
+                    result.path = rawPath(originalRequest);
+            }
             if (value.headers !== undefined)
                 result.headers = headers(value.headers);
             if (own(value, target.responseStatus)) {
@@ -287,13 +296,29 @@
             }
             return result;
         }
-        const request = view(host.request), response = view(host.response);
+        const request = view(host.request, true), response = view(host.response);
         let completed = false;
         const finish = value => { completed = true; return host.done(value); };
         function message(value, synthetic) {
             if (!value || typeof value !== 'object' || Array.isArray(value))
                 return fail('completion requires an object');
             const out = Object.assign({}, value);
+            if (!synthetic && config.phase === 'request' && config.from === 'qx' && own(out, 'path')) {
+                if (typeof out.path !== 'string' || !out.path.startsWith('/') || /[\r\n]/.test(out.path))
+                    fail('QX request path must be an absolute request path');
+                if (config.to !== 'qx') {
+                    if (!originalRequest)
+                        fail('QX request path requires the original HTTP URL');
+                    out.url = originalRequest[1] + '://' + originalRequest[2] + out.path;
+                    delete out.path;
+                }
+            }
+            if (config.to === 'qx' && own(out, 'url')) {
+                const next = requestParts(out.url);
+                if (!synthetic && config.phase === 'request' && !own(out, 'path') && next && originalRequest && next[1].toLowerCase() === originalRequest[1].toLowerCase() && next[2] === originalRequest[2])
+                    out.path = rawPath(next);
+                delete out.url;
+            }
             if (own(out, 'statusCode') && !own(out, 'status'))
                 out.status = out.statusCode;
             delete out.statusCode;
@@ -320,7 +345,7 @@
                 for (const key of ['h2_trailers', 'node', 'policy'])
                     delete out[key];
             for (const key of Object.keys(out))
-                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...(config.to === 'loon' ? ['h2_trailers'] : [])].includes(key)) {
+                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...(config.to === 'qx' && config.phase === 'request' && !synthetic ? ['path'] : []), ...(config.to === 'loon' ? ['h2_trailers'] : [])].includes(key)) {
                     if (config.to === 'qx')
                         delete out[key];
                     else
@@ -341,7 +366,7 @@
                 return finish({});
             if (value === response || value === request) {
                 const out = {};
-                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', source.responseStatus])
+                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...(config.from === 'qx' && config.phase === 'request' ? ['path'] : []), source.responseStatus])
                     if (own(value, k))
                         out[k] = value[k];
                 value = out;
