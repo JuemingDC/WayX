@@ -386,7 +386,9 @@ await commitNativeQxSync(root,native);
 const owned=path.join(root,'Adblock/Quantumult X/ishowshu_pdd.snippet');
 const before=await fs.readFile(owned,'utf8');
 await commitNativeQxSync(root,{...native,outputs:new Map([...native.outputs].map(([file,text])=>[file,text.replace(/^# Updated:.*$/m,'# Updated: different')]))});
-assert.equal(await fs.readFile(owned,'utf8'),before,'unchanged content keeps timestamp');
+// Modified: 2026-11-10 (chance). Preserve changes to upstream update metadata even when executable content is unchanged.
+assert.equal(await fs.readFile(owned,'utf8'),before.replace(/^# Updated:.*$/m,'# Updated: different'));
+await commitNativeQxSync(root,native);
 assert.match((await buildReadmePlan(root)).get('README.md'),/<strong>树先生<\/strong>/);
 await assert.rejects(prepareNativeQxSync(root,{fetchText:async()=>{throw Error('injected source failure');}}),/injected source failure/);
 assert.equal(await fs.readFile(owned,'utf8'),before);

@@ -1,3 +1,5 @@
+// Modified: 2026-11-10 (chance). Plugin headers copy upstream dates, independent of conversion stamps.
+import { upstreamUpdateTime } from "../domain/update-metadata.ts";
 // Modified: 2026-11-08 (chance). Emit update timestamps only; no separate conversion time.
 // Modified: 2026-11-03 (chance). Section labels describe current TypeScript responsibilities.
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript validation layer; preserve source behavior.
@@ -105,7 +107,7 @@ function preservedComments(lines: any): any {
 export function renderQxSnippetHeader(
   headerLines: any,
   entry: any,
-  stamp: any,
+  _stamp: any,
 ): any {
   const { directives, comments } = parseSourceMetadataHeader(headerLines);
   const out: any = [];
@@ -121,7 +123,7 @@ export function renderQxSnippetHeader(
   }
   out.push(
     "",
-    `# Updated: ${stamp}`,
+    `# Updated: ${upstreamUpdateTime(headerLines.join("\n"))}`,
     "# Converted by: chance",
     `# Category: ${entry.category}`,
     `# Source: ${entry.source}`,
@@ -131,7 +133,7 @@ export function renderQxSnippetHeader(
 export function renderSurgeModuleHeader(
   headerLines: any,
   entry: any,
-  stamp: any,
+  _stamp: any,
   {
     needsCore20 = false,
     argumentMetadata = [],
@@ -155,7 +157,7 @@ export function renderSurgeModuleHeader(
   out.push(...original);
   out.push(
     "",
-    "# Updated: " + stamp,
+    "# Updated: " + upstreamUpdateTime(headerLines.join("\n")),
     "# Converted by: chance",
     "# Source: " + entry.source,
   );

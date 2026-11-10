@@ -51,3 +51,5 @@ Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保�
 Modified: 2026-11-08 (chance). 可莉目录接口在 Actions 返回 403 时，保留已登记条目并继续按原始 URL 拉取插件正文，不据此增删目录。目录监控明确记录 DEFERRED（succeeded=false），不更新旧镜像，不声称目录已刷新；官方规范及其它必需监控失败仍阻止发布。仅有既有可莉条目且官方目录返回 403 时允许此隔离，401、格式损坏及无既有目录仍失败。
 
 - Modified: 2026-11-08 (chance). User re-paused Kelee plugin acquisition after HTTP 403. Set paused=true, skip directory/plugin acquisition and conversion, and do not fetch unregistered Kelee plugin-body origins during backups. Preserve existing outputs/archives and the existing script-backup policy. Close the obsolete fetch-upstream 403 alerts as not_planned, without claiming the upstream recovered.
+
+- Modified: 2026-11-10 (chance). Adblock/Module update metadata copies explicit upstream update dates (including retained paused snapshots and native QX wrapper headers), never acquisition/conversion time. If absent, say 上游未标注; retain distinct dates for merged sources. Rule headers record each successful daily sync. Preserve native source bodies and manual author dates.

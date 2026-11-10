@@ -1,7 +1,7 @@
 // Modified: 2026-11-05 (chance). Keep the mature converters' logical working
 // paths internal; publish one type/client/author/app tree with colocated scripts.
 // A reversible manifest restores the working view before the next acquisition.
-import { migrateUpdateMetadata } from "../domain/update-metadata.ts";
+import { applyUpstreamUpdateTime, migrateUpdateMetadata } from "../domain/update-metadata.ts";
 import { normalizeSurgeModuleHeader } from "../domain/surge-module-header.ts";
 import path from "node:path";
 import crypto from "node:crypto";
@@ -433,6 +433,14 @@ export async function publishLayout(
     }
     // Modified: 2026-11-08 (chance). Migrate retained timestamp headers after operand offsets are consumed.
     next = migrateUpdateMetadata(rewrite(next, state.artifacts), logical.endsWith(".snippet") && /^# Managed by: WayX Native QX\r?$/m.test(text));
+    // Modified: 2026-11-10 (chance). Correct retained/paused plugin wrappers from
+    // their frozen source dates too; Rule timestamps and manual assets stay independent.
+    if (/^(?:Adblock|Module)\//.test(logical)) {
+      const owner = catalog.find((e) => logical === "Adblock/Surge/" + e.surge || logical === "Adblock/Quantumult X/" + e.qx);
+      const upstream = owner ? await readOptional(safePath(root, "Resource/Loon/" + owner.file)) : null;
+      if (upstream) next = applyUpstreamUpdateTime(next, upstream.toString());
+      else if (/^# Managed by: WayX Native QX\r?$/m.test(next)) next = applyUpstreamUpdateTime(next, next);
+    }
     if (logical.endsWith(".sgmodule")) {
       // Modified: 2026-11-09 (chance). Publish parameter directives before ordinary comments.
       next = normalizeSurgeModuleHeader(next);

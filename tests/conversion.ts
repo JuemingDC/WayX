@@ -512,8 +512,8 @@ assert.deepEqual(firstStages,[
   'validate-qx',
   'validate-surge',
 ]);
-assert.match(first.qx,/^# Updated: 2026-10-01 12:00:00 \+08:00$/m);
-assert.match(first.surge,/^# Updated: 2026-10-01 12:00:00 \+08:00$/m);
+assert.match(first.qx,/^# Updated: 上游未标注$/m);
+assert.match(first.surge,/^# Updated: 上游未标注$/m);
 
 const rerunStages=[];
 const second=convertPluginWithContext(entry,source,context,{
@@ -532,10 +532,11 @@ assert.deepEqual(rerunStages,[
   'validate-qx',
   'validate-surge',
 ]);
-assert.match(second.qx,/^# Updated: 2026-10-01 12:01:00 \+08:00$/m);
-assert.match(second.surge,/^# Updated: 2026-10-01 12:01:00 \+08:00$/m);
-assert.notEqual(first.qx,second.qx);
-assert.notEqual(first.surge,second.surge);
+assert.match(second.qx,/^# Updated: 上游未标注$/m);
+assert.match(second.surge,/^# Updated: 上游未标注$/m);
+// Modified: 2026-11-10 (chance). Re-running conversion cannot manufacture an upstream update.
+assert.equal(first.qx,second.qx);
+assert.equal(first.surge,second.surge);
 
 console.log('Validated conversion runner contract passed');
 }

@@ -1,3 +1,5 @@
+// Modified: 2026-11-10 (chance). Native QX wrappers use author update dates and publish date-only source changes.
+import { upstreamUpdateTime } from "../domain/update-metadata.ts";
 import { QX_WAYX_REJECT_ACTIONS } from "../domain/core.ts";
 import { normalizeRemoteScriptEcho, bindKnownBackups } from "../parser/backup-references.ts";
 import { readJson } from "./transaction.ts";
@@ -362,10 +364,10 @@ export function repairNativeQxSource(source: {url: string; text: string}): strin
 // Modified: 2026-11-01 (chance). Native QX follows check/copy: retain executable text and order; only repair snippet formatting and the explicitly authorized source typo.
 export function mergeNativeQxSources(
   sources: any,
-  { name, author, stamp = nowConversionStamp(), diagnostics = [] }: any = {},
+  { name, author, diagnostics = [] }: any = {},
 ): any {
   const out: string[] = [
-    "# Name: " + name, "# Updated: " + stamp, "# Copied by: chance",
+    "# Name: " + name, "# Updated: " + upstreamUpdateTime(sources.map((source: any) => source.text).join("\n")), "# Copied by: chance",
     "# Source Authors: " + (author ?? ""), "# Category: app", NATIVE_QX_MARKER, "",
   ];
   for (const source of sources) {
@@ -649,14 +651,8 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
         "Refusing to overwrite unmanaged native QX resource: " + relative,
       );
     old.set(relative, previous);
-    let next: any = plan.outputs.get(relative) ?? null;
-    if (
-      previous &&
-      next &&
-      previous.replace(/^# Updated:.*$/m, "") ===
-        next.replace(/^# Updated:.*$/m, "")
-    )
-      next = previous;
+    // Modified: 2026-11-10 (chance). An upstream-only date change is publishable metadata.
+    const next: any = plan.outputs.get(relative) ?? null;
     if (next !== previous) writes.set(relative, next);
   }
   let state: any = null;

@@ -237,7 +237,8 @@ export async function runRules(
       const stamp =
           new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC",
         candidate = ruleHeader(file, metadata[file], stamp) + content;
-      if (before === null || withoutStamp(before) !== withoutStamp(candidate))
+      // Modified: 2026-11-10 (chance). Rule dates record every successful daily sync.
+      if (before !== candidate)
         changes.set(file, candidate);
     } else if (
       before === null ||

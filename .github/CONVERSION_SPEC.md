@@ -208,7 +208,7 @@ Surge native URL/Header/Body Rewrite/Map Local 能安全表示时优先；原生
 
 ## 2.12 Metadata、MITM 与注释
 
-MITM hostname 只作目标格式适配，不扩大范围。保留有效源注释、作者、名称、说明、图标及更新时间；目标添加 Converted、Converted by: chance、Category（适用目标）、Source、Target。QX section 标题使用注释形式；Surge 仅用支持的 Module metadata。
+MITM hostname 只作目标格式适配，不扩大范围。保留有效源注释、作者、名称、说明、图标及更新时间；目标添加 Updated（原作者日期）、Converted by: chance、Category（适用目标）和 Source。QX section 标题使用注释形式；Surge 仅用支持的 Module metadata。
 
 QX inline note 仅在一条注释唯一对应一条活动声明时使用，否则普通注释保留。拆分输出的源注释只绑定首条，不复制成多个伪一对一注释。注释源 Rewrite 只输出关闭的已支持形式，不复活活动规则，不生成无用 helper。
 
@@ -343,7 +343,7 @@ QX 原生 filter 文件仅输出 direct/reject/ssid：未受全代理约束的�
 
 两端文件布局独立：Quantumult X 每个合集始终单文件，逐条保留 native direct/ssid/reject，不能因 Surge 拆分而生成 QX 的 _direct/_proxy 文件。Surge 的 surge_output 显式规定 split/combined：Apple 根据 routing_layers 输出 apple_cn.list/apple_proxy.list；Microsoft、Steam 拆为 _direct.list/_proxy.list；Google、YouTube、Facebook/Meta、X、Telegram、GitHub、海外 AI、Netflix、Disney 输出单一 .list，主配置以代理策略引用，不生成 _direct/_proxy 两份；Spotify 的 DIRECT/PROXY 匹配项合并为 spotify.list，不带策略，由主配置统一选择一个策略，不宣称它能保留逐条分流差异。没有上游直连证据时不补造 Spotify DIRECT。其它合集存在不同策略时自动拆分；REJECT 家族独立输出，不能混入以代理引用的文件。Surge 外部 RULE-SET 均不带逐条策略。filterfix 的独立混合策略 dconf 规则继续生效。
 
-生成文件集中在 Rule/QuantumultX 与 Rule/Surge；英文头包括 Name、Updated、Source Authors、Category 以及来源。Category 固定为广告 Adblock、应用/AI/media 为 app、cn/proxy 为 general。只在实际输出或元信息变化时更新时间；只清理状态文件记录且仍有受管标记的旧产物，保护手写文件。下载、校验或事务失败保留旧产物；无法表示的声明保存在 rules-result.json.filtered；格式损坏等异常按来源/错误类型复用 Issue，已支持规则继续发布，不能将隔离项宣称已转换。完整成功且不再出现该类声明时关闭对应告警。
+生成文件集中在 Rule/QuantumultX 与 Rule/Surge；英文头包括 Name、Updated、Source Authors、Category 以及来源。Category 固定为广告 Adblock、应用/AI/media 为 app、cn/proxy 为 general。每次成功的每日规则同步刷新更新时间，即使规则正文不变；只清理状态文件记录且仍有受管标记的旧产物，保护手写文件。下载、校验或事务失败保留旧产物；无法表示的声明保存在 rules-result.json.filtered；格式损坏等异常按来源/错误类型复用 Issue，已支持规则继续发布，不能将隔离项宣称已转换。完整成功且不再出现该类声明时关闭对应告警。
 
 补充来源默认合并现有分类。注册表 `standalone: true` 的来源独立输出，不参与应用归属、cn/proxy 合并或跨来源去重；保留原注释、声明顺序与逐条策略。filterFix 使用独立分类 filterfix：QX 输出 Rule/QuantumultX/filterfix.list；Surge 输出 Rule/Surge/filterfix.dconf，在同一个 [Rule] 配置片段保留 DIRECT/PROXY，不生成 filterfix_direct/filterfix_proxy 或把该来源并入 cn。Surge 使用主配置 [Rule] 内的 #!include 引用片段，PROXY 须为主配置已定义的代理或策略组。外部 RULE-SET 与模块均不能用于保存该混合策略语义。依据：https://manual.nssurge.com/profile/format.html、https://manual.nssurge.com/rules/ruleset.html、https://manual.nssurge.com/profile/module.html。
 
@@ -469,6 +469,6 @@ Modified: 2026-11-05 (chance). 当前用户要求覆盖旧版共享三端脚本�
 
 Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。
 
-Modified: 2026-11-08 (chance). WayX 生成元数据只输出 `Updated`（更新时间），不再输出独立的 `Converted` 时间。已有自有时间段在最终发布时迁移；作者原注释、原生 QX 副本和原始备份不改写。日期仅在对应内容更新时改变，不因重复同步刷新其它文件的日期。
+Modified: 2026-11-10 (chance). Adblock、Module 的 `Updated` 复制上游明确标注的更新时间（如 `#!date`、`@UpdateTime`），不得使用拉取、复制或转换时钟；上游未标注时写“上游未标注”，合并多个来源时保留各不相同的原始日期。原生 QX 只修改 WayX 外层日期，原作者正文和原始备份逐字节保留；暂停来源以现存源快照修正自有日期，不恢复拉取。Rule 每次成功同步刷新当天更新时间。手工维护内容保留作者日期。
 
 Modified: 2026-11-08 (chance). 可莉目录接口在 Actions 返回 403 时，保留已登记条目并继续按原始 URL 拉取插件正文，不据此增删目录。目录监控明确记录 DEFERRED（succeeded=false），不更新旧镜像，不声称目录已刷新；官方规范及其它必需监控失败仍阻止发布。仅有既有可莉条目且官方目录返回 403 时允许此隔离，401、格式损坏及无既有目录仍失败。

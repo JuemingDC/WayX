@@ -115,7 +115,8 @@ try {
   );
   assert.ok(qx.includes("Adblock/Quantumult%20X/Kelee/Demo/ads.js"));
   // Modified: 2026-11-08 (chance). Header migration cannot shift script operand offsets.
-  assert.match(qx,/^# Updated: 2026-11-01$/m);
+  // Modified: 2026-11-10 (chance). A frozen source without an author date cannot inherit the former build date.
+  assert.match(qx,/^# Updated: 上游未标注$/m);
   assert.doesNotMatch(qx,/^# Converted:/m);
   const published = await fs.readFile(
     path.join(root, "Adblock/Quantumult X/Kelee/Demo/ads.js"),
