@@ -1526,9 +1526,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     return value;
                 }, set });
         }
-        return run.call(host.global, overlay);
+        const scope = new Proxy(overlay, { has: (t, key) => own(t, key), get: (t, key) => key === Symbol.unscopables ? undefined : Reflect.get(t, key), set: (t, key, value) => Reflect.set(t, key, value) });
+        const global = new Proxy(host.global, { get: (t, key) => own(overlay, key) ? overlay[key] : Reflect.get(t, key), set: (t, key, value) => own(overlay, key) ? Reflect.set(overlay, key, value) : Reflect.set(t, key, value), has: (t, key) => own(overlay, key) || Reflect.has(t, key) });
+        overlay.globalThis = global;
+        overlay.window = global;
+        overlay.global = global;
+        return run.call(global, scope);
     })(__wayxConfig, __wayxHost, function (__wayxScope) {
-        return (function ($request, URLSearchParams, $notification, $done) {
+        with (__wayxScope) {
             return (function () {
                 const url = $request.url;
                 const reqbody = $request.body;
@@ -1548,6 +1553,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 }
                 $done({});
             }).call(this);
-        }).call(this, Object.prototype.hasOwnProperty.call(__wayxScope, "$request") ? __wayxScope["$request"] : (typeof $request === 'undefined' ? undefined : $request), Object.prototype.hasOwnProperty.call(__wayxScope, "URLSearchParams") ? __wayxScope["URLSearchParams"] : (typeof URLSearchParams === 'undefined' ? undefined : URLSearchParams), Object.prototype.hasOwnProperty.call(__wayxScope, "$notification") ? __wayxScope["$notification"] : (typeof $notification === 'undefined' ? undefined : $notification), Object.prototype.hasOwnProperty.call(__wayxScope, "$done") ? __wayxScope["$done"] : (typeof $done === 'undefined' ? undefined : $done));
+        }
     });
 })();
