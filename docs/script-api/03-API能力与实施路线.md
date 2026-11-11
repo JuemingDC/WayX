@@ -71,3 +71,13 @@ ScriptHub 固定基线为 b943361f11be5795b3eb10f9cc4e5497642922fc，复用 faca
 - 通知按来源字段读取并映射；Loon 字符串链接保留，远程媒体按目标字段提交；QX 不新增无证据的内嵌图片选项。
 - 证据：[NSNanoCat fetch](https://github.com/NSNanoCat/util/blob/49e40678c71f5075f451bf9aea6a91fd5c75ca5f/polyfill/fetch.mjs)、[NSNanoCat notification](https://github.com/NSNanoCat/util/blob/3cfb2cac62f0331344a44ea7e3d0b18ce7c82058/lib/notification.mjs)、[Loon Script API](https://nsloon.app/docs/Script/script_api/)、[Surge API](https://manual.nssurge.com/scripting/api.html)。GitHub 实现是兼容依据，不等于本项目已经客户端实测。
 - 已复查存储、HTTP 选项/响应、完成值和环境信息：QX timeout 的实例使用 Promise.race，不能据此证明原生参数支持；Surge 无原生全量清空接口，ALPN/额外完成字段及缺失环境信息仍不伪造。
+
+## 按实际 API 生成（2026-11-11，chance）
+
+转换产物优先使用最小词法适配：只读请求 URL/正文和响应正文、以静态 body 对象完成的 Loon 脚本，不再携带整套运行时。保留单次完成提交、字节视图偏移和函数作用域；业务语句与字面量不改写。
+
+其余程序依据真实词法引用选择模块（正文/完成值、HTTP、存储、通知、环境、参数、标准能力），再保留模块依赖闭包。别名和动态成员访问保留对应完整 API；全局对象逃逸、动态全局键、eval/Function/this 保守保留兼容能力。只有生成器自有代码参与常量消解及依赖裁剪，不能从作者的具体 URL/数据分支猜测输出。
+
+目标客户端和固定布局在生成阶段确定；已不再使用的 host 字段、配置字段、编解码、压缩、AES、URL provider 不打包。复杂动态脚本可能仍需要较完整的兼容层。QX 原生脚本仍直拷；精简不会恢复暂停来源，也不会修改 Rule。
+
+验证包含完整 API 内核与精简产物的差分执行，并复用现有 API、provider、原生 QX 和发布集成测试。大小减少不作为语义一致的证明；未进行客户端实测。

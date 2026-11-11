@@ -422,7 +422,7 @@ Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无
 
 ## 2.25 备份、清单与验证
 
-Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与维护边界维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 映射真实 QX removeAllValues；Surge 忽略全量清空和通知延时，保留通知内容与支持的媒体字段。runtimePolicyVersion=8、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
+Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与维护边界维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 映射真实 QX removeAllValues；Surge 忽略全量清空和通知延时，保留通知内容与支持的媒体字段。runtimePolicyVersion=9、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
 
 测试由 API 契约、标准向量、模拟原生网络及合成备份事务组成；覆盖动态输入、Env 接收者、Header 操作、七方法/失败/并发、字节、存储和通知，并以独立 zlib 向量验证压缩和损坏输入；原生 QX clear-all 保留，Surge 无清空存储 API 时不以已见键集合模拟。不得用源脚本的具体语法分支堆叠测试放行清单。Rule/Rewrite/Module 的已有转换职责不受影响。
 
@@ -478,3 +478,5 @@ Modified: 2026-11-08 (chance). 可莉目录接口在 Actions 返回 403 时，�
 Modified: 2026-11-10 (chance). runtimePolicyVersion=8：以官方 Surge API 与 NSNanoCat/util 的 fetch/notification 主实现为依据，恢复 QX HTTP bodyBytes 双向转换及通知 open-url/media-url/update-pasteboard 字段。Loon openUrl/clipboard 对应 Surge action/url/text 与 QX open-url/update-pasteboard；Surge 单动作冲突时剪贴板优先。保留字节视图范围与原业务实参求值，未知 getter 不读取；不模拟通知 delay、不把库 Promise.race 当作 QX 原生 timeout 证据。证据及保留边界见 docs/script-api/03-API能力与实施路线.md。原生 QX 仍逐字节复制，自动产物由 Actions 发布。
 
 Modified: 2026-11-10 (chance). 原生 QX commit/tree 发现通过共享资源传输使用 Actions GITHUB_TOKEN；仅向精确 https://api.github.com origin 自动添加认证，不发送至 raw/第三方来源，不覆盖显式认证。sync 步骤显式注入 token，避免匿名 REST 配额导致全事务失败。保留原子发布与真实失败门禁；403 不自动认定来源失效，也不恢复已暂停可莉来源。
+
+Modified: 2026-11-11 (chance). runtimePolicyVersion=9：生成器按词法 API 引用选择依赖闭包；不以注释/字符串中的 API 字样拉入模块。正文/url 直接读取及静态 body 完成值采用小型词法适配，不注入 Proxy/with；保留完成单次提交、字节视图范围和来源作用域。其它程序保留所需 API 模块，构建时消解一致的客户端/布局常量，移除不可达 helper、未使用 host 捕获、provider 和配置字段。全局对象逃逸、动态全局键、eval/Function/this 等不可静态限定的访问保留完整所需兼容能力，不改写作者业务表达式，不承诺无法证明的细粒度裁剪。原生 QX 继续逐字节复制；作者源码与 API 证据独立归档。差分测试将精简结果与未裁剪 API 内核的输出、调用顺序和异常比较；由现有 Actions 生成和发布产物，不手改交付脚本。

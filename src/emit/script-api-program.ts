@@ -1,3 +1,10 @@
+// Modified: 2026-11-11 (chance). Emit body-only bridges or API dependency slices instead of one full runtime per script.
+import {
+  scriptApiUsage,
+  selectScriptApiRuntime,
+  selectScriptConfig,
+  emitBodyScript,
+} from "./script-api-selection.ts";
 import {
   headerPredicateRuntime,
   headerArgumentPrefix,
@@ -42,13 +49,28 @@ export function emitScriptApiProgram(
     table = fresh("__wayxContexts");
   // Modified: 2026-11-05 (chance). Include only providers referenced by executable source;
   // target-specific composition does not carry a Loon runtime or source metadata banner.
+  const usage = scriptApiUsage(tree);
+  // Opaque lookup retains the established provider dependency policy; a local
+  // `this` reference must not pull every large provider into an unrelated script.
   const executable = ts.createPrinter({ removeComments: true }).printFile(tree);
-  const uses = (pattern: RegExp) => pattern.test(executable);
-  const compression = uses(/\$utils|\b(?:gzip|ungzip)\b/);
-  const aes = uses(/\$crypto/);
-  const url = uses(/\b(?:URL|URLSearchParams)\b/);
+  const opaqueUses = (pattern: RegExp) =>
+    usage.dynamic && pattern.test(executable);
+  const compression =
+    usage.roots.has("$utils") || opaqueUses(/\$utils|\b(?:gzip|ungzip)\b/);
+  const aes = usage.roots.has("$crypto") || opaqueUses(/\$crypto/);
+  const url =
+    opaqueUses(/\b(?:URL|URLSearchParams)\b/) ||
+    usage.roots.has("URL") ||
+    usage.roots.has("URLSearchParams");
   let legacyEncoding = false;
   const inspectDecoder = (node: ts.Node) => {
+    if (
+      usage.roots.has("TextDecoder") &&
+      ts.isElementAccessExpression(node) &&
+      ts.isStringLiteralLike(node.argumentExpression) &&
+      node.argumentExpression.text === "TextDecoder"
+    )
+      legacyEncoding = true;
     // Modified: 2026-11-05 (chance). Aliased constructors may receive dynamic
     // encodings; omit the provider only for direct, known UTF-8 constructions.
     if (ts.isIdentifier(node) && node.text === "TextDecoder") {
@@ -69,7 +91,7 @@ export function emitScriptApiProgram(
   // QX fetch promises expose both bytes and decoded text on Surge's callback transport.
   // The response charset is runtime data, so its decoder is an active API dependency.
   legacyEncoding ||=
-    uses(/\$task/) &&
+    (opaqueUses(/\$task/) || usage.roots.has("$task")) &&
     Object.values(contexts).some(
       (targets: any) => targets.surge?.from === "qx",
     ) &&
@@ -86,12 +108,102 @@ export function emitScriptApiProgram(
           ),
       )
     : contexts;
+  const configs = Object.values(selected).flatMap((targets: any) =>
+    Object.values(targets),
+  );
+  const bodyOnly = emitBodyScript(source, usage, configs, fixedTarget, fresh);
+  if (bodyOnly) return bodyOnly;
+  const runtime = selectScriptApiRuntime(scriptApiRuntime, usage, configs);
+  const capture: Record<string, string> = {
+    global: "globalThis",
+    request: "typeof $request==='undefined'?undefined:$request",
+    response: "typeof $response==='undefined'?undefined:$response",
+    done: "$done",
+    task: "typeof $task==='undefined'?undefined:$task",
+    http: "typeof $httpClient==='undefined'?undefined:$httpClient",
+    prefs: "typeof $prefs==='undefined'?undefined:$prefs",
+    store: "typeof $persistentStore==='undefined'?undefined:$persistentStore",
+    notifyQx: "typeof $notify==='undefined'?undefined:$notify",
+    notify: "typeof $notification==='undefined'?undefined:$notification",
+    script: "typeof $script==='undefined'?undefined:$script",
+    argument: "typeof $argument==='undefined'?undefined:$argument",
+    environment: "typeof $environment==='undefined'?undefined:$environment",
+    loon: "typeof $loon==='undefined'?undefined:$loon",
+    setTimeout: "typeof setTimeout==='undefined'?undefined:setTimeout",
+    codecs: `(${scriptCodecs})((${legacyEncoding ? encodingProvider : "undefined"}),{TextDecoder:typeof TextDecoder==='undefined'?undefined:TextDecoder})`,
+    utils: "typeof $utils==='undefined'?undefined:$utils",
+    crypto: "typeof $crypto==='undefined'?undefined:$crypto",
+    compression: compression ? "(" + pakoRuntime + ")" : "undefined",
+    aes: aes ? "(" + aesProvider + ")" : "undefined",
+    url: url ? "(" + urlProvider + ")" : "undefined",
+  };
+  // Phase dispatch needs the real response presence even when the API is unused.
+  runtime.hostFields.add("response");
+  const headerGuard =
+    (!fixedTarget || fixedTarget === "surge") &&
+    configs.some((c: any) => c.from === "qx");
+  if (headerGuard) {
+    runtime.hostFields.add("argument");
+    runtime.hostFields.add("request");
+    runtime.hostFields.add("done");
+  }
+  const captures = [...runtime.hostFields]
+    .map((key) => key + ":" + capture[key])
+    .join(",");
+  const compact = Object.fromEntries(
+    Object.entries(selected).map(([role, targets]: [string, any]) => [
+      role,
+      Object.fromEntries(
+        Object.entries(targets).map(([client, value]) => [
+          client,
+          selectScriptConfig(value, runtime.configPaths),
+        ]),
+      ),
+    ]),
+  );
+  const single =
+    fixedTarget && Object.keys(compact).length === 1
+      ? Object.keys(compact)[0]
+      : null;
+  const configuration = single
+    ? `if((${host}.response===undefined?'request':'response')!==${JSON.stringify(single)})throw new Error('Unregistered HTTP source/target declaration');\nconst ${config}=${JSON.stringify(compact[single][fixedTarget!])};`
+    : `const ${table}=${JSON.stringify(compact)},${config}=${table}[${host}.response===undefined?'request':'response']?.[${target}];\nif(!${config})throw new Error('Unregistered HTTP source/target declaration');`;
+  const lexical = !usage.dynamic && !usage.globalAccess;
+  // Only adapted bindings become parameters. Unadapted globals must keep
+  // native lexical lookup and missing-name ReferenceErrors.
+  const adapted = new Set([
+    "$request",
+    "$response",
+    "$done",
+    "$script",
+    "$task",
+    "$httpClient",
+    "$prefs",
+    "$persistentStore",
+    "$notify",
+    "$notification",
+    "$argument",
+    "$environment",
+    "$loon",
+    "TextDecoder",
+    "TextEncoder",
+    "atob",
+    "btoa",
+    "URL",
+    "URLSearchParams",
+    ...(configs.some((c: any) => c.from === "loon")
+      ? ["$utils", "$crypto"]
+      : []),
+  ]);
+  const roots = [...usage.roots].filter((root) => adapted.has(root));
+  const invocation = lexical
+    ? `function(${scope}){return(function(${roots.join(",")}){return(function(){\n${source}\n}).call(this);}).call(this,${roots.map((root) => `Object.prototype.hasOwnProperty.call(${scope},${JSON.stringify(root)})?${scope}[${JSON.stringify(root)}]:(typeof ${root}==='undefined'?undefined:${root})`).join(",")});}`
+    : `function(${scope}){with(${scope}){return(function(){\n${source}\n}).call(this);}}`;
   return `/* SPDX-License-Identifier: GPL-3.0-only; ScriptHub derivative. */\n/* Adapter: GPL-3.0-only; derived from ScriptHub b943361f11be5795b3eb10f9cc4e5497642922fc. See vendor/script-hub/NOTICE.md. */\n(function(){
-const ${target}=${fixedTarget ? JSON.stringify(fixedTarget) : "typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null"};
-const ${host}={global:globalThis,request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,task:typeof $task==='undefined'?undefined:$task,http:typeof $httpClient==='undefined'?undefined:$httpClient,prefs:typeof $prefs==='undefined'?undefined:$prefs,store:typeof $persistentStore==='undefined'?undefined:$persistentStore,notifyQx:typeof $notify==='undefined'?undefined:$notify,notify:typeof $notification==='undefined'?undefined:$notification,script:typeof $script==='undefined'?undefined:$script,argument:typeof $argument==='undefined'?undefined:$argument,environment:typeof $environment==='undefined'?undefined:$environment,loon:typeof $loon==='undefined'?undefined:$loon,setTimeout:typeof setTimeout==='undefined'?undefined:setTimeout,codecs:(${scriptCodecs})((${legacyEncoding ? encodingProvider : "undefined"}),{TextDecoder:typeof TextDecoder==='undefined'?undefined:TextDecoder}),utils:typeof $utils==='undefined'?undefined:$utils,crypto:typeof $crypto==='undefined'?undefined:$crypto,compression:${compression ? "(" + pakoRuntime + ")" : "undefined"},aes:${aes ? "(" + aesProvider + ")" : "undefined"},url:${url ? "(" + urlProvider + ")" : "undefined"}};
-const ${table}=${JSON.stringify(selected)},${config}=${table}[${host}.response===undefined?'request':'response']?.[${target}];
-if(!${config})throw new Error('Unregistered HTTP source/target declaration');
-if(${target}==='surge'&&${config}.from==='qx'&&typeof ${host}.argument==='string'&&${host}.argument.startsWith(${JSON.stringify(headerArgumentPrefix)})){const p=JSON.parse(decodeURIComponent(${host}.argument.slice(${headerArgumentPrefix.length})));if(!(${headerPredicateRuntime})(p,${host}.request))return ${host}.done({});${host}.argument=undefined;}
-return (${scriptApiRuntime})(${config},${host},function(${scope}){with(${scope}){return (function(){\n${source}\n}).call(this);}});
+${single ? "" : `const ${target}=${fixedTarget ? JSON.stringify(fixedTarget) : "typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null"};`}
+const ${host}={${captures}};
+${configuration}
+${headerGuard ? `if(${fixedTarget ? JSON.stringify(fixedTarget) : target}==='surge'&&typeof ${host}.argument==='string'&&${host}.argument.startsWith(${JSON.stringify(headerArgumentPrefix)})){const p=JSON.parse(decodeURIComponent(${host}.argument.slice(${headerArgumentPrefix.length})));if(!(${headerPredicateRuntime})(p,${host}.request))return ${host}.done({});${host}.argument=undefined;}` : ""}
+return (${runtime.code})(${config},${host},${invocation});
 })();\n`;
 }
