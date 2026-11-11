@@ -232,3 +232,41 @@ vm.runInNewContext('const $custom="host lexical";' + lexicalPlan.code, {
   },
 });
 assert.equal(lexicalValue.body, "host lexical");
+
+// Lazy URL probing must happen inside author control flow, including try/catch.
+for (const source of [
+  'if(false)new URL("https://test/");$done({body:"untouched"});',
+  'try{new URL("https://test/")}catch(e){$done({body:e.message})}',
+]) {
+  const plan = pair(source, {
+    from: "loon",
+    to: "surge",
+    phase: "response",
+    responseBody: true,
+  });
+  let probes = 0,
+    value: any;
+  const globals: any = {
+    $response: { body: "x", status: 200 },
+    URLSearchParams,
+    $done: (v: any) => {
+      value = v;
+    },
+  };
+  Object.defineProperty(globals, "URL", {
+    get() {
+      probes++;
+      return class {
+        constructor() {
+          throw Error("lazy probe");
+        }
+      };
+    },
+  });
+  vm.runInNewContext(plan.code!, globals);
+  assert.equal(probes, source.startsWith("if") ? 0 : 2);
+  assert.equal(
+    value.body,
+    source.startsWith("if") ? "untouched" : "lazy probe",
+  );
+}

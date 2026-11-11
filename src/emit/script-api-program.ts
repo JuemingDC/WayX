@@ -1,6 +1,7 @@
 // Modified: 2026-11-11 (chance). Emit body-only bridges or API dependency slices instead of one full runtime per script.
 import {
   scriptApiUsage,
+  useLexicalScriptApis,
   selectScriptApiRuntime,
   selectScriptConfig,
   emitBodyScript,
@@ -168,7 +169,7 @@ export function emitScriptApiProgram(
   const configuration = single
     ? `if((${host}.response===undefined?'request':'response')!==${JSON.stringify(single)})throw new Error('Unregistered HTTP source/target declaration');\nconst ${config}=${JSON.stringify(compact[single][fixedTarget!])};`
     : `const ${table}=${JSON.stringify(compact)},${config}=${table}[${host}.response===undefined?'request':'response']?.[${target}];\nif(!${config})throw new Error('Unregistered HTTP source/target declaration');`;
-  const lexical = !usage.dynamic && !usage.globalAccess;
+  const lexical = useLexicalScriptApis(usage);
   // Only adapted bindings become parameters. Unadapted globals must keep
   // native lexical lookup and missing-name ReferenceErrors.
   const adapted = new Set([

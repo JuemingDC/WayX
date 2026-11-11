@@ -45,6 +45,13 @@ export function scriptApiUsage(tree: ts.SourceFile) {
   return { roots, dynamic, globalAccess, refs };
 }
 export type ScriptApiUsage = ReturnType<typeof scriptApiUsage>;
+// Modified: 2026-11-11 (chance). Preserve lazy standard-class getters inside
+// author control flow; lexical arguments would evaluate them before author try/if.
+export const useLexicalScriptApis = (usage: ScriptApiUsage) =>
+  !usage.dynamic &&
+  !usage.globalAccess &&
+  !usage.roots.has("URL") &&
+  !usage.roots.has("URLSearchParams");
 const parse = (text: string) =>
   ts.createSourceFile(
     "adapter.js",
@@ -204,7 +211,7 @@ export function selectScriptApiRuntime(
     .expression as ts.ParenthesizedExpression;
   const kernel = fn.expression as ts.FunctionExpression;
   let statements: ts.Statement[] = [];
-  const lexical = !usage.dynamic && !usage.globalAccess;
+  const lexical = useLexicalScriptApis(usage);
   for (const statement of kernel.body.statements) {
     if (lexical && ts.isReturnStatement(statement)) {
       statements.push(
