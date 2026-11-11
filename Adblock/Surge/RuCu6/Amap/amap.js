@@ -1,1200 +1,509 @@
-/* SPDX-License-Identifier: GPL-3.0-only; ScriptHub derivative. */
+/* SPDX-License-Identifier: GPL-3.0-only */
 (function () {
-    const __wayxTarget = "surge";
-    const __wayxHost = { global: globalThis, request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, task: typeof $task === 'undefined' ? undefined : $task, http: typeof $httpClient === 'undefined' ? undefined : $httpClient, prefs: typeof $prefs === 'undefined' ? undefined : $prefs, store: typeof $persistentStore === 'undefined' ? undefined : $persistentStore, notifyQx: typeof $notify === 'undefined' ? undefined : $notify, notify: typeof $notification === 'undefined' ? undefined : $notification, script: typeof $script === 'undefined' ? undefined : $script, argument: typeof $argument === 'undefined' ? undefined : $argument, environment: typeof $environment === 'undefined' ? undefined : $environment, loon: typeof $loon === 'undefined' ? undefined : $loon, setTimeout: typeof setTimeout === 'undefined' ? undefined : setTimeout, codecs: (function (legacy, native = {}) {
-            let legacyProvider;
-            const text = value => { if (typeof value === 'symbol')
-                throw new TypeError('Cannot convert a Symbol to a string'); return String(value); };
-            const dictionary = value => { if (value === undefined || value === null)
-                return {}; if (typeof value !== 'object' && typeof value !== 'function')
-                throw new TypeError('Options must be an object'); return value; };
-            const arrayBufferLength = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get;
-            const typedPrototype = Object.getPrototypeOf(Uint8Array.prototype), typedGet = name => Object.getOwnPropertyDescriptor(typedPrototype, name).get, dataGet = name => Object.getOwnPropertyDescriptor(DataView.prototype, name).get;
-            const typedName = Object.getOwnPropertyDescriptor(typedPrototype, Symbol.toStringTag).get, typedLength = typedGet('length'), typedBuffer = typedGet('buffer'), typedOffset = typedGet('byteOffset'), typedBytes = typedGet('byteLength'), dataBuffer = dataGet('buffer'), dataOffset = dataGet('byteOffset'), dataBytes = dataGet('byteLength'), setBytes = Uint8Array.prototype.set;
-            const inputBytes = value => {
-                if (value === undefined)
-                    return new Uint8Array(0);
-                let length;
-                try {
-                    length = arrayBufferLength.call(value);
-                }
-                catch { }
-                if (length !== undefined)
-                    return new Uint8Array(value, 0, length);
-                if (ArrayBuffer.isView(value)) {
-                    const typed = typedName.call(value) !== undefined, buffer = (typed ? typedBuffer : dataBuffer).call(value), offset = (typed ? typedOffset : dataOffset).call(value), size = (typed ? typedBytes : dataBytes).call(value);
-                    arrayBufferLength.call(buffer);
-                    return new Uint8Array(buffer, offset, size);
-                }
-                throw new TypeError('Expected an ArrayBuffer or view');
-            };
-            const scalar = (s, index) => { let cp = s.charCodeAt(index), read = 1; if (cp >= 0xd800 && cp <= 0xdbff) {
-                const low = s.charCodeAt(index + 1);
-                if (low >= 0xdc00 && low <= 0xdfff) {
-                    cp = 0x10000 + ((cp - 0xd800) << 10) + (low - 0xdc00);
-                    read = 2;
-                }
-                else
-                    cp = 0xfffd;
-            }
-            else if (cp >= 0xdc00 && cp <= 0xdfff)
-                cp = 0xfffd; return { cp, read }; };
-            const sequence = cp => cp <= 0x7f ? [cp] : cp <= 0x7ff ? [0xc0 | (cp >> 6), 0x80 | (cp & 63)] : cp <= 0xffff ? [0xe0 | (cp >> 12), 0x80 | ((cp >> 6) & 63), 0x80 | (cp & 63)] : [0xf0 | (cp >> 18), 0x80 | ((cp >> 12) & 63), 0x80 | ((cp >> 6) & 63), 0x80 | (cp & 63)];
-            const encoderInstances = new WeakSet();
-            const encoderBrand = value => { if (!encoderInstances.has(value))
-                throw new TypeError('Illegal TextEncoder receiver'); };
-            class TextEncoder {
-                constructor() { encoderInstances.add(this); }
-                get encoding() { encoderBrand(this); return 'utf-8'; }
-                encode(input = undefined) { encoderBrand(this); const s = input === undefined ? '' : text(input), out = []; for (let i = 0; i < s.length;) {
-                    const point = scalar(s, i);
-                    out.push(...sequence(point.cp));
-                    i += point.read;
-                } return new Uint8Array(out); }
-                encodeInto(input, destination) { encoderBrand(this); if (arguments.length < 2)
-                    throw new TypeError('Two arguments required'); const s = text(input); if (typedName.call(destination) !== 'Uint8Array')
-                    throw new TypeError('Uint8Array destination required'); const capacity = typedLength.call(destination); let read = 0, written = 0; while (read < s.length) {
-                    const point = scalar(s, read), bytes = sequence(point.cp);
-                    if (written + bytes.length > capacity)
-                        break;
-                    setBytes.call(destination, bytes, written);
-                    written += bytes.length;
-                    read += point.read;
-                } return { read, written }; }
-            }
-            const decoders = new WeakMap(), decoderState = value => { const state = decoders.get(value); if (!state)
-                throw new TypeError('Illegal TextDecoder receiver'); return state; };
-            const reset = state => { state.point = 0; state.seen = 0; state.need = 0; state.lower = 0x80; state.upper = 0xbf; };
-            class TextDecoder {
-                constructor(label = 'utf-8', options = undefined) {
-                    const encoding = text(label).replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/g, '').toLowerCase(), opts = dictionary(options), fatal = !!opts.fatal, ignoreBOM = !!opts.ignoreBOM;
-                    let delegate;
-                    if (typeof native.TextDecoder === 'function') {
-                        try {
-                            delegate = new native.TextDecoder(encoding, { fatal, ignoreBOM });
-                        }
-                        catch (error) {
-                            if (error.name !== 'RangeError')
-                                throw error;
-                        }
-                    }
-                    if (!delegate && !['utf-8', 'utf8', 'unicode-1-1-utf-8', 'unicode11utf8', 'unicode20utf8', 'x-unicode20utf8'].includes(encoding)) {
-                        if (!legacy)
-                            throw new RangeError('Encoding provider unavailable');
-                        if (!legacyProvider)
-                            legacyProvider = legacy();
-                        delegate = new legacyProvider.TextDecoder(encoding, { fatal, ignoreBOM });
-                    }
-                    const state = { fatal, ignoreBOM, delegate, stream: false, bom: false };
-                    reset(state);
-                    decoders.set(this, state);
-                }
-                get encoding() { const state = decoderState(this); return state.delegate ? state.delegate.encoding : 'utf-8'; }
-                get fatal() { return decoderState(this).fatal; }
-                get ignoreBOM() { return decoderState(this).ignoreBOM; }
-                decode(input = undefined, options = undefined) {
-                    const state = decoderState(this), bytes = inputBytes(input), opts = dictionary(options), stream = !!opts.stream, out = [];
-                    if (state.delegate)
-                        return state.delegate.decode(bytes, { stream });
-                    if (!state.stream) {
-                        reset(state);
-                        state.bom = false;
-                    }
-                    state.stream = stream;
-                    const emit = cp => { if (!state.bom) {
-                        state.bom = true;
-                        if (cp === 0xfeff && !state.ignoreBOM)
-                            return;
-                    } out.push(cp <= 0xffff ? String.fromCharCode(cp) : String.fromCharCode(0xd800 + ((cp - 0x10000) >> 10), 0xdc00 + ((cp - 0x10000) & 1023))); };
-                    const error = () => { reset(state); if (state.fatal)
-                        throw new TypeError('Invalid UTF-8 data'); emit(0xfffd); };
-                    for (let i = 0; i < bytes.length; i++) {
-                        const b = bytes[i];
-                        if (!state.need) {
-                            if (b <= 0x7f) {
-                                emit(b);
-                                continue;
-                            }
-                            if (b >= 0xc2 && b <= 0xdf) {
-                                state.need = 1;
-                                state.point = b & 31;
-                                continue;
-                            }
-                            if (b >= 0xe0 && b <= 0xef) {
-                                state.need = 2;
-                                state.point = b & 15;
-                                if (b === 0xe0)
-                                    state.lower = 0xa0;
-                                if (b === 0xed)
-                                    state.upper = 0x9f;
-                                continue;
-                            }
-                            if (b >= 0xf0 && b <= 0xf4) {
-                                state.need = 3;
-                                state.point = b & 7;
-                                if (b === 0xf0)
-                                    state.lower = 0x90;
-                                if (b === 0xf4)
-                                    state.upper = 0x8f;
-                                continue;
-                            }
-                            error();
-                            continue;
-                        }
-                        if (b < state.lower || b > state.upper) {
-                            error();
-                            i--;
-                            continue;
-                        }
-                        state.lower = 0x80;
-                        state.upper = 0xbf;
-                        state.point = (state.point << 6) | (b & 63);
-                        state.seen++;
-                        if (state.seen === state.need) {
-                            const cp = state.point;
-                            reset(state);
-                            emit(cp);
-                        }
-                    }
-                    if (!stream && state.need)
-                        error();
-                    return out.join('');
-                }
-            }
-            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-            class PortableInvalidCharacterError extends Error {
-                get name() { return 'InvalidCharacterError'; }
-                get code() { return 5; }
-                get [Symbol.toStringTag]() { return 'DOMException'; }
-            }
-            const invalid = () => { throw typeof DOMException === 'function' ? new DOMException('Invalid Base64 character', 'InvalidCharacterError') : new PortableInvalidCharacterError('Invalid Base64 character'); };
-            function atob(value) { if (!arguments.length)
-                throw new TypeError('One argument required'); let s = text(value).replace(/[\t\n\f\r ]/g, ''); if (s.length % 4 === 0)
-                s = s.replace(/==?$/, ''); if (s.length % 4 === 1 || /[^A-Za-z0-9+/]/.test(s))
-                invalid(); let bits = 0, buffer = 0, out = ''; for (let i = 0; i < s.length; i++) {
-                buffer = (buffer << 6) | alphabet.indexOf(s[i]);
-                bits += 6;
-                if (bits >= 8) {
-                    bits -= 8;
-                    out += String.fromCharCode((buffer >> bits) & 255);
-                }
-            } return out; }
-            function btoa(value) { if (!arguments.length)
-                throw new TypeError('One argument required'); const s = text(value); let out = ''; for (let i = 0; i < s.length; i += 3) {
-                const a = s.charCodeAt(i), b = s.charCodeAt(i + 1), c = s.charCodeAt(i + 2);
-                if (a > 255 || b > 255 || c > 255)
-                    invalid();
-                const word = (a << 16) | ((b || 0) << 8) | (c || 0);
-                out += alphabet[(word >>> 18) & 63] + alphabet[(word >>> 12) & 63] + (i + 1 < s.length ? alphabet[(word >>> 6) & 63] : '=') + (i + 2 < s.length ? alphabet[word & 63] : '=');
-            } return out; }
-            return { TextEncoder, TextDecoder, atob, btoa };
-        })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), utils: typeof $utils === 'undefined' ? undefined : $utils, crypto: typeof $crypto === 'undefined' ? undefined : $crypto, compression: undefined, aes: undefined, url: undefined };
-    const __wayxContexts = { "response": { "surge": { "phase": "response", "responseBody": true, "binary": false, "binaryKnown": true, "name": "amap.js", "from": "loon", "to": "surge", "apiPlan": { "version": 1, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"], "source": { "responseStatus": "status", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } }, "runtimePolicyVersion": 8, "omittedParameters": [] } } }, __wayxConfig = __wayxContexts[__wayxHost.response === undefined ? 'request' : 'response']?.[__wayxTarget];
-    if (!__wayxConfig)
+    if ((typeof $response === 'undefined' ? 'request' : 'response') !== "response")
         throw new Error('Unregistered HTTP source/target declaration');
-    if (__wayxTarget === 'surge' && __wayxConfig.from === 'qx' && typeof __wayxHost.argument === 'string' && __wayxHost.argument.startsWith("wayx_qx_header_v1=")) {
-        const p = JSON.parse(decodeURIComponent(__wayxHost.argument.slice(18)));
-        if (!(function (p, r) {
-            const re = new RegExp(p.pattern, p.flags), headers = Array.isArray(r.headers) ? r.headers : Object.keys(r.headers || {}).map(field => ({ field, value: r.headers[field] }));
-            if (p.kind === 'method')
-                return re.test(String(r.method || ''));
-            if (p.kind === 'field')
-                return headers.some(h => String(h.field).toLowerCase() === p.field.toLowerCase() && re.test(String(h.value)));
-            const path = String(r.url || '').replace(/^[a-z]+:\/\/[^/]+/i, '').split('#')[0] || '/';
-            return [String(r.method || ''), path, ...headers.flatMap(h => [String(h.field), String(h.value)])].some(value => re.test(value));
-        })(p, __wayxHost.request))
-            return __wayxHost.done({});
-        __wayxHost.argument = undefined;
+    const __wayxDone = $done;
+    let __wayxCompleted = false;
+    const __wayxBinary = value => { if (ArrayBuffer.isView(value))
+        return true; try {
+        Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get.call(value);
+        return true;
     }
-    return (function (config, host, run) {
-        const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
-        const fail = message => { throw new TypeError('WayX API: ' + message); };
-        const source = config.apiPlan.source, target = config.apiPlan.target;
-        const headers = (function (headers) {
-            if (headers === undefined || headers === null)
-                return headers;
-            if (typeof headers !== 'object' || Array.isArray(headers))
-                throw new TypeError('Header dictionary required');
-            const lowerCaseHeaders = Object.fromEntries(Object.entries(headers).map(([k, v]) => [k.toLowerCase(), v]));
-            const key = prop => typeof prop === 'string' ? prop.toLowerCase() : prop;
-            return new Proxy(lowerCaseHeaders, {
-                get: (target, prop, receiver) => {
-                    if (prop === 'hasOwnProperty')
-                        return name => Object.prototype.hasOwnProperty.call(target, key(name));
-                    if (prop === 'propertyIsEnumerable')
-                        return name => Object.prototype.propertyIsEnumerable.call(target, key(name));
-                    if (typeof prop === 'string' && !Object.prototype.hasOwnProperty.call(target, key(prop)) && ['toString', 'toLocaleString', 'valueOf', 'constructor'].includes(prop))
-                        return Reflect.get(target, prop, receiver);
-                    return Reflect.get(target, key(prop), receiver);
-                },
-                set: (target, prop, value) => Reflect.defineProperty(target, key(prop), { value, writable: true, enumerable: true, configurable: true }),
-                deleteProperty: (target, prop) => Reflect.deleteProperty(target, key(prop)),
-                has: (target, prop) => Reflect.has(target, key(prop)),
-                defineProperty: (target, prop, descriptor) => {
-                    if (key(prop) !== prop && !descriptor.configurable)
-                        throw new TypeError('Case-insensitive Header descriptors must be configurable');
-                    return Reflect.defineProperty(target, key(prop), descriptor);
-                },
-                getOwnPropertyDescriptor: (target, prop) => { const d = Reflect.getOwnPropertyDescriptor(target, key(prop)); return d && key(prop) !== prop ? Object.assign({}, d, { configurable: true }) : d; },
-            });
-        });
-        const abLength = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get, typed = Object.getPrototypeOf(Uint8Array.prototype), get = name => Object.getOwnPropertyDescriptor(typed, name).get, tag = Object.getOwnPropertyDescriptor(typed, Symbol.toStringTag).get;
-        const bytes = value => { let length; try {
-            length = abLength.call(value);
+    catch {
+        return false;
+    } };
+    const __wayxBytes = value => { let length; try {
+        length = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get.call(value);
+    }
+    catch { } if (length !== undefined)
+        return new Uint8Array(value, 0, length); if (ArrayBuffer.isView(value)) {
+        const proto = Object.getPrototypeOf(Uint8Array.prototype), typed = Object.getOwnPropertyDescriptor(proto, Symbol.toStringTag).get.call(value) !== undefined, get = name => Object.getOwnPropertyDescriptor(typed ? proto : DataView.prototype, name).get.call(value);
+        return new Uint8Array(get('buffer'), get('byteOffset'), get('byteLength'));
+    } throw new TypeError('WayX API: binary body requires BufferSource'); };
+    const __wayxView = value => { if (value === undefined)
+        return undefined; const result = Object.assign({}, value); if (__wayxBinary(value.bodyBytes) || __wayxBinary(value.body)) {
+        const data = value.body;
+        if (data !== undefined) {
+            result.body = __wayxBytes(data);
+            delete result.bodyBytes;
         }
-        catch { } if (length !== undefined)
-            return new Uint8Array(value, 0, length); if (ArrayBuffer.isView(value)) {
-            const isTyped = tag.call(value) !== undefined, getter = name => isTyped ? get(name).call(value) : Object.getOwnPropertyDescriptor(DataView.prototype, name).get.call(value);
-            return new Uint8Array(getter('buffer'), getter('byteOffset'), getter('byteLength'));
-        } return fail('binary body requires BufferSource'); };
-        const binary = value => { if (ArrayBuffer.isView(value))
-            return true; try {
-            abLength.call(value);
-            return true;
-        }
-        catch {
-            return false;
-        } };
-        const buffer = value => { const b = bytes(value); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength); };
-        const status = value => { if (typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599)
-            return value; const m = typeof value === 'string' && /^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value); if (m)
-            return status(Number(m[1])); return fail('invalid HTTP status'); };
-        const statusLine = value => { const code = status(value); return typeof value === 'string' ? value : 'HTTP/1.1 ' + code + ' ' + ({ 200: 'OK', 201: 'Created', 204: 'No Content', 301: 'Moved Permanently', 302: 'Found', 304: 'Not Modified', 400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found', 500: 'Internal Server Error' }[code] || 'Status'); };
-        const requestParts = value => typeof value === 'string' ? /^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value) : null;
-        const originalRequest = requestParts(host.request && host.request.url);
-        const rawPath = parts => parts[3] ? (parts[3][0] === '?' ? '/' : '') + parts[3] : '/';
-        function view(value, requestRole = false) {
-            if (value === undefined)
-                return undefined;
-            const result = Object.assign({}, value);
-            if (requestRole && config.from === 'qx' && originalRequest) {
-                if (!own(result, 'scheme'))
-                    result.scheme = originalRequest[1].toLowerCase();
-                if (!own(result, 'path'))
-                    result.path = rawPath(originalRequest);
+    } return result; };
+    return (function ($request, $response, $done) {
+        return (function () {
+            const url = $request.url;
+            if (!$response.body)
+                $done({});
+            let obj = JSON.parse($response.body);
+            if (url.includes("/aos/perception/publicTravel/beforeNavi")) {
+                if (obj?.data?.common_data?.bus_plan_bottom_event?.data?.length > 0) {
+                    obj.data.common_data.bus_plan_bottom_event.data = [];
+                }
+                if (obj?.data?.common_data?.bus_plan_bottom_tips?.data?.length > 0) {
+                    obj.data.common_data.bus_plan_bottom_tips.data = [];
+                }
+                if (obj?.data?.common_data?.bus_plan_segment_event?.data?.length > 0) {
+                    obj.data.common_data.bus_plan_segment_event.data = [];
+                }
+                if (obj?.data?.front_end?.assistant?.length > 0) {
+                    obj.data.front_end.assistant = [];
+                }
             }
-            if (value.headers !== undefined)
-                result.headers = headers(value.headers);
-            if (own(value, target.responseStatus)) {
-                result[source.responseStatus] = status(value[target.responseStatus]);
-                if (source.responseStatus !== target.responseStatus)
-                    delete result[target.responseStatus];
+            else if (url.includes("/boss/car/order/content_info")) {
+                if (obj?.data?.lubanData?.benefitsCard?.dataList?.length > 0) {
+                    obj.data.lubanData.benefitsCard.dataList = [];
+                }
+                if (obj?.data?.lubanData?.popup?.dataList?.length > 0) {
+                    obj.data.lubanData.popup.dataList = [];
+                }
+                if (obj?.data?.lubanData?.skin?.dataList?.length > 0) {
+                    obj.data.lubanData.skin.dataList = [];
+                }
+                if (obj?.data?.matrixData?.c3DiversionCard?.dataList?.length > 0) {
+                    obj.data.matrixData.c3DiversionCard.dataList = [];
+                }
+                if (obj?.data?.matrixData?.DiversionCard?.dataList?.length > 0) {
+                    obj.data.matrixData.DiversionCard.dataList = [];
+                }
             }
-            if (config.binary || binary(value.bodyBytes) || binary(value.body)) {
-                const valueBytes = target.binaryField === 'bodyBytes' ? value.bodyBytes : value.body;
-                if (valueBytes !== undefined) {
-                    const b = bytes(valueBytes);
-                    if (source.binaryField === 'bodyBytes') {
-                        result.bodyBytes = buffer(b);
-                        delete result.body;
-                    }
-                    else {
-                        result.body = b;
-                        delete result.bodyBytes;
+            else if (url.includes("/boss/order_web/friendly_information")) {
+                const items = ["banners", "carouselTips", "integratedBanners", "integratedTips", "skins", "skinAndTips", "tips"];
+                if (obj?.data?.["105"]) {
+                    for (let i of items) {
+                        delete obj.data["105"][i];
                     }
                 }
             }
-            return result;
-        }
-        const request = view(host.request, true), response = view(host.response);
-        let completed = false;
-        const finish = value => { completed = true; return host.done(value); };
-        function message(value, synthetic) {
-            if (!value || typeof value !== 'object' || Array.isArray(value))
-                return fail('completion requires an object');
-            const out = Object.assign({}, value);
-            if (!synthetic && config.phase === 'request' && config.from === 'qx' && own(out, 'path')) {
-                if (typeof out.path !== 'string' || !out.path.startsWith('/') || /[\r\n]/.test(out.path))
-                    fail('QX request path must be an absolute request path');
-                if (config.to !== 'qx') {
-                    if (!originalRequest)
-                        fail('QX request path requires the original HTTP URL');
-                    if (!own(out, 'url') || out.url === (host.request && host.request.url))
-                        out.url = originalRequest[1] + '://' + originalRequest[2] + out.path;
-                    delete out.path;
+            else if (url.includes("/bus/plan/integrate")) {
+                if (obj?.data?.banner_lists?.data?.length > 0) {
+                    obj.data.banner_lists.data = [];
+                }
+                if (obj?.data?.banner_lists?.tips?.length > 0) {
+                    obj.data.banner_lists.tips = [];
+                }
+                if (obj?.data?.mixed_plans?.data?.taxiPlans?.length > 0) {
+                    obj.data.mixed_plans.data.taxiPlans = [];
                 }
             }
-            if (own(out, 'statusCode') && !own(out, 'status'))
-                out.status = out.statusCode;
-            delete out.statusCode;
-            if (own(out, 'status'))
-                out.status = target.completion.statusEncoding === 'line' ? statusLine(out.status) : status(out.status);
-            if (own(out, 'headers')) {
-                if (!out.headers || typeof out.headers !== 'object' || Array.isArray(out.headers))
-                    fail('completion headers require a dictionary');
-                out.headers = Object.assign({}, headers(out.headers));
-            }
-            if (own(out, 'bodyBytes')) {
-                out.body = bytes(out.bodyBytes);
-                delete out.bodyBytes;
-            }
-            if (binary(out.body)) {
-                if (target.binaryField === 'bodyBytes') {
-                    out.bodyBytes = buffer(out.body);
-                    delete out.body;
-                }
-                else
-                    out.body = bytes(out.body);
-            }
-            if (config.to === 'surge')
-                for (const key of ['h2_trailers', 'node', 'policy'])
-                    delete out[key];
-            for (const key of Object.keys(out))
-                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...(config.to === 'qx' && config.phase === 'request' && !synthetic ? ['path'] : []), ...(config.to === 'loon' ? ['h2_trailers'] : [])].includes(key)) {
-                    if (config.to === 'qx')
-                        delete out[key];
-                    else
-                        fail('unmapped completion field: ' + key);
-                }
-            if (target.completion.synthetic === 'flat')
-                delete out.abort;
-            if (target.completion.synthetic === 'flat' && !synthetic && config.phase === 'response' && own(out, 'headers') && !own(out, 'body') && !own(out, 'bodyBytes') && config.responseBody)
-                fail('QX response-body requires body with changed headers');
-            return out;
-        }
-        function done(value) {
-            if (completed)
-                return;
-            if (['task', 'network', 'generic'].includes(config.phase))
-                return finish(value ?? {});
-            if (value === undefined || value === null)
-                return finish({});
-            if (value === response || value === request) {
-                const out = {};
-                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...(config.from === 'qx' && config.phase === 'request' ? ['path'] : []), source.responseStatus])
-                    if (own(value, k))
-                        out[k] = value[k];
-                value = out;
-            }
-            if (typeof value === 'string')
-                value = { body: value };
-            let synthetic = false, payload = value;
-            if (value && typeof value === 'object' && own(value, 'response')) {
-                synthetic = true;
-                payload = value.response;
-            }
-            else if (config.from === 'qx' && config.phase === 'echo')
-                synthetic = true;
-            const out = message(payload, synthetic);
-            if (synthetic) {
-                if (target.completion.synthetic === 'flat') {
-                    if (config.phase !== 'echo')
-                        fail('QX synthetic response requires an echo declaration');
-                    return finish(out);
-                }
-                return finish({ response: out });
-            }
-            return finish(out);
-        }
-        function transport(input, style, method) {
-            if (typeof input === 'string')
-                input = { url: input };
-            if (!input || typeof input !== 'object' || typeof input.url !== 'string')
-                return fail('HTTP request requires url');
-            const http = style === 'promise' ? config.apiPlan.qxHttp : source.http;
-            const options = style === 'promise' ? (input.opts || {}) : input;
-            const verb = String(method || input.method || 'GET').toLowerCase();
-            if (!config.apiPlan.methods.includes(verb))
-                return fail('HTTP method unavailable: ' + verb);
-            const req = { url: input.url };
-            if (own(input, 'headers'))
-                req.headers = Object.assign({}, input.headers);
-            let requestBody = own(input, 'body') ? input.body : undefined;
-            if (requestBody === undefined && style === 'promise' && own(input, 'bodyBytes'))
-                requestBody = input.bodyBytes;
-            if (requestBody !== undefined) {
-                if (binary(requestBody))
-                    req[target.binaryField] = target.http.style === 'promise' ? buffer(requestBody) : bytes(requestBody);
-                else
-                    req.body = requestBody;
-            }
-            const mapped = {};
-            for (const semantic of ['redirect', 'cookie', 'tls'])
-                mapped[target.http[semantic]] = own(options, http[semantic]) ? options[http[semantic]] : http.defaults[semantic];
-            if (own(options, http.policy))
-                mapped[target.http.policy] = options[http.policy] === http.directPolicy ? target.http.directPolicy : options[http.policy];
-            if (style === 'callback' && input['body-base64'] && config.from !== config.to) {
-                if (typeof input.body !== 'string')
-                    fail('body-base64 requires a String body');
-                const raw = host.codecs.atob(input.body), data = new Uint8Array(raw.length);
-                for (let i = 0; i < raw.length; i++)
-                    data[i] = raw.charCodeAt(i);
-                delete req.body;
-                req[target.binaryField] = target.http.style === 'promise' ? buffer(data) : data;
-            }
-            if (target.http.style === 'promise') {
-                req.method = verb.toUpperCase();
-                req.opts = mapped;
-                return { req, verb };
-            }
-            Object.assign(req, mapped);
-            if (http.timeoutMs !== null && target.http.timeoutMs !== null && own(input, 'timeout'))
-                req.timeout = input.timeout * http.timeoutMs / target.http.timeoutMs;
-            for (const key of ['binary-mode', 'body-base64', 'alpn'])
-                if (style === 'callback' && own(input, key) && (key !== 'body-base64' || config.from === config.to) && (key !== 'alpn' || config.from === config.to))
-                    req[key] = input[key];
-            if (style === 'promise')
-                req['binary-mode'] = true;
-            return { req, verb };
-        }
-        function taskFetch(input) {
-            return new Promise((resolve, reject) => {
-                let plan;
-                try {
-                    plan = transport(input, 'promise');
-                }
-                catch (error) {
-                    reject(error);
-                    return;
-                }
-                const normalize = (native, data) => {
-                    if (!native)
-                        return reject({ error: 'HTTP transport returned no response' });
-                    const out = { statusCode: status(native[target.responseStatus]), headers: headers(native.headers || {}) };
-                    if (binary(data)) {
-                        out.bodyBytes = buffer(data);
-                        if (target.http.style === 'promise' && typeof native.body === 'string')
-                            out.body = native.body;
-                        else {
-                            const type = out.headers['content-type'] || '', match = typeof type === 'string' && /charset\s*=\s*["']?([^;\s"']+)/i.exec(type);
-                            const encoding = match ? match[1] : 'utf-8', Decoder = host.codecs.TextDecoder;
-                            try {
-                                out.body = new Decoder(encoding).decode(bytes(data));
+            else if (url.includes("/c3frontend/af-hotel/page/main")) {
+                if (obj?.data?.modules) {
+                    if (obj?.data?.modules?.CouponPortalCard) {
+                        delete obj.data.modules.CouponPortalCard;
+                    }
+                    if (obj?.data?.modules?.CouponWidget) {
+                        delete obj.data.modules.CouponWidget;
+                    }
+                    if (obj?.data?.modules?.recommended_list) {
+                        delete obj.data.modules.recommended_list;
+                    }
+                    if (obj?.data?.modules?.user_filter_card) {
+                        const items = [
+                            "banner",
+                            "bannerList",
+                            "service_data",
+                            "sug_items_data"
+                        ];
+                        if (obj?.data?.modules?.user_filter_card?.data) {
+                            if (obj?.data?.modules?.user_filter_card?.data?.search_button_data?.rightbgText) {
+                                delete obj.data.modules.user_filter_card.data.search_button_data.rightbgText;
                             }
-                            catch (cause) {
-                                const error = new Error('HTTP response charset unavailable: ' + encoding);
-                                error.code = 'UNSUPPORTED_RESPONSE_CHARSET';
-                                error.encoding = encoding;
-                                error.cause = cause;
-                                throw error;
-                            }
-                        }
-                    }
-                    else
-                        out.body = data;
-                    resolve(out);
-                };
-                if (target.http.style === 'promise') {
-                    let promise;
-                    try {
-                        promise = host.task.fetch(plan.req);
-                    }
-                    catch (error) {
-                        reject(error);
-                        return;
-                    }
-                    Promise.resolve(promise).then(r => { try {
-                        normalize(r, r && (own(r, 'bodyBytes') ? r.bodyBytes : r.body));
-                    }
-                    catch (error) {
-                        reject(error);
-                    } }, reject);
-                }
-                else {
-                    const fn = host.http && host.http[plan.verb];
-                    if (typeof fn !== 'function') {
-                        reject(new TypeError('Native HTTP method unavailable'));
-                        return;
-                    }
-                    try {
-                        fn.call(host.http, plan.req, (error, r, data) => { if (error) {
-                            reject({ error });
-                            return;
-                        } try {
-                            normalize(r, data);
-                        }
-                        catch (e) {
-                            reject(e);
-                        } });
-                    }
-                    catch (error) {
-                        reject(error);
-                    }
-                }
-            });
-        }
-        const http = {};
-        for (const method of config.apiPlan.methods)
-            http[method] = (input, callback) => {
-                if (typeof callback !== 'function')
-                    return fail('HTTP callback required');
-                const plan = transport(input, 'callback', method);
-                if (target.http.style === 'callback') {
-                    const fn = host.http && host.http[method];
-                    if (typeof fn !== 'function')
-                        return fail('native HTTP method unavailable');
-                    return fn.call(host.http, plan.req, (error, r, data) => { if (error)
-                        return callback(error, r, data); if (!r)
-                        return callback('HTTP transport returned no response', r, data); const result = Object.assign({}, r, { headers: headers(r.headers || {}) }); result.status = status(r[target.responseStatus]); return callback(null, result, data); });
-                }
-                return host.task.fetch(plan.req).then(r => { if (!r)
-                    return callback('HTTP transport returned no response', undefined, undefined); return callback(null, { status: status(r.statusCode), headers: headers(r.headers || {}) }, input && input['binary-mode'] && own(r, 'bodyBytes') ? bytes(r.bodyBytes) : r.body); }, e => callback(e && e.error || e, undefined, undefined));
-            };
-        const nativeStore = target.store.style === 'prefs' ? host.prefs : host.store;
-        const storageKey = key => { if (key === undefined) {
-            const name = config.name || (config.from === config.to && host.script && host.script.name);
-            if (!name)
-                return fail('source storage default key needs source script name');
-            return name;
-        } if (typeof key !== 'string')
-            return fail('storage key must be String'); return key; };
-        const store = { read: key => nativeStore[target.store.read](storageKey(key)), write: (value, key) => {
-                key = storageKey(key);
-                if (value === null || (value === undefined && source.store.undefinedDeletes))
-                    return target.store.remove ? nativeStore[target.store.remove](key) : nativeStore[target.store.write](null, key);
-                if (typeof value !== 'string')
-                    return fail('storage value must be String or deletion marker');
-                return nativeStore[target.store.write](value, key);
-            } };
-        store.remove = () => { if (config.to === 'loon')
-            return host.store.remove(); if (config.to === 'qx') {
-            host.prefs.removeAllValues();
-            return;
-        } return; };
-        const prefKey = key => typeof key === 'string' ? key : fail('QX storage requires an explicit String key');
-        const prefs = { valueForKey: key => store.read(prefKey(key)), setValueForKey: (value, key) => { key = prefKey(key); if (typeof value !== 'string')
-                return fail('QX storage value must be String'); return store.write(value, key); }, removeValueForKey: key => target.store.remove ? nativeStore[target.store.remove](prefKey(key)) : nativeStore[target.store.write](null, prefKey(key)) };
-        if (config.from === 'qx' && config.to === 'surge')
-            prefs.removeAllValues = () => undefined;
-        if (config.from === 'qx' && config.to === 'qx' && host.prefs && typeof host.prefs.removeAllValues === 'function')
-            prefs.removeAllValues = host.prefs.removeAllValues.bind(host.prefs);
-        function notify(title = '', subtitle = '', body = '', option, delay) {
-            if (config.from === config.to)
-                return config.to === 'qx' ? host.notifyQx(title, subtitle, body, option) : host.notify.post(title, subtitle, body, option, delay);
-            const raw = typeof option === 'object' && option !== null ? option : {}, mapped = {};
-            const open = typeof option === 'string' && source.notification.stringLink ? option : raw[source.notification.open];
-            const copy = raw[config.from === 'qx' ? 'update-pasteboard' : 'clipboard'];
-            if (typeof open === 'string') {
-                if (config.to === 'surge') {
-                    mapped.action = 'open-url';
-                    mapped.url = open;
-                }
-                else
-                    mapped[target.notification.open] = open;
-            }
-            if (typeof copy === 'string') {
-                if (config.to === 'surge') {
-                    delete mapped.url;
-                    mapped.action = 'clipboard';
-                    mapped.text = copy;
-                }
-                else if (config.to === 'qx')
-                    mapped['update-pasteboard'] = copy;
-            }
-            const media = raw[source.notification.media];
-            if (typeof media === 'string') {
-                if (/^https?:\/\//i.test(media))
-                    mapped[target.notification.media] = media;
-                else if (config.to === 'surge') {
-                    const uri = /^data:(image\/(?:png|jpeg|gif|webp));base64,([\s\S]*)$/i.exec(media);
-                    let data = uri ? uri[2] : media, decoded;
-                    try {
-                        decoded = host.codecs.atob(data);
-                    }
-                    catch { }
-                    if (decoded) {
-                        let mime = decoded.startsWith('\x89PNG\r\n\x1a\n') ? 'image/png' : decoded.startsWith('\xff\xd8\xff') ? 'image/jpeg' : /^GIF8[79]a/.test(decoded) ? 'image/gif' : decoded.startsWith('RIFF') && decoded.slice(8, 12) === 'WEBP' ? 'image/webp' : undefined;
-                        if (mime && (!uri || uri[1].toLowerCase() === mime)) {
-                            mapped['media-base64'] = host.codecs.btoa(decoded);
-                            mapped['media-base64-mime'] = mime;
-                        }
-                    }
-                }
-            }
-            const post = config.to === 'qx' ? host.notifyQx : host.notify.post.bind(host.notify);
-            return Object.keys(mapped).length ? post(title, subtitle, body, mapped) : post(title, subtitle, body);
-        }
-        let argument = config.from === 'qx' || target.argument === 'absent' ? undefined : host.argument;
-        if (config.argumentSchema && config.argumentSchema.kind === 'object' && typeof argument === 'string')
-            argument = JSON.parse(argument);
-        const script = config.from === 'qx' ? undefined : Object.assign({}, host.script, { name: config.name || host.script && host.script.name });
-        if (script && script.startTime !== undefined) {
-            const t = script.startTime;
-            script.startTime = t instanceof Date ? t : new Date(t * 1000);
-        }
-        const environment = Object.assign({}, host.environment);
-        const overlay = {
-            $request: request, $response: response, $done: done, $script: script,
-            $task: config.to === 'qx' || config.from === 'qx' ? { fetch: taskFetch } : undefined, $httpClient: http,
-            $prefs: config.to === 'qx' || config.from === 'qx' ? prefs : undefined, $persistentStore: store,
-            $notify: config.to === 'qx' || config.from === 'qx' ? notify : undefined, $notification: { post: notify },
-            $argument: argument, $environment: environment, $loon: config.to === 'loon' ? host.loon : undefined,
-        };
-        if (config.from === 'loon') {
-            overlay.$utils = (function (host, config) {
-                if (config.from === config.to && host.utils && typeof host.utils.gzip === 'function' && typeof host.utils.ungzip === 'function')
-                    return host.utils;
-                let provider;
-                const proto = Object.getPrototypeOf(Uint8Array.prototype);
-                const get = name => Object.getOwnPropertyDescriptor(proto, name).get;
-                const tag = Object.getOwnPropertyDescriptor(proto, Symbol.toStringTag).get;
-                const byteView = value => {
-                    if (tag.call(value) !== 'Uint8Array')
-                        throw new TypeError('Loon gzip APIs require Uint8Array');
-                    return new Uint8Array(get('buffer').call(value), get('byteOffset').call(value), get('byteLength').call(value));
-                };
-                const run = (method, value) => {
-                    const input = byteView(value);
-                    if (config.from === config.to && host.utils && typeof host.utils[method] === 'function')
-                        return host.utils[method](input);
-                    try {
-                        if (!provider)
-                            provider = host.compression();
-                        if (method === 'gzip')
-                            return provider.gzip(input);
-                        const inflater = new provider.Inflate({ windowBits: 31 });
-                        inflater.push(input, true);
-                        if (inflater.err || !inflater.ended || !inflater.result)
-                            throw new Error(inflater.msg || 'incomplete gzip stream');
-                        return inflater.result;
-                    }
-                    catch (cause) {
-                        const error = new Error(method === 'gzip' ? 'gzip compression failed' : 'invalid gzip data');
-                        error.code = method === 'gzip' ? 'COMPRESSION_FAILED' : 'DECOMPRESSION_FAILED';
-                        error.cause = cause;
-                        throw error;
-                    }
-                };
-                return Object.assign({}, config.from === config.to ? host.utils : undefined, { gzip: value => run('gzip', value), ungzip: value => run('ungzip', value) });
-            })(host, config);
-            overlay.$crypto = (function (host, config) {
-                if (config.to === 'loon' && host.crypto && host.crypto.aes && typeof host.crypto.aes.encrypt === 'function' && typeof host.crypto.aes.decrypt === 'function')
-                    return host.crypto;
-                let provider;
-                const proto = Object.getPrototypeOf(Uint8Array.prototype), get = name => Object.getOwnPropertyDescriptor(proto, name).get, tag = Object.getOwnPropertyDescriptor(proto, Symbol.toStringTag).get;
-                const view = (value, name) => { if (tag.call(value) !== 'Uint8Array')
-                    throw new TypeError(name + ' requires Uint8Array'); return new Uint8Array(get('buffer').call(value), get('byteOffset').call(value), get('byteLength').call(value)); };
-                const invalid = message => { throw new TypeError('Loon AES: ' + message); };
-                const run = (method, value, options) => {
-                    const data = view(value, 'data');
-                    if (!options || typeof options !== 'object')
-                        invalid('options required');
-                    const rawMode = options.mode;
-                    if (typeof rawMode !== 'string')
-                        invalid('mode must be String');
-                    const mode = rawMode.toLowerCase();
-                    if (!['ecb', 'cbc', 'ctr', 'gcm'].includes(mode))
-                        invalid('unknown mode');
-                    const key = view(options.key, 'key');
-                    if (![16, 24, 32].includes(key.length))
-                        invalid('key length must be 16, 24 or 32');
-                    const rawIV = options.iv;
-                    let iv;
-                    if (mode === 'ecb') {
-                        if (rawIV !== undefined)
-                            invalid('ECB forbids IV');
-                    }
-                    else {
-                        iv = view(rawIV, 'iv');
-                        if (iv.length !== (mode === 'gcm' ? 12 : 16))
-                            invalid('invalid IV length');
-                    }
-                    const rawPadding = options.padding;
-                    let disablePadding = false;
-                    if (mode === 'ecb' || mode === 'cbc') {
-                        if (rawPadding !== undefined && typeof rawPadding !== 'string')
-                            invalid('padding must be String');
-                        const padding = rawPadding === undefined ? 'pkcs7' : rawPadding.toLowerCase();
-                        if (!['pkcs7', 'none'].includes(padding))
-                            invalid('unknown padding');
-                        disablePadding = padding === 'none';
-                        if (disablePadding && data.length % 16)
-                            invalid('unpadded data must be block aligned');
-                    }
-                    else if (rawPadding !== undefined)
-                        invalid('mode does not use padding');
-                    const rawAAD = options.aad, rawTag = options.tag;
-                    let aad, tagBytes;
-                    if (mode === 'gcm') {
-                        if (rawAAD !== undefined)
-                            aad = view(rawAAD, 'aad');
-                        if (method === 'decrypt') {
-                            tagBytes = view(rawTag, 'tag');
-                            if (tagBytes.length !== 16)
-                                invalid('GCM tag length must be 16');
-                        }
-                        else if (rawTag !== undefined)
-                            invalid('encrypt does not accept tag');
-                    }
-                    else if (rawAAD !== undefined || rawTag !== undefined)
-                        invalid('mode does not use AAD/tag');
-                    try {
-                        if (!provider)
-                            provider = host.aes();
-                        const cipher = mode === 'ecb' ? provider.ecb(key, { disablePadding }) : mode === 'cbc' ? provider.cbc(key, iv, { disablePadding }) : mode === 'ctr' ? provider.ctr(key, iv) : provider.gcm(key, iv, aad);
-                        let input = data;
-                        if (tagBytes) {
-                            input = new Uint8Array(data.length + 16);
-                            input.set(data);
-                            input.set(tagBytes, data.length);
-                        }
-                        const result = cipher[method](input);
-                        if (method === 'decrypt')
-                            return result;
-                        if (mode === 'gcm')
-                            return { ciphertext: result.slice(0, -16), tag: result.slice(-16) };
-                        return { ciphertext: result };
-                    }
-                    catch (cause) {
-                        const error = new Error('AES ' + method + ' failed');
-                        error.code = method === 'encrypt' ? 'ENCRYPTION_FAILED' : 'DECRYPTION_FAILED';
-                        error.cause = cause;
-                        throw error;
-                    }
-                };
-                return { aes: { encrypt: (data, options) => run('encrypt', data, options), decrypt: (data, options) => run('decrypt', data, options) } };
-            })(host, config);
-        }
-        overlay.TextDecoder = host.codecs.TextDecoder;
-        let standards;
-        for (const name of ['URL', 'URLSearchParams']) {
-            const set = value => Object.defineProperty(overlay, name, { value, writable: true, enumerable: true, configurable: true });
-            Object.defineProperty(overlay, name, { enumerable: true, configurable: true, get() { if (!standards)
-                    standards = typeof host.global.URL === 'function' && typeof host.global.URLSearchParams === 'function' ? { URL: host.global.URL, URLSearchParams: host.global.URLSearchParams } : host.url(host.codecs); const value = standards[name]; set(value); return value; }, set });
-        }
-        for (const name of ['TextEncoder', 'atob', 'btoa'])
-            if (typeof host.global[name] === 'undefined')
-                overlay[name] = host.codecs[name];
-        const scope = new Proxy(overlay, { has: (t, key) => own(t, key), get: (t, key) => key === Symbol.unscopables ? undefined : Reflect.get(t, key), set: (t, key, value) => Reflect.set(t, key, value) });
-        const global = new Proxy(host.global, { get: (t, key) => own(overlay, key) ? overlay[key] : Reflect.get(t, key), set: (t, key, value) => own(overlay, key) ? Reflect.set(overlay, key, value) : Reflect.set(t, key, value), has: (t, key) => own(overlay, key) || Reflect.has(t, key) });
-        overlay.globalThis = global;
-        overlay.window = global;
-        overlay.global = global;
-        return run.call(global, scope);
-    })(__wayxConfig, __wayxHost, function (__wayxScope) {
-        with (__wayxScope) {
-            return (function () {
-                const url = $request.url;
-                if (!$response.body)
-                    $done({});
-                let obj = JSON.parse($response.body);
-                if (url.includes("/aos/perception/publicTravel/beforeNavi")) {
-                    if (obj?.data?.common_data?.bus_plan_bottom_event?.data?.length > 0) {
-                        obj.data.common_data.bus_plan_bottom_event.data = [];
-                    }
-                    if (obj?.data?.common_data?.bus_plan_bottom_tips?.data?.length > 0) {
-                        obj.data.common_data.bus_plan_bottom_tips.data = [];
-                    }
-                    if (obj?.data?.common_data?.bus_plan_segment_event?.data?.length > 0) {
-                        obj.data.common_data.bus_plan_segment_event.data = [];
-                    }
-                    if (obj?.data?.front_end?.assistant?.length > 0) {
-                        obj.data.front_end.assistant = [];
-                    }
-                }
-                else if (url.includes("/boss/car/order/content_info")) {
-                    if (obj?.data?.lubanData?.benefitsCard?.dataList?.length > 0) {
-                        obj.data.lubanData.benefitsCard.dataList = [];
-                    }
-                    if (obj?.data?.lubanData?.popup?.dataList?.length > 0) {
-                        obj.data.lubanData.popup.dataList = [];
-                    }
-                    if (obj?.data?.lubanData?.skin?.dataList?.length > 0) {
-                        obj.data.lubanData.skin.dataList = [];
-                    }
-                    if (obj?.data?.matrixData?.c3DiversionCard?.dataList?.length > 0) {
-                        obj.data.matrixData.c3DiversionCard.dataList = [];
-                    }
-                    if (obj?.data?.matrixData?.DiversionCard?.dataList?.length > 0) {
-                        obj.data.matrixData.DiversionCard.dataList = [];
-                    }
-                }
-                else if (url.includes("/boss/order_web/friendly_information")) {
-                    const items = ["banners", "carouselTips", "integratedBanners", "integratedTips", "skins", "skinAndTips", "tips"];
-                    if (obj?.data?.["105"]) {
-                        for (let i of items) {
-                            delete obj.data["105"][i];
-                        }
-                    }
-                }
-                else if (url.includes("/bus/plan/integrate")) {
-                    if (obj?.data?.banner_lists?.data?.length > 0) {
-                        obj.data.banner_lists.data = [];
-                    }
-                    if (obj?.data?.banner_lists?.tips?.length > 0) {
-                        obj.data.banner_lists.tips = [];
-                    }
-                    if (obj?.data?.mixed_plans?.data?.taxiPlans?.length > 0) {
-                        obj.data.mixed_plans.data.taxiPlans = [];
-                    }
-                }
-                else if (url.includes("/c3frontend/af-hotel/page/main")) {
-                    if (obj?.data?.modules) {
-                        if (obj?.data?.modules?.CouponPortalCard) {
-                            delete obj.data.modules.CouponPortalCard;
-                        }
-                        if (obj?.data?.modules?.CouponWidget) {
-                            delete obj.data.modules.CouponWidget;
-                        }
-                        if (obj?.data?.modules?.recommended_list) {
-                            delete obj.data.modules.recommended_list;
-                        }
-                        if (obj?.data?.modules?.user_filter_card) {
-                            const items = [
-                                "banner",
-                                "bannerList",
-                                "service_data",
-                                "sug_items_data"
-                            ];
-                            if (obj?.data?.modules?.user_filter_card?.data) {
-                                if (obj?.data?.modules?.user_filter_card?.data?.search_button_data?.rightbgText) {
-                                    delete obj.data.modules.user_filter_card.data.search_button_data.rightbgText;
-                                }
-                                for (let i of items) {
-                                    delete obj.data.modules.user_filter_card.data[i];
-                                }
+                            for (let i of items) {
+                                delete obj.data.modules.user_filter_card.data[i];
                             }
                         }
                     }
                 }
-                else if (url.includes("/c3frontend/af-launch/page/main")) {
-                    if (obj?.data?.modules?.C1EndNaviEngine?.data) {
-                        obj.data.modules.C1EndNaviEngine.data = {};
-                    }
+            }
+            else if (url.includes("/c3frontend/af-launch/page/main")) {
+                if (obj?.data?.modules?.C1EndNaviEngine?.data) {
+                    obj.data.modules.C1EndNaviEngine.data = {};
                 }
-                else if (url.includes("/c3frontend/af-nearby/nearby")) {
-                    if (obj?.data?.modules?.banner) {
-                        obj.data.modules.banner = {};
-                    }
-                    if (obj?.data?.modules?.contentPoster) {
-                        obj.data.modules.contentPoster = {};
-                    }
+            }
+            else if (url.includes("/c3frontend/af-nearby/nearby")) {
+                if (obj?.data?.modules?.banner) {
+                    obj.data.modules.banner = {};
                 }
-                else if (url.includes("/faas/amap-navigation/card-service-plan-home")) {
-                    if (obj?.data?.children?.length > 0) {
-                        obj.data.children = obj.data.children.filter((i) => !i.hasOwnProperty("schema"));
-                    }
+                if (obj?.data?.modules?.contentPoster) {
+                    obj.data.modules.contentPoster = {};
                 }
-                else if (url.includes("/faas/amap-navigation/main-page")) {
-                    if (obj?.data?.cardList?.length > 0) {
-                        obj.data.cardList = obj.data.cardList.filter((i) => i?.dataKey === "ContinueNavigationCard" ||
-                            i?.dataKey === "FrequentLocation" ||
-                            i?.dataKey === "LoginCard");
-                    }
-                    if (obj?.data?.mapBizList?.length > 0) {
-                        obj.data.mapBizList = obj.data.mapBizList.filter((i) => i?.dataKey === "FindCarVirtualCard");
-                    }
+            }
+            else if (url.includes("/faas/amap-navigation/card-service-plan-home")) {
+                if (obj?.data?.children?.length > 0) {
+                    obj.data.children = obj.data.children.filter((i) => !i.hasOwnProperty("schema"));
                 }
-                else if (url.includes("/perception/drive/routeInfo")) {
-                    if (obj?.data?.tbt?.event?.length > 0) {
-                        obj.data.tbt.event = obj.data.tbt.event.filter((i) => !/ads-\d+/.test(i?.dynamic_id_s));
-                    }
-                    if (obj?.data?.front_end) {
-                        if (obj?.data?.front_end?.assistant) {
-                            delete obj.data.front_end.assistant;
-                        }
-                        if (obj?.data?.front_end?.guide_tips?.length > 0) {
-                            obj.data.front_end.guide_tips = obj.data.front_end.guide_tips.filter((i) => i?.biz_type !== "music");
-                        }
-                        if (obj?.data?.front_end?.download?.length > 0) {
-                            obj.data.front_end.download = obj.data.front_end.download.filter((i) => !/ads-\d+/.test(i?.dynamic_id_s));
-                        }
-                    }
+            }
+            else if (url.includes("/faas/amap-navigation/main-page")) {
+                if (obj?.data?.cardList?.length > 0) {
+                    obj.data.cardList = obj.data.cardList.filter((i) => i?.dataKey === "ContinueNavigationCard" ||
+                        i?.dataKey === "FrequentLocation" ||
+                        i?.dataKey === "LoginCard");
                 }
-                else if (url.includes("/perception/drive/routePlan")) {
-                    const items = [
-                        "assistant",
-                        "global_guide_data",
-                        "route_search",
-                        "start_button_tips"
-                    ];
-                    if (obj?.data?.front_end) {
-                        for (let i of items) {
-                            delete obj.data.front_end[i];
-                        }
+                if (obj?.data?.mapBizList?.length > 0) {
+                    obj.data.mapBizList = obj.data.mapBizList.filter((i) => i?.dataKey === "FindCarVirtualCard");
+                }
+            }
+            else if (url.includes("/perception/drive/routeInfo")) {
+                if (obj?.data?.tbt?.event?.length > 0) {
+                    obj.data.tbt.event = obj.data.tbt.event.filter((i) => !/ads-\d+/.test(i?.dynamic_id_s));
+                }
+                if (obj?.data?.front_end) {
+                    if (obj?.data?.front_end?.assistant) {
+                        delete obj.data.front_end.assistant;
                     }
-                    if (obj?.data?.tbt?.event?.length > 0) {
-                        obj.data.tbt.event = obj.data.tbt.event.filter((i) => !/ads-\d+/.test(i?.dynamic_id_s));
+                    if (obj?.data?.front_end?.guide_tips?.length > 0) {
+                        obj.data.front_end.guide_tips = obj.data.front_end.guide_tips.filter((i) => i?.biz_type !== "music");
                     }
                     if (obj?.data?.front_end?.download?.length > 0) {
                         obj.data.front_end.download = obj.data.front_end.download.filter((i) => !/ads-\d+/.test(i?.dynamic_id_s));
                     }
                 }
-                else if (url.includes("/promotion-web/resource")) {
-                    const items = [
-                        "alpha",
-                        "banner",
-                        "bravo",
-                        "bubble",
-                        "charlie",
-                        "icon",
-                        "other",
-                        "popup",
-                        "push",
-                        "tips"
-                    ];
-                    if (obj?.data) {
-                        for (let i of items) {
-                            delete obj.data[i];
+            }
+            else if (url.includes("/perception/drive/routePlan")) {
+                const items = [
+                    "assistant",
+                    "global_guide_data",
+                    "route_search",
+                    "start_button_tips"
+                ];
+                if (obj?.data?.front_end) {
+                    for (let i of items) {
+                        delete obj.data.front_end[i];
+                    }
+                }
+                if (obj?.data?.tbt?.event?.length > 0) {
+                    obj.data.tbt.event = obj.data.tbt.event.filter((i) => !/ads-\d+/.test(i?.dynamic_id_s));
+                }
+                if (obj?.data?.front_end?.download?.length > 0) {
+                    obj.data.front_end.download = obj.data.front_end.download.filter((i) => !/ads-\d+/.test(i?.dynamic_id_s));
+                }
+            }
+            else if (url.includes("/promotion-web/resource")) {
+                const items = [
+                    "alpha",
+                    "banner",
+                    "bravo",
+                    "bubble",
+                    "charlie",
+                    "icon",
+                    "other",
+                    "popup",
+                    "push",
+                    "tips"
+                ];
+                if (obj?.data) {
+                    for (let i of items) {
+                        delete obj.data[i];
+                    }
+                }
+            }
+            else if (url.includes("/shield/dsp/profile/index/nodefaasv3")) {
+                if (obj?.data) {
+                    if (obj?.data?.tipData) {
+                        delete obj.data.tipData;
+                    }
+                    if (obj?.data?.memberInfo) {
+                        delete obj.data.memberInfo;
+                    }
+                    if (obj?.data?.topMixedCard) {
+                        delete obj.data.topMixedCard;
+                    }
+                    if (obj?.data?.cardList?.length > 0) {
+                        obj.data.cardList = obj.data.cardList.filter((i) => i?.dataKey === "MyOrderCard");
+                    }
+                }
+            }
+            else if (url.includes("/shield/frogserver/aocs/updatable/")) {
+                const items = [
+                    "EndNaviC3AdCard",
+                    "Naviendpage_Searchwords",
+                    "SplashScreenControl",
+                    "TipsTaxiButton",
+                    "amapCoin",
+                    "favorites_info",
+                    "feedback_banner",
+                    "footprint",
+                    "his_input_tip",
+                    "home_business_position_config",
+                    "hotel_activity",
+                    "hotel_fillin_opt",
+                    "hotel_loop",
+                    "hotel_tipsicon",
+                    "hotsaleConfig",
+                    "landing_page_info",
+                    "map_weather_switch",
+                    "maplayers",
+                    "navi_end",
+                    "nearby_business_popup",
+                    "nearby_map_entry_guide",
+                    "nearby_map_pull_down_guide",
+                    "operation_layer",
+                    "poi_rec",
+                    "route_banner",
+                    "routeresult_banner",
+                    "sportsGroupConfig",
+                    "sportsHealthConfig",
+                    "sportsHomeConfig",
+                    "sportsRouteConfig",
+                    "sportsTaskConfig",
+                    "sports_walk",
+                    "small_biz_b2b_kb",
+                    "small_biz_case",
+                    "small_biz_fun",
+                    "small_biz_index",
+                    "small_biz_news",
+                    "splashscreen",
+                    "splashview_config",
+                    "sur_bar",
+                    "taxi_activity",
+                    "testflight_adiu",
+                    "tf_remind",
+                    "tips_bar_black_list",
+                    "vip"
+                ];
+                if (obj?.data) {
+                    for (let i of items) {
+                        if (obj?.data?.[i]) {
+                            obj.data[i] = { status: 1, version: "", value: "" };
                         }
                     }
                 }
-                else if (url.includes("/shield/dsp/profile/index/nodefaasv3")) {
-                    if (obj?.data) {
-                        if (obj?.data?.tipData) {
-                            delete obj.data.tipData;
-                        }
-                        if (obj?.data?.memberInfo) {
-                            delete obj.data.memberInfo;
-                        }
-                        if (obj?.data?.topMixedCard) {
-                            delete obj.data.topMixedCard;
-                        }
-                        if (obj?.data?.cardList?.length > 0) {
-                            obj.data.cardList = obj.data.cardList.filter((i) => i?.dataKey === "MyOrderCard");
-                        }
-                    }
+            }
+            else if (url.includes("/shield/search/common/coupon/info")) {
+                if (obj?.data) {
+                    obj.data = {};
                 }
-                else if (url.includes("/shield/frogserver/aocs/updatable/")) {
-                    const items = [
-                        "EndNaviC3AdCard",
-                        "Naviendpage_Searchwords",
-                        "SplashScreenControl",
-                        "TipsTaxiButton",
-                        "amapCoin",
-                        "favorites_info",
-                        "feedback_banner",
-                        "footprint",
-                        "his_input_tip",
-                        "home_business_position_config",
-                        "hotel_activity",
-                        "hotel_fillin_opt",
-                        "hotel_loop",
-                        "hotel_tipsicon",
-                        "hotsaleConfig",
-                        "landing_page_info",
-                        "map_weather_switch",
-                        "maplayers",
-                        "navi_end",
-                        "nearby_business_popup",
-                        "nearby_map_entry_guide",
-                        "nearby_map_pull_down_guide",
-                        "operation_layer",
-                        "poi_rec",
-                        "route_banner",
-                        "routeresult_banner",
-                        "sportsGroupConfig",
-                        "sportsHealthConfig",
-                        "sportsHomeConfig",
-                        "sportsRouteConfig",
-                        "sportsTaskConfig",
-                        "sports_walk",
-                        "small_biz_b2b_kb",
-                        "small_biz_case",
-                        "small_biz_fun",
-                        "small_biz_index",
-                        "small_biz_news",
-                        "splashscreen",
-                        "splashview_config",
-                        "sur_bar",
-                        "taxi_activity",
-                        "testflight_adiu",
-                        "tf_remind",
-                        "tips_bar_black_list",
-                        "vip"
-                    ];
-                    if (obj?.data) {
-                        for (let i of items) {
-                            if (obj?.data?.[i]) {
-                                obj.data[i] = { status: 1, version: "", value: "" };
-                            }
-                        }
-                    }
-                }
-                else if (url.includes("/shield/search/common/coupon/info")) {
-                    if (obj?.data) {
-                        obj.data = {};
-                    }
-                }
-                else if (url.includes("/shield/search/nearbyrec_smart")) {
-                    const items = ["head", "search_hot_words", "feed_rec"];
+            }
+            else if (url.includes("/shield/search/nearbyrec_smart")) {
+                const items = ["head", "search_hot_words", "feed_rec"];
+                if (obj?.data?.modules?.length > 0) {
                     if (obj?.data?.modules?.length > 0) {
-                        if (obj?.data?.modules?.length > 0) {
-                            obj.data.modules = obj.data.modules.filter((i) => items?.includes(i));
-                        }
+                        obj.data.modules = obj.data.modules.filter((i) => items?.includes(i));
                     }
                 }
-                else if (url.includes("/shield/search/poi/detail")) {
-                    const items = [
-                        "CouponBanner",
-                        "CouponPush",
-                        "activityRecommendation",
-                        "adStoreBigBannerModule",
-                        "adv_compliance_info",
-                        "adv_gift",
-                        "bigListBizRec",
-                        "bottomDescription",
-                        "brand_service",
-                        "brand_shop_bar",
-                        "businessQualifications",
-                        "carServiceCard",
-                        "checkIn",
-                        "check_in",
-                        "cityCardFeed",
-                        "city_discount",
-                        "claim",
-                        "co_branded_card",
-                        "collector_guide",
-                        "commonAiAgent",
-                        "commonGoodsShelf",
-                        "commonHkfMiniPortal",
-                        "common_coupon_bar",
-                        "common_coupon_card",
-                        "comprehensiveEditEntrance",
-                        "contributor",
-                        "cpt_service_shop",
-                        "dayTripList",
-                        "discount_commodity",
-                        "divergentRecommendModule",
-                        "enhanceCustomerServiceFixedBottom",
-                        "enhanceCustomerServicePoiModule",
-                        "everyOneToSee",
-                        "feedback",
-                        "first_surround_estate_tab",
-                        "footer_tel_button",
-                        "ggc_entry",
-                        "hkfMiniPortal",
-                        "hkfCalendarRecommend",
-                        "horizontalGoodsShelf",
-                        "hospital_strategy",
-                        "hotPlay",
-                        "hot_new_house_estate",
-                        "hot_shop",
-                        "hotelCoupon",
-                        "hotelList",
-                        "hotelMustRead",
-                        "houseAgentService",
-                        "houseList",
-                        "houseOfficeBrandIntroduction",
-                        "houseOfficeInfo",
-                        "houseOfficeNotice",
-                        "houseOfficeService",
-                        "houseShelf",
-                        "house_apart_info",
-                        "house_buying_agent",
-                        "house_coupon",
-                        "house_cp_clues",
-                        "house_cpt_coupon",
-                        "house_cpt_grab",
-                        "house_price",
-                        "house_price_v2",
-                        "house_rent_sale_agency",
-                        "image_banner",
-                        "kaMarketingCampaign",
-                        "kaProductMixServiceShelf",
-                        "ka_not_enter",
-                        "legSameIndustryRecEntrance",
-                        "legal_document",
-                        "listBizRec_1",
-                        "listBizRec_2",
-                        "matrix_banner",
-                        "merchantSettlement",
-                        "membership",
-                        "mini_hook_shelf",
-                        "movie_info",
-                        "multi_page_anchor",
-                        "nearbyGoodCar",
-                        "nearbyRecommendModule",
-                        "nearby_house",
-                        "nearby_new_house_estate",
-                        "nearby_office_estate",
-                        "nearby_old_sell_estate",
-                        "nearby_play_rec",
-                        "newGuest",
-                        "newRelatedRecommends",
-                        "new_operation_banner",
-                        "newsellhouse",
-                        "officerenthouse",
-                        "officesellhouse",
-                        "official_account",
-                        "official_account_hospital",
-                        "oldsellhouse",
-                        "operation_banner",
-                        "operator_card",
-                        "packageShelf",
-                        "parentBizRec",
-                        "parentPoiRecEntrance",
-                        "platformCustomerCommonModule",
-                        "platformCustomerComplianceInfo",
-                        "poiDetailBottomBar",
-                        "poiDetailBottomBarOperation",
-                        "poiDetailCommonConfig",
-                        "poiDetailNewBeltCardV2",
-                        "poiDetailNewBeltV2",
-                        "poiDetailWaterFeed",
-                        "poiDetailWaterFeedTitle",
-                        "poster_banner",
-                        "portal_entrance",
-                        "quickLink",
-                        "quickLinksPortal",
-                        "relatedRecommends",
-                        "renthouse",
-                        "rentSaleHouse",
-                        "rentsaleagencyv2",
-                        "rentsaleagencyv3",
-                        "rentsalehouse",
-                        "residentialOwners",
-                        "retainInfo",
-                        "reviews",
-                        "sameIndustryRecommendModule",
-                        "sameIndustry2RecommendModule",
-                        "scenic_coupon",
-                        "scenic_filter",
-                        "scenic_lifeservices",
-                        "scenic_mustplay",
-                        "scenic_play_guide",
-                        "scenic_recommend",
-                        "scenic_voice",
-                        "searchPlaMap",
-                        "second_surround_estate_tab",
-                        "service_shop",
-                        "shopBaseCase",
-                        "shopStdActivity",
-                        "shopStructGift",
-                        "shoppingMallEvent",
-                        "similarShelfRecommend",
-                        "similarShopRecommend",
-                        "smallListBizRec",
-                        "smallOrListBizRec",
-                        "societyPublicExperience",
-                        "subscription",
-                        "surroundHouseTab",
-                        "surroundOldSellHouse",
-                        "surroundRentHouse",
-                        "surround_facility",
-                        "surround_facility_new",
-                        "surround_house_tab",
-                        "surround_oldsellhouse",
-                        "surround_renthouse",
-                        "surround_rentoffice",
-                        "surround_selloffice",
-                        "thirdparty_info",
-                        "travelGuideRec",
-                        "uploadBar",
-                        "upload_bar",
-                        "verification",
-                        "waistRecEntrance",
-                        "waterFallFeed",
-                        "waterFallFeedTitle",
-                        "yellowPageAdRecommendModule"
-                    ];
-                    if (obj?.data?.modules) {
-                        if (obj?.data?.modules?.combineReviews?.data?.write_comment) {
-                            delete obj.data.modules.combineReviews.data.write_comment;
-                        }
-                        for (let i of items) {
-                            delete obj.data.modules[i];
-                        }
+            }
+            else if (url.includes("/shield/search/poi/detail")) {
+                const items = [
+                    "CouponBanner",
+                    "CouponPush",
+                    "activityRecommendation",
+                    "adStoreBigBannerModule",
+                    "adv_compliance_info",
+                    "adv_gift",
+                    "bigListBizRec",
+                    "bottomDescription",
+                    "brand_service",
+                    "brand_shop_bar",
+                    "businessQualifications",
+                    "carServiceCard",
+                    "checkIn",
+                    "check_in",
+                    "cityCardFeed",
+                    "city_discount",
+                    "claim",
+                    "co_branded_card",
+                    "collector_guide",
+                    "commonAiAgent",
+                    "commonGoodsShelf",
+                    "commonHkfMiniPortal",
+                    "common_coupon_bar",
+                    "common_coupon_card",
+                    "comprehensiveEditEntrance",
+                    "contributor",
+                    "cpt_service_shop",
+                    "dayTripList",
+                    "discount_commodity",
+                    "divergentRecommendModule",
+                    "enhanceCustomerServiceFixedBottom",
+                    "enhanceCustomerServicePoiModule",
+                    "everyOneToSee",
+                    "feedback",
+                    "first_surround_estate_tab",
+                    "footer_tel_button",
+                    "ggc_entry",
+                    "hkfMiniPortal",
+                    "hkfCalendarRecommend",
+                    "horizontalGoodsShelf",
+                    "hospital_strategy",
+                    "hotPlay",
+                    "hot_new_house_estate",
+                    "hot_shop",
+                    "hotelCoupon",
+                    "hotelList",
+                    "hotelMustRead",
+                    "houseAgentService",
+                    "houseList",
+                    "houseOfficeBrandIntroduction",
+                    "houseOfficeInfo",
+                    "houseOfficeNotice",
+                    "houseOfficeService",
+                    "houseShelf",
+                    "house_apart_info",
+                    "house_buying_agent",
+                    "house_coupon",
+                    "house_cp_clues",
+                    "house_cpt_coupon",
+                    "house_cpt_grab",
+                    "house_price",
+                    "house_price_v2",
+                    "house_rent_sale_agency",
+                    "image_banner",
+                    "kaMarketingCampaign",
+                    "kaProductMixServiceShelf",
+                    "ka_not_enter",
+                    "legSameIndustryRecEntrance",
+                    "legal_document",
+                    "listBizRec_1",
+                    "listBizRec_2",
+                    "matrix_banner",
+                    "merchantSettlement",
+                    "membership",
+                    "mini_hook_shelf",
+                    "movie_info",
+                    "multi_page_anchor",
+                    "nearbyGoodCar",
+                    "nearbyRecommendModule",
+                    "nearby_house",
+                    "nearby_new_house_estate",
+                    "nearby_office_estate",
+                    "nearby_old_sell_estate",
+                    "nearby_play_rec",
+                    "newGuest",
+                    "newRelatedRecommends",
+                    "new_operation_banner",
+                    "newsellhouse",
+                    "officerenthouse",
+                    "officesellhouse",
+                    "official_account",
+                    "official_account_hospital",
+                    "oldsellhouse",
+                    "operation_banner",
+                    "operator_card",
+                    "packageShelf",
+                    "parentBizRec",
+                    "parentPoiRecEntrance",
+                    "platformCustomerCommonModule",
+                    "platformCustomerComplianceInfo",
+                    "poiDetailBottomBar",
+                    "poiDetailBottomBarOperation",
+                    "poiDetailCommonConfig",
+                    "poiDetailNewBeltCardV2",
+                    "poiDetailNewBeltV2",
+                    "poiDetailWaterFeed",
+                    "poiDetailWaterFeedTitle",
+                    "poster_banner",
+                    "portal_entrance",
+                    "quickLink",
+                    "quickLinksPortal",
+                    "relatedRecommends",
+                    "renthouse",
+                    "rentSaleHouse",
+                    "rentsaleagencyv2",
+                    "rentsaleagencyv3",
+                    "rentsalehouse",
+                    "residentialOwners",
+                    "retainInfo",
+                    "reviews",
+                    "sameIndustryRecommendModule",
+                    "sameIndustry2RecommendModule",
+                    "scenic_coupon",
+                    "scenic_filter",
+                    "scenic_lifeservices",
+                    "scenic_mustplay",
+                    "scenic_play_guide",
+                    "scenic_recommend",
+                    "scenic_voice",
+                    "searchPlaMap",
+                    "second_surround_estate_tab",
+                    "service_shop",
+                    "shopBaseCase",
+                    "shopStdActivity",
+                    "shopStructGift",
+                    "shoppingMallEvent",
+                    "similarShelfRecommend",
+                    "similarShopRecommend",
+                    "smallListBizRec",
+                    "smallOrListBizRec",
+                    "societyPublicExperience",
+                    "subscription",
+                    "surroundHouseTab",
+                    "surroundOldSellHouse",
+                    "surroundRentHouse",
+                    "surround_facility",
+                    "surround_facility_new",
+                    "surround_house_tab",
+                    "surround_oldsellhouse",
+                    "surround_renthouse",
+                    "surround_rentoffice",
+                    "surround_selloffice",
+                    "thirdparty_info",
+                    "travelGuideRec",
+                    "uploadBar",
+                    "upload_bar",
+                    "verification",
+                    "waistRecEntrance",
+                    "waterFallFeed",
+                    "waterFallFeedTitle",
+                    "yellowPageAdRecommendModule"
+                ];
+                if (obj?.data?.modules) {
+                    if (obj?.data?.modules?.combineReviews?.data?.write_comment) {
+                        delete obj.data.modules.combineReviews.data.write_comment;
+                    }
+                    for (let i of items) {
+                        delete obj.data.modules[i];
                     }
                 }
-                else if (url.includes("/shield/search_bff/hotword")) {
-                    if (obj?.data?.headerHotWord?.length > 0) {
-                        obj.data.headerHotWord = [];
+            }
+            else if (url.includes("/shield/search_bff/hotword")) {
+                if (obj?.data?.headerHotWord?.length > 0) {
+                    obj.data.headerHotWord = [];
+                }
+            }
+            else if (url.includes("/shield/search_poi/search/sp") || url.includes("/shield/search_poi/mps")) {
+                if (obj?.data?.list_data) {
+                    let list = obj.data.list_data.content[0];
+                    if (list?.hookInfo) {
+                        let hookData = list.hookInfo.data;
+                        if (hookData?.header) {
+                            delete hookData.header;
+                        }
+                        if (hookData?.house_info) {
+                            delete hookData.house_info;
+                        }
+                    }
+                    if (list?.map_bottom_bar?.hotel) {
+                        delete list.map_bottom_bar.hotel;
+                    }
+                    if (list?.poi?.item_info?.tips_bottombar_button?.hotel) {
+                        delete list.poi.item_info.tips_bottombar_button.hotel;
+                    }
+                    if (list?.tips_operation_info) {
+                        delete list.tips_operation_info;
+                    }
+                    if (list?.bottom?.bottombar_button?.hotel) {
+                        delete list.bottom.bottombar_button.hotel;
+                    }
+                    if (list?.card?.card_id === "SearchCardBrand" && list?.item_type === "brandAdCard") {
+                        delete list.card;
+                    }
+                    if (list?.card?.card_id === "NearbyGroupBuy" && list?.item_type === "toplist") {
+                        delete list.card;
+                    }
+                    if (list?.card?.card_id === "ImageBanner" && list?.item_type === "ImageBanner") {
+                        delete list.card;
                     }
                 }
-                else if (url.includes("/shield/search_poi/search/sp") || url.includes("/shield/search_poi/mps")) {
-                    if (obj?.data?.list_data) {
-                        let list = obj.data.list_data.content[0];
+                else if (obj?.data?.district?.poi_list) {
+                    let poi = obj.data.district.poi_list[0];
+                    if (poi?.transportation) {
+                        delete poi.transportation;
+                    }
+                    if (poi?.feed_rec_tab) {
+                        delete poi.feed_rec_tab;
+                    }
+                }
+                else if (obj?.data?.modules) {
+                    if (obj?.data?.modules?.not_parse_result?.data?.list_data) {
+                        let list = obj.data.modules.not_parse_result.data.list_data.content[0];
                         if (list?.hookInfo) {
                             let hookData = list.hookInfo.data;
                             if (hookData?.header) {
@@ -1216,134 +525,100 @@
                         if (list?.bottom?.bottombar_button?.hotel) {
                             delete list.bottom.bottombar_button.hotel;
                         }
-                        if (list?.card?.card_id === "SearchCardBrand" && list?.item_type === "brandAdCard") {
-                            delete list.card;
-                        }
-                        if (list?.card?.card_id === "NearbyGroupBuy" && list?.item_type === "toplist") {
-                            delete list.card;
-                        }
-                        if (list?.card?.card_id === "ImageBanner" && list?.item_type === "ImageBanner") {
-                            delete list.card;
-                        }
                     }
-                    else if (obj?.data?.district?.poi_list) {
-                        let poi = obj.data.district.poi_list[0];
-                        if (poi?.transportation) {
-                            delete poi.transportation;
-                        }
-                        if (poi?.feed_rec_tab) {
-                            delete poi.feed_rec_tab;
-                        }
-                    }
-                    else if (obj?.data?.modules) {
-                        if (obj?.data?.modules?.not_parse_result?.data?.list_data) {
-                            let list = obj.data.modules.not_parse_result.data.list_data.content[0];
-                            if (list?.hookInfo) {
-                                let hookData = list.hookInfo.data;
-                                if (hookData?.header) {
-                                    delete hookData.header;
-                                }
-                                if (hookData?.house_info) {
-                                    delete hookData.house_info;
-                                }
-                            }
-                            if (list?.map_bottom_bar?.hotel) {
-                                delete list.map_bottom_bar.hotel;
-                            }
-                            if (list?.poi?.item_info?.tips_bottombar_button?.hotel) {
-                                delete list.poi.item_info.tips_bottombar_button.hotel;
-                            }
-                            if (list?.tips_operation_info) {
-                                delete list.tips_operation_info;
-                            }
-                            if (list?.bottom?.bottombar_button?.hotel) {
-                                delete list.bottom.bottombar_button.hotel;
-                            }
-                        }
-                        if (obj?.data?.modules?.list_data?.data) {
-                            let list = obj.data.modules.list_data.data;
-                            if (list?.content?.length > 0) {
-                                list.content = list.content.filter((i) => !["brandAdCard", "toplist_al"].includes(i?.item_type));
-                            }
+                    if (obj?.data?.modules?.list_data?.data) {
+                        let list = obj.data.modules.list_data.data;
+                        if (list?.content?.length > 0) {
+                            list.content = list.content.filter((i) => !["brandAdCard", "toplist_al"].includes(i?.item_type));
                         }
                     }
                 }
-                else if (url.includes("/shield/search_poi/sug")) {
-                    if (obj?.tip_list) {
-                        let newLists = [];
-                        if (obj?.tip_list?.length > 0) {
-                            for (let item of obj.tip_list) {
-                                if (["12"].includes(item?.tip?.datatype_spec) ||
-                                    ["ad", "poi_ad", "toplist"].includes(item?.tip?.result_type) ||
-                                    ["ad", "exct_query_sug_merge_theme", "query_sug_merge_theme", "sp"].includes(item?.tip?.task_tag)) {
-                                    continue;
-                                }
-                                else {
-                                    newLists.push(item);
-                                }
+            }
+            else if (url.includes("/shield/search_poi/sug")) {
+                if (obj?.tip_list) {
+                    let newLists = [];
+                    if (obj?.tip_list?.length > 0) {
+                        for (let item of obj.tip_list) {
+                            if (["12"].includes(item?.tip?.datatype_spec) ||
+                                ["ad", "poi_ad", "toplist"].includes(item?.tip?.result_type) ||
+                                ["ad", "exct_query_sug_merge_theme", "query_sug_merge_theme", "sp"].includes(item?.tip?.task_tag)) {
+                                continue;
                             }
-                            obj.tip_list = newLists;
-                        }
-                    }
-                    else if (obj?.city_list) {
-                        let newLists = [];
-                        if (obj?.city_list?.length > 0) {
-                            for (let item of obj.city_list) {
-                                let newTips = [];
-                                if (item?.tip_list?.length > 0) {
-                                    for (let ii of item.tip_list) {
-                                        if (["12"].includes(ii?.tip?.datatype_spec)) {
-                                            continue;
-                                        }
-                                        else if (["ad", "poi_ad"].includes(ii?.tip?.result_type)) {
-                                            continue;
-                                        }
-                                        else {
-                                            newTips.push(ii);
-                                        }
-                                    }
-                                    item.tip_list = newTips;
-                                }
+                            else {
                                 newLists.push(item);
                             }
-                            obj.city_list = newLists;
                         }
+                        obj.tip_list = newLists;
                     }
                 }
-                else if (url.includes("/shield/search_poi/tips_operation_location")) {
-                    if (obj?.data?.coupon) {
-                        delete obj.data.coupon;
-                    }
-                    const items = [
-                        "belt",
-                        "common_float_bar",
-                        "common_image_banner",
-                        "coupon_discount_float_bar",
-                        "coupon_float_bar",
-                        "discount_coupon",
-                        "image_cover_bar",
-                        "mood_coupon_banner",
-                        "operation_brand",
-                        "promotion_wrap_card",
-                        "tips_top_banner"
-                    ];
-                    if (obj?.data?.modules) {
-                        for (let i of items) {
-                            delete obj.data.modules[i];
+                else if (obj?.city_list) {
+                    let newLists = [];
+                    if (obj?.city_list?.length > 0) {
+                        for (let item of obj.city_list) {
+                            let newTips = [];
+                            if (item?.tip_list?.length > 0) {
+                                for (let ii of item.tip_list) {
+                                    if (["12"].includes(ii?.tip?.datatype_spec)) {
+                                        continue;
+                                    }
+                                    else if (["ad", "poi_ad"].includes(ii?.tip?.result_type)) {
+                                        continue;
+                                    }
+                                    else {
+                                        newTips.push(ii);
+                                    }
+                                }
+                                item.tip_list = newTips;
+                            }
+                            newLists.push(item);
                         }
+                        obj.city_list = newLists;
                     }
                 }
-                else if (url.includes("/valueadded/alimama/splash_screen")) {
-                    if (obj?.data?.ad?.length > 0) {
-                        for (let item of obj.data.ad) {
-                            item.set.setting.display_time = 0;
-                            item.creative[0].start_time = 3818332800;
-                            item.creative[0].end_time = 3818419199;
-                        }
+            }
+            else if (url.includes("/shield/search_poi/tips_operation_location")) {
+                if (obj?.data?.coupon) {
+                    delete obj.data.coupon;
+                }
+                const items = [
+                    "belt",
+                    "common_float_bar",
+                    "common_image_banner",
+                    "coupon_discount_float_bar",
+                    "coupon_float_bar",
+                    "discount_coupon",
+                    "image_cover_bar",
+                    "mood_coupon_banner",
+                    "operation_brand",
+                    "promotion_wrap_card",
+                    "tips_top_banner"
+                ];
+                if (obj?.data?.modules) {
+                    for (let i of items) {
+                        delete obj.data.modules[i];
                     }
                 }
-                $done({ body: JSON.stringify(obj) });
-            }).call(this);
+            }
+            else if (url.includes("/valueadded/alimama/splash_screen")) {
+                if (obj?.data?.ad?.length > 0) {
+                    for (let item of obj.data.ad) {
+                        item.set.setting.display_time = 0;
+                        item.creative[0].start_time = 3818332800;
+                        item.creative[0].end_time = 3818419199;
+                    }
+                }
+            }
+            $done({ body: JSON.stringify(obj) });
+        }).call(this);
+    }).call(globalThis, __wayxView(typeof $request === 'undefined' ? undefined : $request), __wayxView(typeof $response === 'undefined' ? undefined : $response), value => {
+        if (__wayxCompleted)
+            return;
+        const result = value == null ? {} : Object.assign({}, value);
+        if (__wayxBinary(result.body)) {
+            const data = __wayxBytes(result.body);
+            result.body = data;
         }
+        __wayxCompleted = true;
+        return __wayxDone(result);
     });
 })();
