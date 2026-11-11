@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/bilibiliManga.js",
-  "sourceSha256": "26b6acfbe1e65cd74372d658d15869ee80cd9b04abb75f0e986eba4506fda82e",
+  "sourceSha256": "17035efc2c7b5d367a5f6e70ca2e0f7f23aa342c9edb3bf044587e5ee073f261",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "26b6acfbe1e65cd74372d658d15869ee80cd9b04abb75f0e986eba4506fda82e",
+    "sha256": "17035efc2c7b5d367a5f6e70ca2e0f7f23aa342c9edb3bf044587e5ee073f261",
     "operations": [
       {
         "api": "$request.url",
@@ -59,9 +59,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 2104,
-        "end": 2158,
-        "line": 70,
+        "start": 2003,
+        "end": 2068,
+        "line": 68,
         "column": 5,
         "members": [
           "$done"
@@ -70,9 +70,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 2195,
-        "end": 2208,
-        "line": 75,
+        "start": 2108,
+        "end": 2121,
+        "line": 73,
         "column": 1,
         "members": [
           "$done"
@@ -90,7 +90,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "26b6acfbe1e65cd74372d658d15869ee80cd9b04abb75f0e986eba4506fda82e",
+        "analysisSourceSha256": "17035efc2c7b5d367a5f6e70ca2e0f7f23aa342c9edb3bf044587e5ee073f261",
         "operations": [
           {
             "id": "api:0",
@@ -200,9 +200,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 2104,
-              "end": 2158,
-              "line": 70,
+              "start": 2003,
+              "end": 2068,
+              "line": 68,
               "column": 5,
               "access": "call",
               "memberPath": []
@@ -224,9 +224,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 2195,
-              "end": 2208,
-              "line": 75,
+              "start": 2108,
+              "end": 2121,
+              "line": 73,
               "column": 1,
               "access": "call",
               "memberPath": []
