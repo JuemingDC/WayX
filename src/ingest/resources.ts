@@ -4,6 +4,9 @@ import fs from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import http from "node:http";
+import https from "node:https";
+import { Readable } from "node:stream";
 import type { FetchOptions } from "../domain/contracts.ts";
 const settings = JSON.parse(
   readFileSync(new URL("../../config/fetch.json", import.meta.url), "utf8"),
@@ -36,6 +39,9 @@ const profile = Object.freeze({
 });
 const loonProfile = Object.freeze({
   ...profile,
+  // Modified: 2026-11-12 (chance). Same-runner probes show fetch receives 403
+  // while native HTTPS and the reference urllib request receive readable 200s.
+  transport: "node-https",
   userAgent: "Loon/860 CFNetwork/3826.500.111.2.2 Darwin/24.4.0",
   // Modified: 2026-11-12 (chance). Match the reference downloader's language,
   // timeout and attempt budget for Kelee/RuCu6 without changing other sources.
@@ -119,6 +125,51 @@ export function isTransientFetchError(error: any) {
     String(error?.message ?? error),
   );
 }
+// Modified: 2026-11-12 (chance). Match urllib's native HTTP request behavior,
+// retaining the global agent's environment proxy policy, TLS checks, streaming
+// cancellation and bounded redirects. Never fall back to a direct connection.
+export async function requestReferenceResponse(
+  source: string,
+  headers: Headers,
+  signal: AbortSignal,
+  redirect: "follow" | "manual" = "follow",
+  redirects = 0,
+): Promise<{ ok: boolean; status: number; headers: Headers; body: ReadableStream<Uint8Array>; url: string }> {
+  const url = new URL(assertHttpUrl(source));
+  const response = await new Promise<http.IncomingMessage>((resolve, reject) => {
+    const request = (url.protocol === "https:" ? https : http).request(
+      url,
+      { method: "GET", headers: Object.fromEntries(headers), signal },
+      resolve,
+    );
+    request.on("error", reject);
+    request.end();
+  });
+  const status = response.statusCode ?? 0;
+  const responseHeaders = new Headers();
+  for (let i = 0; i < response.rawHeaders.length; i += 2)
+    responseHeaders.append(response.rawHeaders[i], response.rawHeaders[i + 1]);
+  const location = responseHeaders.get("location");
+  if (redirect === "follow" && [301, 302, 303, 307, 308].includes(status) && location) {
+    response.destroy();
+    if (redirects >= 20) throw Error("Too many original source redirects");
+    const next = new URL(assertHttpUrl(new URL(location, source).href));
+    const nextHeaders = new Headers(headers);
+    if (next.origin !== url.origin) {
+      nextHeaders.delete("Authorization");
+      nextHeaders.delete("Cookie");
+      nextHeaders.set("User-Agent", selectOriginalFetchProfile(next.href).userAgent);
+    }
+    return requestReferenceResponse(next.href, nextHeaders, signal, redirect, redirects + 1);
+  }
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    headers: responseHeaders,
+    body: Readable.toWeb(response) as ReadableStream<Uint8Array>,
+    url: source,
+  };
+}
 export async function requestOriginal(
   url: string,
   options: FetchOptions = {},
@@ -158,11 +209,13 @@ export async function requestOriginal(
       headers.set("User-Agent", selectedProfile.userAgent);
       if (options.accept || !headers.has("Accept"))
         headers.set("Accept", options.accept ?? "*/*");
-      const res = await fetch(source, {
-        headers,
-        redirect: options.redirect ?? "follow",
-        signal: controller.signal,
-      });
+      const res = selectedProfile.transport === "node-https"
+        ? await requestReferenceResponse(source, headers, controller.signal, options.redirect)
+        : await fetch(source, {
+            headers,
+            redirect: options.redirect ?? "follow",
+            signal: controller.signal,
+          });
       if (
         !res.ok &&
         !options.allowStatuses?.includes(res.status) &&

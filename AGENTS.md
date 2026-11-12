@@ -46,7 +46,7 @@
 
 Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。
 
-- Modified: 2026-11-12 (chance). Resume Kelee discovery, acquisition, conversion and monitoring after the user-authorized live probe returned 275/275 readable Kelee plugins and 11/11 registered RuCu6 plugins. Kelee and RuCu6 use the reference downloader Loon UA, Accept-Language, 60-second default timeout and five-attempt transient retry budget; other sources keep their existing profiles. Emit Updated timestamps only; preserve author/native/raw bytes and independent upstream dates.
+- Modified: 2026-11-12 (chance). Resume Kelee discovery, acquisition, conversion and monitoring after the user-authorized live probe returned 275/275 readable Kelee plugins and 11/11 registered RuCu6 plugins. Kelee and RuCu6 use native Node HTTP(S) requests (same-runner fetch returned 403 while HTTPS/urllib returned 200), the reference downloader Loon UA, Accept-Language, 60-second default timeout and five-attempt transient retry budget; other sources keep their existing profiles. Emit Updated timestamps only; preserve author/native/raw bytes and independent upstream dates.
 
 Modified: 2026-11-08 (chance). 可莉目录接口在 Actions 返回 403 时，保留已登记条目并继续按原始 URL 拉取插件正文，不据此增删目录。目录监控明确记录 DEFERRED（succeeded=false），不更新旧镜像，不声称目录已刷新；官方规范及其它必需监控失败仍阻止发布。仅有既有可莉条目且官方目录返回 403 时允许此隔离，401、格式损坏及无既有目录仍失败。
 

@@ -226,7 +226,11 @@ console.log('workflow diagnostics contract passed');
 if (selectedCase === "source-fetch.mjs") {
   // Modified: 2026-11-12 (chance). Verify source-specific identities reach the
   // actual HTTP request; lookalike hosts/owners retain the default Surge profile.
-  const { requestOriginal } = await import("../src/ingest/resources.ts");
+  const { requestOriginal, requestReferenceResponse } = await import("../src/ingest/resources.ts");
+  const https = (await import("node:https")).default;
+  const http = (await import("node:http")).default;
+  const { Readable } = await import("node:stream");
+  const { EventEmitter } = await import("node:events");
   const loon = "Loon/860 CFNetwork/3826.500.111.2.2 Darwin/24.4.0";
   const cases = [
     ["https://kelee.one/Tool/Loon/Lpx/example.lpx", loon],
@@ -241,20 +245,21 @@ if (selectedCase === "source-fetch.mjs") {
     ["https://ddgksf2013.top/", WAYX_FETCH_UA],
     ["https://example.org/", WAYX_FETCH_UA],
   ];
-  for (const profile of Object.values(ORIGINAL_FETCH_PROFILES))
-    assert.equal(profile.transport, "node-fetch");
+  assert.equal(ORIGINAL_FETCH_PROFILES.default.transport, "node-fetch");
   assert.equal(ORIGINAL_FETCH_PROFILES.default.userAgent, WAYX_FETCH_UA);
   for (const profile of [ORIGINAL_FETCH_PROFILES.kelee, ORIGINAL_FETCH_PROFILES.rucu6]) {
+    assert.equal(profile.transport, "node-https");
     assert.equal(profile.timeoutMs, 60000);
     assert.equal(profile.attempts, 5);
     assert.equal(profile.headers["Accept-Language"], "zh-CN,zh-Hans;q=0.9");
   }
   const originalFetch = globalThis.fetch;
+  const originalHttpsRequest = https.request;
   try {
     for (const [url, ua] of cases) {
       assert.equal(selectOriginalFetchProfile(url).userAgent, ua);
       let called = false;
-      globalThis.fetch = async (_input, init) => {
+      const checkHeaders = (init: { headers?: HeadersInit }) => {
         called = true;
         const headers = new Headers(init?.headers);
         assert.equal(headers.get("User-Agent"), ua);
@@ -262,13 +267,60 @@ if (selectedCase === "source-fetch.mjs") {
           assert.equal(headers.get("Accept-Language"), "zh-CN,zh-Hans;q=0.9");
         if (url === "https://ddgksf2013.top/")
           assert.equal(headers.get("Referer"), "https://ddgksf2013.top/");
+      };
+      globalThis.fetch = async (_input, init) => {
+        assert.equal(ua, WAYX_FETCH_UA);
+        checkHeaders(init ?? {});
         return new Response("fixture", { status: 200 });
       };
+      https.request = ((_input: unknown, init: any, callback: any) => {
+        assert.equal(ua, loon);
+        checkHeaders(init);
+        const req = new EventEmitter() as any;
+        req.end = () => {
+          const response = Readable.from([Buffer.from("fixture")]) as any;
+          response.statusCode = 200;
+          response.rawHeaders = ["Content-Type", "text/plain"];
+          callback(response);
+        };
+        return req;
+      }) as typeof https.request;
       await requestOriginal(url);
       assert.equal(called, true);
     }
   } finally {
     globalThis.fetch = originalFetch;
+    https.request = originalHttpsRequest;
+  }
+  // Native streaming, redirects, aborts and HTTP errors use actual loopback HTTP;
+  // only the network-identity assertion above stubs the native request method.
+  const server = http.createServer((req, res) => {
+    if (req.url === "/redirect") { res.writeHead(302, { Location: "/body" }); res.end(); }
+    else if (req.url === "/loop") { res.writeHead(302, { Location: "/loop" }); res.end(); }
+    else if (req.url === "/error") { res.writeHead(403); res.end("denied"); }
+    else { res.writeHead(200, { "Content-Type": "text/plain" }); res.write("first"); res.end("second"); }
+  });
+  await new Promise<void>(resolve => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address() as import("node:net").AddressInfo;
+  const base = "http://127.0.0.1:" + address.port;
+  const signal = AbortSignal.timeout(5000);
+  try {
+    const followed = await requestReferenceResponse(base + "/redirect", new Headers(), signal);
+    assert.equal(followed.status, 200);
+    assert.equal(followed.url, base + "/body");
+    assert.equal(await new Response(followed.body).text(), "firstsecond");
+    const manual = await requestReferenceResponse(base + "/redirect", new Headers(), signal, "manual");
+    assert.equal(manual.status, 302);
+    await manual.body.cancel();
+    const denied = await requestReferenceResponse(base + "/error", new Headers(), signal);
+    assert.equal(denied.ok, false);
+    assert.equal(denied.status, 403);
+    await denied.body.cancel();
+    await assert.rejects(requestReferenceResponse(base + "/loop", new Headers(), signal), /Too many/);
+    await assert.rejects(requestReferenceResponse(base + "/body", new Headers(), AbortSignal.abort()), /abort/i);
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>(resolve => server.close(() => resolve()));
   }
   console.log("source-specific fetch contracts passed");
 }
