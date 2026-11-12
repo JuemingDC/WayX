@@ -118,7 +118,7 @@
 ## Adblock
 
 <details>
-<summary><strong>Adblock</strong> · 349 项</summary>
+<summary><strong>Adblock</strong> · 348 项</summary>
 
 按拉取来源分组，点击展开；各来源内部按名称 A–Z 分栏，中文按拼音首字母，数字单列。
 
@@ -717,7 +717,7 @@
 </details>
 
 <details>
-<summary><strong>树先生</strong> · 26 项</summary>
+<summary><strong>树先生</strong> · 25 项</summary>
 
 #### B
 
@@ -779,7 +779,6 @@
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
 | **[拼多多](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ishowshu/pdd/pdd.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fishowshu%2Fpdd%2Fpdd.snippet%2C%20tag%3D%E6%8B%BC%E5%A4%9A%E5%A4%9A%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fishowshu%2Fpdd%2Fpdd.sgmodule) |
-| **[苹果通知推送](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ishowshu/apple-notice/apple-notice.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fishowshu%2Fapple-notice%2Fapple-notice.snippet%2C%20tag%3D%E8%8B%B9%E6%9E%9C%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fishowshu%2Fapple-notice%2Fapple-notice.sgmodule) |
 | **[朴朴超市](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ishowshu/pupu/pupu.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fishowshu%2Fpupu%2Fpupu.snippet%2C%20tag%3D%E6%9C%B4%E6%9C%B4%E8%B6%85%E5%B8%82%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fishowshu%2Fpupu%2Fpupu.sgmodule) |
 
 #### S

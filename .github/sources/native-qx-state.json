@@ -4,7 +4,7 @@
     {
       "repository": "ishowshu/qx",
       "prefix": "ishowshu_",
-      "commit": "bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7"
+      "commit": "3f64bc012443c8424594a2de32e28a3b90d1ff0f"
     },
     {
       "repository": "ZenmoFeiShi/Qx",
@@ -19,219 +19,205 @@
     {
       "repository": "fmz200/wool_scripts",
       "prefix": "fmz200_",
-      "commit": "3bf100e5c1e68730a76dbb6d401a5913921db823"
+      "commit": "009b501adaebb3428461e91c98a17a556249e076"
     }
   ],
   "inputs": [
     {
       "repository": "ishowshu/qx",
       "path": "filter/ad-platform.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/filter/ad-platform.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/filter/ad-platform.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/filter/ad-platform.snippet",
       "sha256": "5842f05070a8acefbbcc584c9d7c63fe50d1331a9a1d10346fc1ef5100b6ccf9"
     },
     {
       "repository": "ishowshu/qx",
-      "path": "filter/apple-notice.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/filter/apple-notice.snippet",
-      "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/filter/apple-notice.snippet",
-      "sha256": "6731cd1dadba8a7c90c157d194117a97aced0e482fba5bb10bd8dd2795df1ecc"
-    },
-    {
-      "repository": "ishowshu/qx",
       "path": "filter/geoip.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/filter/geoip.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/filter/geoip.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/filter/geoip.snippet",
       "sha256": "e0535d86977bdb8b5921b790f2e410036e310f6edc26680d3178fddd35265fab"
     },
     {
       "repository": "ishowshu/qx",
       "path": "filter/pdd.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/filter/pdd.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/filter/pdd.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/filter/pdd.snippet",
       "sha256": "5de16fec4352ada23698514815582b55a06bf04d41a9f116de611534668b0390"
     },
     {
       "repository": "ishowshu/qx",
-      "path": "filter/taobao.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/filter/taobao.snippet",
-      "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/filter/taobao.snippet",
-      "sha256": "b7e56fbe58098ba995ddfbf2f251138272534054fe7ccf24860085d002c28af4"
-    },
-    {
-      "repository": "ishowshu/qx",
       "path": "rewrite/amap-new.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/amap-new.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/amap-new.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/amap-new.snippet",
       "sha256": "46501be7318c8593c1ca06078f1fac06cafdec14dbb818662a62a397838a440f"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/amap.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/amap.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/amap.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/amap.snippet",
       "sha256": "f16ff0ee3054f6fcc296a59fe00dbc5c5f4dd4b053e63711cec32502271b7025"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/bestv.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/bestv.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/bestv.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/bestv.snippet",
       "sha256": "d416530faf3bd42158b6eecaf74c664bcd93ce6a62c0e1a888d6e862d7b5faf1"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/bilibili-qx.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/bilibili-qx.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/bilibili-qx.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/bilibili-qx.snippet",
       "sha256": "d87046cc9762cffb062d1934188399a525d271ba55a47de29f6eec03e51c2574"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/bilibili.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/bilibili.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/bilibili.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/bilibili.snippet",
       "sha256": "a66a6a3b406f92e28f48b2b1ac9f1d1c1aaf34d49ed1b07b44ec6b14800d754c"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/caiyun.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/caiyun.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/caiyun.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/caiyun.snippet",
       "sha256": "8c35a6e6bf33688ca041460e1ba7fc41fb92bb71fb64c57d79931b7eaa3265a1"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/cmbchina.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/cmbchina.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/cmbchina.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/cmbchina.snippet",
       "sha256": "28ead4f5910d22cf37d9072c11d6e59f779490d85cf10dd7b23c58f2a7f2cec8"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/didi.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/didi.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/didi.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/didi.snippet",
       "sha256": "771cfc56b5b9c16543f4ac2a2e5c22116e8d6aae70cc7dde995a857dcbcdcff8"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/douban.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/douban.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/douban.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/douban.snippet",
       "sha256": "1161b50e3c4018daac072bedabd63bce3d68b76d76faaa675630e95d10f72418"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/github.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/github.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/github.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/github.snippet",
       "sha256": "6b7d88f492a2d39a1ad69c822c159c911bf481abfe39a49fb330e2bdebfdc247"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/goofish.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/goofish.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/goofish.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/goofish.snippet",
       "sha256": "e8054eb951d282aede6ab1be0e4a964cee4dc10aa7c27cbc0c37d3c740581d14"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/hupu.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/hupu.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/hupu.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/hupu.snippet",
       "sha256": "8ad149ddd1a3f6b2ccda3a3ffd1bdf7aed20e4e3cbf0492474e01ed68d3a9b91"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/jd.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/jd.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/jd.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/jd.snippet",
       "sha256": "2c81f10b20c871cd2cf99ebebe37648b6c57aeeead1f8ff2c2361a91192d427f"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/jx.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/jx.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/jx.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/jx.snippet",
       "sha256": "9bbc3def09e7e138976ecb21925aa03d3c72f82390ebb65d7d9d1d2ebae038ec"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/keep.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/keep.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/keep.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/keep.snippet",
       "sha256": "7dd0f9ba10fb279ef06fe2cf647320c17ddde12c119a2fd0cff033a645682d61"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/lecheng.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/lecheng.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/lecheng.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/lecheng.snippet",
       "sha256": "9fdab16878a016a1c8ed2f93731db22677d4a3c036bf7967e032d6b3b8d6c2b1"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/leisu.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/leisu.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/leisu.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/leisu.snippet",
       "sha256": "e69a4891d1c5b09275a1325ad792d14a650f237385282b39b2a94ee8d4f67ae4"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/pdd.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/pdd.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/pdd.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/pdd.snippet",
       "sha256": "0390ab4cac52c0e0be88b1dcfd3d90bd20edfbeb73d605b340220076782ad4ac"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/pupu.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/pupu.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/pupu.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/pupu.snippet",
       "sha256": "f166ca9cf1c901421f110b3461ecd127319a1e05bf210f463a3ceb7e3129f428"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/shihuo.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/shihuo.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/shihuo.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/shihuo.snippet",
       "sha256": "2f7c97d300ad92c174f639e342c4da8a1cb13d9af87ecf13adb79b1bc42bd9b9"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/soul.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/soul.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/soul.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/soul.snippet",
       "sha256": "6ca0b61e719734fb591ff96507485c67a1e192d2ed225b06e91f3fe6f7fd8703"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/taobao.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/taobao.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/taobao.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/taobao.snippet",
       "sha256": "c6989320173a48fa169a6de54e025df7c9be5dba9e7ec0dd2d6c54c5b390b9ac"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/ttts.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/ttts.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/ttts.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/ttts.snippet",
       "sha256": "eba9dfd3aafaac9dc1247673af786db040335af840a05105c7406d8b7435d05e"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/xhs.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/xhs.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/xhs.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/xhs.snippet",
       "sha256": "81754623deece2816fbd746963fcd5033e19af27c346d9be937aa012a4c29c19"
     },
     {
       "repository": "ishowshu/qx",
       "path": "rewrite/youtube.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/bc8fd6fa9d7ddd6ff38bd7eefaf264a8e6d53dd7/rewrite/youtube.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/ishowshu/qx/3f64bc012443c8424594a2de32e28a3b90d1ff0f/rewrite/youtube.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/youtube.snippet",
-      "sha256": "f2df12ececb5ba8e3d27ad6bb448a10abada501f368da39c04b1517ba0a6ffe8"
+      "sha256": "fee091c80c3fdc6bf1e12a9b05c21aa15503a5a5211d2b8187c111bbbccb52c1"
     },
     {
       "repository": "ZenmoFeiShi/Qx",
@@ -670,26 +656,20 @@
     {
       "repository": "fmz200/wool_scripts",
       "path": "QuantumultX/rewrite/rewrite.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/3bf100e5c1e68730a76dbb6d401a5913921db823/QuantumultX/rewrite/rewrite.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/009b501adaebb3428461e91c98a17a556249e076/QuantumultX/rewrite/rewrite.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/rewrite.snippet",
-      "sha256": "371ee2dee23f6aee74017f23e54d42a6d19a1b84f9fc7c63e2f70f59abbe4b9a"
+      "sha256": "8a8499e50d0311a078e4c4bf0c48097c3840843bd76bffab390c8a259fab0574"
     },
     {
       "repository": "fmz200/wool_scripts",
       "path": "QuantumultX/rewrite/split/partX/Xiaohongshu.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/3bf100e5c1e68730a76dbb6d401a5913921db823/QuantumultX/rewrite/split/partX/Xiaohongshu.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/009b501adaebb3428461e91c98a17a556249e076/QuantumultX/rewrite/split/partX/Xiaohongshu.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/split/partX/Xiaohongshu.snippet",
-      "sha256": "c9be7498a761c512fcc2f8bb2e5a2847238b39fc38cc7880ae3b45d6d7d34b70"
+      "sha256": "36d353c2f2c3dd7a671ca36daf34a42807edec57083576f70891ff36f5e2568e"
     }
   ],
   "skipped": [],
   "diagnostics": [
-    {
-      "repository": "ishowshu/qx",
-      "application": "taobao",
-      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E6%B7%98%E5%AE%9D* url-and-header reject",
-      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
-    },
     {
       "repository": "ishowshu/qx",
       "application": "amap",
@@ -718,6 +698,12 @@
       "repository": "ishowshu/qx",
       "application": "leisu",
       "source": "^https:\\/\\/img1\\.360buyimg\\.com\\/pop\\/jfs\\/t1 leisu* url-and-header reject-dict",
+      "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
+    },
+    {
+      "repository": "ishowshu/qx",
+      "application": "taobao",
+      "source": "^http:\\/\\/amdc\\.m\\.taobao\\.com\\/amdc\\/mobileDispatch %E6%B7%98%E5%AE%9D* url-and-header reject",
       "reason": "URL-and-header conjunction retained for review; dropping the header condition would broaden matching"
     },
     {
@@ -753,14 +739,10 @@
   "outputs": [
     "Adblock/Quantumult X/ishowshu/ad-platform/ad-platform.snippet",
     "Adblock/Surge/ishowshu/ad-platform/ad-platform.sgmodule",
-    "Adblock/Quantumult X/ishowshu/apple-notice/apple-notice.snippet",
-    "Adblock/Surge/ishowshu/apple-notice/apple-notice.sgmodule",
     "Adblock/Quantumult X/ishowshu/geoip/geoip.snippet",
     "Adblock/Surge/ishowshu/geoip/geoip.sgmodule",
     "Adblock/Quantumult X/ishowshu/pdd/pdd.snippet",
     "Adblock/Surge/ishowshu/pdd/pdd.sgmodule",
-    "Adblock/Quantumult X/ishowshu/taobao/taobao.snippet",
-    "Adblock/Surge/ishowshu/taobao/taobao.sgmodule",
     "Adblock/Quantumult X/ishowshu/amap/amap.snippet",
     "Adblock/Surge/ishowshu/amap/amap.sgmodule",
     "Adblock/Quantumult X/ishowshu/bestv/bestv.snippet",
@@ -797,6 +779,8 @@
     "Adblock/Surge/ishowshu/shihuo/shihuo.sgmodule",
     "Adblock/Quantumult X/ishowshu/soul/soul.snippet",
     "Adblock/Surge/ishowshu/soul/soul.sgmodule",
+    "Adblock/Quantumult X/ishowshu/taobao/taobao.snippet",
+    "Adblock/Surge/ishowshu/taobao/taobao.sgmodule",
     "Adblock/Quantumult X/ishowshu/ttts/ttts.snippet",
     "Adblock/Surge/ishowshu/ttts/ttts.sgmodule",
     "Adblock/Quantumult X/ishowshu/xhs/xhs.snippet",
