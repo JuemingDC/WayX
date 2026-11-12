@@ -15,6 +15,7 @@ import { addAppIcon } from "../domain/icons.ts";
 // Category: Converter / workflow
 import fs from "node:fs/promises";
 import path from "node:path";
+import { loadAdblockNumbers, adblockNumberForPath } from "../application/adblock-numbers.ts";
 import crypto from "node:crypto";
 import { convertNativeQxToSurge } from "../emit/conversion.ts";
 import { quoteJq } from "../parser/rewrite.ts";
@@ -930,7 +931,12 @@ async function scanCategory(root: any, category: any): Promise<any> {
     root,
     category,
   );
-  for (const row of rows.values()) row.catalogSource = sources.get(row.key);
+  const adblockNumbers = category === "Adblock" ? await loadAdblockNumbers(root) : null;
+  for (const row of rows.values()) {
+    row.catalogSource = sources.get(row.key);
+    if (adblockNumbers)
+      row.number = adblockNumberForPath(adblockNumbers, (row.qx ?? row.surge).rel);
+  }
   // Modified: 2026-10-25 (chance). Keep fetch-source group order separate
   // from alphabetical resource order within each existing author group.
   return [...rows.values()].sort((a: any, b: any): any => {
@@ -1048,14 +1054,14 @@ function renderTable(
 ): any {
   const lines: any = [
     ...(heading === null ? [] : [`${"#".repeat(level)} ${heading}`, ""]),
-    "| Name | Quantumult X | Surge |",
-    "| :--- | :---: | :---: |",
+    category === "Adblock" ? "| 编号 | Name | Quantumult X | Surge |" : "| Name | Quantumult X | Surge |",
+    category === "Adblock" ? "| :--- | :--- | :---: | :---: |" : "| :--- | :---: | :---: |",
   ];
   for (const row of rows) {
     const cells: any = rowInstallCells(category, row);
-    lines.push(`| ${resourceNameCell(row)} | ${cells.qx} | ${cells.surge} |`);
+    lines.push(`| ${category === "Adblock" ? (row.number ?? "—") + " | " : ""}${resourceNameCell(row)} | ${cells.qx} | ${cells.surge} |`);
   }
-  if (!rows.length) lines.push("| — | — | — |");
+  if (!rows.length) lines.push(category === "Adblock" ? "| — | — | — | — |" : "| — | — | — |");
   return lines.join("\n");
 }
 // Modified: 2026-10-25 (chance). Group visible names by Latin/pinyin initial;

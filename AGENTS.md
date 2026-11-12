@@ -52,3 +52,5 @@ Modified: 2026-11-08 (chance). 可莉目录接口在 Actions 返回 403 时，�
 
 
 - Modified: 2026-11-10 (chance). Adblock/Module update metadata copies explicit upstream update dates (including retained paused snapshots and native QX wrapper headers), never acquisition/conversion time. If absent, say 上游未标注; retain distinct dates for merged sources. Rule headers record each successful daily sync. Preserve native source bodies and manual author dates.
+
+- Modified: 2026-11-12 (chance). Automatic Issues are consolidated into at most five reusable problem categories (fetch, conversion, rules, monitoring, validation). Fetch Issue bodies contain only stable AD numbers, one per line; other categories describe their problems. Persist never-recycled Adblock numbers in .github/sources/adblock-numbers.json, share each number across QX/Surge variants, expose them as configuration comments and a README column, and retain both logical/published path aliases outside layout rewriting. Close migrated per-item and duplicate automatic Issues after category summaries are written; reuse existing category Issue identities on recurrence. Keep full diagnostics in Action reports.

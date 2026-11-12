@@ -136,7 +136,7 @@ try {
     path.join(root, "Adblock/Surge/Kelee/Demo/Demo.sgmodule"),
     "utf8",
   );
-  assert.match(surgePublished, /^#!category=WayX\n#!arguments=CLIENT:Telegram\n#!arguments-desc=Client\n# Author: chance$/m);
+  assert.match(surgePublished, /^#!category=WayX\n#!arguments=CLIENT:Telegram\n#!arguments-desc=Client\n# WayX ID: AD0001\n# Author: chance$/m);
   assert.match(surgePublished, /timeout=10,max-size=-1/);
   assert.doesNotMatch(surgePublished, /timeout=20/);
   await prepareWorkingLayout(root);

@@ -15,6 +15,7 @@ import {
 } from "../publish/transaction.ts";
 import { scriptReferences } from "../parser/backup-references.ts";
 import { executableScript } from "../domain/executable-script.ts";
+import { ADBLOCK_NUMBERS_FILE, ensureAdblockNumbers, adblockIdentity, applyAdblockNumber } from "./adblock-numbers.ts";
 
 const stateFile = ".github/sources/layout-state.json";
 const base = "https://raw.githubusercontent.com/JuemingDC/WayX/main/";
@@ -157,7 +158,9 @@ async function stateJsonFiles(root: string) {
           f.endsWith(".json"),
       )
       .map((f) => "Resource/Backup/" + f),
-  ].filter((f) => f !== stateFile && f !== "Resource/Backup/index.json");
+  // Modified: 2026-11-12 (chance). Number aliases deliberately retain both
+  // logical and published paths; layout rewriting must not collapse them.
+  ].filter((f) => f !== stateFile && f !== ADBLOCK_NUMBERS_FILE && f !== "Resource/Backup/index.json");
 }
 function uniqueScripts(text: string) {
   const used = new Set<string>();
@@ -304,6 +307,9 @@ export async function publishLayout(
       state.artifacts[file] = dest;
       content.set(file, text);
     }
+  // Modified: 2026-11-12 (chance). Persist shared client IDs before final output
+  // and issue generation, including frozen or retained Adblock declarations.
+  const adblockNumbers = await ensureAdblockNumbers(root, state.artifacts);
   const scriptCopies = new Map<string, Map<string, string>>();
   const occupied = new Map<string, string>();
   const adapterCopies: Record<string, any> = {};
@@ -471,6 +477,8 @@ export async function publishLayout(
       }
       next = uniqueScripts(next);
     }
+    if (logical.startsWith("Adblock/"))
+      next = applyAdblockNumber(next, adblockNumbers.items[adblockIdentity(logical, catalog)].number);
     changes.set(state.artifacts[logical], next);
     if (state.artifacts[logical] !== logical) changes.set(logical, null);
   }

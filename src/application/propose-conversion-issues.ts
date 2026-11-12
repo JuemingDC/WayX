@@ -22,6 +22,10 @@ import {
   parseScriptV2,
   parseLegacyScriptLine,
 } from "../parser/script.ts";
+import { ensureAdblockNumbers } from "./adblock-numbers.ts";
+import type { AdblockNumbers } from "./adblock-numbers.ts";
+import { groupedIssuePlans } from "../domain/issue-groups.ts";
+import { reconcileGroupedIssues } from "./grouped-issues.ts";
 const ROOT: any = process.cwd();
 const TARGET_DIRS: any = [
   path.join(ROOT, "Adblock", "Quantumult X"),
@@ -338,73 +342,6 @@ export function syncFailureTitle(failure: any): any {
   return (
     "[conversion-failure:" + fp + "] " + failure.plugin.id + " " + failure.stage
   );
-}
-async function ensureLabel(
-  name: any,
-  description: any,
-  color: any,
-): Promise<any> {
-  gh([
-    "label",
-    "create",
-    name,
-    "--repo",
-    repo,
-    "--description",
-    description,
-    "--color",
-    color,
-    "--force",
-  ]);
-}
-async function upsertIssue({ title, body, label }: any): Promise<any> {
-  const raw: any = gh([
-    "issue",
-    "list",
-    "--repo",
-    repo,
-    "--state",
-    "all",
-    "--search",
-    '"' + title + '" in:title',
-    "--json",
-    "number,title,state,url",
-    "--limit",
-    "20",
-  ]);
-  const items: any = raw ? JSON.parse(raw) : [];
-  const exact: any = items.find((item: any): any => item.title === title);
-  if (exact) {
-    gh([
-      "issue",
-      "edit",
-      String(exact.number),
-      "--repo",
-      repo,
-      "--body",
-      body,
-      "--add-label",
-      label,
-    ]);
-    if (exact.state === "CLOSED")
-      gh(["issue", "reopen", String(exact.number), "--repo", repo]);
-    console.log("Reuse/update issue #" + exact.number + ": " + title);
-    return exact.url;
-  }
-  const url: any = gh([
-    "issue",
-    "create",
-    "--repo",
-    repo,
-    "--title",
-    title,
-    "--body",
-    body,
-    "--label",
-    label,
-  ]);
-  console.log("Created conversion issue: " + url);
-  return url;
 }
 async function sourceSemanticProblems(
   catalog: any,
@@ -830,61 +767,33 @@ export function recoveredConversionIssues(
     );
   });
 }
-function reconcileManagedIssues(context: any): any {
-  const {
-    monitorReport,
-    validationReport,
-    validationFailures,
-    syncReport,
-    ruleReport,
-    ruleProblems,
-  } = context;
-  if (
-    monitorReport.complete !== true &&
-    !Object.values(validationReport.stages).some(
-      (stage: any): any => stage.complete,
-    ) &&
-    syncReport.publishable !== true
-  )
-    return;
-  const issues: any = JSON.parse(
-    gh([
-      "issue",
-      "list",
-      "--repo",
-      repo,
-      "--state",
-      "open",
-      "--limit",
-      "1000",
-      "--json",
-      "number,title,state,labels",
-    ]),
-  );
-  const recovered: any = [
-    ...recoveredMonitorIssues(monitorReport, issues),
-    ...recoveredValidationIssues(validationReport, issues).filter(
-      (issue: any): any =>
-        !validationFailures.some(
-          (failure: any): any =>
-            validationFailureTitle(failure) === issue.title,
-        ),
-    ),
-    ...recoveredConversionIssues(context, issues),
-    ...recoveredRuleIssues(ruleReport, ruleProblems, issues),
-  ];
-  for (const issue of recovered) {
-    gh([
-      "issue",
-      "close",
-      String(issue.number),
-      "--repo",
-      repo,
-      "--reason",
-      "completed",
-    ]);
-    console.log("Resolved recovered managed issue #" + issue.number);
-  }
+// Modified: 2026-11-12 (chance). Details remain grouped by problem type; only
+// acquisition failures lower to stable IDs, never one issue per plugin/stage.
+export function buildIssueGroupPlans(context: any, numbers: AdblockNumbers) {
+  const { targetProblems, syncFailures, monitorFailures, validationFailures, ruleProblems,
+    syncReport, monitorReport, ruleReport, validationReport } = context;
+  const number = (id: string) => {
+    const value = numbers.items[id]?.number;
+    if (!value) throw Error("Missing Adblock number for " + id);
+    return value;
+  };
+  const fetchFailures = syncFailures.filter((failure: any) => /fetch|download/.test(failure.stage) ||
+    /HTTP \d{3} from original source|source timed out|fetch failed|ECONNRESET|ETIMEDOUT|ENOTFOUND|EAI_AGAIN/i.test(failure.reason));
+  const conversions = syncFailures.filter((failure: any) => !fetchFailures.includes(failure));
+  return groupedIssuePlans({
+    fetch: { entries: fetchFailures.map((failure: any) => number(failure.plugin.id)), complete: syncReport.publishable === true },
+    conversion: {
+      entries: [
+        ...targetProblems.map((group: any) => "## " + number(group.plugin.id) + " · " + group.plugin.id + "\n\n" + targetProblemIssueBody(group)),
+        ...conversions.map((failure: any) => "## " + number(failure.plugin.id) + " · " + failure.plugin.id + "\n\n" + syncFailureIssueBody(failure)),
+      ],
+      complete: syncReport.publishable === true,
+    },
+    rules: { entries: ruleProblems.map(ruleProblemBody), complete: ruleReport?.complete === true },
+    monitor: { entries: monitorFailures.map(monitorFailureIssueBody), complete: monitorReport.complete === true },
+    validation: { entries: validationFailures.map(validationFailureIssueBody), complete: syncReport.publishable === true && monitorReport.complete === true && ruleReport?.complete === true &&
+      Object.values<any>(validationReport.stages ?? {}).length > 0 && Object.values<any>(validationReport.stages ?? {}).every(stage => stage.complete) },
+  });
 }
 async function main(): Promise<any> {
   const {
@@ -960,97 +869,16 @@ async function main(): Promise<any> {
     );
     return;
   }
-  if (repo) {
-    if (validationFailures.length)
-      await ensureLabel(
-        "validation-failure",
-        "Automated output, syntax, runtime or workflow validation failed",
-        "B60205",
-      );
-    if (ruleProblems.length)
-      await ensureLabel(
-        "rules-review",
-        "Source rule declarations quarantined by native target conversion",
-        "FBCA04",
-      );
-    reconcileManagedIssues({
-      monitorReport,
-      validationReport,
-      validationFailures,
-      syncReport,
-      targetProblems,
-      ruleReport,
-      ruleProblems,
-    });
-  }
-  if (
-    !targetProblems.length &&
-    !syncFailures.length &&
-    !monitorFailures.length &&
-    !validationFailures.length &&
-    !ruleProblems.length
-  ) {
-    console.log("No conversion issue candidates found.");
-    return;
-  }
-  if (!repo)
-    throw new Error(
-      "GITHUB_REPOSITORY is required to create conversion issues",
-    );
-  await ensureLabel(
-    "conversion-unknown",
-    "Unknown converter syntax or unregistered semantic type",
-    "D93F0B",
-  );
-  await ensureLabel(
-    "conversion-review",
-    "Known source semantics not losslessly expressible by the current target mapping",
-    "FBCA04",
-  );
-  await ensureLabel(
-    "conversion-failure",
-    "Scheduled upstream conversion or validation failed for a plugin",
-    "B60205",
-  );
-  if (monitorFailures.length)
-    await ensureLabel(
-      "upstream-monitor-failure",
-      "Upstream specification monitoring failed; publication blocked",
-      "B60205",
-    );
-  for (const group of targetProblems) {
-    await upsertIssue({
-      title: targetProblemTitle(group),
-      body: targetProblemIssueBody(group),
-      label:
-        group.kind === "review" ? "conversion-review" : "conversion-unknown",
-    });
-  }
-  for (const failure of syncFailures) {
-    await upsertIssue({
-      title: syncFailureTitle(failure),
-      body: syncFailureIssueBody(failure),
-      label: "conversion-failure",
-    });
-  }
-  for (const problem of ruleProblems)
-    await upsertIssue({
-      title: ruleProblemTitle(problem),
-      body: ruleProblemBody(problem),
-      label: "rules-review",
-    });
-  for (const failure of validationFailures)
-    await upsertIssue({
-      title: validationFailureTitle(failure),
-      body: validationFailureIssueBody(failure),
-      label: "validation-failure",
-    });
-  for (const failure of monitorFailures)
-    await upsertIssue({
-      title: monitorFailureTitle(failure),
-      body: monitorFailureIssueBody(failure),
-      label: "upstream-monitor-failure",
-    });
+  if (!repo) throw Error("GITHUB_REPOSITORY is required to reconcile grouped issues");
+  const extra = [...syncFailures.map((failure: any) => failure.plugin), ...targetProblems.map((group: any) => group.plugin)]
+    .map((plugin: any) => ({ id: plugin.id, paths: [] as string[] }));
+  const numbers = await ensureAdblockNumbers(ROOT, undefined, extra);
+  const plans = buildIssueGroupPlans({ targetProblems, syncFailures, monitorFailures,
+    validationFailures, ruleProblems, syncReport, monitorReport, ruleReport, validationReport }, numbers);
+  const result = await reconcileGroupedIssues(plans, repo, gh, Object.fromEntries(Object.entries(numbers.items).map(([id, item]) => [id, item.number])));
+  if (result.totalOpen > 5) throw Error("Existing manual issues alone exceed the five-issue limit");
+  console.log(JSON.stringify({ categories: plans.length, ...result }));
+
 }
 const isMain: any =
   process.argv[1] &&

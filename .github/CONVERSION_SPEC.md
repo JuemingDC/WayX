@@ -260,15 +260,15 @@ sync 是产物与 README 的写入入口；canonical、README 对比及回归套
 
 目录刷新 → 规则集生成/全量 sync → 一次最终产物检查 → 报告、Issue 与发布。日常 Action 不运行全仓语法预扫描、checkpoint 回归套件、canonical 重转、规则集重建回放、重复的目标格式/README/受管文件扫描。可写 main/test 执行监控并要求 complete=true；只读 PR 不写 Issue、mirror/state。目录刷新成功即可尝试监控。
 
-Review inventory baseline 必须可读且结构有效，不能跳过比较。同步/监控报告只在 ENOENT 时允许为空；损坏 JSON、结构/版本/IO 错误使 Issue 步骤失败。同步报告支持版本 1/2，监控报告支持版本 1。每次新语义/同步/监控失败使用稳定 fingerprint 复用 Issue，保留源声明、阶段、错误与回滚结果。
+Review inventory baseline 必须可读且结构有效，不能跳过比较。同步/监控报告只在 ENOENT 时允许为空；损坏 JSON、结构/版本/IO 错误使 Issue 步骤失败。同步报告支持版本 1/2，监控报告支持版本 1。Modified: 2026-11-12 (chance). 自动 Issue 按拉取失败、转换问题、规则问题、上游监控、校验与自动化五类复用，总开放数量不超过 5；不再按插件、阶段或 fingerprint 新建。拉取失败正文只列稳定 AD 编号，其他类别说明问题内容；源声明、阶段、错误与回滚结果等完整证据留在本次 Action 报告。已有手动 Issue 占用额度时，非拉取类别合并，完整明细仍保留在报告中。
 
-监控告警恢复在现有 Issue 生命周期统一处理：仅完整、无失败且明确列出该来源成功的报告可关闭带受管监控标签的对应告警。缺失报告、未覆盖来源、失败或只读执行不得关闭告警。
+监控告警恢复统一更新同一分类 Issue：只有完整成功的监控报告可以清空并关闭该分类；不完整执行保留前次尚未重新核对的问题。只读执行不得写 Issue。
 
 所有自动化阶段通过 src/application/automation.ts 的共同检查入口执行，独立检查失败后继续收集同阶段其它检查。每项记录命令、退出码、完成状态及日志位置，实际差异保存文件、首个差异位置、预期/实际片段及摘要；语法、规范能力、Rule/Rewrite/Script/General/MITM、依赖、helpers/runtime、metadata/注释、目录/README/手写资源和发布门禁继续使用现有领域检查，不另写同类特例。成功项在控制台和 summary 只显示计数，完整日志随 artifact 保存，人工仅查看异常。机器报告缺失、不完整或失败不得由绿色 step 状态替代。
 
-验证异常按阶段使用稳定 fingerprint 复用受管 Issue，附本次 Action 链接、失败检查与证据位置；完整成功的同阶段检查才可关闭该类告警。只读执行不得写 Issue。未知源语法继续附源声明，不能猜测为有效规则。
+验证异常合并进固定的校验与自动化 Issue，附失败检查与证据位置；缺失或不完整报告不能冒充恢复。只读执行不得写 Issue。未知源语法继续附源声明，不能猜测为有效规则。
 
-对账报告复用本轮转换记录和唯一最终检查的文件摘要，不要求 canonical 重转证据，不重新执行转换。verified 仅表示本轮生成且实际产物通过格式检查，不宣称客户端语义已验证。已隔离并完整保留旧基线的同步失败单独标为 retained，继续通过原有同步 Issue 跟踪。Markdown 对账仅列异常，完整结构化明细留在 artifact。
+对账报告复用本轮转换记录和唯一最终检查的文件摘要，不要求 canonical 重转证据，不重新执行转换。verified 仅表示本轮生成且实际产物通过格式检查，不宣称客户端语义已验证。已隔离并完整保留旧基线的同步失败单独标为 retained，继续通过固定拉取或转换分类 Issue 跟踪。Markdown 对账仅列异常，完整结构化明细留在 artifact。
 
 发布只允许通过全部 required gates 的产物，提交前核对请求 head 未推进，提交后确认受管工作区无未保存变化。日志、发现结果、监控缓存、失败报告和生成产物随已有 artifact 保存。
 
@@ -343,7 +343,7 @@ QX 原生 filter 文件仅输出 direct/reject/ssid：未受全代理约束的�
 
 两端文件布局独立：Quantumult X 每个合集始终单文件，逐条保留 native direct/ssid/reject，不能因 Surge 拆分而生成 QX 的 _direct/_proxy 文件。Surge 的 surge_output 显式规定 split/combined：Apple 根据 routing_layers 输出 apple_cn.list/apple_proxy.list；Microsoft、Steam 拆为 _direct.list/_proxy.list；Google、YouTube、Facebook/Meta、X、Telegram、GitHub、海外 AI、Netflix、Disney 输出单一 .list，主配置以代理策略引用，不生成 _direct/_proxy 两份；Spotify 的 DIRECT/PROXY 匹配项合并为 spotify.list，不带策略，由主配置统一选择一个策略，不宣称它能保留逐条分流差异。没有上游直连证据时不补造 Spotify DIRECT。其它合集存在不同策略时自动拆分；REJECT 家族独立输出，不能混入以代理引用的文件。Surge 外部 RULE-SET 均不带逐条策略。filterfix 的独立混合策略 dconf 规则继续生效。
 
-生成文件集中在 Rule/QuantumultX 与 Rule/Surge；英文头包括 Name、Updated、Source Authors、Category 以及来源。Category 固定为广告 Adblock、应用/AI/media 为 app、cn/proxy 为 general。每次成功的每日规则同步刷新更新时间，即使规则正文不变；只清理状态文件记录且仍有受管标记的旧产物，保护手写文件。下载、校验或事务失败保留旧产物；无法表示的声明保存在 rules-result.json.filtered；格式损坏等异常按来源/错误类型复用 Issue，已支持规则继续发布，不能将隔离项宣称已转换。完整成功且不再出现该类声明时关闭对应告警。
+生成文件集中在 Rule/QuantumultX 与 Rule/Surge；英文头包括 Name、Updated、Source Authors、Category 以及来源。Category 固定为广告 Adblock、应用/AI/media 为 app、cn/proxy 为 general。每次成功的每日规则同步刷新更新时间，即使规则正文不变；只清理状态文件记录且仍有受管标记的旧产物，保护手写文件。下载、校验或事务失败保留旧产物；无法表示的声明保存在 rules-result.json.filtered；格式损坏等异常写入固定规则问题 Issue，并按来源/错误类型归并正文，已支持规则继续发布，不能将隔离项宣称已转换。完整成功且不再出现该类声明时关闭对应告警。
 
 补充来源默认合并现有分类。注册表 `standalone: true` 的来源独立输出，不参与应用归属、cn/proxy 合并或跨来源去重；保留原注释、声明顺序与逐条策略。filterFix 使用独立分类 filterfix：QX 输出 Rule/QuantumultX/filterfix.list；Surge 输出 Rule/Surge/filterfix.dconf，在同一个 [Rule] 配置片段保留 DIRECT/PROXY，不生成 filterfix_direct/filterfix_proxy 或把该来源并入 cn。Surge 使用主配置 [Rule] 内的 #!include 引用片段，PROXY 须为主配置已定义的代理或策略组。外部 RULE-SET 与模块均不能用于保存该混合策略语义。依据：https://manual.nssurge.com/profile/format.html、https://manual.nssurge.com/rules/ruleset.html、https://manual.nssurge.com/profile/module.html。
 
@@ -494,3 +494,9 @@ JS 入口只从真实注释中提取 QX 安装声明，不执行业务脚本、�
 原生 Surge 模块只发布 Surge 版本，保持原脚本 SDK，经原生格式验证和同一备份/布局流程发布；不引入未实现的 Surge→QX API 转换。原生 metadata 仅修正目标不支持的元数据形式、布尔字段和不合法参数名；参数别名同步更新三重花括号，业务 argument 键及值不改。模块参数仍遵循官方 ASCII 名称与连续 directive 头。
 
 已明确失效的整份来源跳过请求：作者标注失效的 JavDB，以及返回网站 HTML fallback 的 Lofter；HTTP 404/410 在目录状态中明确跳过，其它失败不假装成功。QX `#[rewrite_local]` 注释形式有效；正则以 query_key= 起始的重写不得误判为 MITM 键值赋值。
+
+### 去广告编号与分类 Issue（2026-11-12）
+
+去广告内容使用 `AD0001` 形式的固定编号，保存在 `.github/sources/adblock-numbers.json`。同一来源条目的 QX/Surge 版本共用编号；新增只递增，删除保留登记，排序和目录迁移不重排或回收编号。配置增加 `# WayX ID: AD0001` 注释，README 增加编号列，不以编号替换原文件名或修改脚本业务代码。逻辑路径与发布路径同时保留为查找别名，不参与普通布局路径改写。
+
+五类 Issue 标题固定，重复失败只覆盖该类正文，不追加逐条评论；恢复关闭，再次出现复用原 Issue。拉取类正文每行一个编号，无 URL、错误栈或额外说明；其他类别按问题汇总说明。迁移时先写分类摘要，再关闭旧逐条或重复自动 Issue，历史详情保留在已关闭的 Issue 和 Action 报告。
