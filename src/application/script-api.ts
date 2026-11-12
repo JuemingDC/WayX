@@ -192,6 +192,9 @@ export async function prepareScriptApiAdapters(
   }
   const groups = new Map<string, any>();
   for (const artifact of artifacts) {
+    // Modified: 2026-11-12 (chance). Native Surge website modules retain their
+    // original script SDK; only Loon/QX source APIs enter conversion planning.
+    if(artifact.relative.endsWith('.sgmodule')&&/^# Managed by: WayX Native Surge$/m.test(artifact.text))continue;
     // Modified: 2026-11-05 (chance). Adblock and Module use the same target API policy.
     if (
       !/^(?:Adblock|Module)\//.test(artifact.relative) ||

@@ -482,3 +482,15 @@ Modified: 2026-11-10 (chance). 原生 QX commit/tree 发现通过共享资源传
 Modified: 2026-11-11 (chance). runtimePolicyVersion=9：生成器按词法 API 引用选择依赖闭包；不以注释/字符串中的 API 字样拉入模块。正文/url 直接读取及静态 body 完成值采用小型词法适配，不注入 Proxy/with；保留完成单次提交、字节视图范围和来源作用域。其它程序保留所需 API 模块，构建时消解一致的客户端/布局常量，移除不可达 helper、未使用 host 捕获、provider 和配置字段。全局对象逃逸、动态全局键、eval/Function/this 等不可静态限定的访问保留完整所需兼容能力，不改写作者业务表达式，不承诺无法证明的细粒度裁剪。原生 QX 继续逐字节复制；作者源码与 API 证据独立归档。差分测试将精简结果与未裁剪 API 内核的输出、调用顺序和异常比较；由现有 Actions 生成和发布产物，不手改交付脚本。
 
 Modified: 2026-11-11 (chance). runtimePolicyVersion=10：URL/URLSearchParams 引用保持访问时懒加载；不能通过词法参数传值提前触发 getter/provider、越过作者 if/try。以未执行分支零初始化和作者 catch 接收原异常验证。
+
+### 墨鱼网站完整脚本目录（2026-11-12，chance）
+
+从 `https://ddgksf2013.top/` HTML 中发现前端实际 fetch 的同站 JSON 目录，不执行网站 JS。按目录的脚本/重写类别动态登记资源；远程配置、前置安装桥、AppRaven 收藏、分流入口和图标入口独立计入 ignored，不冒充模块。网站条目优先，原 GitHub 三目录中未被网站同名应用覆盖的补充资源继续保留；目录缺失、格式损坏或空列表必须阻止发布，不据此删掉旧资源。报告保存目录 SHA、总数、有效候选、补充项、失效项和实际输出数。
+
+网站请求按 URL 使用 JSON/HTML Accept、同站 Referer、Accept-Language 和 no-cache/Pragma；资源下载仍使用实测 Surge UA，仅修改网站作用域的请求头，不向其它上游添加网站 Referer 或泄漏 GitHub 认证。
+
+JS 入口只从真实注释中提取 QX 安装声明，不执行业务脚本、不按文件名猜匹配条件；带有原生 QX 声明的 `.js` 配置独立识别。原始响应仍按字节归档，QX 引用的 JS 仍逐字节复制；Surge 端调用原有 QX→Surge 配置/API 转换。功能及会员工具归 Module，去广告归 Adblock。复制显式原作者日期，额外支持安装注释的 `> UpdateTime`，不写抓取时间。
+
+原生 Surge 模块只发布 Surge 版本，保持原脚本 SDK，经原生格式验证和同一备份/布局流程发布；不引入未实现的 Surge→QX API 转换。原生 metadata 仅修正目标不支持的元数据形式、布尔字段和不合法参数名；参数别名同步更新三重花括号，业务 argument 键及值不改。模块参数仍遵循官方 ASCII 名称与连续 directive 头。
+
+已明确失效的整份来源跳过请求：作者标注失效的 JavDB，以及返回网站 HTML fallback 的 Lofter；HTTP 404/410 在目录状态中明确跳过，其它失败不假装成功。QX `#[rewrite_local]` 注释形式有效；正则以 query_key= 起始的重写不得误判为 MITM 键值赋值。

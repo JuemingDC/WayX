@@ -30,6 +30,7 @@ const profile = Object.freeze({
   transport: "node-fetch",
   userAgent: WAYX_FETCH_UA,
   accept: "*/*",
+  headers: {} as Record<string,string>,
 });
 export const ORIGINAL_FETCH_PROFILES = Object.freeze({
   default: profile,
@@ -37,7 +38,13 @@ export const ORIGINAL_FETCH_PROFILES = Object.freeze({
   rucu6: profile,
 });
 export function selectOriginalFetchProfile(value: string) {
-  assertHttpUrl(value);
+  const url=new URL(assertHttpUrl(value));
+  // Modified: 2026-11-12 (chance). Website catalog requests use their declared
+  // JSON/HTML types and same-site Referer; download UA remains the observed Surge UA.
+  if(url.origin==='https://ddgksf2013.top')return {
+    ...profile,id:'ddgksf-site',
+    headers:{Accept:url.pathname.endsWith('.json')?'application/json':url.pathname==='/'?'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8':'*/*','Accept-Language':'zh-CN,zh;q=0.9,en;q=0.8',Referer:'https://ddgksf2013.top/','Cache-Control':'no-cache',Pragma:'no-cache'},
+  };
   return profile;
 }
 export function assertHttpUrl(value: string) {
@@ -121,7 +128,8 @@ export async function requestOriginal(
       }),
       timer = setTimeout(() => controller.abort(deadline), timeoutMs);
     try {
-      const headers = new Headers(options.headers);
+      const headers = new Headers(selectOriginalFetchProfile(source).headers);
+      new Headers(options.headers).forEach((value,key)=>headers.set(key,value));
       // Modified: 2026-11-10 (chance). Authenticate GitHub REST snapshots with
       // the Actions token only at the exact HTTPS API origin, never upstream hosts.
       if (new URL(source).origin === "https://api.github.com" &&

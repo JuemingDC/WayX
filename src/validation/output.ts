@@ -632,7 +632,10 @@ function validateQxExecutableLine(
 ): any {
   const noted: any = stripQxLeadingNote(line, entry);
   line = noted.line;
-  if (noted.note && /^([A-Za-z0-9_-]+)\s*=/.test(line)) {
+  // Modified: 2026-11-12 (chance). URL regexes may begin with query_key=;
+  // a parsed rewrite takes precedence over MITM assignment detection.
+  const rewrite: any = splitQxRewriteLine(line);
+  if (noted.note && !rewrite && /^([A-Za-z0-9_-]+)\s*=/.test(line)) {
     throw new Error(
       `${entry.id}: Quantumult X leading notes are only valid on filter/rewrite rules: ${line}`,
     );
@@ -643,7 +646,7 @@ function validateQxExecutableLine(
       `${entry.id}: malformed/unverified Quantumult X task line: ${line}`,
     );
   }
-  const mitm: any = line.match(/^([A-Za-z0-9_-]+)\s*=/);
+  const mitm: any = !rewrite && line.match(/^([A-Za-z0-9_-]+)\s*=/);
   if (mitm) {
     if (section && section !== "mitm")
       throw new Error(
@@ -656,7 +659,6 @@ function validateQxExecutableLine(
     }
     return;
   }
-  const rewrite: any = splitQxRewriteLine(line);
   if (rewrite) {
     if (section && section !== "rewrite_local")
       throw new Error(
@@ -774,11 +776,9 @@ export function validateQX(text: any, entry: any): any {
       );
     if (active) throw new Error(`${entry.id}: unconverted QX token ${bad}`);
   }
-  const commentedSections: any = [
-    "# [filter_local]",
-    "# [rewrite_local]",
-    "# [mitm]",
-  ].filter((section: any): any => text.includes(section));
+  // Modified: 2026-11-12 (chance). Both #[rewrite_local] and # [rewrite_local]
+  // are comments; native source spacing/case does not change QX semantics.
+  const commentedSections=String(text).match(/^\s*#\s*\[(?:filter_local|rewrite_local|mitm)\]\s*$/gim)??[];
   if (!commentedSections.length) {
     throw new Error(`${entry.id}: missing commented QX section heading`);
   }

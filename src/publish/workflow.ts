@@ -1,3 +1,8 @@
+// Modified: 2026-11-12 (chance). Website-listed resources supersede the limited
+// GitHub directory subset; embedded QX and native Surge keep separate handling.
+import {ddgksfCatalogUrl,parseDdgksfCatalog,websiteQxConfiguration} from "../ingest/ddgksf.ts";
+import {unavailableSource} from "../ingest/resources.ts";
+import {normalizeSurgeModuleHeader} from "../domain/surge-module-header.ts";
 // Modified: 2026-11-10 (chance). Native QX wrappers use author update dates and publish date-only source changes.
 import { upstreamUpdateTime } from "../domain/update-metadata.ts";
 import { QX_WAYX_REJECT_ACTIONS } from "../domain/core.ts";
@@ -13,7 +18,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { convertNativeQxToSurge } from "../emit/conversion.ts";
 import { quoteJq } from "../parser/rewrite.ts";
-import { validateQX } from "../validation/output.ts";
+import { validateQX,validateSurgeModule } from "../validation/output.ts";
 import { spawnSync } from "node:child_process";
 import { normalizePluginSource, parseLoonPlugin } from "../parser/input.ts";
 
@@ -367,7 +372,7 @@ export function mergeNativeQxSources(
   { name, author, diagnostics = [] }: any = {},
 ): any {
   const out: string[] = [
-    "# Name: " + name, "# Updated: " + upstreamUpdateTime(sources.map((source: any) => source.text).join("\n")), "# Copied by: chance",
+    "# Name: " + name, "# Updated: " + upstreamUpdateTime(sources.map((source: any) => source.rawText??source.text).join("\n")), "# Copied by: chance",
     "# Source Authors: " + (author ?? ""), "# Category: app", NATIVE_QX_MARKER, "",
   ];
   for (const source of sources) {
@@ -423,6 +428,26 @@ export function mergeNativeQxSources(
   validateQX(text, {id: name ?? "native_qx"});
   return text;
 }
+function nativeWebsiteSurge(text:string,item:any){
+  const updated=upstreamUpdateTime(text);
+  const renames=new Map<string,string>();let counter=0;
+  const used=new Set([...text.matchAll(/^#!arguments=(.+)$/gm)].flatMap(m=>m[1].split(',').map(row=>row.split(':',1)[0].trim())));
+  text=text.replace(/^#!arguments=(.+)$/gm,(_,row)=>'#!arguments='+row.split(',').map((value:string)=>{
+    const colon=value.indexOf(':'),key=(colon<0?value:value.slice(0,colon)).trim();
+    if(/^[A-Za-z0-9_]+$/.test(key))return value;
+    let name='option';while(used.has(name))name='option_'+(++counter);used.add(name);
+    renames.set(key,name);return name+(colon<0?'':value.slice(colon));
+  }).join(','));
+  for(const [from,to] of renames)text=text.split('{{{'+from+'}}}').join('{{{'+to+'}}}');
+  if(renames.size&&!/^#!arguments-desc=/m.test(text))text=text.replace(/^(#!arguments=.*)$/m,'$1\n#!arguments-desc='+[...renames].map(([from,to])=>to+'：'+from).join('；'));
+  const accepted=/^#!(?:name|desc|system|requirement|arguments|arguments-desc|source)=/i;
+  text=text.split('\n').map(line=>line.startsWith('#!')&&!accepted.test(line)?'# Upstream '+line.slice(2):line).join('\n');
+  if(!/^#!name=/m.test(text))text='#!name='+item.name+'\n'+text;
+  if(!/^#!desc=/m.test(text))text='#!desc='+(item.desc||item.name)+'\n'+text;
+  text=text.replace(/^(#!desc=.*)$/m,'$1\n#!category=WayX');
+  text=text.replace(/\b(requires-body|binary-body-mode|full-header-mode)=([01])(?=,|$)/gm,(_,key,value)=>key+'='+(value==='1'?'true':'false'));
+  return normalizeSurgeModuleHeader(text+'\n# Managed by: WayX Native Surge\n# Source: '+item.sourceUrl+'\n# Updated: '+updated+'\n# Copied by: chance\n');
+}
 export async function prepareNativeQxSync(
   root: any,
   { fetchText, icons = null }: any = {},
@@ -458,12 +483,14 @@ export async function prepareNativeQxSync(
     commit: plans.length === 1 ? plans[0].commit : undefined,
     sources: plans.map((plan: any, i: any): any => ({
       repository: configs[i].repository,
+      website: configs[i].website,
       prefix: configs[i].prefix,
       commit: plan.commit,
     })),
     inputs: plans.flatMap((p: any): any => p.inputs),
     skipped: plans.flatMap((p: any): any => p.skipped),
     diagnostics: plans.flatMap((p: any): any => p.diagnostics),
+    discovery: plans.map((p:any)=>p.discovery).filter(Boolean),
   };
 }
 async function prepareNativeQxSource(
@@ -478,8 +505,10 @@ async function prepareNativeQxSource(
     throw Error("Invalid native QX registry");
   // Modified: 2026-11-01 (chance). Explicit native QX allowlists select only the requested collection and standalone app; missing entries fail instead of pruning old outputs.
   if (config.include && (!Array.isArray(config.include) || !config.include.length || config.include.some((p: any) => typeof p !== "string" || p.startsWith("/") || p.split("/").includes("..") || !p.endsWith(".snippet")))) throw Error("Invalid native QX include list");
+  let commit:any,files:any[],discovery:any;
+  const githubFiles=async()=>{
   const api: any = "https://api.github.com/repos/" + config.repository;
-  const commit: any = JSON.parse(
+  commit = JSON.parse(
     await fetchText(api + "/commits/" + encodeURIComponent(config.ref)),
   ).sha;
   if (!/^[a-f0-9]{40}$/.test(commit))
@@ -490,7 +519,7 @@ async function prepareNativeQxSource(
   if (tree.truncated || !Array.isArray(tree.tree))
     throw Error("Incomplete native QX source tree");
   // Modified: 2026-11-01 (chance). Discover configured QX conf directories and route each directory to its declared category.
-  const files: any = tree.tree
+  const selectedFiles = tree.tree
     .filter(
       (x: any): any =>
         x.type === "blob" &&
@@ -503,22 +532,42 @@ async function prepareNativeQxSource(
         !(config.exclude || []).includes(x.path),
     )
     .sort((a: any, b: any): any => a.path.localeCompare(b.path, "en"));
-  if (!files.length) throw Error("Empty native QX source catalog");
-  if (config.include?.some((p: string) => !files.some((f: any) => f.path === p))) throw Error("Missing requested native QX source");
+  if (!selectedFiles.length) throw Error("Empty native QX source catalog");
+  if (config.include?.some((p: string) => !selectedFiles.some((f: any) => f.path === p))) throw Error("Missing requested native QX source");
+  return selectedFiles;
+  };
+  if(config.website){
+    if(config.website!=="https://ddgksf2013.top/")throw Error("Unregistered native website");
+    const html=await fetchText(config.website),catalogUrl=ddgksfCatalogUrl(html,config.website),payload=await fetchText(catalogUrl);
+    const catalog=parseDdgksfCatalog(payload);
+    discovery={source:config.website,catalogUrl,catalogSha256:crypto.createHash('sha256').update(payload).digest('hex'),total:catalog.total,eligible:catalog.entries.length,ignored:catalog.ignored};
+    files=catalog.entries.map(entry=>({...entry,type:'blob'}));
+    const existing=await githubFiles();
+    const keys=new Set(files.map(file=>path.posix.basename(file.path,'.conf')));
+    const extra=existing.filter((file:any)=>!keys.has(path.posix.basename(file.path,'.conf').toLowerCase().replace(/_/g,'-')));
+    files.push(...extra);discovery.repositorySupplement=extra.map((file:any)=>file.path);
+  }else files=await githubFiles();
   const groups: any = new Map(),
     inputs: any = [],
     skipped: any = [],
     diagnostics: any = [];
+  const nativeSurge:any[]=[];
   for (const file of files) {
-    const url: any =
-      "https://raw.githubusercontent.com/" +
-      config.repository +
-      "/" +
-      commit +
-      "/" +
-      file.path;
-    const text: any = await fetchText(url);
-    if (/^\s*</.test(text)) throw Error("HTML response for " + url);
+    const url:any=file.url??"https://raw.githubusercontent.com/"+config.repository+"/"+commit+"/"+file.path;
+    if(unavailableSource(url)){skipped.push({application:file.name??file.path,source:url,reason:unavailableSource(url)});continue;}
+    let rawText:string;
+    try{rawText=await fetchText(url);}catch(error:any){
+      if(!config.website||![404,410].includes(error.status))throw error;
+      skipped.push({application:file.name,source:url,reason:'HTTP '+error.status});continue;
+    }
+    if(/^\s*</.test(rawText))throw Error("HTML response for "+url);
+    let text=rawText;
+    if(config.website)text=websiteQxConfiguration(text,url);
+    const sourceUrl=file.url??"https://raw.githubusercontent.com/"+config.repository+"/"+config.ref+"/"+file.path;
+    inputs.push({repository:config.repository,path:file.path,acquiredUrl:url,sourceUrl,sha256:crypto.createHash('sha256').update(rawText).digest('hex')});
+    if(config.website&&!/\surl(?:-and-header)?\s/.test(text)&&/^\[(?:Script|URL Rewrite|Map Local)\]\s*$/m.test(text)){
+      nativeSurge.push({...file,text,sourceUrl});continue;
+    }
     const stem: any = path.posix.basename(file.path, path.posix.extname(file.path)),
       key: any =
         config.aliases?.[stem] ||
@@ -530,8 +579,10 @@ async function prepareNativeQxSource(
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push({
       text,
+      rawText,
+      siteItem: file.url?file:undefined,
       path: file.path,
-      url:
+      url: file.url??
         "https://raw.githubusercontent.com/" +
         config.repository +
         "/" +
@@ -539,14 +590,7 @@ async function prepareNativeQxSource(
         "/" +
         file.path,
     });
-    inputs.push({
-      repository: config.repository,
-      path: file.path,
-      // Modified: 2026-11-01 (chance). Retain both requested immutable snapshot and author URL for exact-byte source archiving.
-      acquiredUrl: url,
-      sourceUrl: "https://raw.githubusercontent.com/" + config.repository + "/" + config.ref + "/" + file.path,
-      sha256: crypto.createHash("sha256").update(text).digest("hex"),
-    });
+
   }
   const outputs: any = new Map();
   for (const [key, allSources] of groups) {
@@ -584,10 +628,11 @@ async function prepareNativeQxSource(
         .map((x: any): any => (x.text.match(/^#!name\s*=\s*(.+)$/im)?.[1] || x.text.match(/^\s*\/\/\s*@ScriptName\s+(.+)$/im)?.[1]))
         .filter(Boolean)
         .at(-1) ||
+      sources[0].siteItem?.name ||
       config.names?.[key] ||
       key;
     // Modified: 2026-11-01 (chance). QX copies checked native declarations; no Loon compiler, URL normalization or icon backfill is applied.
-    const text = mergeNativeQxSources(sources, { name, author: config.author, diagnostics });
+    const text = mergeNativeQxSources(sources, { name, author: sources[0].siteItem?.author??config.author, diagnostics });
     // Modified: 2026-11-01 (chance). Function/HTML enhancements are Modules; advertising filters remain Adblock.
     const category = config.directories?.[sources[0].path.split("/")[0]] ?? "Adblock";
     if (!["Adblock", "Module"].includes(category)) throw Error("Invalid native category");
@@ -617,7 +662,16 @@ async function prepareNativeQxSource(
       );
     }
   }
-  return { outputs, commit, inputs, skipped, diagnostics };
+  for(const item of nativeSurge){
+    const key=path.posix.basename(item.path,'.conf');
+    const category=item.category;
+    const text=nativeWebsiteSurge(item.text,item);
+    validateSurgeModule(text,{id:config.prefix+key});
+    outputs.set((category==='Module'?'Module/Surge':SURGE_ADBLOCK_DIR)+'/'+config.prefix+key+'.sgmodule',text);
+    diagnostics.push({source:item.sourceUrl,application:item.name,reason:'Native Surge retained; no equivalent QX artifact claimed'});
+  }
+  if(discovery){discovery.sourceResources=groups.size+nativeSurge.length;discovery.nativeSurgeResources=nativeSurge.length;discovery.skipped=skipped;discovery.outputs=outputs.size;}
+  return { outputs, commit, inputs, skipped, diagnostics,discovery };
 }
 export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
   if (!plan) return;
@@ -646,7 +700,7 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
     } catch (error: any) {
       if (error.code !== "ENOENT") throw error;
     }
-    if (previous !== null && !previous.includes(NATIVE_QX_MARKER))
+    if (previous !== null && !previous.includes(NATIVE_QX_MARKER) && !previous.includes("# Managed by: WayX Native Surge"))
       throw Error(
         "Refusing to overwrite unmanaged native QX resource: " + relative,
       );
@@ -672,6 +726,7 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
         inputs: plan.inputs,
         skipped: plan.skipped,
         diagnostics: plan.diagnostics,
+        discovery: plan.discovery,
         outputs: [...plan.outputs.keys()],
       },
       null,
