@@ -1,5 +1,5 @@
-// Modified: 2026-10-30 (chance). One TypeScript transport and Surge UA for all
-// sources, bounded streamed bytes, transient retries and sealed disk snapshots.
+// Modified: 2026-11-12 (chance). Keep one TypeScript transport; Kelee and RuCu6
+// use the reference downloader's Loon UA, other sources retain the Surge UA.
 import fs from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -32,13 +32,25 @@ const profile = Object.freeze({
   accept: "*/*",
   headers: {} as Record<string,string>,
 });
+const loonProfile = Object.freeze({
+  ...profile,
+  userAgent: "Loon/860 CFNetwork/3826.500.111.2.2 Darwin/24.4.0",
+});
 export const ORIGINAL_FETCH_PROFILES = Object.freeze({
   default: profile,
-  kelee: profile,
-  rucu6: profile,
+  kelee: Object.freeze({ ...loonProfile, id: "kelee" }),
+  rucu6: Object.freeze({ ...loonProfile, id: "rucu6" }),
 });
 export function selectOriginalFetchProfile(value: string) {
   const url=new URL(assertHttpUrl(value));
+  // Modified: 2026-11-12 (chance). Match source hosts/owners exactly; third-party
+  // mirrors and similarly named hosts keep their own default request identity.
+  if (url.hostname === "kelee.one" || url.hostname.endsWith(".kelee.one"))
+    return ORIGINAL_FETCH_PROFILES.kelee;
+  if (url.hostname === "rucu6.pages.dev" ||
+      (["raw.githubusercontent.com", "github.com"].includes(url.hostname) &&
+       /^\/RuCu6\//i.test(url.pathname)))
+    return ORIGINAL_FETCH_PROFILES.rucu6;
   // Modified: 2026-11-12 (chance). Website catalog requests use their declared
   // JSON/HTML types and same-site Referer; download UA remains the observed Surge UA.
   if(url.origin==='https://ddgksf2013.top')return {
@@ -128,14 +140,15 @@ export async function requestOriginal(
       }),
       timer = setTimeout(() => controller.abort(deadline), timeoutMs);
     try {
-      const headers = new Headers(selectOriginalFetchProfile(source).headers);
+      const selectedProfile = selectOriginalFetchProfile(source);
+      const headers = new Headers(selectedProfile.headers);
       new Headers(options.headers).forEach((value,key)=>headers.set(key,value));
       // Modified: 2026-11-10 (chance). Authenticate GitHub REST snapshots with
       // the Actions token only at the exact HTTPS API origin, never upstream hosts.
       if (new URL(source).origin === "https://api.github.com" &&
           process.env.GITHUB_TOKEN && !headers.has("Authorization"))
         headers.set("Authorization", "Bearer " + process.env.GITHUB_TOKEN);
-      headers.set("User-Agent", WAYX_FETCH_UA);
+      headers.set("User-Agent", selectedProfile.userAgent);
       if (options.accept || !headers.has("Accept"))
         headers.set("Accept", options.accept ?? "*/*");
       const res = await fetch(source, {
