@@ -531,6 +531,8 @@ async function prepareNativeQxSource(
         ).test(x.path)) &&
         !(config.exclude || []).includes(x.path),
     )
+    // Git tree url points to the blob JSON API, not the downloadable resource.
+    .map((file: any) => ({path:file.path,type:file.type}))
     .sort((a: any, b: any): any => a.path.localeCompare(b.path, "en"));
   if (!selectedFiles.length) throw Error("Empty native QX source catalog");
   if (config.include?.some((p: string) => !selectedFiles.some((f: any) => f.path === p))) throw Error("Missing requested native QX source");

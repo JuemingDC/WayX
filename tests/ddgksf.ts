@@ -143,7 +143,7 @@ try {
       return JSON.stringify({
         tree: [
           { path: "AdBlock/Alpha.conf", type: "blob" },
-          { path: "Function/Legacy.conf", type: "blob" },
+          { path: "Function/Legacy.conf", type: "blob", url: "https://api.github.com/repos/ddgksf2013/Rewrite/git/blobs/metadata-only" },
         ],
       });
     if (!(url in bodies)) throw Error("Unexpected source: " + url);
