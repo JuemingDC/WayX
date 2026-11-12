@@ -1,36 +1,189 @@
-name: WayX Source Fetch Probe
+name: WayX Automation
+
 on:
+  # Modified: 2026-11-01 (chance). Code/specification pushes run acquisition and publication; generated backup/target commits do not retrigger the workflow.
   push:
-    branches: [test]
+    branches: [main, test]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'config/**'
+      - 'docs/**'
+      - 'AGENTS.md'
+      - '.github/CONVERSION_SPEC.md'
+      - '.github/workflows/**'
+      - 'package*.json'
+      - 'tsconfig.json'
+  pull_request:
+    paths:
+      - '.github/**'
+      - 'Resource/Loon/**'
+      - 'Adblock/**'
+      - 'Script/**'
+      - 'Boxjs/**'
+      - 'Module/**'
+      - 'Rule/**'
+      - 'README.md'
+      - 'src/**'
+      - 'tests/**'
+      - 'config/**'
+      - 'docs/**'
+      - 'package*.json'
+      - 'tsconfig.json'
+  workflow_dispatch:
+  schedule:
+    # Modified: 2026-10-31 (chance). Run daily at 05:30 Asia/Shanghai (21:30 UTC on the previous day).
+    - cron: '30 21 * * *'
+
 permissions:
-  contents: read
+  contents: write
+  issues: write
+
+concurrency:
+  group: wayx-${{ github.repository }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
-  probe:
+  automation:
+    if: github.event_name == 'pull_request' || github.ref_name == 'main' || github.ref_name == 'test'
     runs-on: ubuntu-26.04
-    timeout-minutes: 10
+    timeout-minutes: 90
+    # Modified: 2026-11-01 (chance). Share bash fail-fast/pipefail semantics instead of repeating shell setup in every step.
+    defaults:
+      run:
+        shell: bash
+    env:
+      PUBLISH_BRANCH: ${{ github.event_name != 'pull_request' && github.ref_name || (github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test' && 'test' || '') }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
-      - uses: actions/checkout@v7.0.1
+      # Modified: 2026-11-01 (chance). Use verified v7 patch releases; publication only needs the requested HEAD, not full history.
+      - name: Checkout requested baseline
+        uses: actions/checkout@v7.0.1
         with:
-          ref: '35436ece412c4ec05e95cfaf13a5c1ff67e705f3'
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v7.1.0
         with:
+          # October 2026 security release; continue tracking patched Node 26 builds.
           node-version: '^26.12.1'
-      - name: Verify all plugins using production TypeScript acquisition
-        shell: bash
-        run: |
-          node --input-type=module <<'JS'
-          import fs from 'node:fs/promises';
-          import {requestOriginal} from './src/ingest/resources.ts';
-          import {identifyResource} from './src/ingest/formats.ts';
-          const list=await requestOriginal('https://hub.kelee.one/list.json');
-          const payload=JSON.parse(list.bytes.toString());
-          const registry=JSON.parse(await fs.readFile('.github/sources/loon.json','utf8'));
-          const fixed=JSON.parse(await fs.readFile('.github/sources/loon-static.json','utf8'));
-          const entries=payload.lists.map(x=>({owner:'Kelee',url:new URL(x.url).searchParams.get('plugin')}));
-          for(const x of [...registry,...fixed])if(new URL(x.source).hostname==='rucu6.pages.dev')entries.push({owner:'RuCu6',url:x.source});
-          const unique=[...new Map(entries.map(x=>[x.url,x])).values()];
-          const results=[];let next=0;
-          await Promise.all(Array.from({length:4},async()=>{while(next<unique.length){const item=unique[next++];try{const r=await requestOriginal(item.url);results.push({...item,status:r.status,format:identifyResource(r.bytes,item.url),size:r.bytes.length});}catch(e){results.push({...item,error:e.message});}}}));
-          for(const owner of ['Kelee','RuCu6']){const rows=results.filter(x=>x.owner===owner);console.log(JSON.stringify({owner,total:rows.length,valid:rows.filter(x=>x.format==='loon-text').length,failures:rows.filter(x=>x.format!=='loon-text')}));}
-          if(results.some(x=>x.format!=='loon-text'))process.exitCode=1;
-          JS
+          check-latest: true
+      # Modified: 2026-10-30 (chance). All automation runs through TypeScript.
+      - name: Install locked TypeScript runtime dependencies
+        run: npm ci
+
+      # Modified: 2026-10-23 (chance). Pin the official jq compiler used by
+      # conversion and final validation instead of inheriting the runner version.
+      - name: Install verified jq 1.8.2
+        run: node src/cli.ts setup-jq
+
+      - name: Run semantic regression suites for proposed code changes
+        if: github.event_name == 'pull_request'
+        run: npm test
+
+      - name: Prepare runtime logs and enforce branch budget
+        run: node src/cli.ts prepare
+
+      - name: Refresh plugin catalogs and prune retired artifacts
+        id: catalog
+        env:
+          RUCU6_LIST_URL: ${{ vars.RUCU6_LIST_URL }}
+        continue-on-error: true
+        run: node src/cli.ts catalog 2>&1 | tee .github/monitor/.runtime/catalog.log
+
+      - name: Aggregate and convert routing rule sets
+        id: rules
+        if: steps.catalog.outcome == 'success'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node src/cli.ts rules
+
+      - name: Pull discovered upstreams and convert
+        id: loon_sync
+        if: steps.catalog.outcome == 'success'
+        continue-on-error: true
+        run: node src/cli.ts sync 2>&1 | tee .github/monitor/.runtime/loon-sync.log
+
+      - name: Verify complete generated repository
+        id: verify
+        if: steps.loon_sync.outputs.publishable == 'true'
+        continue-on-error: true
+        run: node src/cli.ts verify 2>&1 | tee .github/monitor/.runtime/verification.log
+
+      - name: Check monitored upstream specifications
+        id: monitor
+        if: env.PUBLISH_BRANCH != '' && steps.catalog.outcome == 'success'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node src/cli.ts monitor 2>&1 | tee .github/monitor/.runtime/monitor.log
+
+      - name: Generate reconciliation and Review inventory
+        id: reports
+        if: always()
+        continue-on-error: true
+        run: node src/cli.ts reports 2>&1 | tee .github/monitor/.runtime/reports.log
+
+      - name: Create or update conversion issues
+        id: issues
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STAGES: ${{ toJSON(steps) }}
+        run: node src/cli.ts issues 2>&1 | tee .github/monitor/.runtime/issues.log
+
+      - name: Evaluate publication gates
+        id: gate
+        if: always()
+        env:
+          STAGES: ${{ toJSON(steps) }}
+          SYNC_PUBLISHABLE: ${{ steps.loon_sync.outputs.publishable }}
+          MONITOR_ENABLED: ${{ env.PUBLISH_BRANCH != '' && 'true' || 'false' }}
+          MONITOR_COMPLETE: ${{ steps.monitor.outputs.complete }}
+        run: node src/cli.ts gate
+
+      - name: Publish validated outputs to the existing branch
+        id: publish
+        if: always()
+        continue-on-error: true
+        env:
+          PUBLISHABLE: ${{ steps.gate.outputs.publishable }}
+          MONITOR_ENABLED: ${{ env.PUBLISH_BRANCH != '' && 'true' || 'false' }}
+        run: node src/cli.ts publish
+
+      - name: Record run summary
+        if: always()
+        env:
+          PUBLICATION: ${{ steps.publish.outputs.publication }}
+        run: node src/cli.ts summary
+
+      # Modified: 2026-11-01 (chance). Include functional native Module outputs in the downloadable artifacts.
+      - name: Upload automation reports and generated outputs
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: wayx-conversion-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 14
+          path: |
+            .github/monitor/.runtime/
+            .github/sources/loon.json
+            Resource/Loon/
+            Resource/Encrypted/
+            Resource/Backup/
+            Rule/
+            Adblock/Quantumult X/
+            Adblock/Surge/
+            Module/QuantumultX/
+            Module/Surge/
+            Script/
+            README.md
+
+      - name: Surface blocked or failed publication
+        if: always()
+        env:
+          PUBLISHABLE: ${{ steps.gate.outputs.publishable }}
+          PUBLICATION_OUTCOME: ${{ steps.publish.outcome }}
+        run: node src/cli.ts final
+
