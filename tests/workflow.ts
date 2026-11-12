@@ -223,7 +223,55 @@ console.log('workflow diagnostics contract passed');
 
 
 
-if(selectedCase==='source-fetch.mjs'){for(const profile of Object.values(ORIGINAL_FETCH_PROFILES)){assert.equal(profile.userAgent,WAYX_FETCH_UA);assert.equal(profile.transport,'node-fetch');}assert.match(WAYX_FETCH_UA,/^Surge /);}
+if (selectedCase === "source-fetch.mjs") {
+  // Modified: 2026-11-12 (chance). Verify source-specific identities reach the
+  // actual HTTP request; lookalike hosts/owners retain the default Surge profile.
+  const { requestOriginal } = await import("../src/ingest/resources.ts");
+  const loon = "Loon/860 CFNetwork/3826.500.111.2.2 Darwin/24.4.0";
+  const cases = [
+    ["https://kelee.one/Tool/Loon/Lpx/example.lpx", loon],
+    ["https://hub.kelee.one/list.json", loon],
+    ["https://kelee.one/Resource/JavaScript/example.js", loon],
+    ["https://rucu6.pages.dev/Plugins/example.lpx", loon],
+    ["https://raw.githubusercontent.com/RuCu6/QuanX/main/example.js", loon],
+    ["https://github.com/RuCu6/QuanX/raw/main/example.js", loon],
+    ["https://kelee.one.example.org/example", WAYX_FETCH_UA],
+    ["https://rucu6.pages.dev.example.org/example", WAYX_FETCH_UA],
+    ["https://raw.githubusercontent.com/RuCu6-other/repo/main/example", WAYX_FETCH_UA],
+    ["https://ddgksf2013.top/", WAYX_FETCH_UA],
+    ["https://example.org/", WAYX_FETCH_UA],
+  ];
+  for (const profile of Object.values(ORIGINAL_FETCH_PROFILES))
+    assert.equal(profile.transport, "node-fetch");
+  assert.equal(ORIGINAL_FETCH_PROFILES.default.userAgent, WAYX_FETCH_UA);
+  for (const profile of [ORIGINAL_FETCH_PROFILES.kelee, ORIGINAL_FETCH_PROFILES.rucu6]) {
+    assert.equal(profile.timeoutMs, 60000);
+    assert.equal(profile.attempts, 5);
+    assert.equal(profile.headers["Accept-Language"], "zh-CN,zh-Hans;q=0.9");
+  }
+  const originalFetch = globalThis.fetch;
+  try {
+    for (const [url, ua] of cases) {
+      assert.equal(selectOriginalFetchProfile(url).userAgent, ua);
+      let called = false;
+      globalThis.fetch = async (_input, init) => {
+        called = true;
+        const headers = new Headers(init?.headers);
+        assert.equal(headers.get("User-Agent"), ua);
+        if (ua === loon)
+          assert.equal(headers.get("Accept-Language"), "zh-CN,zh-Hans;q=0.9");
+        if (url === "https://ddgksf2013.top/")
+          assert.equal(headers.get("Referer"), "https://ddgksf2013.top/");
+        return new Response("fixture", { status: 200 });
+      };
+      await requestOriginal(url);
+      assert.equal(called, true);
+    }
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  console.log("source-specific fetch contracts passed");
+}
 if (selectedCase === "readme-index.mjs") {
 // Suite case: readme-index.mjs
 // README index regression contract.

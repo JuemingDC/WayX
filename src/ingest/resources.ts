@@ -30,11 +30,18 @@ const profile = Object.freeze({
   transport: "node-fetch",
   userAgent: WAYX_FETCH_UA,
   accept: "*/*",
+  timeoutMs: settings.timeoutMs,
+  attempts: settings.attempts,
   headers: {} as Record<string,string>,
 });
 const loonProfile = Object.freeze({
   ...profile,
   userAgent: "Loon/860 CFNetwork/3826.500.111.2.2 Darwin/24.4.0",
+  // Modified: 2026-11-12 (chance). Match the reference downloader's language,
+  // timeout and attempt budget for Kelee/RuCu6 without changing other sources.
+  headers: { "Accept-Language": "zh-CN,zh-Hans;q=0.9" },
+  timeoutMs: 60000,
+  attempts: 5,
 });
 export const ORIGINAL_FETCH_PROFILES = Object.freeze({
   default: profile,
@@ -124,8 +131,9 @@ export async function requestOriginal(
   const disabled = unavailableSource(url);
   if (disabled) throw Object.assign(Error("Source disabled: " + disabled), { code: "ERR_SOURCE_DISABLED" });
   const source = assertHttpUrl(url),
+    selectedProfile = selectOriginalFetchProfile(source),
     maxBytes = options.maxBytes ?? FETCH_LIMITS.binary,
-    timeoutMs = options.timeoutMs ?? settings.timeoutMs;
+    timeoutMs = options.timeoutMs ?? selectedProfile.timeoutMs;
   if (
     !Number.isSafeInteger(maxBytes) ||
     maxBytes < 1 ||
@@ -140,7 +148,6 @@ export async function requestOriginal(
       }),
       timer = setTimeout(() => controller.abort(deadline), timeoutMs);
     try {
-      const selectedProfile = selectOriginalFetchProfile(source);
       const headers = new Headers(selectedProfile.headers);
       new Headers(options.headers).forEach((value,key)=>headers.set(key,value));
       // Modified: 2026-11-10 (chance). Authenticate GitHub REST snapshots with
@@ -192,7 +199,7 @@ export async function requestOriginal(
       };
     } catch (error) {
       const failure = controller.signal.reason === deadline ? deadline : error;
-      if (attempt >= settings.attempts - 1 || !isTransientFetchError(failure))
+      if (attempt >= selectedProfile.attempts - 1 || !isTransientFetchError(failure))
         throw failure;
       await new Promise((r) => setTimeout(r, 250 * 2 ** attempt));
     } finally {
@@ -202,7 +209,7 @@ export async function requestOriginal(
 }
 export async function fetchOriginalBytes(
   url: string,
-  options: number | FetchOptions = 20000,
+  options: number | FetchOptions = {},
 ): Promise<Buffer> {
   const result = await requestOriginal(
     url,
@@ -218,7 +225,7 @@ export async function fetchOriginalBytes(
 }
 export async function fetchOriginalText(
   url: string,
-  options: number | FetchOptions = 20000,
+  options: number | FetchOptions = {},
 ): Promise<string> {
   const opts = typeof options === "number" ? { timeoutMs: options } : options;
   const bytes = await fetchOriginalBytes(url, {
