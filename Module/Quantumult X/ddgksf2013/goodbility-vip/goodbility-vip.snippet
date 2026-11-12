@@ -1,0 +1,26 @@
+# Name: Goodbility
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/goodbility.vip.js
+# ************************
+
+# 解锁GoodNotes、Notability内购会员 
+
+# https://t.me/ddgksf2021
+
+# Source section: [Script]
+
+# [rewrite_local]
+^https:\/\/isi\.csan.[a-z.]+\/.+\/(receipts$|subscribers\/[^/]+$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/goodbility-vip/goodbility.vip.js
+^https:\/\/isi\.csan.[a-z.]+\/.+\/(receipts|subscribers) url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/goodbility-vip/deleteHeader.js
+^https?:\/\/notability\.com\/global url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/goodbility-vip/goodbility.vip.js
+
+# [mitm]
+
+hostname=isi.csan.*, notability.com
+
+# ***********************

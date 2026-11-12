@@ -1,0 +1,59 @@
+#!name=酷我音乐
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 酷我音乐
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/kkmusic.vip.js
+# *********************************
+# 酷我音乐 Pro
+# 2025.12.12V1.0.6
+# https://t.me/ddgksf2021
+#^https?:\/\/.*kuwo.cn/commercia url reject-200
+#^https?:\/\/.*kuwo\.cn\/apps\/earning-sign url reject-200
+#^https?:\/\/.*kuwo\.cn\/api\/v\d\/online\/sign\/new\/todayStatus url reject-200^https?:\/\/.*kuwo\.cn\/api\/v\d\/online\/sign\/new\/todayStatus url reject-2000s?:\/\/.*kuwo\.cn\/openapi\/v\d\/user\/freeMode\/text url reject-200
+# *********************************
+
+[Map Local]
+^https?:\/\/.*kuwo\.cn\/star\/upload\/95\/25\/1764662243747_\.png data-type=text data="" status-code=200
+^https?:\/\/.*kuwo\.cn\/star\/upload\/25\/9\/1763524573099_\.png data-type=text data="" status-code=200
+^https?:\/\/.*kuwo\.cn\/openapi\/v\d\/operate\/text data-type=text data="" status-code=200
+^https?:\/\/.*kuwo\.cn\/openapi\/v\d\/operate\/downTab\/info data-type=text data="" status-code=200
+^https?:\/\/.*kuwo\.cn\/apps\/global-free-popup data-type=text data="" status-code=200
+^https?:\/\/vip1\.kuwo\.cn\/vip\/activity\/kwMemberDay data-type=text data="" status-code=200
+^https?:\/\/mc\.tencentmusic\.com\/sdk\/ad data-type=text data="" status-code=200
+^https?:\/\/.*kuwo\.cn/AdSystem data-type=text data="" status-code=200
+^https?:\/\/.*kuwo\.cn/openapi/v1/user/freemium/global/text data-type=text data="" status-code=200
+^https?:\/\/hotword\.kuwo\.cn\/hotword\.s data-type=text data="" status-code=200
+^https?:\/\/vip1\.kuwo\.cn\/vip_adv\/ data-type=text data="" status-code=200
+^https?:\/\/vip1\.kuwo\.cn\/vip\/v\d\/sysinfo data-type=text data="" status-code=200
+^https?:\/\/wapi\.kuwo\.cn\/openapi\/v1\/app\/pasterAdvert data-type=text data="" status-code=200
+^https?:\/\/mobilead\.kuwo\.cn\/ data-type=text data="" status-code=200
+^https?:\/\/.*kuwo\.cn\/star\/upload\/64\/73\/1724231349487_\.M data-type=text data="" status-code=200
+^https?:\/\/rich\.kuwo\.cn\/AdService data-type=text data="" status-code=200
+
+[Script]
+ddgksf2013_kkmusic-vip_1 = type=http-response,pattern=^https?:\/\/searchrecterm\.kuwo\.cn\/recterm\.s,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_2 = type=http-response,pattern=^https?:\/\/appi\.kuwo\.cn\/kuwopay\/vip-tab\/page\/cells,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_3 = type=http-response,pattern=^https?:\/\/appi\.kuwo\.cn\/kuwopay\/vip-tab\/setting,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_4 = type=http-response,pattern=^https?:\/\/musicpay\.kuwo\.cn\/music\.pay\?newver,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_5 = type=http-response,pattern=^https?:\/\/[a-z0-9A-Z]+\.(kuwo|lrts)\.(cn|me)\/a\.p,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_6 = type=http-response,pattern=^https?:\/\/[a-z0-9A-Z]+\.kuwo\.cn\/audi\.tion,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_7 = type=http-response,pattern=^https?:\/\/.*\.kuwo\.cn\/v2\/api\/pay\/vip\/extraVipStatus,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_8 = type=http-response,pattern=^https?:\/\/vip1\.kuwo\.cn\/vip\/enc\/user\/vip\?op=ui,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_9 = type=http-response,pattern=^https?:\/\/vip1\.kuwo\.cn\/vip\/v2\/userbase\/vip\?op=get,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_10 = type=http-response,pattern=^https?:\/\/vip1\.kuwo\.cn\/vip\/v2\/user\/vip\?(uid|op=ui),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_11 = type=http-response,pattern=^https?:\/\/vip1\.kuwo\.cn\/vip\/v2\/theme,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_12 = type=http-request,pattern=^https?:\/\/musicpay\.kuwo\.cn\/music\.pay\?ui,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=false
+ddgksf2013_kkmusic-vip_13 = type=http-response,pattern=^https?:\/\/appi\.kuwo\.cn/kuwopay/personal/cells,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+ddgksf2013_kkmusic-vip_14 = type=http-response,pattern=^https?:\/\/[a-z0-9A-Z]+\.kuwo\.cn\/mobi\.s\?f=kwxs,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/kkmusic-vip/kkmusic.vip.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% *.kuwo.cn, *.lrts.me, mc.tencentmusic.com, h5s.kuwo.cn

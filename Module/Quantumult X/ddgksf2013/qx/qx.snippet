@@ -1,0 +1,14 @@
+# Name: SubStore
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: Peng-YM
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://raw.githubusercontent.com/sub-store-org/Sub-Store/master/config/QX.snippet
+# [mitm]
+hostname=sub.store
+
+# [rewrite_local]
+^https?:\/\/sub\.store\/((download)|api\/(preview|sync|(utils\/node-info))) url script-analyze-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/qx/sub-store-1.min.js
+^https?:\/\/sub\.store url script-analyze-echo-response https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/qx/sub-store-0.min.js

@@ -1,0 +1,23 @@
+# Name: PikPak
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/pikpak.fnc.js
+# ***********************
+
+# 解决pikpak中国大陆无法使用问题
+
+# [rewrite_local]
+
+^https?:\/\/access\.mypikpak\.com\/access_controller url reject-200
+
+
+# [mitm]
+
+hostname = access.mypikpak.com
+
+
+# ***********************

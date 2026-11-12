@@ -1,0 +1,44 @@
+#!name=埋堆堆净化[墨鱼版]
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 埋堆堆净化[墨鱼版]
+# Updated: 2026-01-30
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/rewrite/MaiDuiDuiAds.conf
+// ==UserScript==
+// @ScriptName        埋堆堆净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @Feedback          📮 ddgksf2013@163.com 📮
+// @UpdateTime        2026-01-30
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.2
+// @ScriptURL         https://ddgksf2013.top/rewrite/MaiDuiDuiAds.conf
+// ==/UserScript==
+DOMAIN-SUFFIX,ubixioe.com,REJECT
+
+[Map Local]
+^http:\/\/119\.29\.29\.90\/d data-type=text data="" status-code=200
+^https?:\/\/maiduidui.*sensorsdata\.cn\/api\/v\d\/sfo\/(user_)?popup_displays data-type=text data="" status-code=200
+^https?:\/\/mob\.mddcloud\.com\.cn\/adApi data-type=text data="" status-code=200
+
+[Body Rewrite]
+http-response-jq ^https?:\/\/mob\.mddcloud\.com\.cn\/api\/app\/getConfigList396\.action '.data.appOprConfigs=[]'
+http-response-jq ^https?:\/\/mob\.mddcloud\.com\.cn\/api\/module\/listTabModules\.action '.data |= map(select(.moduleType!=16)) | .data |= map(if .moduleType==21 then .moduleData |= map(select(.redirectType == 2)) else . end)'
+http-response-jq ^https?:\/\/mob\.mddcloud\.com\.cn\/api\/layout\/info '.data.layoutInfo.entranceList |= map(select(.name | IN("首页", "会员")))'
+http-response-jq ^https?:\/\/mob\.mddcloud\.com\.cn\/api\/search\/hotKeyword\.action '.data=[{"isAppointRedirect":0,"iconImg":"","category":11,"keyword":"搜索","uuid":"","seq":1}]'
+
+[MITM]
+hostname = %APPEND% mob.mddcloud.com.cn,maiduidui.*.saas.sensorsdata.cn

@@ -1,0 +1,23 @@
+#!name=网盘倍速
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 网盘倍速
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/bdpan.unlock.js
+# *************
+# **************
+
+[Script]
+ddgksf2013_bdpan-unlock_1 = type=http-request,pattern=^https:\/\/pan\.baidu\.com\/api\/streaming\?app_id=\d+&type=M3U8_HQ_1080,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/bdpan-unlock/bdpan.unlock.js,requires-body=false
+ddgksf2013_bdpan-unlock_2 = type=http-response,pattern=^https:\/\/pan\.baidu\.com\/rest\/.*\/membership\/user,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/bdpan-unlock/bdpan.unlock.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% pan.baidu.com, afd.baidu.com

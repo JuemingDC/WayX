@@ -1,0 +1,25 @@
+#!name=Endel
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: Endel
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: langkhach
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/endel.vip.js
+# *********************************
+# Endel Pro
+# 2025.12.12V1.0.6
+# https://t.me/ddgksf2021
+# *********************************
+
+[Script]
+ddgksf2013_endel-vip_1 = type=http-response,pattern=^https?:\/\/api-production\.endel\.io\/v\d\/call,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/endel-vip/endel.vip.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% api-production.endel.io

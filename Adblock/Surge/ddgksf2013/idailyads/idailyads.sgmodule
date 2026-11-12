@@ -1,0 +1,40 @@
+#!name=iDaily净化[墨鱼版]
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: iDaily净化[墨鱼版]
+# Updated: 2026-01-16
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/rewrite/iDailyAds.conf
+// ==UserScript==
+// @ScriptName        iDaily净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @UpdateTime        2026-01-16
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.1
+// @ScriptURL         https://ddgksf2013.top/rewrite/iDailyAds.conf
+// ==/UserScript==
+
+[Map Local]
+^https?:\/\/idaily-cdn\.idailycdn\.com\/api\/(intro) data-type=text data="" status-code=200
+^https?:\/\/icity-pres\.2q10\.com\/api\/v\d\/idly\/common\/launching data-type=text data="" status-code=200
+^https?:\/\/idaily-cdn\.idailycdn\.com\/app\/idaily_portable\/honored data-type=text data="" status-code=200
+^https?:\/\/app-cdn\.2q10\.com\/app\/idays\/popups data-type=text data="" status-code=200
+^https?:\/\/idays-cdn\.2q10\.com\/app\/idays\/app_ad data-type=text data="" status-code=200
+
+[Body Rewrite]
+http-response-jq ^https?:\/\/app-cdn\.2q10\.com\/app\/\w+\/honored 'del(.apps,.grids,.banner_popups,.badge,.banner)'
+
+[MITM]
+hostname = %APPEND% app-cdn.2q10.com, idaily-cdn.idailycdn.com, icity-pres.2q10.com, idaily-cdn.idailycdn.com, idays-cdn.2q10.com

@@ -1,0 +1,71 @@
+#!name=快看漫画净化[墨鱼版]
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 快看漫画净化[墨鱼版]
+# Updated: 2025-12-24
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/rewrite/KuaiKanComicsAds.conf
+// ==UserScript==
+// @ScriptName        快看漫画净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @Feedback          📮 ddgksf2013@163.com 📮
+// @UpdateTime        2025-12-24
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         使用前请快看漫画，挂载脚本然后使用
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.4
+// @ScriptURL         https://ddgksf2013.top/rewrite/KuaiKanComicsAds.conf
+// ==/UserScript==
+# > 青少年
+# > 搜索填词
+# > 搜索下方
+# > 图标右上推广
+# > 会员弹窗
+# > 我页面推广
+# > 推广弹窗
+# > 我的页面
+# > 右下活动
+# > 主页右上
+# > 通用广告
+# > 帖子页面
+# > 下一话推荐
+# > 话之间评论
+# > 浮标
+# > 顶部浮窗
+# > 广告显示
+
+[Map Local]
+^https?:\/\/.*kkmh\.com\/v\d\/app\/young_config\/get data-type=text data="" status-code=200
+^https?:\/\/.*kkmh\.com\/v\d\/vip\/nameplate\/list_all\? data-type=text data="" status-code=200
+^https?:\/\/.*kkmh\.com\/v\d\/business\/activities\/get data-type=text data="" status-code=200
+^https?:\/\/.*kkmh\.com\/v\d\/(ad|advertisement)\/ data-type=text data="" status-code=200
+^https?:\/\/.*kkmh\.com\/v\d\/ironman\/comic\/recommend\? data-type=text data="" status-code=200
+^https?:\/\/.*kkmh\.com\/v\d\/business\/fake_push\/info data-type=text data="" status-code=200
+
+[Body Rewrite]
+http-response-jq ^https?:\/\/.*kkmh\.com\/search\/app\/shading_word\/v\d\/list\? '.data.shading_words=[]'
+http-response-jq ^https?:\/\/.*kkmh\.com\/v\d\/search\/show '.data.info=[]'
+http-response-jq ^https?:\/\/.*kkmh\.com\/v\d\/kb\/wallet\? '.data.activity={}'
+http-response-jq ^https?:\/\/.*kkmh\.com\/v\d\/vip\/(charge_tip_list|banner_tip_list)\? '.data.list=[]'
+http-response-jq ^https?:\/\/.*kkmh\.com\/v\d\/vip\/platform_base\/popups_display '.data.popup_list=[]'
+http-response-jq ^https?:\/\/.*kkmh\.com\/v\d\/business\/mine\/business_config\? '.data.module_config=[]'
+http-response-jq ^https?:\/\/.*kkmh\.com\/v\d/ironman/discovery_v2/tab_list_v3\?gender=0&location=7 '.data.list=[]'
+http-response-jq ^https?:\/\/.*kkmh\.com\/v\d\/ironman\/topic_detail\/tabs\? '.data={}'
+http-response-jq ^https?:\/\/.*kkmh\.com\/v\d\/comments\/cruel\/hot_floor_list '.data={}'
+http-response-jq ^https?:\/\/.*kkmh\.com\/v\d\/checkin\/task_center\/checkin_list_for_home_page_pop '.data={}'
+http-response ^https?:\/\/.*kkmh\.com\/v\d\/topic\/discovery_v2\/list "ad_show\":1" "ad_show\":0"
+
+[MITM]
+hostname = %APPEND% api.kkmh.com,cdn-api.kkmh.com,cdn-search.kkmh.com, search.kkmh.com,pay.kkmh.com, cdn-pay.kkmh.com

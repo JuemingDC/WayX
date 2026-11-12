@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "sourceUrl": "https://ddgksf2013.top/scripts/pornhub.ads.js",
+  "sourceSha256": "3c29fe45944a37878c82cd87dc39ee6a386316a95f939114f1988077e332fb8e",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "3c29fe45944a37878c82cd87dc39ee6a386316a95f939114f1988077e332fb8e",
+    "operations": [
+      {
+        "api": "$request.<runtime-key>",
+        "access": "read",
+        "start": 4514,
+        "end": 4547,
+        "line": 24,
+        "column": 3974,
+        "members": [
+          "$request",
+          "<runtime-key>"
+        ]
+      },
+      {
+        "api": "$response.<runtime-key>",
+        "access": "read",
+        "start": 4557,
+        "end": 4591,
+        "line": 24,
+        "column": 4017,
+        "members": [
+          "$response",
+          "<runtime-key>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 7814,
+        "end": 7834,
+        "line": 24,
+        "column": 7274,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "3c29fe45944a37878c82cd87dc39ee6a386316a95f939114f1988077e332fb8e",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request.<runtime-key>",
+              "start": 4514,
+              "end": 4547,
+              "line": 24,
+              "column": 3974,
+              "access": "read",
+              "memberPath": [
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response.<runtime-key>",
+              "start": 4557,
+              "end": 4591,
+              "line": 24,
+              "column": 4017,
+              "access": "read",
+              "memberPath": [
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "response.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 7814,
+              "end": 7834,
+              "line": 24,
+              "column": 7274,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

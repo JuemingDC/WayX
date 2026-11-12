@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "sourceUrl": "https://ddgksf2013.top/scripts/wannianli.vip.js",
+  "sourceSha256": "204e2333f291ddb6f0a5a863d3460786b739f3d95cd080c0f59cffbd9ab9facf",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "204e2333f291ddb6f0a5a863d3460786b739f3d95cd080c0f59cffbd9ab9facf",
+    "operations": [
+      {
+        "api": "$request.<runtime-key>",
+        "access": "read",
+        "start": 4371,
+        "end": 4404,
+        "line": 23,
+        "column": 3930,
+        "members": [
+          "$request",
+          "<runtime-key>"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 4410,
+        "end": 4427,
+        "line": 23,
+        "column": 3969,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 6881,
+        "end": 6901,
+        "line": 23,
+        "column": 6440,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "204e2333f291ddb6f0a5a863d3460786b739f3d95cd080c0f59cffbd9ab9facf",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request.<runtime-key>",
+              "start": 4371,
+              "end": 4404,
+              "line": 23,
+              "column": 3930,
+              "access": "read",
+              "memberPath": [
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 4410,
+              "end": 4427,
+              "line": 23,
+              "column": 3969,
+              "access": "read",
+              "memberPath": [
+                "body"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 6881,
+              "end": 6901,
+              "line": 23,
+              "column": 6440,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

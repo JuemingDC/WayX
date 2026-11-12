@@ -1,0 +1,24 @@
+# Name: 句读
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/judou.vip.js
+# *********************************
+
+# 句读 Pro
+
+# 2025.12.12V1.0.6
+
+# [rewrite_local]
+
+https://judouapp.com/api/v\d/mine/profile url request-header (\r\n)If-None-Match:.+?(\r\n) request-header $1$2
+^https?:\/\/judouapp.com\/api\/v\d\/mine\/profile url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/judou-vip/judou.vip.js
+
+# [mitm]
+
+hostname = judouapp.com
+
+# *****************************

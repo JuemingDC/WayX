@@ -1,0 +1,26 @@
+#!name=drafts
+# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/Drafts.png
+# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: drafts
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/drafts.vip.js
+# *************
+# Drafts Pro
+# https://t.me/ddgksf2013
+# **************
+
+[Script]
+ddgksf2013_drafts-vip_1 = type=http-response,pattern=^https?:\/\/backend\.getdrafts\.com\/api\/v\d\/verification,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/drafts-vip/drafts.vip.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% backend.getdrafts.com

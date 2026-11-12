@@ -1,0 +1,57 @@
+#!name=百度网盘
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 百度网盘
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/bdpan.ads.js
+# *********************************************
+# 百度网盘去广告脚本
+# https://t.me/ddgksf2021
+# > 百度网盘_推广@ddgksf2013
+# > 百度网盘_广告推广@ddgksf2013
+# > 百度网盘_启动弹窗@ddgksf2013
+# > 百度网盘_设置信息流@ddgksf2013
+# > 百度网盘_通用广告@ddgksf2013
+# > 百度网盘_活动推广@ddgksf2013
+# > 百度网盘_游戏广告@ddgksf2013
+# > 百度网盘_热搜list@ddgksf2013
+# > 百度网盘_活动推广@ddgksf2013
+# > 百度网盘_开屏广告@ddgksf2013
+# > 百度网盘_搜索填词@ddgksf2013
+# > 百度网盘_金币乐园@ddgksf2013
+# > 百度网盘_首页信息流@ddgksf2013
+# > 百度网盘_我的页面@ddgksf2013
+# > 百度网盘_短剧@ddgksf2013
+# *********************************************
+
+[Map Local]
+^https?:\/\/pan\.baidu\.com\/api\/getconfig data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/.*baidu\.com\/rest\/.*\/membership\/(proxy\/)?guide data-type=text data="" status-code=200
+^https?:\/\/pan\.baidu\.com\/act\/v\d\/(bchannel|welfare)\/list data-type=text data="" status-code=200
+^https?:\/\/pan\.baidu\.com\/rest\/.*\/pcs\/ad data-type=text data="" status-code=200
+^https?:\/\/pan\.baidu\.com\/act\/api\/activityentry data-type=text data="" status-code=200
+^https:\/\/pan\.baidu\.com\/feed\/hotlist data-type=text data="" status-code=200
+^https?:\/\/.*zhangyuyidong\.cn\/api\/zysdk data-type=text data="" status-code=200
+^https?:\/\/pan\.baidu\.com\/api\/getsyscfg data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https:\/\/pan\.baidu\.com\/queryintent\/queryhint data-type=text data="" status-code=200
+^https:\/\/pan\.baidu\.com\/coins\/center\/notice data-type=text data="" status-code=200
+^https:\/\/pan\.baidu\.com\/recommend\/shortseries\/list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Body Rewrite]
+http-response-jq ^https:\/\/pan\.baidu\.com\/api\/taskscore\/tasklist '.result.list=[]'
+
+[Script]
+ddgksf2013_bdpan-ads_1 = type=http-response,pattern=^https?:\/\/afd\.baidu\.com\/afd\/entry,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ddgksf2013/bdpan-ads/bdpan.ads.js,requires-body=true
+ddgksf2013_bdpan-ads_2 = type=http-response,pattern=^https:\/\/pan\.baidu\.com\/rest\/.*\/membership\/user\?method=gamecenter,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ddgksf2013/bdpan-ads/bdpan.ads.js,requires-body=true
+ddgksf2013_bdpan-ads_3 = type=http-response,pattern=^https:\/\/pan\.baidu\.com\/feed\/cardinfos,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ddgksf2013/bdpan-ads/bdpan.ads.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% pan.baidu.com, afd.baidu.com

@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "sourceUrl": "https://ddgksf2013.top/scripts/yiyan.vip.js",
+  "sourceSha256": "fd670d267a2f374fa2ce137492aa729032db95b07edd4955db5fd0b573725e8c",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "fd670d267a2f374fa2ce137492aa729032db95b07edd4955db5fd0b573725e8c",
+    "operations": [
+      {
+        "api": "$response.body.replace",
+        "access": "call",
+        "start": 300,
+        "end": 355,
+        "line": 23,
+        "column": 12,
+        "members": [
+          "$response",
+          "body",
+          "replace"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 357,
+        "end": 372,
+        "line": 24,
+        "column": 1,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "fd670d267a2f374fa2ce137492aa729032db95b07edd4955db5fd0b573725e8c",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body.replace",
+              "start": 300,
+              "end": 355,
+              "line": 23,
+              "column": 12,
+              "access": "call",
+              "memberPath": [
+                "body",
+                "replace"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 357,
+              "end": 372,
+              "line": 24,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

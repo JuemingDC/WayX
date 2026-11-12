@@ -1,0 +1,27 @@
+#!name=Spotify
+# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/spotify.png
+# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: Spotify
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: app2smile
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/app2smile/rules/master/module/spotify.conf
+# 2025.6.27 部分解锁premium,音质不能设置为超高(建议登录后再打开脚本,重启app等待脚本生效)
+# 仓库地址 https://github.com/app2smile/rules
+# 功能: 1.去除播放广告 2.歌手/专辑列表正常展示 3.去除随机播放
+
+[Script]
+ddgksf2013_spotify_1 = type=http-request,pattern=^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/spotify/spotify-qx-header.js,requires-body=false
+ddgksf2013_spotify_2 = type=http-response,pattern=^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/spotify/spotify-proto.js,requires-body=true,binary-body-mode=true
+ddgksf2013_spotify_3 = type=http-request,pattern=^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(artistview\/v1\/artist|album-entity-view\/v2\/album)\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/spotify/spotify-json.js,requires-body=false
+
+[MITM]
+hostname = %APPEND% spclient.wg.spotify.com, *spclient.spotify.com

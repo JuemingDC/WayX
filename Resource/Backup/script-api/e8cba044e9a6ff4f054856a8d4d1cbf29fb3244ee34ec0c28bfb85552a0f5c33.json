@@ -1,0 +1,1045 @@
+{
+  "version": 1,
+  "sourceUrl": "https://github.com/NSRingo/WeatherKit/releases/download/v3.3.2/request.bundle.js",
+  "sourceSha256": "da05af299dd2172e1c25a2bff349cdda268114ee7fc43340cc48da29c76ea033",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "da05af299dd2172e1c25a2bff349cdda268114ee7fc43340cc48da29c76ea033",
+    "operations": [
+      {
+        "api": "$script.startTime",
+        "access": "read",
+        "start": 7184,
+        "end": 7201,
+        "line": 1,
+        "column": 7185,
+        "members": [
+          "$script",
+          "startTime"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 7207,
+        "end": 7215,
+        "line": 1,
+        "column": 7208,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$script.startTime",
+        "access": "read",
+        "start": 7294,
+        "end": 7311,
+        "line": 1,
+        "column": 7295,
+        "members": [
+          "$script",
+          "startTime"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 7322,
+        "end": 7330,
+        "line": 1,
+        "column": 7323,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$script.startTime",
+        "access": "read",
+        "start": 7454,
+        "end": 7471,
+        "line": 1,
+        "column": 7455,
+        "members": [
+          "$script",
+          "startTime"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 7482,
+        "end": 7490,
+        "line": 1,
+        "column": 7483,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 7546,
+        "end": 7554,
+        "line": 1,
+        "column": 7547,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 8120,
+        "end": 8128,
+        "line": 1,
+        "column": 8121,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 10754,
+        "end": 10830,
+        "line": 1,
+        "column": 10755,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "TextDecoder",
+        "access": "call",
+        "start": 11813,
+        "end": 11837,
+        "line": 1,
+        "column": 11814,
+        "members": [
+          "TextDecoder"
+        ]
+      },
+      {
+        "api": "setTimeout",
+        "access": "call",
+        "start": 12056,
+        "end": 12124,
+        "line": 1,
+        "column": 12057,
+        "members": [
+          "setTimeout"
+        ]
+      },
+      {
+        "api": "$persistentStore.read",
+        "access": "call",
+        "start": 12546,
+        "end": 12570,
+        "line": 1,
+        "column": 12547,
+        "members": [
+          "$persistentStore",
+          "read"
+        ]
+      },
+      {
+        "api": "$prefs.valueForKey",
+        "access": "call",
+        "start": 12598,
+        "end": 12619,
+        "line": 1,
+        "column": 12599,
+        "members": [
+          "$prefs",
+          "valueForKey"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 13176,
+        "end": 13203,
+        "line": 1,
+        "column": 13177,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$prefs.setValueForKey",
+        "access": "call",
+        "start": 13231,
+        "end": 13257,
+        "line": 1,
+        "column": 13232,
+        "members": [
+          "$prefs",
+          "setValueForKey"
+        ]
+      },
+      {
+        "api": "$persistentStore.write",
+        "access": "call",
+        "start": 13694,
+        "end": 13724,
+        "line": 1,
+        "column": 13695,
+        "members": [
+          "$persistentStore",
+          "write"
+        ]
+      },
+      {
+        "api": "$prefs.removeValueForKey",
+        "access": "call",
+        "start": 13825,
+        "end": 13852,
+        "line": 1,
+        "column": 13826,
+        "members": [
+          "$prefs",
+          "removeValueForKey"
+        ]
+      },
+      {
+        "api": "$prefs.removeAllValues",
+        "access": "call",
+        "start": 14181,
+        "end": 14205,
+        "line": 1,
+        "column": 14182,
+        "members": [
+          "$prefs",
+          "removeAllValues"
+        ]
+      },
+      {
+        "api": "URL",
+        "access": "call",
+        "start": 107388,
+        "end": 107449,
+        "line": 1,
+        "column": 107389,
+        "members": [
+          "URL"
+        ]
+      },
+      {
+        "api": "URL",
+        "access": "call",
+        "start": 123701,
+        "end": 123711,
+        "line": 1,
+        "column": 123702,
+        "members": [
+          "URL"
+        ]
+      },
+      {
+        "api": "URL",
+        "access": "call",
+        "start": 124018,
+        "end": 124053,
+        "line": 1,
+        "column": 124019,
+        "members": [
+          "URL"
+        ]
+      },
+      {
+        "api": "TextEncoder",
+        "access": "call",
+        "start": 127648,
+        "end": 127663,
+        "line": 1,
+        "column": 127649,
+        "members": [
+          "TextEncoder"
+        ]
+      },
+      {
+        "api": "URL",
+        "access": "call",
+        "start": 160912,
+        "end": 160933,
+        "line": 1,
+        "column": 160913,
+        "members": [
+          "URL"
+        ]
+      },
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 160920,
+        "end": 160932,
+        "line": 1,
+        "column": 160921,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "URL",
+        "access": "call",
+        "start": 164771,
+        "end": 164785,
+        "line": 1,
+        "column": 164772,
+        "members": [
+          "URL"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 168731,
+        "end": 168739,
+        "line": 1,
+        "column": 168732,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 168761,
+        "end": 168769,
+        "line": 1,
+        "column": 168762,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 169217,
+        "end": 169225,
+        "line": 1,
+        "column": 169218,
+        "members": [
+          "$request"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "request": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "da05af299dd2172e1c25a2bff349cdda268114ee7fc43340cc48da29c76ea033",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$script.startTime",
+              "start": 7184,
+              "end": 7201,
+              "line": 1,
+              "column": 7185,
+              "access": "read",
+              "memberPath": [
+                "startTime"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 7207,
+              "end": 7215,
+              "line": 1,
+              "column": 7208,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$script.startTime",
+              "start": 7294,
+              "end": 7311,
+              "line": 1,
+              "column": 7295,
+              "access": "read",
+              "memberPath": [
+                "startTime"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 7322,
+              "end": 7330,
+              "line": 1,
+              "column": 7323,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$script.startTime",
+              "start": 7454,
+              "end": 7471,
+              "line": 1,
+              "column": 7455,
+              "access": "read",
+              "memberPath": [
+                "startTime"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 7482,
+              "end": 7490,
+              "line": 1,
+              "column": 7483,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 7546,
+              "end": 7554,
+              "line": 1,
+              "column": 7547,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 8120,
+              "end": 8128,
+              "line": 1,
+              "column": 8121,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 10754,
+              "end": 10830,
+              "line": 1,
+              "column": 10755,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 11813,
+              "end": 11837,
+              "line": 1,
+              "column": 11814,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextDecoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 12056,
+              "end": 12124,
+              "line": 1,
+              "column": 12057,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 12546,
+              "end": 12570,
+              "line": 1,
+              "column": 12547,
+              "access": "call",
+              "memberPath": [
+                "read"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$prefs.valueForKey",
+              "start": 12598,
+              "end": 12619,
+              "line": 1,
+              "column": 12599,
+              "access": "call",
+              "memberPath": [
+                "valueForKey"
+              ]
+            },
+            "canonical": "storage.read",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 13176,
+              "end": 13203,
+              "line": 1,
+              "column": 13177,
+              "access": "call",
+              "memberPath": [
+                "write"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$prefs.setValueForKey",
+              "start": 13231,
+              "end": 13257,
+              "line": 1,
+              "column": 13232,
+              "access": "call",
+              "memberPath": [
+                "setValueForKey"
+              ]
+            },
+            "canonical": "storage.write",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:15",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 13694,
+              "end": 13724,
+              "line": 1,
+              "column": 13695,
+              "access": "call",
+              "memberPath": [
+                "write"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
+            "rule": "storage.remove",
+            "kind": "storage",
+            "source": {
+              "api": "$prefs.removeValueForKey",
+              "start": 13825,
+              "end": 13852,
+              "line": 1,
+              "column": 13826,
+              "access": "call",
+              "memberPath": [
+                "removeValueForKey"
+              ]
+            },
+            "canonical": "storage.remove",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "native engine / runtime capability",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:17",
+            "rule": "storage.removeAll",
+            "kind": "storage",
+            "source": {
+              "api": "$prefs.removeAllValues",
+              "start": 14181,
+              "end": 14205,
+              "line": 1,
+              "column": 14182,
+              "access": "call",
+              "memberPath": [
+                "removeAllValues"
+              ]
+            },
+            "canonical": "storage.removeAll",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "native engine / runtime capability",
+              "lowering": "Loon clear-all maps to actual QX removeAllValues or native Loon; Surge clear-all is omitted under explicit user policy",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:18",
+            "rule": "standard.URL",
+            "kind": "codec",
+            "source": {
+              "api": "URL",
+              "start": 107388,
+              "end": 107449,
+              "line": 1,
+              "column": 107389,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "standard.URL",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "URL",
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:19",
+            "rule": "standard.URL",
+            "kind": "codec",
+            "source": {
+              "api": "URL",
+              "start": 123701,
+              "end": 123711,
+              "line": 1,
+              "column": 123702,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "standard.URL",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "URL",
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:20",
+            "rule": "standard.URL",
+            "kind": "codec",
+            "source": {
+              "api": "URL",
+              "start": 124018,
+              "end": 124053,
+              "line": 1,
+              "column": 124019,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "standard.URL",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "URL",
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:21",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 127648,
+              "end": 127663,
+              "line": 1,
+              "column": 127649,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:22",
+            "rule": "standard.URL",
+            "kind": "codec",
+            "source": {
+              "api": "URL",
+              "start": 160912,
+              "end": 160933,
+              "line": 1,
+              "column": 160913,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "standard.URL",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "URL",
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:23",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 160920,
+              "end": 160932,
+              "line": 1,
+              "column": 160921,
+              "access": "read",
+              "memberPath": [
+                "url"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:24",
+            "rule": "standard.URL",
+            "kind": "codec",
+            "source": {
+              "api": "URL",
+              "start": 164771,
+              "end": 164785,
+              "line": 1,
+              "column": 164772,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "standard.URL",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "URL",
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:25",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 168731,
+              "end": 168739,
+              "line": 1,
+              "column": 168732,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:26",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 168761,
+              "end": 168769,
+              "line": 1,
+              "column": 168762,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:27",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 169217,
+              "end": 169225,
+              "line": 1,
+              "column": 169218,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

@@ -1,0 +1,63 @@
+#!name=🍿️ DualSubs: ▶️ YouTube
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 🍿️ DualSubs: ▶️ YouTube
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: DualSubs
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://github.com/DualSubs/YouTube/releases/latest/download/DualSubs.YouTube.snippet
+# Upstream name = 🍿️ DualSubs: ▶️ YouTube
+# Upstream desc = YouTube 增强及双语字幕(歌词)
+# Upstream openUrl = https://dualsubs.github.io/preferences/
+# Upstream author = VirgilClyne[https://github.com/VirgilClyne]
+# Upstream homepage = https://DualSubs.github.io/guide/youtube
+# Upstream icon = https://github.com/DualSubs/YouTube/raw/main/src/assets/icon_rounded.png
+# Upstream category = 🍿️ DualSubs
+# Upstream date = 2026-10-16 01:54:49
+# Upstream version = 1.6.0
+#[rewrite_local]
+# [WayX] SOURCE INVALID: QX echo-response requires a local Data-relative resource; upstream remote resource is not supported by the official sample
+# Source declaration: ^https:\/\/dualsubs\.github\.io\/api\/YouTube(?:\?.*)?$ url echo-response application/json\r\nX-PreferencePanes-Version: 1.6.0 echo-response https://github.com/DualSubs/YouTube/releases/download/v1.6.0/DualSubs.YouTube.PreferencePanes.json
+#[Script]
+# YouTube
+# 🍿️ DualSubs.YouTube.Player.request.json
+# 🍿️ DualSubs.YouTube.Player.response.json
+# 🍿️ DualSubs.YouTube.Player.request.proto
+# 🍿️ DualSubs.YouTube.Player.response.proto
+# 🍿️ DualSubs.YouTube.GetWatch.response.proto
+# 🍿️ DualSubs.YouTube.TimedText.request
+# 🍿️ DualSubs.YouTube.Composite.TimedText.response
+# 🍿️ DualSubs.YouTube.Translate.TimedText.response
+# YouTube Music
+# 🍿️ DualSubs.YouTubeMusic.Browse.request.json
+# 🍿️ DualSubs.YouTube.Browse.request.proto
+# 🍿️ DualSubs.YouTubeMusic.Translate.Lyrics.response.json
+# 🍿️ DualSubs.YouTubeMusic.Translate.Lyrics.response.proto
+#[MITM]
+
+[Map Local]
+^https?:\/\/([\w-]+)\.googlevideo\.com\/initplayback(\?.*oad=.+)$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[Script]
+ddgksf2013_dualsubs-youtube_1 = type=http-request,pattern=^https:\/\/dualsubs\.github\.io\/api\/(?:get|set|delete)(?:\?.*)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/api.js,requires-body=false
+ddgksf2013_dualsubs-youtube_2 = type=http-request,pattern=^https?:\/\/(www|m|tv)\.youtube\.com\/youtubei\/v1\/player(\?.+)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/request.bundle.js,requires-body=true,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_3 = type=http-response,pattern=^https?:\/\/(www|m|tv)\.youtube\.com\/youtubei\/v1\/player(\?.+)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/response.bundle.js,requires-body=true,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_4 = type=http-request,pattern=^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player(\?.+)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/request.bundle.js,requires-body=true,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_5 = type=http-response,pattern=^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/player(\?.+)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/response.bundle.js,requires-body=true,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_6 = type=http-response,pattern=^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/get_watch(\?.+)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/response.bundle.js,requires-body=true,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_7 = type=http-request,pattern=^https?:\/\/(www|m)\.youtube\.com\/api\/timedtext,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/request.bundle.js,requires-body=false,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_8 = type=http-response,pattern=^https?:\/\/(www|m)\.youtube\.com\/api\/timedtext\?(.*)subtype=(Official|External),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/Composite.Subtitles.response.bundle.js,requires-body=true
+ddgksf2013_dualsubs-youtube_9 = type=http-response,pattern=^https?:\/\/(www|m)\.youtube\.com\/api\/timedtext\?(.*)subtype=Translate,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/Translate.response.bundle.js,requires-body=true,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_10 = type=http-request,pattern=^https?:\/\/music\.youtube\.com\/youtubei\/v1\/browse(\?.+)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/request.bundle.js,requires-body=true,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_11 = type=http-request,pattern=^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/browse(\?.+)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/request.bundle.js,requires-body=true,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_12 = type=http-response,pattern=^https?:\/\/music\.youtube\.com\/youtubei\/v1\/browse\?(.*)subtype=Translate,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/Translate.response.bundle.js,requires-body=true,binary-body-mode=true
+ddgksf2013_dualsubs-youtube_13 = type=http-response,pattern=^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/browse\?(.*)subtype=Translate,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/dualsubs-youtube/Translate.response.bundle.js,requires-body=true,binary-body-mode=true
+
+[MITM]
+hostname = %APPEND% dualsubs.github.io, www.youtube.com, m.youtube.com, tv.youtube.com, music.youtube.com, youtubei.googleapis.com, -redirector*.googlevideo.com, *.googlevideo.com

@@ -1,0 +1,22 @@
+#!name=boxjs
+# Icon: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/BoxJS.png
+# Icon Collection: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/icons-all.json
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: boxjs
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: chavyleung
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/chavyleung/scripts/master/box/rewrite/boxjs.rewrite.quanx.conf
+
+[Script]
+ddgksf2013_boxjs-rewrite-quanx_1 = type=http-request,pattern=^https?:\/\/(.+\.)?boxjs\.(com|net),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/boxjs-rewrite-quanx/chavy.boxjs.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% boxjs.com, boxjs.net, *.boxjs.com, *.boxjs.net

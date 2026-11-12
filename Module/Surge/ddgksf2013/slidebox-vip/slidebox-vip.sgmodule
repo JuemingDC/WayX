@@ -1,0 +1,31 @@
+#!name=Slidebox
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: Slidebox
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/slidebox.vip.js
+# *********************************
+# > 应用名称：Slidebox
+# > 脚本作者：Cuttlefish
+# > 微信账号：墨鱼手记
+# > 更新时间：2025-02-13
+# > 通知频道：https://t.me/ddgksf2021
+# > 投稿助手：https://t.me/ddgksf2013_bot
+# > 问题反馈：📮 ddgksf2013@163.com 📮
+# > 特别说明：本脚本仅供墨鱼微信群友专享，禁止售卖或分享他人
+# ～ Slidebox（2023-02-13）@ddgksf2013
+# *********************************
+
+[Script]
+ddgksf2013_slidebox-vip_1 = type=http-response,pattern=https:\/\/.*slidebox-ios-prod\.cloudfunctions\.net\/api_v1$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/slidebox-vip/slidebox.vip.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% *slidebox-ios-prod.cloudfunctions.net

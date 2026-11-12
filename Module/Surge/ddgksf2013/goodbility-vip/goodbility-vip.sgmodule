@@ -1,0 +1,27 @@
+#!name=Goodbility
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: Goodbility
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/goodbility.vip.js
+# ************************
+# 解锁GoodNotes、Notability内购会员
+# https://t.me/ddgksf2021
+# Source section: [Script]
+# ***********************
+
+[Script]
+ddgksf2013_goodbility-vip_1 = type=http-response,pattern=^https:\/\/isi\.csan\.[a-z.]+\/.+\/(receipts$|subscribers\/[^/]+$),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/goodbility-vip/goodbility.vip.js,requires-body=true
+ddgksf2013_goodbility-vip_2 = type=http-request,pattern=^https:\/\/isi\.csan\.[a-z.]+\/.+\/(receipts|subscribers),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/goodbility-vip/deleteHeader.js,requires-body=false
+ddgksf2013_goodbility-vip_3 = type=http-response,pattern=^https?:\/\/notability\.com\/global,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/goodbility-vip/goodbility.vip.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% isi.csan.*, notability.com

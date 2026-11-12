@@ -1,0 +1,34 @@
+#!name=搜图神器
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 搜图神器
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/soutushenqi.vip.js
+# *************
+# 搜图神器 Pro
+# https://t.me/ddgksf2021
+# >  配置处理@ddgksf2013
+# > 启动弹窗@ddgksf2013
+# > 会员处理
+# **************
+
+[Map Local]
+^http?:\/\/wallpaper\.soutushenqi\.com\/v\d\/home\/dialog data-type=text data="" status-code=200
+
+[Body Rewrite]
+http-request ^http?:\/\/wallpaper\.soutushenqi\.com\/v\d\/config config_key=stsq_ios_home_vipI config_key=
+
+[Script]
+ddgksf2013_soutushenqi-vip_1 = type=http-response,pattern=^http?:\/\/wallpaper\.soutushenqi\.com\/v\d\/config,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/soutushenqi-vip/soutushenqi.vip.js,requires-body=true
+ddgksf2013_soutushenqi-vip_2 = type=http-response,pattern=^http?:\/\/wallpaper\.soutushenqi\.com\/api\/v\d\/account,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/soutushenqi-vip/soutushenqi.vip.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% wallpaper.soutushenqi.com

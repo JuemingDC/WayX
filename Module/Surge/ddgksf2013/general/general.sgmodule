@@ -1,17 +1,17 @@
-#!name=general
+#!name=Google重定向
 #!desc=Native QX conversion
 #!category=WayX
 #!requirement=CORE_VERSION>=20
 # Native QX review count: 0
 
 [Rule]
-# Name: general
+# Name: Google重定向
 # Updated: 上游未标注
 # Copied by: chance
-# Source Authors: 墨鱼 / ddgksf2013
+# Source Authors: DivineEngine
 # Category: Module
 # Managed by: WayX Native QX
-# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Html/General.conf
+# Source: https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/Html/General.conf
 # Redirect Google Search Service
 
 [URL Rewrite]

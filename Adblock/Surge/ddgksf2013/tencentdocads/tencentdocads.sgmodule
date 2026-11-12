@@ -1,0 +1,36 @@
+#!name=腾讯文档净化[墨鱼版]
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 腾讯文档净化[墨鱼版]
+# Updated: 2026-04-03
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/rewrite/TencentDocAds.conf
+// ==UserScript==
+// @ScriptName        腾讯文档净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @Feedback          📮 ddgksf2013@163.com 📮
+// @UpdateTime        2026-04-03
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.2
+// @ScriptURL         https://ddgksf2013.top/rewrite/TencentDocAds.conf
+// ==/UserScript==
+
+[URL Rewrite]
+^https?:\/\/docs\.qq\.com\/.*\/ad\/ _ reject
+^https?:\/\/docs\.qq\.com\/api\/advertise\/ _ reject
+
+[MITM]
+hostname = %APPEND% docs.qq.com

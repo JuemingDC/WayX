@@ -1,0 +1,49 @@
+#!name=美柚净化[墨鱼版]
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 美柚净化[墨鱼版]
+# Updated: 2026-01-10
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/rewrite/MeiYouAds.conf
+// ==UserScript==
+// @ScriptName        美柚净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @Feedback          📮 ddgksf2013@163.com 📮
+// @UpdateTime        2026-01-10
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.2
+// @ScriptURL         https://ddgksf2013.top/rewrite/MeiYouAds.conf
+// ==/UserScript==
+DOMAIN,jingqi.youzibuy.com,REJECT
+DOMAIN,mgo.seeyouyima.com,REJECT
+DOMAIN,ad.seeyouyima.com,REJECT
+DOMAIN,ad-logs.seeyouyima.com,REJECT
+DOMAIN,circle.seeyouyima.com,REJECT
+DOMAIN,ab.seeyouyima.com,REJECT
+
+[URL Rewrite]
+^https?:\/\/common\.seeyouyima\.com\/v\d\/conf_list _ reject
+
+[Map Local]
+^https?:\/\/config-service\.seeyouyima\.com\/api\/configs\/batch data-type=text data="" status-code=200
+
+[Body Rewrite]
+http-response-jq ^https?:\/\/sub\.seeyouyima\.com\/v\d\/sub\/my_vip '.data={}'
+http-response-jq ^https?:\/\/users\.seeyouyima\.com\/v\d\/wo\? 'del(.data.circle)'
+http-response-jq ^https?:\/\/circle\.xmseeyouyima\.com\/v\d\/feeds_recommend\? 'del(.data.activity_card)'
+
+[MITM]
+hostname = %APPEND% sub.seeyouyima.com, common.seeyouyima.com, users.seeyouyima.com, circle.xmseeyouyima.com, config-service.seeyouyima.com

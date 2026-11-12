@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "sourceUrl": "https://ddgksf2013.top/scripts/javdbapp.ads.js",
+  "sourceSha256": "e12a58608e076b8f03420baa6b5d6cbc68865326ec655a1cfe6e615d8181a770",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "e12a58608e076b8f03420baa6b5d6cbc68865326ec655a1cfe6e615d8181a770",
+    "operations": [
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 705,
+        "end": 719,
+        "line": 25,
+        "column": 10,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 724,
+        "end": 736,
+        "line": 25,
+        "column": 29,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 1084,
+        "end": 1117,
+        "line": 25,
+        "column": 389,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "e12a58608e076b8f03420baa6b5d6cbc68865326ec655a1cfe6e615d8181a770",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 705,
+              "end": 719,
+              "line": 25,
+              "column": 10,
+              "access": "read",
+              "memberPath": [
+                "body"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 724,
+              "end": 736,
+              "line": 25,
+              "column": 29,
+              "access": "read",
+              "memberPath": [
+                "url"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 1084,
+              "end": 1117,
+              "line": 25,
+              "column": 389,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

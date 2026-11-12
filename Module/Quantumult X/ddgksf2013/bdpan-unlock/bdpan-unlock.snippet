@@ -1,0 +1,21 @@
+# Name: 网盘倍速
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/bdpan.unlock.js
+# *************
+
+
+# [rewrite_local]
+^https:\/\/pan\.baidu\.com\/api\/streaming\?app_id=\d+&type=M3U8_HQ_1080 url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/bdpan-unlock/bdpan.unlock.js
+^https:\/\/pan\.baidu\.com\/rest\/.*\/membership\/user url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/bdpan-unlock/bdpan.unlock.js
+
+
+# [mitm]
+hostname = pan.baidu.com, afd.baidu.com
+
+
+# **************

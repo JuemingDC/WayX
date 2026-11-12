@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "sourceUrl": "https://gist.github.com/RavelloH/68ed0626dae69a1ce7c8ad6887087ea1/raw/c008127260bc4dcd550fcd98285048cf6176f602/main.js",
+  "sourceSha256": "1d3ea8c1046be208540795de979fd64d00a2b4573ae8af61f8595dd418e58d47",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "1d3ea8c1046be208540795de979fd64d00a2b4573ae8af61f8595dd418e58d47",
+    "operations": [
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 14,
+        "end": 30,
+        "line": 1,
+        "column": 15,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 214,
+        "end": 232,
+        "line": 10,
+        "column": 1,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "request": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "1d3ea8c1046be208540795de979fd64d00a2b4573ae8af61f8595dd418e58d47",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 14,
+              "end": 30,
+              "line": 1,
+              "column": 15,
+              "access": "read",
+              "memberPath": [
+                "headers"
+              ]
+            },
+            "canonical": "request.headers",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 214,
+              "end": 232,
+              "line": 10,
+              "column": 1,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

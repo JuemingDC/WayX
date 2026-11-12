@@ -1,0 +1,50 @@
+#!name=酷安
+# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/kuancoolapk.png
+# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 酷安
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://raw.githubusercontent.com/ddgksf2013/Scripts/master/coolapk.js
+# *********************************
+# > 应用名称：酷安净化[墨鱼版]
+# > 脚本作者：ddgksf2013
+# > 微信账号：墨鱼手记
+# > 更新时间：2025-09-27
+# > 通知频道：https://t.me/ddgksf2021
+# > 贡献投稿：https://t.me/ddgksf2013_bot
+# > 问题反馈：ddgksf2013@163.com
+# > 特别提醒：如需转载请注明出处，谢谢合作！
+# > 特别说明：⚠️⚠️⚠️
+#           本脚本仅供学习交流使用，禁止转载、售卖
+#           ⚠️⚠️⚠️
+# > 酷安_开屏广告@ddgksf2013
+# > 酷安_推广广告@ddgksf2013
+# > 酷安_首页广告@ddgksf2013
+# > 酷安_评论广告@ddgksf2013
+# > 酷安_商品推广@ddgksf2013
+# > 酷安_屏蔽热词@ddgksf2013
+# > 酷安_酷品页推广@ddgksf2013
+# *********************************
+
+[Map Local]
+^https?:\/\/api\.coolapk\.com\/v6\/search\?.*type=hotSearch data-type=text data="" status-code=200
+
+[Script]
+ddgksf2013_coolapk_1 = type=http-response,pattern=^https?:\/\/api\.coolapk\.com\/v6\/main\/init,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ddgksf2013/coolapk/coolapk.js,requires-body=true
+ddgksf2013_coolapk_2 = type=http-response,pattern=^https?:\/\/api\.coolapk\.com\/v6\/dataList,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ddgksf2013/coolapk/coolapk.js,requires-body=true
+ddgksf2013_coolapk_3 = type=http-response,pattern=^https?:\/\/api\.coolapk\.com\/v6\/main\/indexV8,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ddgksf2013/coolapk/coolapk.js,requires-body=true
+ddgksf2013_coolapk_4 = type=http-response,pattern=^https?:\/\/api\.coolapk\.com\/v6\/feed\/replyList,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ddgksf2013/coolapk/coolapk.js,requires-body=true
+ddgksf2013_coolapk_5 = type=http-response,pattern=^https?:\/\/api\.coolapk\.com\/v6\/feed\/detail,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ddgksf2013/coolapk/coolapk.js,requires-body=true
+ddgksf2013_coolapk_6 = type=http-response,pattern=https://api\.coolapk\.com/v6/page/dataList\?.*title=%E9%85,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ddgksf2013/coolapk/coolapk.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% api.coolapk.com

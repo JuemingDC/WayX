@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/caiyun.js",
-  "sourceSha256": "003c3b37dfc1293b082daeca7469b9db478dacf2edd1580b1a3d416be4682bc0",
+  "sourceSha256": "ba4fcf0b0b4efd9562f315466ea00a47f9f072cfd26a656b54e4aca536e35517",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "003c3b37dfc1293b082daeca7469b9db478dacf2edd1580b1a3d416be4682bc0",
+    "sha256": "ba4fcf0b0b4efd9562f315466ea00a47f9f072cfd26a656b54e4aca536e35517",
     "operations": [
       {
         "api": "$request.url",
@@ -81,9 +81,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 3038,
-        "end": 3074,
-        "line": 97,
+        "start": 1781,
+        "end": 1817,
+        "line": 59,
         "column": 3,
         "members": [
           "$done"
@@ -95,199 +95,13 @@
   "runtimePolicyVersion": 10,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
-    "request": {
-      "surge": {
-        "version": 1,
-        "sourceClient": "qx",
-        "targetClient": "surge",
-        "sourceView": "analysis-input",
-        "analysisSourceSha256": "003c3b37dfc1293b082daeca7469b9db478dacf2edd1580b1a3d416be4682bc0",
-        "operations": [
-          {
-            "id": "api:0",
-            "rule": "request.url",
-            "kind": "context",
-            "source": {
-              "api": "$request.url",
-              "start": 33,
-              "end": 45,
-              "line": 3,
-              "column": 13,
-              "access": "read",
-              "memberPath": [
-                "url"
-              ]
-            },
-            "canonical": "request.url",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$request.url",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:1",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$task",
-              "start": 70,
-              "end": 75,
-              "line": 4,
-              "column": 24,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:2",
-            "rule": "request.headers",
-            "kind": "context",
-            "source": {
-              "api": "$request.headers",
-              "start": 106,
-              "end": 122,
-              "line": 5,
-              "column": 14,
-              "access": "read",
-              "memberPath": [
-                "headers"
-              ]
-            },
-            "canonical": "request.headers",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$request.headers",
-              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:3",
-            "rule": "response.context",
-            "kind": "context",
-            "source": {
-              "api": "$response",
-              "start": 136,
-              "end": 145,
-              "line": 7,
-              "column": 12,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "response.context",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$response",
-              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:4",
-            "rule": "complete",
-            "kind": "completion",
-            "source": {
-              "api": "$done",
-              "start": 641,
-              "end": 667,
-              "line": 18,
-              "column": 3,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:5",
-            "rule": "response.body",
-            "kind": "context",
-            "source": {
-              "api": "$response.body",
-              "start": 701,
-              "end": 715,
-              "line": 20,
-              "column": 24,
-              "access": "read",
-              "memberPath": [
-                "body"
-              ]
-            },
-            "canonical": "response.body",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$response.body",
-              "lowering": "identity; declaration controls whether body is available",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:6",
-            "rule": "complete",
-            "kind": "completion",
-            "source": {
-              "api": "$done",
-              "start": 3038,
-              "end": 3074,
-              "line": 97,
-              "column": 3,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "complete(pass|modify|respond)",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          }
-        ],
-        "diagnostics": []
-      }
-    },
     "response": {
       "surge": {
         "version": 1,
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "003c3b37dfc1293b082daeca7469b9db478dacf2edd1580b1a3d416be4682bc0",
+        "analysisSourceSha256": "ba4fcf0b0b4efd9562f315466ea00a47f9f072cfd26a656b54e4aca536e35517",
         "operations": [
           {
             "id": "api:0",
@@ -445,9 +259,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 3038,
-              "end": 3074,
-              "line": 97,
+              "start": 1781,
+              "end": 1817,
+              "line": 59,
               "column": 3,
               "access": "call",
               "memberPath": []

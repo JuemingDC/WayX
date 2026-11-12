@@ -1,0 +1,22 @@
+# Name: Google人机
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: NobyDa
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Snippet/GoogleCAPTCHA.snippet
+# QuantumultX 远程重写配置片段
+
+# Google搜索人机验证解决方案
+# Google搜索内容时并发使用多个代理策略、策略组尝试搜索内容，并返回最优结果。具体细节可查看脚本注释。
+
+# 脚本：https://raw.githubusercontent.com/NobyDa/Script/master/Surge/JS/Google_CAPTCHA.js
+# 片段：https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Snippet/GoogleCAPTCHA.snippet
+
+
+# [rewrite_local]
+^https:\/\/www\.google\.com(?:\.[a-z]+|)\/(?:search\?(?:|.+?&)q=|$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/googlecaptcha/Google_CAPTCHA.js
+
+# [mitm]
+hostname = www.google.com*

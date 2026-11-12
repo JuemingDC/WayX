@@ -1,0 +1,49 @@
+#!name=雪球&雪球基金净化[墨鱼版]
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 雪球&雪球基金净化[墨鱼版]
+# Updated: 2026-01-16
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/rewrite/XueQiuAds.conf
+// ==UserScript==
+// @ScriptName        雪球&雪球基金净化[墨鱼版]
+// @Author            @ddgksf2013
+// @Function          如果有需要的去除广告的APP，可自行在共享表格中添加需求
+// @AddRequest        https://bit.ly/addRequestforAdBlock
+// @WechatID          墨鱼手记
+// @TgChannel         https://t.me/ddgksf2021
+// @Contribute        https://t.me/ddgksf2013_bot
+// @UpdateTime        2026-01-16
+// @Suitable          自行观看“# > ”注释内容
+// @Attention         如需引用请注明出处，谢谢合作！
+// @Version           V1.0.4
+// @ScriptURL         https://ddgksf2013.top/rewrite/XueQiuAds.conf
+// ==/UserScript==
+
+[URL Rewrite]
+^https?:\/\/api\.xueqiu\.com\/promotion\/display_ad_batch\.json _ reject
+
+[Map Local]
+^https?:\/\/qmas\.xueqiu\.com\/domains\.json data-type=text data="" status-code=200
+^https?:\/\/api\.xueqiu\.com\/lightsnow\/launch\/plan\/bee\/query\.json data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/api\.xueqiu\.com\/analysis\/status\/v\d\/underlying_product.json data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+^https?:\/\/api\.xueqiu\.com\/snowpard\/launch_strategy\/query\.json data-type=text data="" status-code=200
+^https?:\/\/api\.xueqiu\.com\/lightsnow\/optional\/banner\/query\.json data-type=text data="" status-code=200
+^https?:\/\/fund\.xueqiu\.com\/fundx\/activity\/x\/web\/djUser\/getBeeMaterial data-type=text data="" status-code=200
+^https?:\/\/api\.xueqiu\.com\/snowpard\/bomb_box\/show\.json data-type=text data="" status-code=200
+
+[Body Rewrite]
+http-response-jq ^https?:\/\/api\.xueqiu\.com\/recommend-proxy\/card\/zj_card\.json '.data.card_list=[]'
+http-response-jq ^https?:\/\/api\.xueqiu\.com\/query/search\/ai\/v\d\/recommend_search\.json '.data.list=[]'
+http-response-jq ^https?:\/\/api\.xueqiu\.com\/query\/v\d\/hot_event\/tag\.json '.data=[]'
+http-response-jq ^https?:\/\/open\.xueqiu\.com\/mpaas\/config\/content 'del(.data.fund_account_open_set, .data.property_fund_account_open_set)'
+
+[MITM]
+hostname = %APPEND% qmas.xueqiu.com, api.xueqiu.com, open.xueqiu.com, fund.xueqiu.com, 101.201.62.26, 101.201.175.228, 182.92.251.113,47.75.231.220,

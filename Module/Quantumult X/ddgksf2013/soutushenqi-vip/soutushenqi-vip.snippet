@@ -1,0 +1,27 @@
+# Name: 搜图神器
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/soutushenqi.vip.js
+# *************
+
+# 搜图神器 Pro
+
+# https://t.me/ddgksf2021
+
+# [mitm]
+hostname = wallpaper.soutushenqi.com
+
+# [rewrite_local]
+# >  配置处理@ddgksf2013
+^http?:\/\/wallpaper.soutushenqi.com\/v\d\/config url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/soutushenqi-vip/soutushenqi.vip.js
+^http?:\/\/wallpaper.soutushenqi.com\/v\d\/config url request-body config_key=stsq_ios_home_vipI request-body config_key=
+# > 启动弹窗@ddgksf2013
+^http?:\/\/wallpaper\.soutushenqi\.com\/v\d\/home\/dialog url reject-200
+# > 会员处理
+^http?:\/\/wallpaper\.soutushenqi\.com\/api\/v\d\/account url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/soutushenqi-vip/soutushenqi.vip.js
+
+# **************

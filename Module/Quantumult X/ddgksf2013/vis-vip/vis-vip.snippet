@@ -1,0 +1,25 @@
+# Name: Vis
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/vis.vip.js
+# *********************************
+
+# Vis Pro
+
+# https://t.me/ddgksf2021
+
+# [rewrite_local]
+
+
+^https:\/\/rc\.visionarytech\.ltd\/.+\/(receipts$|subscribers\/[^/]+$) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/vis-vip/revenuecat.vip.js
+^https:\/\/rc\.visionarytech\.ltd\/.+\/(receipts|subscribers) url script-request-header https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/vis-vip/deleteHeader.js
+
+# [mitm]
+
+hostname = rc.visionarytech.ltd
+
+# *********************************

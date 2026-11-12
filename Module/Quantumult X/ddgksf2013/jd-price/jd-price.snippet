@@ -1,0 +1,45 @@
+# Name: 京东历史比价
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: wf021325
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://raw.githubusercontent.com/wf021325/qx/master/js/jd_price.js
+
+# 2024-09-16
+# 京东比价
+# 仅适用于京东App版本≤V12.4.3
+# 2024-12-22
+# 发现13.8.3又支持此脚本了
+# 脚本修改来源 https://raw.githubusercontent.com/githubdulong/Script/master/jd_price2.sgmodule
+# 1. 修复比价接口
+# 2. 之前只能QX，Surge，更换为Env,兼容Loon等，仅测试QX
+# 2025-01-04
+# 脚本抄袭来源 https://raw.githubusercontent.com/mw418/Loon/main/script/jd_price.js
+# 1. 京东很奇怪，标题下面的比价时有时无  所以增加点击【详情】显示比价(显示在页内)
+# 2. 抄袭上面的部分代码，让显示格式尽量对其
+# 2025-04-10
+# 修复比价接口
+# 2025-04-18
+# 修复比价接口
+# 首次使用请打开【慢慢买】APP，点击【我的】，提示【获取ck成功🎉】即可正常比价
+# 2025-04-21
+# 修复比价接口，显示为表格
+# 2025-04-23
+# 更新接口
+# 2025-05-15
+# 更新接口
+# 2025-05-16
+# 更新APP正常用，脚本风控的问题
+# 2025-07-10
+# ...
+
+# [rewrite_local]
+^https?:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/jd-price/jd_price.js
+^https?:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/jd-price/jd_price.js
+
+# ^https?:\/\/in\.m\.jd\.com\/product\/graphext\/\d+\.html url script-response-body http://192.168.2.170:8080/jd_price.js
+# ^https?:\/\/apapia-sqk-weblogic\.manmanbuy\.com\/baoliao\/center\/menu$ url script-request-body http://192.168.2.170:8080/jd_price.js
+# [mitm]
+hostname = in.m.jd.com, apapia-sqk-weblogic.manmanbuy.com

@@ -1,0 +1,43 @@
+#!name= iRingo: 🌤 WeatherKit
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name:  iRingo: 🌤 WeatherKit
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: NSRingo
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://github.com/NSRingo/WeatherKit/releases/latest/download/iRingo.WeatherKit.snippet
+# Upstream name =  iRingo: 🌤 WeatherKit
+# Upstream desc = iOS 18 & macOS 15 & watchOS 11\n1.解锁全部天气功能\n2.修改空气质量数据\n3.修改下一小时降水数据\n4.修改天气数据\n5.修改天气预警数据
+# Upstream openUrl = http://boxjs.com/#/app/iRingo.WeatherKit
+# Upstream author = VirgilClyne[https://github.com/VirgilClyne],WordlessEcho[https://github.com/WordlessEcho],001[https://github.com/001ProMax],hhh2210[https://github.com/hhh2210]
+# Upstream homepage = https://NSRingo.github.io/guide/Weather/weather-kit
+# Upstream icon = https://developer.apple.com/assets/elements/icons/weatherkit/weatherkit-128x128.png
+# Upstream category =  iRingo
+# Upstream date = 2026-08-29 08:12:58
+# Upstream version = 3.3.2
+#[filter_local]
+DOMAIN,weather-analytics-events.apple.com,REJECT
+DOMAIN-SUFFIX,tthr.apple.com,REJECT
+DOMAIN,tether.edge.apple,REJECT
+#[rewrite_local]
+# 🌤 WeatherKit.api.v1.availability.response
+# 🌤 WeatherKit.api.v1.airQualityScale.request
+# 🌤 WeatherKit.api.v1.weatherAlerts.response
+# 🌤 WeatherKit.api.v2.weather.response
+#[mitm]
+
+[Script]
+ddgksf2013_iringo-weatherkit_1 = type=http-response,pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/iringo-weatherkit/response.bundle.js,requires-body=true
+ddgksf2013_iringo-weatherkit_2 = type=http-request,pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v1\/airQualityScale\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/iringo-weatherkit/request.bundle.js,requires-body=false
+ddgksf2013_iringo-weatherkit_3 = type=http-request,pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=[^&#]*-[0-9]{9}(?:&|$),script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/iringo-weatherkit/request.bundle.js,requires-body=false
+ddgksf2013_iringo-weatherkit_4 = type=http-request,pattern="^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=-?[0-9]+(?:\.[0-9]+)?,-?[0-9]+(?:\.[0-9]+)?(?:&|$)",script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/iringo-weatherkit/request.bundle.js,requires-body=false
+ddgksf2013_iringo-weatherkit_5 = type=http-response,pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/iringo-weatherkit/response.bundle.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% weatherkit.apple.com

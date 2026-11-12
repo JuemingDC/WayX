@@ -1,0 +1,43 @@
+#!name=随手记
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 随手记
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/suishouji.ads.js
+# *********************************************
+# > 随手记_开屏广告
+# > 随手记_广告推送
+# > 随手记_社区
+# > 随手记_首页推荐
+# > 随手记_社区推广
+# > 随手记_账本中间推广
+# > 随手记_推广Tips
+# > 随手记_会员信息
+#https://userapi.feidee.net/v1/profile/basic_info url script-response-body https://ddgksf2013.top/scripts/suishouji.ads.js
+# > 随手记_状态信息
+#https://yun.feidee.net/cab-vip-ws/terminal/v1/vip-users/show-info url script-response-body https://ddgksf2013.top/scripts/suishouji.ads.js
+# > 随手记_账本顶部推广
+# *********************************************
+
+[URL Rewrite]
+https://tg\.feidee\.com/online_ad/api/search.do _ reject
+https://tg\.feidee\.com/vis-ad-engine-ws/api/show _ reject
+https://moneymarket\.ssjlicai\.com/finance-common-operation-ws/api/actShelve/v1/actShelveShowTipInfo _ reject
+
+[Map Local]
+https://api\.feidee\.net/v1/configs/client/configs data-type=text data="" status-code=200
+https://yunmk\.feidee\.net/cab-market-ws/market/v2/contents data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+https://community\.feidee\.com/api/v1/home/top data-type=text data="" status-code=200
+https://yun\.feidee\.net/cab-query-ws/v1/comet/vtable/score-card data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+https://yun\.feidee\.net/cab-draw-activity-ws/terminal/v1/draw-record/user-draw-result data-type=text data="{}" status-code=200 header="Content-Type:application/json"
+
+[MITM]
+hostname = %APPEND% *.feidee.*, *.ssjlicai.*

@@ -1,6 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-only; ScriptHub derivative. */
 (function () {
-    const __wayxTarget = "surge";
     const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, codecs: (function (legacy, native = {}) {
             let legacyProvider;
             const text = value => { if (typeof value === 'symbol')
@@ -1115,9 +1114,9 @@
             ;
             return __wayxProvider;
         }), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), http: typeof $httpClient === 'undefined' ? undefined : $httpClient, store: typeof $persistentStore === 'undefined' ? undefined : $persistentStore, global: globalThis, argument: typeof $argument === 'undefined' ? undefined : $argument };
-    const __wayxContexts = { "request": { "surge": { "apiPlan": { "source": { "responseStatus": "statusCode", "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" }, "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" }, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"] }, "phase": "request" } }, "response": { "surge": { "apiPlan": { "source": { "responseStatus": "statusCode", "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" }, "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" }, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"] }, "phase": "response" } } }, __wayxConfig = __wayxContexts[__wayxHost.response === undefined ? 'request' : 'response']?.[__wayxTarget];
-    if (!__wayxConfig)
+    if ((__wayxHost.response === undefined ? 'request' : 'response') !== "response")
         throw new Error('Unregistered HTTP source/target declaration');
+    const __wayxConfig = { "apiPlan": { "source": { "responseStatus": "statusCode", "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" }, "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" }, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"] } };
     if ("surge" === 'surge' && typeof __wayxHost.argument === 'string' && __wayxHost.argument.startsWith("wayx_qx_header_v1=")) {
         const p = JSON.parse(decodeURIComponent(__wayxHost.argument.slice(18)));
         if (!(function (p, r) {
@@ -1242,7 +1241,7 @@
             if (!value || typeof value !== 'object' || Array.isArray(value))
                 return fail('completion requires an object');
             const out = Object.assign({}, value);
-            if (!synthetic && config.phase === 'request' && true && own(out, 'path')) {
+            if (!synthetic && false && true && own(out, 'path')) {
                 if (typeof out.path !== 'string' || !out.path.startsWith('/') || /[\r\n]/.test(out.path))
                     fail('QX request path must be an absolute request path');
                 {
@@ -1283,13 +1282,13 @@
         function done(value) {
             if (completed)
                 return;
-            if (['task', 'network', 'generic'].includes(config.phase))
+            if (['task', 'network', 'generic'].includes("response"))
                 return finish(value ?? {});
             if (value === undefined || value === null)
                 return finish({});
             if (value === response || value === request) {
                 const out = {};
-                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...(config.phase === 'request' ? ['path'] : []), "statusCode"])
+                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...([]), "statusCode"])
                     if (own(value, k))
                         out[k] = value[k];
                 value = out;
@@ -1301,8 +1300,8 @@
                 synthetic = true;
                 payload = value.response;
             }
-            else if (config.phase === 'echo')
-                synthetic = true;
+            else
+                ;
             const out = message(payload, synthetic);
             if (synthetic) {
                 ;
@@ -1494,15 +1493,6 @@
                         }
                     }
                     else if (url.includes("/api/v1/user_detail")) {
-                        if (obj?.vip_info?.show_upcoming_renewal) {
-                            obj.vip_info.show_upcoming_renewal = false;
-                        }
-                        if (obj?.vip_info?.svip) {
-                            if (obj?.vip_info?.svip) {
-                                obj.vip_info.svip.is_auto_renewal = true;
-                                obj.vip_info.svip.expires_time = "3742732800";
-                            }
-                        }
                     }
                     else if (url.includes("/wrapper.cyapi.cn/v1/activity")) {
                         if (["&type_id=A03&"]?.includes(url)) {
@@ -1518,37 +1508,8 @@
                         }
                     }
                     else if (url.includes("/v1/vip_info")) {
-                        if (obj?.vip) {
-                            obj.vip.expires_time = "4030000000";
-                        }
-                        if (obj?.svip) {
-                            obj.svip.expires_time = "4030000000";
-                        }
-                        if (obj?.show_upcoming_renewal) {
-                            obj.show_upcoming_renewal = false;
-                        }
                     }
                     else if (url.includes("/v2/user")) {
-                        if (obj?.result) {
-                            obj.result.svip_given = 730;
-                            obj.result.is_phone_verified = true;
-                            obj.result.is_xy_vip = true;
-                            obj.result.vip_expired_at = 4030000000.16;
-                            obj.result.is_vip = true;
-                            obj.result.xy_svip_expire = 4030000000.16;
-                            if (obj?.result?.wt) {
-                                if (obj.result.wt.vip) {
-                                    obj.result.wt.vip.enabled = true;
-                                    obj.result.wt.vip.expired_at = 4030000000.16;
-                                    obj.result.wt.vip.svip_expired_at = 4030000000.16;
-                                }
-                                obj.result.wt.svip_given = 730;
-                            }
-                            obj.result.is_primary = true;
-                            obj.result.xy_vip_expire = 4030000000.16;
-                            obj.result.svip_expired_at = 4030000000.16;
-                            obj.result.vip_type = "s";
-                        }
                     }
                     $done({ body: JSON.stringify(obj) });
                 }

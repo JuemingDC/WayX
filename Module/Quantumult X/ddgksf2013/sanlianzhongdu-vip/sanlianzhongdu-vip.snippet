@@ -1,0 +1,31 @@
+# Name: 三联中读
+# Updated: 2025-10-02
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/sanlianzhongdu.vip.js
+# *********************************
+
+# > ScriptName        三联中读[请游客登录]
+# > Explain           自动7天会员[知识和数字刊会员]，到期后自己再次手动匿名登录即可，又有7天会员
+# > Author            @ddgksf2013
+# > WechatID          墨鱼手记
+# > TgChannel         https://t.me/ddgksf2021
+# > Contribute        https://t.me/ddgksf2013_bot
+# > Feedback          📮 ddgksf2013@163.com 📮
+# > UpdateTime        2025-10-02
+# > ScriptURL         https://ddgksf2013.top/scripts/sanlianzhongdu.vip.js
+
+# [rewrite_local]
+
+^https?:\/\/apis\.lifeweek\.com\.cn\/index\/receiveExperienceVip url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/sanlianzhongdu-vip/sanlianzhongdu.vip.js
+^https?:\/\/apis\.lifeweek\.com\.cn\/reg\/vistorRegister\.do url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/sanlianzhongdu-vip/sanlianzhongdu.vip.js
+^https?:\/\/apis\.lifeweek\.com\.cn\/api\/cueWord\/recommend url reject
+
+# [mitm]
+
+hostname = apis.lifeweek.com.cn
+
+# *********************************

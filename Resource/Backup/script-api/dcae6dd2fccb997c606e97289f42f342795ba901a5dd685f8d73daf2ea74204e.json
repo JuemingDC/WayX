@@ -1,0 +1,363 @@
+{
+  "version": 1,
+  "sourceUrl": "https://ddgksf2013.top/scripts/revenuecat.vip.js",
+  "sourceSha256": "48c839115380e1b02977cee373ba524778affee360c7d5acceb7c8ec75b85497",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "48c839115380e1b02977cee373ba524778affee360c7d5acceb7c8ec75b85497",
+    "operations": [
+      {
+        "api": "$task",
+        "access": "read",
+        "start": 10443,
+        "end": 10448,
+        "line": 227,
+        "column": 1707,
+        "members": [
+          "$task"
+        ]
+      },
+      {
+        "api": "$task.<runtime-key>",
+        "access": "read",
+        "start": 10482,
+        "end": 10511,
+        "line": 227,
+        "column": 1746,
+        "members": [
+          "$task",
+          "<runtime-key>"
+        ]
+      },
+      {
+        "api": "$httpClient",
+        "access": "read",
+        "start": 10545,
+        "end": 10556,
+        "line": 227,
+        "column": 1809,
+        "members": [
+          "$httpClient"
+        ]
+      },
+      {
+        "api": "$rocket",
+        "access": "read",
+        "start": 10590,
+        "end": 10597,
+        "line": 227,
+        "column": 1854,
+        "members": [
+          "$rocket"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 10625,
+        "end": 10634,
+        "line": 227,
+        "column": 1889,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request.headers.<runtime-key>",
+        "access": "read",
+        "start": 10642,
+        "end": 10685,
+        "line": 227,
+        "column": 1906,
+        "members": [
+          "$request",
+          "headers",
+          "<runtime-key>"
+        ]
+      },
+      {
+        "api": "$request.<runtime-key>.user-agent",
+        "access": "read",
+        "start": 10687,
+        "end": 10733,
+        "line": 227,
+        "column": 1951,
+        "members": [
+          "$request",
+          "<runtime-key>",
+          "user-agent"
+        ]
+      },
+      {
+        "api": "$response.<runtime-key>",
+        "access": "read",
+        "start": 10752,
+        "end": 10785,
+        "line": 227,
+        "column": 2016,
+        "members": [
+          "$response",
+          "<runtime-key>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 16070,
+        "end": 16119,
+        "line": 227,
+        "column": 7334,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "48c839115380e1b02977cee373ba524778affee360c7d5acceb7c8ec75b85497",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$task",
+              "start": 10443,
+              "end": 10448,
+              "line": 227,
+              "column": 1707,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$task.<runtime-key>",
+              "start": 10482,
+              "end": 10511,
+              "line": 227,
+              "column": 1746,
+              "access": "read",
+              "memberPath": [
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$httpClient",
+              "start": 10545,
+              "end": 10556,
+              "line": 227,
+              "column": 1809,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$rocket",
+              "start": 10590,
+              "end": 10597,
+              "line": 227,
+              "column": 1854,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 10625,
+              "end": 10634,
+              "line": 227,
+              "column": 1889,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers.<runtime-key>",
+              "start": 10642,
+              "end": 10685,
+              "line": 227,
+              "column": 1906,
+              "access": "read",
+              "memberPath": [
+                "headers",
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "request.headers",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request.<runtime-key>.user-agent",
+              "start": 10687,
+              "end": 10733,
+              "line": 227,
+              "column": 1951,
+              "access": "read",
+              "memberPath": [
+                "<runtime-key>",
+                "user-agent"
+              ]
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response.<runtime-key>",
+              "start": 10752,
+              "end": 10785,
+              "line": 227,
+              "column": 2016,
+              "access": "read",
+              "memberPath": [
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "response.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 16070,
+              "end": 16119,
+              "line": 227,
+              "column": 7334,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

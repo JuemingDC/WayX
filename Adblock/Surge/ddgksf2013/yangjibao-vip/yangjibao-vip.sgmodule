@@ -1,0 +1,26 @@
+#!name=养基宝
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 养基宝
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/yangjibao.vip.js
+# /***********************************
+#
+# 养基宝 Pro
+#
+# ***********************************/
+
+[Body Rewrite]
+http-response-jq ^https?:\/\/.*yangjibao\.com\/.*\/account|vip_info '.data.vip_label=true|.data.vip_expiry_date="2099-12-31"|.data.is_pay=true'
+http-response-jq ^https?:\/\/.*yangjibao\.com\/unify_ad '.data=null'
+
+[MITM]
+hostname = %APPEND% *.yangjibao.com

@@ -1,0 +1,25 @@
+#!name=PikPak
+# Icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/pikpak.png
+# Icon Collection: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: PikPak
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/pikpak.fnc.js
+# ***********************
+# 解决pikpak中国大陆无法使用问题
+# ***********************
+
+[Map Local]
+^https?:\/\/access\.mypikpak\.com\/access_controller data-type=text data="" status-code=200
+
+[MITM]
+hostname = %APPEND% access.mypikpak.com

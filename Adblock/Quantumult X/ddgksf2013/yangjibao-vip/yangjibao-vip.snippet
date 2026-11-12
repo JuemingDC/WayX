@@ -1,0 +1,21 @@
+# Name: 养基宝
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/yangjibao.vip.js
+# /***********************************
+# 
+# 养基宝 Pro
+# 
+# ***********************************/
+
+
+# [mitm]
+hostname=*.yangjibao.com
+
+# [rewrite_local]
+^https?:\/\/.*yangjibao\.com\/.*\/account|vip_info url jsonjq-response-body '.data.vip_label=true|.data.vip_expiry_date="2099-12-31"|.data.is_pay=true'
+^https?:\/\/.*yangjibao.com\/unify_ad url jsonjq-response-body '.data=null'

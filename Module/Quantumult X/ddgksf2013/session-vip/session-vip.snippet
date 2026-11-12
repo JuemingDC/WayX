@@ -1,0 +1,28 @@
+# Name: Session
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: Caster
+# Category: Module
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/session.vip.js
+# *********************************
+
+# Session Pro
+
+
+# https://t.me/ddgksf2021
+
+
+# [rewrite_local]
+  
+
+^https:\/\/api\.stayinsession\.com\/user\/detail url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Quantumult%20X/ddgksf2013/session-vip/session.vip.js
+(^https:\/\/api\.stayinsession\.com\/\?token=.*?&)(is_setapp\=false) url 302 $1is_setapp=true
+^https:\/\/api\.stayinsession\.com\/user\/detail url request-header (\r\n)If-None-Match:.+(\r\n) request-header $1If-None-Match:$2
+
+# [mitm]
+
+hostname=api.stayinsession.com
+
+# *********************************

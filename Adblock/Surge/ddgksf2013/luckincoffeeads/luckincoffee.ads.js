@@ -1,0 +1,424 @@
+/* SPDX-License-Identifier: GPL-3.0-only; ScriptHub derivative. */
+(function () {
+    const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, store: typeof $persistentStore === 'undefined' ? undefined : $persistentStore, global: globalThis, argument: typeof $argument === 'undefined' ? undefined : $argument };
+    if ((__wayxHost.response === undefined ? 'request' : 'response') !== "response")
+        throw new Error('Unregistered HTTP source/target declaration');
+    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } } };
+    if ("surge" === 'surge' && typeof __wayxHost.argument === 'string' && __wayxHost.argument.startsWith("wayx_qx_header_v1=")) {
+        const p = JSON.parse(decodeURIComponent(__wayxHost.argument.slice(18)));
+        if (!(function (p, r) {
+            const re = new RegExp(p.pattern, p.flags), headers = Array.isArray(r.headers) ? r.headers : Object.keys(r.headers || {}).map(field => ({ field, value: r.headers[field] }));
+            if (p.kind === 'method')
+                return re.test(String(r.method || ''));
+            if (p.kind === 'field')
+                return headers.some(h => String(h.field).toLowerCase() === p.field.toLowerCase() && re.test(String(h.value)));
+            const path = String(r.url || '').replace(/^[a-z]+:\/\/[^/]+/i, '').split('#')[0] || '/';
+            return [String(r.method || ''), path, ...headers.flatMap(h => [String(h.field), String(h.value)])].some(value => re.test(value));
+        })(p, __wayxHost.request))
+            return __wayxHost.done({});
+        __wayxHost.argument = undefined;
+    }
+    return (function (config, host, run) {
+        const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+        const fail = message => { throw new TypeError('WayX API: ' + message); };
+        const target = config.apiPlan.target;
+        const headers = (function (headers) {
+            if (headers === undefined || headers === null)
+                return headers;
+            if (typeof headers !== 'object' || Array.isArray(headers))
+                throw new TypeError('Header dictionary required');
+            const lowerCaseHeaders = Object.fromEntries(Object.entries(headers).map(([k, v]) => [k.toLowerCase(), v]));
+            const key = prop => typeof prop === 'string' ? prop.toLowerCase() : prop;
+            return new Proxy(lowerCaseHeaders, {
+                get: (target, prop, receiver) => {
+                    if (prop === 'hasOwnProperty')
+                        return name => Object.prototype.hasOwnProperty.call(target, key(name));
+                    if (prop === 'propertyIsEnumerable')
+                        return name => Object.prototype.propertyIsEnumerable.call(target, key(name));
+                    if (typeof prop === 'string' && !Object.prototype.hasOwnProperty.call(target, key(prop)) && ['toString', 'toLocaleString', 'valueOf', 'constructor'].includes(prop))
+                        return Reflect.get(target, prop, receiver);
+                    return Reflect.get(target, key(prop), receiver);
+                },
+                set: (target, prop, value) => Reflect.defineProperty(target, key(prop), { value, writable: true, enumerable: true, configurable: true }),
+                deleteProperty: (target, prop) => Reflect.deleteProperty(target, key(prop)),
+                has: (target, prop) => Reflect.has(target, key(prop)),
+                defineProperty: (target, prop, descriptor) => {
+                    if (key(prop) !== prop && !descriptor.configurable)
+                        throw new TypeError('Case-insensitive Header descriptors must be configurable');
+                    return Reflect.defineProperty(target, key(prop), descriptor);
+                },
+                getOwnPropertyDescriptor: (target, prop) => { const d = Reflect.getOwnPropertyDescriptor(target, key(prop)); return d && key(prop) !== prop ? Object.assign({}, d, { configurable: true }) : d; },
+            });
+        });
+        const abLength = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get;
+        const typed = Object.getPrototypeOf(Uint8Array.prototype);
+        const get = name => Object.getOwnPropertyDescriptor(typed, name).get;
+        const tag = Object.getOwnPropertyDescriptor(typed, Symbol.toStringTag).get;
+        const bytes = value => {
+            let length;
+            try {
+                length = abLength.call(value);
+            }
+            catch { }
+            if (length !== undefined)
+                return new Uint8Array(value, 0, length);
+            if (ArrayBuffer.isView(value)) {
+                const isTyped = tag.call(value) !== undefined, getter = name => isTyped ? get(name).call(value) : Object.getOwnPropertyDescriptor(DataView.prototype, name).get.call(value);
+                return new Uint8Array(getter('buffer'), getter('byteOffset'), getter('byteLength'));
+            }
+            return fail('binary body requires BufferSource');
+        };
+        const binary = value => {
+            if (ArrayBuffer.isView(value))
+                return true;
+            try {
+                abLength.call(value);
+                return true;
+            }
+            catch {
+                return false;
+            }
+        };
+        const buffer = value => { const b = bytes(value); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength); };
+        const status = value => {
+            if (typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599)
+                return value;
+            const m = typeof value === 'string' && /^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value);
+            if (m)
+                return status(Number(m[1]));
+            return fail('invalid HTTP status');
+        };
+        const requestParts = value => typeof value === 'string' ? /^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value) : null;
+        const originalRequest = requestParts(host.request && host.request.url);
+        const rawPath = parts => parts[3] ? (parts[3][0] === '?' ? '/' : '') + parts[3] : '/';
+        function view(value, requestRole = false) {
+            if (value === undefined)
+                return undefined;
+            const result = Object.assign({}, value);
+            if (requestRole && true && originalRequest) {
+                if (!own(result, 'scheme'))
+                    result.scheme = originalRequest[1].toLowerCase();
+                if (!own(result, 'path'))
+                    result.path = rawPath(originalRequest);
+            }
+            if (value.headers !== undefined)
+                result.headers = headers(value.headers);
+            if (own(value, "status")) {
+                result["statusCode"] = status(value["status"]);
+                delete result["status"];
+            }
+            if (binary(value.bodyBytes) || binary(value.body)) {
+                const valueBytes = value.body;
+                if (valueBytes !== undefined) {
+                    const b = bytes(valueBytes);
+                    {
+                        result.bodyBytes = buffer(b);
+                        delete result.body;
+                    }
+                }
+            }
+            return result;
+        }
+        const request = view(host.request, true);
+        const response = view(host.response);
+        let completed = false;
+        const finish = value => { completed = true; return host.done(value); };
+        function message(value, synthetic) {
+            if (!value || typeof value !== 'object' || Array.isArray(value))
+                return fail('completion requires an object');
+            const out = Object.assign({}, value);
+            if (!synthetic && false && true && own(out, 'path')) {
+                if (typeof out.path !== 'string' || !out.path.startsWith('/') || /[\r\n]/.test(out.path))
+                    fail('QX request path must be an absolute request path');
+                {
+                    if (!originalRequest)
+                        fail('QX request path requires the original HTTP URL');
+                    if (!own(out, 'url') || out.url === (host.request && host.request.url))
+                        out.url = originalRequest[1] + '://' + originalRequest[2] + out.path;
+                    delete out.path;
+                }
+            }
+            if (own(out, 'statusCode') && !own(out, 'status'))
+                out.status = out.statusCode;
+            delete out.statusCode;
+            if (own(out, 'status'))
+                out.status = status(out.status);
+            if (own(out, 'headers')) {
+                if (!out.headers || typeof out.headers !== 'object' || Array.isArray(out.headers))
+                    fail('completion headers require a dictionary');
+                out.headers = Object.assign({}, headers(out.headers));
+            }
+            if (own(out, 'bodyBytes')) {
+                out.body = bytes(out.bodyBytes);
+                delete out.bodyBytes;
+            }
+            if (binary(out.body)) {
+                out.body = bytes(out.body);
+            }
+            for (const key of ['h2_trailers', 'node', 'policy'])
+                delete out[key];
+            for (const key of Object.keys(out))
+                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...([]), ...([])].includes(key)) {
+                    fail('unmapped completion field: ' + key);
+                }
+            ;
+            ;
+            return out;
+        }
+        function done(value) {
+            if (completed)
+                return;
+            if (['task', 'network', 'generic'].includes("response"))
+                return finish(value ?? {});
+            if (value === undefined || value === null)
+                return finish({});
+            if (value === response || value === request) {
+                const out = {};
+                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...([]), "statusCode"])
+                    if (own(value, k))
+                        out[k] = value[k];
+                value = out;
+            }
+            if (typeof value === 'string')
+                value = { body: value };
+            let synthetic = false, payload = value;
+            if (value && typeof value === 'object' && own(value, 'response')) {
+                synthetic = true;
+                payload = value.response;
+            }
+            else
+                ;
+            const out = message(payload, synthetic);
+            if (synthetic) {
+                ;
+                return finish({ response: out });
+            }
+            return finish(out);
+        }
+        const nativeStore = host.store;
+        const storageKey = key => {
+            if (key === undefined) {
+                const name = "luckincoffee.ads.js";
+                if (!name)
+                    return fail('source storage default key needs source script name');
+                return name;
+            }
+            if (typeof key !== 'string')
+                return fail('storage key must be String');
+            return key;
+        };
+        const store = { read: key => nativeStore["read"](storageKey(key)), write: (value, key) => {
+                key = storageKey(key);
+                if (value === null || (value === undefined && false))
+                    return nativeStore["write"](null, key);
+                if (typeof value !== 'string')
+                    return fail('storage value must be String or deletion marker');
+                return nativeStore["write"](value, key);
+            } };
+        const prefKey = key => typeof key === 'string' ? key : fail('QX storage requires an explicit String key');
+        const prefs = { valueForKey: key => store.read(prefKey(key)), setValueForKey: (value, key) => {
+                key = prefKey(key);
+                if (typeof value !== 'string')
+                    return fail('QX storage value must be String');
+                return store.write(value, key);
+            }, removeValueForKey: key => nativeStore["write"](null, prefKey(key)) };
+        prefs.removeAllValues = () => undefined;
+        ;
+        ;
+        const overlay = {
+            $request: request, $response: response, $done: done
+        };
+        ;
+        return run.call(host.global, overlay);
+    })(__wayxConfig, __wayxHost, function (__wayxScope) {
+        return (function ($done, $request, $response) {
+            return (function () {
+                'use strict';
+                const _0x4e065a = _0x43e4;
+                (function (_0x55e253, _0x454b38) { const _0x450871 = _0x43e4, _0x78eb33 = _0x55e253(); while (!![]) {
+                    try {
+                        const _0x341551 = parseInt(_0x450871(0xd4)) / 0x1 * (parseInt(_0x450871(0x107)) / 0x2) + -parseInt(_0x450871(0xd0)) / 0x3 + parseInt(_0x450871(0x10a)) / 0x4 + -parseInt(_0x450871(0x10f)) / 0x5 * (-parseInt(_0x450871(0x102)) / 0x6) + parseInt(_0x450871(0x106)) / 0x7 * (-parseInt(_0x450871(0x115)) / 0x8) + -parseInt(_0x450871(0x111)) / 0x9 * (parseInt(_0x450871(0x105)) / 0xa) + parseInt(_0x450871(0x10d)) / 0xb;
+                        if (_0x341551 === _0x454b38)
+                            break;
+                        else
+                            _0x78eb33['push'](_0x78eb33['shift']());
+                    }
+                    catch (_0xccb253) {
+                        _0x78eb33['push'](_0x78eb33['shift']());
+                    }
+                } }(_0x4515, 0x9c9e0));
+                function _0x43e4(_0x5ca443, _0x51785c) { _0x5ca443 = _0x5ca443 - 0xd0; const _0x4515c4 = _0x4515(); let _0x43e40c = _0x4515c4[_0x5ca443]; return _0x43e40c; }
+                const KEY = _0x4e065a(0xf5), SBOX = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x1, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76, 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0, 0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15, 0x4, 0xc7, 0x23, 0xc3, 0x18, 0x96, 0x5, 0x9a, 0x7, 0x12, 0x80, 0xe2, 0xeb, 0x27, 0xb2, 0x75, 0x9, 0x83, 0x2c, 0x1a, 0x1b, 0x6e, 0x5a, 0xa0, 0x52, 0x3b, 0xd6, 0xb3, 0x29, 0xe3, 0x2f, 0x84, 0x53, 0xd1, 0x0, 0xed, 0x20, 0xfc, 0xb1, 0x5b, 0x6a, 0xcb, 0xbe, 0x39, 0x4a, 0x4c, 0x58, 0xcf, 0xd0, 0xef, 0xaa, 0xfb, 0x43, 0x4d, 0x33, 0x85, 0x45, 0xf9, 0x2, 0x7f, 0x50, 0x3c, 0x9f, 0xa8, 0x51, 0xa3, 0x40, 0x8f, 0x92, 0x9d, 0x38, 0xf5, 0xbc, 0xb6, 0xda, 0x21, 0x10, 0xff, 0xf3, 0xd2, 0xcd, 0xc, 0x13, 0xec, 0x5f, 0x97, 0x44, 0x17, 0xc4, 0xa7, 0x7e, 0x3d, 0x64, 0x5d, 0x19, 0x73, 0x60, 0x81, 0x4f, 0xdc, 0x22, 0x2a, 0x90, 0x88, 0x46, 0xee, 0xb8, 0x14, 0xde, 0x5e, 0xb, 0xdb, 0xe0, 0x32, 0x3a, 0xa, 0x49, 0x6, 0x24, 0x5c, 0xc2, 0xd3, 0xac, 0x62, 0x91, 0x95, 0xe4, 0x79, 0xe7, 0xc8, 0x37, 0x6d, 0x8d, 0xd5, 0x4e, 0xa9, 0x6c, 0x56, 0xf4, 0xea, 0x65, 0x7a, 0xae, 0x8, 0xba, 0x78, 0x25, 0x2e, 0x1c, 0xa6, 0xb4, 0xc6, 0xe8, 0xdd, 0x74, 0x1f, 0x4b, 0xbd, 0x8b, 0x8a, 0x70, 0x3e, 0xb5, 0x66, 0x48, 0x3, 0xf6, 0xe, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e, 0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf, 0x8c, 0xa1, 0x89, 0xd, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0xf, 0xb0, 0x54, 0xbb, 0x16], INV_SBOX = new Array(0x100);
+                for (let i = 0x0; i < 0x100; i++)
+                    INV_SBOX[SBOX[i]] = i;
+                const RCON = [0x0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36];
+                function xtime(_0x1b4112) { return (_0x1b4112 << 0x1 ^ (_0x1b4112 & 0x80 ? 0x1b : 0x0)) & 0xff; }
+                function gmul(_0x32a0ff, _0x4f6dd3) { let _0x553827 = 0x0; for (let _0x5f03eb = 0x0; _0x5f03eb < 0x8; _0x5f03eb++) {
+                    if (_0x4f6dd3 & 0x1)
+                        _0x553827 ^= _0x32a0ff;
+                    _0x32a0ff = xtime(_0x32a0ff), _0x4f6dd3 >>>= 0x1;
+                } return _0x553827; }
+                function utf8ToBytes(_0x32b2af) { const _0x46578b = _0x4e065a, _0x38dd2f = []; for (let _0x3b5447 = 0x0; _0x3b5447 < _0x32b2af[_0x46578b(0xf7)]; _0x3b5447++) {
+                    let _0x2a1cf2 = _0x32b2af[_0x46578b(0xfe)](_0x3b5447);
+                    if (_0x2a1cf2 < 0x80)
+                        _0x38dd2f[_0x46578b(0xfd)](_0x2a1cf2);
+                    else {
+                        if (_0x2a1cf2 < 0x800)
+                            _0x38dd2f['push'](0xc0 | _0x2a1cf2 >> 0x6, 0x80 | _0x2a1cf2 & 0x3f);
+                        else {
+                            if (_0x2a1cf2 >= 0xd800 && _0x2a1cf2 <= 0xdbff && _0x3b5447 + 0x1 < _0x32b2af[_0x46578b(0xf7)]) {
+                                const _0x16d77d = _0x32b2af[_0x46578b(0xfe)](++_0x3b5447), _0x41f63a = 0x10000 + (_0x2a1cf2 - 0xd800 << 0xa) + (_0x16d77d - 0xdc00);
+                                _0x38dd2f[_0x46578b(0xfd)](0xf0 | _0x41f63a >> 0x12, 0x80 | _0x41f63a >> 0xc & 0x3f, 0x80 | _0x41f63a >> 0x6 & 0x3f, 0x80 | _0x41f63a & 0x3f);
+                            }
+                            else
+                                _0x38dd2f[_0x46578b(0xfd)](0xe0 | _0x2a1cf2 >> 0xc, 0x80 | _0x2a1cf2 >> 0x6 & 0x3f, 0x80 | _0x2a1cf2 & 0x3f);
+                        }
+                    }
+                } return _0x38dd2f; }
+                function bytesToUtf8(_0x364ed8) { const _0x225cee = _0x4e065a; let _0x7dae91 = ''; for (let _0x554421 = 0x0; _0x554421 < _0x364ed8[_0x225cee(0xf7)];) {
+                    const _0x2ffba2 = _0x364ed8[_0x554421++];
+                    if (_0x2ffba2 < 0x80)
+                        _0x7dae91 += String['fromCharCode'](_0x2ffba2);
+                    else {
+                        if ((_0x2ffba2 & 0xe0) === 0xc0) {
+                            const _0x1a1347 = _0x364ed8[_0x554421++];
+                            _0x7dae91 += String[_0x225cee(0xe9)]((_0x2ffba2 & 0x1f) << 0x6 | _0x1a1347 & 0x3f);
+                        }
+                        else {
+                            if ((_0x2ffba2 & 0xf0) === 0xe0) {
+                                const _0x345b16 = _0x364ed8[_0x554421++], _0x1d916b = _0x364ed8[_0x554421++];
+                                _0x7dae91 += String[_0x225cee(0xe9)]((_0x2ffba2 & 0xf) << 0xc | (_0x345b16 & 0x3f) << 0x6 | _0x1d916b & 0x3f);
+                            }
+                            else {
+                                const _0x18799d = _0x364ed8[_0x554421++], _0x36d544 = _0x364ed8[_0x554421++], _0x42571c = _0x364ed8[_0x554421++];
+                                let _0x2214eb = (_0x2ffba2 & 0x7) << 0x12 | (_0x18799d & 0x3f) << 0xc | (_0x36d544 & 0x3f) << 0x6 | _0x42571c & 0x3f;
+                                _0x2214eb -= 0x10000, _0x7dae91 += String[_0x225cee(0xe9)](0xd800 + (_0x2214eb >> 0xa), 0xdc00 + (_0x2214eb & 0x3ff));
+                            }
+                        }
+                    }
+                } return _0x7dae91; }
+                function keyExpansion(_0x23ce06) { const _0x10059c = _0x4e065a, _0x558f2 = _0x23ce06[_0x10059c(0x100)](); let _0x13fa7f = 0x10, _0x4ce046 = 0x1, _0x1049e1 = [0x0, 0x0, 0x0, 0x0]; while (_0x13fa7f < 0xb0) {
+                    for (let _0x39607b = 0x0; _0x39607b < 0x4; _0x39607b++)
+                        _0x1049e1[_0x39607b] = _0x558f2[_0x13fa7f - 0x4 + _0x39607b];
+                    _0x13fa7f % 0x10 === 0x0 && (_0x1049e1 = [_0x1049e1[0x1], _0x1049e1[0x2], _0x1049e1[0x3], _0x1049e1[0x0]][_0x10059c(0xe5)](_0x3efa59 => SBOX[_0x3efa59]), _0x1049e1[0x0] ^= RCON[_0x4ce046++]);
+                    for (let _0x391fd4 = 0x0; _0x391fd4 < 0x4; _0x391fd4++) {
+                        _0x558f2[_0x13fa7f] = _0x558f2[_0x13fa7f - 0x10] ^ _0x1049e1[_0x391fd4], _0x13fa7f++;
+                    }
+                } return _0x558f2; }
+                const ROUND_KEY = keyExpansion(utf8ToBytes(KEY));
+                function addRoundKey(_0x256bbc, _0x1b8e3f) { const _0x2fd98a = _0x1b8e3f * 0x10; for (let _0x3e3479 = 0x0; _0x3e3479 < 0x10; _0x3e3479++)
+                    _0x256bbc[_0x3e3479] ^= ROUND_KEY[_0x2fd98a + _0x3e3479]; }
+                function subBytes(_0xe1e8c9) { for (let _0x79e415 = 0x0; _0x79e415 < 0x10; _0x79e415++)
+                    _0xe1e8c9[_0x79e415] = SBOX[_0xe1e8c9[_0x79e415]]; }
+                function invSubBytes(_0x544035) { for (let _0x4fc1ee = 0x0; _0x4fc1ee < 0x10; _0x4fc1ee++)
+                    _0x544035[_0x4fc1ee] = INV_SBOX[_0x544035[_0x4fc1ee]]; }
+                function shiftRows(_0x4124b2) { const _0xe9f3c = _0x4e065a, _0x3c5b1a = _0x4124b2[_0xe9f3c(0x100)](); _0x4124b2[0x0] = _0x3c5b1a[0x0], _0x4124b2[0x4] = _0x3c5b1a[0x4], _0x4124b2[0x8] = _0x3c5b1a[0x8], _0x4124b2[0xc] = _0x3c5b1a[0xc], _0x4124b2[0x1] = _0x3c5b1a[0x5], _0x4124b2[0x5] = _0x3c5b1a[0x9], _0x4124b2[0x9] = _0x3c5b1a[0xd], _0x4124b2[0xd] = _0x3c5b1a[0x1], _0x4124b2[0x2] = _0x3c5b1a[0xa], _0x4124b2[0x6] = _0x3c5b1a[0xe], _0x4124b2[0xa] = _0x3c5b1a[0x2], _0x4124b2[0xe] = _0x3c5b1a[0x6], _0x4124b2[0x3] = _0x3c5b1a[0xf], _0x4124b2[0x7] = _0x3c5b1a[0x3], _0x4124b2[0xb] = _0x3c5b1a[0x7], _0x4124b2[0xf] = _0x3c5b1a[0xb]; }
+                function invShiftRows(_0x34e0f3) { const _0x283f58 = _0x34e0f3['slice'](); _0x34e0f3[0x0] = _0x283f58[0x0], _0x34e0f3[0x4] = _0x283f58[0x4], _0x34e0f3[0x8] = _0x283f58[0x8], _0x34e0f3[0xc] = _0x283f58[0xc], _0x34e0f3[0x1] = _0x283f58[0xd], _0x34e0f3[0x5] = _0x283f58[0x1], _0x34e0f3[0x9] = _0x283f58[0x5], _0x34e0f3[0xd] = _0x283f58[0x9], _0x34e0f3[0x2] = _0x283f58[0xa], _0x34e0f3[0x6] = _0x283f58[0xe], _0x34e0f3[0xa] = _0x283f58[0x2], _0x34e0f3[0xe] = _0x283f58[0x6], _0x34e0f3[0x3] = _0x283f58[0x7], _0x34e0f3[0x7] = _0x283f58[0xb], _0x34e0f3[0xb] = _0x283f58[0xf], _0x34e0f3[0xf] = _0x283f58[0x3]; }
+                function mixColumns(_0x1307ad) { for (let _0x5ef19c = 0x0; _0x5ef19c < 0x4; _0x5ef19c++) {
+                    const _0x4ed883 = _0x5ef19c * 0x4, _0x36c8a9 = _0x1307ad[_0x4ed883], _0x5c9fd8 = _0x1307ad[_0x4ed883 + 0x1], _0x3625f3 = _0x1307ad[_0x4ed883 + 0x2], _0x547b22 = _0x1307ad[_0x4ed883 + 0x3];
+                    _0x1307ad[_0x4ed883] = gmul(_0x36c8a9, 0x2) ^ gmul(_0x5c9fd8, 0x3) ^ _0x3625f3 ^ _0x547b22, _0x1307ad[_0x4ed883 + 0x1] = _0x36c8a9 ^ gmul(_0x5c9fd8, 0x2) ^ gmul(_0x3625f3, 0x3) ^ _0x547b22, _0x1307ad[_0x4ed883 + 0x2] = _0x36c8a9 ^ _0x5c9fd8 ^ gmul(_0x3625f3, 0x2) ^ gmul(_0x547b22, 0x3), _0x1307ad[_0x4ed883 + 0x3] = gmul(_0x36c8a9, 0x3) ^ _0x5c9fd8 ^ _0x3625f3 ^ gmul(_0x547b22, 0x2);
+                } }
+                function invMixColumns(_0x5d810d) { for (let _0x5b94d4 = 0x0; _0x5b94d4 < 0x4; _0x5b94d4++) {
+                    const _0x1c7514 = _0x5b94d4 * 0x4, _0x25a4cc = _0x5d810d[_0x1c7514], _0xa1164 = _0x5d810d[_0x1c7514 + 0x1], _0x141560 = _0x5d810d[_0x1c7514 + 0x2], _0x1f2868 = _0x5d810d[_0x1c7514 + 0x3];
+                    _0x5d810d[_0x1c7514] = gmul(_0x25a4cc, 0xe) ^ gmul(_0xa1164, 0xb) ^ gmul(_0x141560, 0xd) ^ gmul(_0x1f2868, 0x9), _0x5d810d[_0x1c7514 + 0x1] = gmul(_0x25a4cc, 0x9) ^ gmul(_0xa1164, 0xe) ^ gmul(_0x141560, 0xb) ^ gmul(_0x1f2868, 0xd), _0x5d810d[_0x1c7514 + 0x2] = gmul(_0x25a4cc, 0xd) ^ gmul(_0xa1164, 0x9) ^ gmul(_0x141560, 0xe) ^ gmul(_0x1f2868, 0xb), _0x5d810d[_0x1c7514 + 0x3] = gmul(_0x25a4cc, 0xb) ^ gmul(_0xa1164, 0xd) ^ gmul(_0x141560, 0x9) ^ gmul(_0x1f2868, 0xe);
+                } }
+                function encryptBlock(_0x439d6d) { const _0x5a19e5 = _0x4e065a, _0x34a97d = _0x439d6d[_0x5a19e5(0x100)](); addRoundKey(_0x34a97d, 0x0); for (let _0x4b2f89 = 0x1; _0x4b2f89 < 0xa; _0x4b2f89++) {
+                    subBytes(_0x34a97d), shiftRows(_0x34a97d), mixColumns(_0x34a97d), addRoundKey(_0x34a97d, _0x4b2f89);
+                } return subBytes(_0x34a97d), shiftRows(_0x34a97d), addRoundKey(_0x34a97d, 0xa), _0x34a97d; }
+                function decryptBlock(_0x1f1555) { const _0x3f8cda = _0x1f1555['slice'](); addRoundKey(_0x3f8cda, 0xa); for (let _0x1671a9 = 0x9; _0x1671a9 > 0x0; _0x1671a9--) {
+                    invShiftRows(_0x3f8cda), invSubBytes(_0x3f8cda), addRoundKey(_0x3f8cda, _0x1671a9), invMixColumns(_0x3f8cda);
+                } return invShiftRows(_0x3f8cda), invSubBytes(_0x3f8cda), addRoundKey(_0x3f8cda, 0x0), _0x3f8cda; }
+                function pkcs7Pad(_0xa59bd2) { const _0x454012 = _0x4e065a, _0x3a886a = 0x10 - _0xa59bd2['length'] % 0x10, _0x51f8d9 = _0xa59bd2['slice'](); for (let _0x5ea29f = 0x0; _0x5ea29f < _0x3a886a; _0x5ea29f++)
+                    _0x51f8d9[_0x454012(0xfd)](_0x3a886a); return _0x51f8d9; }
+                function pkcs7Unpad(_0x4ed555) { const _0x3a5c4f = _0x4e065a; if (!_0x4ed555[_0x3a5c4f(0xf7)])
+                    throw new Error('empty'); const _0x386cc4 = _0x4ed555[_0x4ed555[_0x3a5c4f(0xf7)] - 0x1]; if (_0x386cc4 < 0x1 || _0x386cc4 > 0x10 || _0x386cc4 > _0x4ed555[_0x3a5c4f(0xf7)])
+                    throw new Error('bad\x20padding'); for (let _0x4bdddf = _0x4ed555['length'] - _0x386cc4; _0x4bdddf < _0x4ed555[_0x3a5c4f(0xf7)]; _0x4bdddf++)
+                    if (_0x4ed555[_0x4bdddf] !== _0x386cc4)
+                        throw new Error(_0x3a5c4f(0xd9)); return _0x4ed555[_0x3a5c4f(0x100)](0x0, _0x4ed555[_0x3a5c4f(0xf7)] - _0x386cc4); }
+                const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+                function _0x4515() { const _0x4fd8e1 = ['luckyfe.luckincoffee.ios.flash.config', 'cipher\x20length', '20tZRPcm', '35CsDufv', '26lrNlRt', 'content', 'flashSwitch', '3182040aYJBeh', 'moduleTitle', 'wxSharePic', '243166TBMDCB', 'F101005', '5UCMUju', 'luckyfe.luckincoffee.banner.config', '484137aeakkF', 'bubbleData', 'forEach', 'showButton', '530608smKsKV', '1362543LMtBHf', 'arBtnPic', 'home_middlebanner_scrollbroadcast_switch', 'mainVisualPic', '23362ePpcPN', 'iconUrl', 'positionCode', 'test', 'F101', 'bad\x20padding', 'isArray', 'stringify', 'trim', '[Luckin\x20Clean]\x20', 'popupPic', 'replace', 'exports', 'headPic', 'wxShareTitle', 'object', 'rulePic', 'map', 'string', 'bubbleScheme', 'url', 'fromCharCode', 'filter', 'moduleInfos', 'showPicUrl2', 'parse', 'log', 'enlargeIconUrl', 'arIcon', 'F101003', 'link', 'tacticList', 'body', 'lqiQnStb3CMmDJXk', '福利中心', 'length', 'undefined', 'imgUrl', 'title', 'tactic', 'F101001', 'push', 'charCodeAt', 'concat', 'slice', 'showAISearch', '2481474KfZkSP']; _0x4515 = function () { return _0x4fd8e1; }; return _0x4515(); }
+                function b64Encode(_0x16c29c) { const _0x495d0c = _0x4e065a; let _0x2a15b6 = ''; for (let _0x14f6d6 = 0x0; _0x14f6d6 < _0x16c29c[_0x495d0c(0xf7)]; _0x14f6d6 += 0x3) {
+                    const _0x4f8801 = _0x16c29c[_0x14f6d6], _0x330029 = _0x14f6d6 + 0x1 < _0x16c29c[_0x495d0c(0xf7)] ? _0x16c29c[_0x14f6d6 + 0x1] : 0x0, _0x4f8fbd = _0x14f6d6 + 0x2 < _0x16c29c['length'] ? _0x16c29c[_0x14f6d6 + 0x2] : 0x0, _0xe25d61 = _0x4f8801 << 0x10 | _0x330029 << 0x8 | _0x4f8fbd;
+                    _0x2a15b6 += B64[_0xe25d61 >> 0x12 & 0x3f] + B64[_0xe25d61 >> 0xc & 0x3f] + (_0x14f6d6 + 0x1 < _0x16c29c[_0x495d0c(0xf7)] ? B64[_0xe25d61 >> 0x6 & 0x3f] : '=') + (_0x14f6d6 + 0x2 < _0x16c29c[_0x495d0c(0xf7)] ? B64[_0xe25d61 & 0x3f] : '=');
+                } return _0x2a15b6; }
+                function b64Decode(_0x4b6ae0) { const _0x59c233 = _0x4e065a; _0x4b6ae0 = _0x4b6ae0['replace'](/\s/g, ''); const _0xd7ba6 = {}; for (let _0x402aca = 0x0; _0x402aca < 0x40; _0x402aca++)
+                    _0xd7ba6[B64[_0x402aca]] = _0x402aca; const _0x3cd348 = []; for (let _0x2da5d6 = 0x0; _0x2da5d6 < _0x4b6ae0['length']; _0x2da5d6 += 0x4) {
+                    const _0x3118c9 = _0xd7ba6[_0x4b6ae0[_0x2da5d6]], _0x3563d5 = _0xd7ba6[_0x4b6ae0[_0x2da5d6 + 0x1]], _0x1e0c89 = _0x4b6ae0[_0x2da5d6 + 0x2] === '=' ? 0x0 : _0xd7ba6[_0x4b6ae0[_0x2da5d6 + 0x2]], _0x51ba48 = _0x4b6ae0[_0x2da5d6 + 0x3] === '=' ? 0x0 : _0xd7ba6[_0x4b6ae0[_0x2da5d6 + 0x3]], _0x59b6f = _0x3118c9 << 0x12 | _0x3563d5 << 0xc | _0x1e0c89 << 0x6 | _0x51ba48;
+                    _0x3cd348[_0x59c233(0xfd)](_0x59b6f >> 0x10 & 0xff);
+                    if (_0x4b6ae0[_0x2da5d6 + 0x2] !== '=')
+                        _0x3cd348['push'](_0x59b6f >> 0x8 & 0xff);
+                    if (_0x4b6ae0[_0x2da5d6 + 0x3] !== '=')
+                        _0x3cd348[_0x59c233(0xfd)](_0x59b6f & 0xff);
+                } return _0x3cd348; }
+                function decryptBody(_0x1dda36) { const _0x37ca62 = _0x4e065a; let _0x4272b4 = _0x1dda36[_0x37ca62(0xdc)]()[_0x37ca62(0xdf)](/-/g, '+')[_0x37ca62(0xdf)](/_/g, '/'); while (_0x4272b4['length'] % 0x4)
+                    _0x4272b4 += '='; const _0x30c759 = b64Decode(_0x4272b4); if (_0x30c759[_0x37ca62(0xf7)] % 0x10)
+                    throw new Error(_0x37ca62(0x104)); let _0xc9f722 = []; for (let _0x3a1a50 = 0x0; _0x3a1a50 < _0x30c759['length']; _0x3a1a50 += 0x10)
+                    _0xc9f722 = _0xc9f722[_0x37ca62(0xff)](decryptBlock(_0x30c759[_0x37ca62(0x100)](_0x3a1a50, _0x3a1a50 + 0x10))); return bytesToUtf8(pkcs7Unpad(_0xc9f722)); }
+                function encryptBody(_0x586c9a) { const _0x4b0410 = _0x4e065a, _0x23e176 = pkcs7Pad(utf8ToBytes(_0x586c9a)); let _0x225859 = []; for (let _0x3ae686 = 0x0; _0x3ae686 < _0x23e176[_0x4b0410(0xf7)]; _0x3ae686 += 0x10)
+                    _0x225859 = _0x225859[_0x4b0410(0xff)](encryptBlock(_0x23e176[_0x4b0410(0x100)](_0x3ae686, _0x3ae686 + 0x10))); return b64Encode(_0x225859)[_0x4b0410(0xdf)](/\+/g, '-')[_0x4b0410(0xdf)](/\//g, '_'); }
+                function parseJSONText(_0x3351bb) { const _0x270d2b = _0x4e065a; try {
+                    return typeof _0x3351bb === 'string' ? JSON[_0x270d2b(0xed)](_0x3351bb) : null;
+                }
+                catch (_0x14c65c) {
+                    return null;
+                } }
+                function compactJSON(_0x3ddcb7) { const _0x5ee404 = _0x4e065a; return JSON[_0x5ee404(0xdb)](_0x3ddcb7); }
+                function filterMyPage(_0x2d83d0) { const _0x29fa16 = _0x4e065a, _0x4038e0 = { '招商加盟': 0x1, '租赁合作': 0x1, '加入我们': 0x1, '优惠联盟': 0x1, '活动周边': 0x1, '企业充赠': 0x1 }; return _0x2d83d0[_0x29fa16(0xea)](_0x47c2e1 => !_0x4038e0[_0x47c2e1 && _0x47c2e1[_0x29fa16(0xfa)]]); }
+                function clean(_0x31e8f4, _0x559679) { const _0xb158a8 = _0x4e065a, _0x2ec8e1 = _0x31e8f4 && _0x31e8f4[_0xb158a8(0x108)]; if (/\/resource\/m\/sys\/config\/value/[_0xb158a8(0xd7)](_0x559679) && _0x2ec8e1 && typeof _0x2ec8e1 === _0xb158a8(0xe3) && !Array[_0xb158a8(0xda)](_0x2ec8e1)) {
+                    let _0x55b0c3 = parseJSONText(_0x2ec8e1[_0xb158a8(0x110)]);
+                    _0x55b0c3 && (_0x55b0c3[_0xb158a8(0xd2)] = 0x0, _0x55b0c3['personal_middlebanner_scrollbroadcast_switch'] = 0x0, _0x2ec8e1[_0xb158a8(0x110)] = compactJSON(_0x55b0c3)), _0x55b0c3 = parseJSONText(_0x2ec8e1['luckyfe.luckincoffee.ios.flash.config']), _0x55b0c3 && (_0x55b0c3[_0xb158a8(0x109)] = ![], _0x2ec8e1[_0xb158a8(0x103)] = compactJSON(_0x55b0c3));
+                }
+                else {
+                    if (/\/resource\/m\/sys\/homePage\/common\/modules/[_0xb158a8(0xd7)](_0x559679) && _0x2ec8e1 && Array[_0xb158a8(0xda)](_0x2ec8e1[_0xb158a8(0xf3)]))
+                        _0x2ec8e1['tacticList'] = [];
+                    else {
+                        if (/\/resource\/m\/sys\/common\/modules/[_0xb158a8(0xd7)](_0x559679) && _0x2ec8e1 && Array[_0xb158a8(0xda)](_0x2ec8e1['tacticList'])) {
+                            if (_0x2ec8e1['positionCode'] === 'F104')
+                                _0x2ec8e1[_0xb158a8(0xf3)] = [];
+                            else
+                                _0x2ec8e1[_0xb158a8(0xd6)] === _0xb158a8(0xd8) && (_0x2ec8e1[_0xb158a8(0xf3)] = _0x2ec8e1[_0xb158a8(0xf3)][_0xb158a8(0xea)](_0x3b55e0 => _0x3b55e0 && _0x3b55e0[_0xb158a8(0xd6)] !== _0xb158a8(0xfc) && _0x3b55e0['positionCode'] !== _0xb158a8(0x10e)), _0x2ec8e1[_0xb158a8(0xf3)]['forEach'](_0x16a8b9 => { const _0x524e21 = _0xb158a8; if (_0x16a8b9['positionCode'] === _0x524e21(0xf1) && Array['isArray'](_0x16a8b9[_0x524e21(0xeb)]))
+                                    _0x16a8b9[_0x524e21(0xeb)] = _0x16a8b9[_0x524e21(0xeb)][_0x524e21(0xea)](_0x445996 => _0x445996 && _0x445996[_0x524e21(0x10b)] !== _0x524e21(0xf6)); }));
+                        }
+                        else {
+                            if (/\/resource\/m\/sys\/base\/myPageSectionShow\/newUI/['test'](_0x559679) && Array[_0xb158a8(0xda)](_0x2ec8e1))
+                                _0x31e8f4[_0xb158a8(0x108)] = filterMyPage(_0x2ec8e1);
+                            else {
+                                if (/\/resource\/m\/sys\/app\/adposNew/[_0xb158a8(0xd7)](_0x559679) && Array[_0xb158a8(0xda)](_0x2ec8e1))
+                                    _0x31e8f4['content'] = [];
+                                else {
+                                    if (/\/resource\/m\/sys\/homePage\/contactor\/modules/[_0xb158a8(0xd7)](_0x559679) && _0x2ec8e1 && typeof _0x2ec8e1 === _0xb158a8(0xe3))
+                                        _0x2ec8e1['isPop'] = 0x0, _0x2ec8e1['popupLinkUrl'] = '', _0x2ec8e1[_0xb158a8(0xfb)] && typeof _0x2ec8e1[_0xb158a8(0xfb)] === _0xb158a8(0xe3) && (_0x2ec8e1[_0xb158a8(0xfb)][_0xb158a8(0xeb)] = [], _0x2ec8e1['tactic'][_0xb158a8(0xe1)] = '', _0x2ec8e1[_0xb158a8(0xfb)]['showPicUrl'] = '', _0x2ec8e1['tactic'][_0xb158a8(0xec)] = '', _0x2ec8e1[_0xb158a8(0xfb)]['popupStyleTemplateJson'] = '');
+                                    else {
+                                        if (/\/resource\/m\/sys\/app\/carousel/[_0xb158a8(0xd7)](_0x559679) && _0x2ec8e1 && typeof _0x2ec8e1 === _0xb158a8(0xe3))
+                                            _0x2ec8e1[_0xb158a8(0xf9)] = '', _0x2ec8e1['notifyInfos'] = [];
+                                        else {
+                                            if (/\/resource\/m\/sys\/visual\/effect\/modules/['test'](_0x559679) && Array[_0xb158a8(0xda)](_0x2ec8e1))
+                                                _0x31e8f4[_0xb158a8(0x108)] = [];
+                                            else {
+                                                if (/\/resource\/m\/aigc\/showAIButton/[_0xb158a8(0xd7)](_0x559679) && _0x2ec8e1 && typeof _0x2ec8e1 === _0xb158a8(0xe3))
+                                                    _0x2ec8e1[_0xb158a8(0x112)] = null, _0x2ec8e1[_0xb158a8(0xe7)] = null, _0x2ec8e1['bubbleType'] = 0x0, _0x2ec8e1[_0xb158a8(0xef)] = '', _0x2ec8e1[_0xb158a8(0xd5)] = '', _0x2ec8e1[_0xb158a8(0xf2)] = '', _0x2ec8e1[_0xb158a8(0x101)] = ![], _0x2ec8e1[_0xb158a8(0x114)] = ![];
+                                                else
+                                                    /\/resource\/seckill\/ar\/campaignBaseInfo/[_0xb158a8(0xd7)](_0x559679) && _0x2ec8e1 && typeof _0x2ec8e1 === _0xb158a8(0xe3) && (_0x2ec8e1['status'] = 0x0, [_0xb158a8(0xd1), _0xb158a8(0xf0), _0xb158a8(0xd3), _0xb158a8(0xde), _0xb158a8(0xe4), _0xb158a8(0x10c), _0xb158a8(0xe2)][_0xb158a8(0x113)](_0x43b9e0 => { const _0x5ec80b = _0xb158a8; if (typeof _0x2ec8e1[_0x43b9e0] === _0x5ec80b(0xe6))
+                                                        _0x2ec8e1[_0x43b9e0] = ''; }));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } return _0x31e8f4; }
+                function main(_0x12339c, _0x551118) { const _0x3612c2 = _0x4e065a, _0x3a0eea = decryptBody(_0x551118), _0x33e550 = JSON[_0x3612c2(0xed)](_0x3a0eea); return clean(_0x33e550, _0x12339c), encryptBody(JSON['stringify'](_0x33e550)); }
+                if (typeof module !== _0x4e065a(0xf8) && module['exports'])
+                    module[_0x4e065a(0xe0)] = { 'decryptBody': decryptBody, 'encryptBody': encryptBody, 'clean': clean, 'main': main };
+                else
+                    try {
+                        $done({ 'body': main($request[_0x4e065a(0xe8)], $response[_0x4e065a(0xf4)]) });
+                    }
+                    catch (_0x14ad91) {
+                        console[_0x4e065a(0xee)](_0x4e065a(0xdd) + _0x14ad91), $done({ 'body': $response['body'] });
+                    }
+            }).call(this);
+        }).call(this, Object.prototype.hasOwnProperty.call(__wayxScope, "$done") ? __wayxScope["$done"] : (typeof $done === 'undefined' ? undefined : $done), Object.prototype.hasOwnProperty.call(__wayxScope, "$request") ? __wayxScope["$request"] : (typeof $request === 'undefined' ? undefined : $request), Object.prototype.hasOwnProperty.call(__wayxScope, "$response") ? __wayxScope["$response"] : (typeof $response === 'undefined' ? undefined : $response));
+    });
+})();

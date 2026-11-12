@@ -1,0 +1,216 @@
+{
+  "version": 1,
+  "sourceUrl": "https://ddgksf2013.top/scripts/luckincoffee.ads.js",
+  "sourceSha256": "f05b8e62554e47c2a81d846717193f9728b09bccb7968c3f67aa4d0ad84437c0",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "f05b8e62554e47c2a81d846717193f9728b09bccb7968c3f67aa4d0ad84437c0",
+    "operations": [
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 16901,
+        "end": 16975,
+        "line": 1,
+        "column": 16902,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request.<runtime-key>",
+        "access": "read",
+        "start": 16920,
+        "end": 16945,
+        "line": 1,
+        "column": 16921,
+        "members": [
+          "$request",
+          "<runtime-key>"
+        ]
+      },
+      {
+        "api": "$response.<runtime-key>",
+        "access": "read",
+        "start": 16946,
+        "end": 16972,
+        "line": 1,
+        "column": 16947,
+        "members": [
+          "$response",
+          "<runtime-key>"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 17046,
+        "end": 17079,
+        "line": 1,
+        "column": 17047,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 17060,
+        "end": 17077,
+        "line": 1,
+        "column": 17061,
+        "members": [
+          "$response",
+          "body"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "f05b8e62554e47c2a81d846717193f9728b09bccb7968c3f67aa4d0ad84437c0",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 16901,
+              "end": 16975,
+              "line": 1,
+              "column": 16902,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request.<runtime-key>",
+              "start": 16920,
+              "end": 16945,
+              "line": 1,
+              "column": 16921,
+              "access": "read",
+              "memberPath": [
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response.<runtime-key>",
+              "start": 16946,
+              "end": 16972,
+              "line": 1,
+              "column": 16947,
+              "access": "read",
+              "memberPath": [
+                "<runtime-key>"
+              ]
+            },
+            "canonical": "response.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 17046,
+              "end": 17079,
+              "line": 1,
+              "column": 17047,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 17060,
+              "end": 17077,
+              "line": 1,
+              "column": 17061,
+              "access": "read",
+              "memberPath": [
+                "body"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

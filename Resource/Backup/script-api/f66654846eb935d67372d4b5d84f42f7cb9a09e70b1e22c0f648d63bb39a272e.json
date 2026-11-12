@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/master/deleteHeader.js",
+  "sourceSha256": "fa25d87f324a42c6c3159c40b762c89c7977a7402ffb39260acc9362c7537e3f",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "fa25d87f324a42c6c3159c40b762c89c7977a7402ffb39260acc9362c7537e3f",
+    "operations": [
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 351,
+        "end": 367,
+        "line": 13,
+        "column": 95,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 423,
+        "end": 455,
+        "line": 13,
+        "column": 167,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "request": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "fa25d87f324a42c6c3159c40b762c89c7977a7402ffb39260acc9362c7537e3f",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 351,
+              "end": 367,
+              "line": 13,
+              "column": 95,
+              "access": "read",
+              "memberPath": [
+                "headers"
+              ]
+            },
+            "canonical": "request.headers",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 423,
+              "end": 455,
+              "line": 13,
+              "column": 167,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

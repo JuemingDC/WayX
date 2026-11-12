@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Scripts/refs/heads/master/zhihu_openads.js",
+  "sourceSha256": "3f12b578e30b4f6f7d54fd0091789491c444ed9cc2353b91406927438b201dc7",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "3f12b578e30b4f6f7d54fd0091789491c444ed9cc2353b91406927438b201dc7",
+    "operations": [
+      {
+        "api": "$response.body.replace",
+        "access": "call",
+        "start": 665,
+        "end": 739,
+        "line": 50,
+        "column": 10,
+        "members": [
+          "$response",
+          "body",
+          "replace"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 794,
+        "end": 807,
+        "line": 50,
+        "column": 139,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "3f12b578e30b4f6f7d54fd0091789491c444ed9cc2353b91406927438b201dc7",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body.replace",
+              "start": 665,
+              "end": 739,
+              "line": 50,
+              "column": 10,
+              "access": "call",
+              "memberPath": [
+                "body",
+                "replace"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 794,
+              "end": 807,
+              "line": 50,
+              "column": 139,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

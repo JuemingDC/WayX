@@ -1,0 +1,534 @@
+{
+  "version": 1,
+  "sourceUrl": "https://ddgksf2013.top/scripts/umetrip.ads.js",
+  "sourceSha256": "f1a37c300126b1bd64451261207a9166ee2aad77a3e79705a0f5c24229aef46e",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "f1a37c300126b1bd64451261207a9166ee2aad77a3e79705a0f5c24229aef46e",
+    "operations": [
+      {
+        "api": "TextDecoder",
+        "access": "read",
+        "start": 2919,
+        "end": 2930,
+        "line": 1,
+        "column": 2920,
+        "members": [
+          "TextDecoder"
+        ]
+      },
+      {
+        "api": "TextDecoder",
+        "access": "call",
+        "start": 2942,
+        "end": 2966,
+        "line": 1,
+        "column": 2943,
+        "members": [
+          "TextDecoder"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 10790,
+        "end": 10798,
+        "line": 1,
+        "column": 10791,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$request.headers",
+        "access": "read",
+        "start": 10800,
+        "end": 10816,
+        "line": 1,
+        "column": 10801,
+        "members": [
+          "$request",
+          "headers"
+        ]
+      },
+      {
+        "api": "$response",
+        "access": "read",
+        "start": 11011,
+        "end": 11020,
+        "line": 1,
+        "column": 11012,
+        "members": [
+          "$response"
+        ]
+      },
+      {
+        "api": "$response.bodyBytes",
+        "access": "read",
+        "start": 11022,
+        "end": 11041,
+        "line": 1,
+        "column": 11023,
+        "members": [
+          "$response",
+          "bodyBytes"
+        ]
+      },
+      {
+        "api": "$response.bodyBytes",
+        "access": "read",
+        "start": 11064,
+        "end": 11083,
+        "line": 1,
+        "column": 11065,
+        "members": [
+          "$response",
+          "bodyBytes"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 11686,
+        "end": 11693,
+        "line": 1,
+        "column": 11687,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 11784,
+        "end": 11804,
+        "line": 1,
+        "column": 11785,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 11877,
+        "end": 11884,
+        "line": 1,
+        "column": 11878,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 11934,
+        "end": 11941,
+        "line": 1,
+        "column": 11935,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 16674,
+        "end": 16688,
+        "line": 1,
+        "column": 16675,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 16770,
+        "end": 16778,
+        "line": 1,
+        "column": 16771,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 16846,
+        "end": 16866,
+        "line": 1,
+        "column": 16847,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "f1a37c300126b1bd64451261207a9166ee2aad77a3e79705a0f5c24229aef46e",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 2919,
+              "end": 2930,
+              "line": 1,
+              "column": 2920,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextDecoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 2942,
+              "end": 2966,
+              "line": 1,
+              "column": 2943,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextDecoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 10790,
+              "end": 10798,
+              "line": 1,
+              "column": 10791,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "request.headers",
+            "kind": "context",
+            "source": {
+              "api": "$request.headers",
+              "start": 10800,
+              "end": 10816,
+              "line": 1,
+              "column": 10801,
+              "access": "read",
+              "memberPath": [
+                "headers"
+              ]
+            },
+            "canonical": "request.headers",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request.headers",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response",
+              "start": 11011,
+              "end": 11020,
+              "line": 1,
+              "column": 11012,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "response.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.bodyBytes",
+              "start": 11022,
+              "end": 11041,
+              "line": 1,
+              "column": 11023,
+              "access": "read",
+              "memberPath": [
+                "bodyBytes"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "ArrayBuffer <-> Uint8Array preserving byteOffset/byteLength",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.bodyBytes",
+              "start": 11064,
+              "end": 11083,
+              "line": 1,
+              "column": 11065,
+              "access": "read",
+              "memberPath": [
+                "bodyBytes"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "ArrayBuffer <-> Uint8Array preserving byteOffset/byteLength",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11686,
+              "end": 11693,
+              "line": 1,
+              "column": 11687,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11784,
+              "end": 11804,
+              "line": 1,
+              "column": 11785,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11877,
+              "end": 11884,
+              "line": 1,
+              "column": 11878,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 11934,
+              "end": 11941,
+              "line": 1,
+              "column": 11935,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 16674,
+              "end": 16688,
+              "line": 1,
+              "column": 16675,
+              "access": "read",
+              "memberPath": [
+                "body"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 16770,
+              "end": 16778,
+              "line": 1,
+              "column": 16771,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 16846,
+              "end": 16866,
+              "line": 1,
+              "column": 16847,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

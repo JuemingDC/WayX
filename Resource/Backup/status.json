@@ -2,10 +2,15 @@
   "version": 1,
   "scriptCleanup": {
     "removed": [],
-    "retainedGenerated": 377,
+    "retainedGenerated": 456,
     "policy": "unreferenced-generated-only; active/transitive/manual/source dependencies retained"
   },
   "headerRewrites": [
+    {
+      "artifact": "Adblock/Surge/ddgksf2013/txsports-ad-clean/txsports-ad-clean.sgmodule",
+      "source": "^https:\\/\\/config\\.ab\\.qq\\.com\\/tab\\/GetTabRemoteConfig(?:\\?.*)?$ (?i)\\r\\nUser-Agent:\\s*QQSportsV3\\/ url-and-header script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Resource/Backup/script/f685b508c8f0030b09799470748a955ab2ad56e312e19ab3ba7eb60110c73566/txsports-ad-clean.js",
+      "status": "converted"
+    },
     {
       "artifact": "Adblock/Surge/fmz200/blockads/blockads.sgmodule",
       "source": "^http:\\/\\/.+\\/amdc\\/mobileDispatch %E8%8F%9C%E9%B8%9F%E8%A3%B9%E8%A3%B9* url-and-header reject",
@@ -59,16 +64,16 @@
       "status": "converted"
     }
   ],
-  "pluginSources": 360,
-  "scriptUrls": 245,
-  "backedUpScripts": 243,
-  "rewrittenArtifacts": 0,
+  "pluginSources": 449,
+  "scriptUrls": 328,
+  "backedUpScripts": 326,
+  "rewrittenArtifacts": 105,
   "scriptApi": {
-    "universal": 342,
-    "adapted": 955,
+    "universal": 421,
+    "adapted": 1250,
     "blocked": 0,
     "excluded": 0,
-    "nativeCopied": 438
+    "nativeCopied": 734
   },
   "unresolvedReferences": 0,
   "disabledSources": [

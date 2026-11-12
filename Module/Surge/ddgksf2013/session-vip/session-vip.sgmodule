@@ -1,0 +1,29 @@
+#!name=Session
+#!desc=Native QX conversion · 1 declarations require review
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 1
+
+[Rule]
+# Name: Session
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: Caster
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/session.vip.js
+# *********************************
+# Session Pro
+# https://t.me/ddgksf2021
+# [WayX] REVIEW REQUIRED: Whole-header replacement is outside the supported CRLF-bounded single-field form
+# Source declaration: ^https:\/\/api\.stayinsession\.com\/user\/detail url request-header (\r\n)If-None-Match:.+(\r\n) request-header $1If-None-Match:$2
+# *********************************
+
+[URL Rewrite]
+(^https:\/\/api\.stayinsession\.com\/\?token=.*?&)(is_setapp\=false) $1is_setapp=true 302
+
+[Script]
+ddgksf2013_session-vip_1 = type=http-response,pattern=^https:\/\/api\.stayinsession\.com\/user\/detail,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/session-vip/session.vip.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% api.stayinsession.com

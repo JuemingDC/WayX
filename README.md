@@ -28,68 +28,112 @@
 ## Module
 
 <details>
-<summary><strong>Module</strong> · 16 项</summary>
+<summary><strong>Module</strong> · 51 项</summary>
 
 ### A
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[傲软抠图](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/apowersoft-vip/apowersoft-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fapowersoft-vip%2Fapowersoft-vip.snippet%2C%20tag%3D%E5%82%B2%E8%BD%AF%E6%8A%A0%E5%9B%BE%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fapowersoft-vip%2Fapowersoft-vip.sgmodule) |
 | **[Apple证书屏蔽验证](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/salem-2007/AntiRevoke/AntiRevoke.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fsalem-2007%2FAntiRevoke%2FAntiRevoke.snippet%2C%20tag%3DApple%E8%AF%81%E4%B9%A6%E5%B1%8F%E8%94%BD%E9%AA%8C%E8%AF%81%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fsalem-2007%2FAntiRevoke%2FAntiRevoke.sgmodule) |
+| **[Appraven](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/appraven-vip/appraven-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fappraven-vip%2Fappraven-vip.snippet%2C%20tag%3DAppraven%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fappraven-vip%2Fappraven-vip.sgmodule) |
 
 ### B
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
 | **[哔哩哔哩繁体CC字幕转中文简体[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/bilibili-cc/bilibili-cc.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fbilibili-cc%2Fbilibili-cc.snippet%2C%20tag%3D%E5%93%94%E5%93%A9%E5%93%94%E5%93%A9%E7%B9%81%E4%BD%93CC%E5%AD%97%E5%B9%95%E8%BD%AC%E4%B8%AD%E6%96%87%E7%AE%80%E4%BD%93%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fbilibili-cc%2Fbilibili-cc.sgmodule) |
+| **[boxjs](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/boxjs-rewrite-quanx/boxjs-rewrite-quanx.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fboxjs-rewrite-quanx%2Fboxjs-rewrite-quanx.snippet%2C%20tag%3Dboxjs%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fboxjs-rewrite-quanx%2Fboxjs-rewrite-quanx.sgmodule) |
+| **[BuyiTunes](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/buyitunes-vip/buyitunes-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fbuyitunes-vip%2Fbuyitunes-vip.snippet%2C%20tag%3DBuyiTunes%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fbuyitunes-vip%2Fbuyitunes-vip.sgmodule) |
 
 ### D
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[douban](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/douban/douban.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fdouban%2Fdouban.snippet%2C%20tag%3Ddouban%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fdouban%2Fdouban.sgmodule) |
+| **[🍿️ DualSubs: ▶️ YouTube](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/dualsubs-youtube/dualsubs-youtube.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fdualsubs-youtube%2Fdualsubs-youtube.snippet%2C%20tag%3D%F0%9F%8D%BF%EF%B8%8F%20DualSubs%3A%20%E2%96%B6%EF%B8%8F%20YouTube%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fdualsubs-youtube%2Fdualsubs-youtube.sgmodule) |
+| **[drafts](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/drafts-vip/drafts-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fdrafts-vip%2Fdrafts-vip.snippet%2C%20tag%3Ddrafts%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fdrafts-vip%2Fdrafts-vip.sgmodule) |
 
 ### E
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
 | **[Emby增强[墨鱼整理版]](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/embyplugin/embyplugin.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fembyplugin%2Fembyplugin.snippet%2C%20tag%3DEmby%E5%A2%9E%E5%BC%BA%5B%E5%A2%A8%E9%B1%BC%E6%95%B4%E7%90%86%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fembyplugin%2Fembyplugin.sgmodule) |
+| **[Endel](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/endel-vip/endel-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fendel-vip%2Fendel-vip.snippet%2C%20tag%3DEndel%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fendel-vip%2Fendel-vip.sgmodule) |
 
 ### F
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[Fimo](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/fimo-vip/fimo-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Ffimo-vip%2Ffimo-vip.snippet%2C%20tag%3DFimo%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Ffimo-vip%2Ffimo-vip.sgmodule) |
+| **[Flightradar24](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/flightradar24-vip/flightradar24-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fflightradar24-vip%2Fflightradar24-vip.snippet%2C%20tag%3DFlightradar24%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fflightradar24-vip%2Fflightradar24-vip.sgmodule) |
 | **[forceinstalltf](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/forceinstalltf/forceinstalltf.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fforceinstalltf%2Fforceinstalltf.snippet%2C%20tag%3Dforceinstalltf%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fforceinstalltf%2Fforceinstalltf.sgmodule) |
 
 ### G
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[general](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/general/general.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fgeneral%2Fgeneral.snippet%2C%20tag%3Dgeneral%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fgeneral%2Fgeneral.sgmodule) |
+| **[Goodbility](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/goodbility-vip/goodbility-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fgoodbility-vip%2Fgoodbility-vip.snippet%2C%20tag%3DGoodbility%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fgoodbility-vip%2Fgoodbility-vip.sgmodule) |
+| **[Google人机](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/googlecaptcha/googlecaptcha.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fgooglecaptcha%2Fgooglecaptcha.snippet%2C%20tag%3DGoogle%E4%BA%BA%E6%9C%BA%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fgooglecaptcha%2Fgooglecaptcha.sgmodule) |
+| **[Google重定向](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/general/general.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fgeneral%2Fgeneral.snippet%2C%20tag%3DGoogle%E9%87%8D%E5%AE%9A%E5%90%91%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fgeneral%2Fgeneral.sgmodule) |
 | **[google自动翻页](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/endlessgoogle/endlessgoogle.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fendlessgoogle%2Fendlessgoogle.snippet%2C%20tag%3Dgoogle%E8%87%AA%E5%8A%A8%E7%BF%BB%E9%A1%B5%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fendlessgoogle%2Fendlessgoogle.sgmodule) |
+
+### I
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[ iRingo: 🌤 WeatherKit](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/iringo-weatherkit/iringo-weatherkit.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Firingo-weatherkit%2Firingo-weatherkit.snippet%2C%20tag%3D%EF%A3%BF%20iRingo%3A%20%F0%9F%8C%A4%20%EF%A3%BFWeatherKit%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Firingo-weatherkit%2Firingo-weatherkit.sgmodule) |
+
+### J
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[极简汇率](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/jijianhuilv-vip/jijianhuilv-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fjijianhuilv-vip%2Fjijianhuilv-vip.snippet%2C%20tag%3D%E6%9E%81%E7%AE%80%E6%B1%87%E7%8E%87%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fjijianhuilv-vip%2Fjijianhuilv-vip.sgmodule) |
+| **[京东历史比价](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/jd-price/jd-price.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fjd-price%2Fjd-price.snippet%2C%20tag%3D%E4%BA%AC%E4%B8%9C%E5%8E%86%E5%8F%B2%E6%AF%94%E4%BB%B7%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fjd-price%2Fjd-price.sgmodule) |
+| **[句读](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/judou-vip/judou-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fjudou-vip%2Fjudou-vip.snippet%2C%20tag%3D%E5%8F%A5%E8%AF%BB%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fjudou-vip%2Fjudou-vip.sgmodule) · 1 条待核对 |
 
 ### K
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[看理想](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/vistopia-vip/vistopia-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fvistopia-vip%2Fvistopia-vip.snippet%2C%20tag%3D%E7%9C%8B%E7%90%86%E6%83%B3%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fvistopia-vip%2Fvistopia-vip.sgmodule) |
 | **[可莉插件中心转 Surge](https://github.com/JuemingDC/WayX/blob/main/Module/Surge/chance/Plugin2Surge/Plugin2Surge.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fchance%2FPlugin2Surge%2FPlugin2Surge.sgmodule) |
+| **[酷我音乐](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/kkmusic-vip/kkmusic-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fkkmusic-vip%2Fkkmusic-vip.snippet%2C%20tag%3D%E9%85%B7%E6%88%91%E9%9F%B3%E4%B9%90%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fkkmusic-vip%2Fkkmusic-vip.sgmodule) |
+
+### N
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[Nicegram](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/nicegram-vip/nicegram-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fnicegram-vip%2Fnicegram-vip.snippet%2C%20tag%3DNicegram%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fnicegram-vip%2Fnicegram-vip.sgmodule) |
 
 ### P
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[PikPak](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/pikpak-fnc/pikpak-fnc.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fpikpak-fnc%2Fpikpak-fnc.snippet%2C%20tag%3DPikPak%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fpikpak-fnc%2Fpikpak-fnc.sgmodule) |
 | **[PingMe 签到](https://github.com/JuemingDC/WayX/blob/main/Module/Surge/chance/PingMe/PingMe.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fchance%2FPingMe%2FPingMe.sgmodule) |
 
-### Q
+### R
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[q-search](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/q-search/q-search.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fq-search%2Fq-search.snippet%2C%20tag%3Dq-search%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fq-search%2Fq-search.sgmodule) |
+| **[Reddit 自动翻译](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/reddit/reddit.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Freddit%2Freddit.snippet%2C%20tag%3DReddit%20%E8%87%AA%E5%8A%A8%E7%BF%BB%E8%AF%91%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Freddit%2Freddit.sgmodule) |
+| **[Redirect2Ng](https://github.com/JuemingDC/WayX/blob/main/Module/Surge/ddgksf2013/redirect2ng/redirect2ng.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fredirect2ng%2Fredirect2ng.sgmodule) |
+| **[Redirect2Swift](https://github.com/JuemingDC/WayX/blob/main/Module/Surge/ddgksf2013/redirect2swift/redirect2swift.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fredirect2swift%2Fredirect2swift.sgmodule) |
+| **[Redirect2Turrit](https://github.com/JuemingDC/WayX/blob/main/Module/Surge/ddgksf2013/redirect2turrit/redirect2turrit.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fredirect2turrit%2Fredirect2turrit.sgmodule) |
+| **[RevenueCat](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/revenuecat-vip/revenuecat-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Frevenuecat-vip%2Frevenuecat-vip.snippet%2C%20tag%3DRevenueCat%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Frevenuecat-vip%2Frevenuecat-vip.sgmodule) |
 
 ### S
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[三联中读](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/sanlianzhongdu-vip/sanlianzhongdu-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fsanlianzhongdu-vip%2Fsanlianzhongdu-vip.snippet%2C%20tag%3D%E4%B8%89%E8%81%94%E4%B8%AD%E8%AF%BB%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fsanlianzhongdu-vip%2Fsanlianzhongdu-vip.sgmodule) |
+| **[搜图神器](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/soutushenqi-vip/soutushenqi-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fsoutushenqi-vip%2Fsoutushenqi-vip.snippet%2C%20tag%3D%E6%90%9C%E5%9B%BE%E7%A5%9E%E5%99%A8%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fsoutushenqi-vip%2Fsoutushenqi-vip.sgmodule) |
+| **[Safari超级搜索](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/q-search/q-search.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fq-search%2Fq-search.snippet%2C%20tag%3DSafari%E8%B6%85%E7%BA%A7%E6%90%9C%E7%B4%A2%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fq-search%2Fq-search.sgmodule) |
+| **[Session](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/session-vip/session-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fsession-vip%2Fsession-vip.snippet%2C%20tag%3DSession%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fsession-vip%2Fsession-vip.sgmodule) · 1 条待核对 |
 | **[SideStore Local Loopback](https://github.com/JuemingDC/WayX/blob/main/Module/Surge/chance/Localloopback/Localloopback.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fchance%2FLocalloopback%2FLocalloopback.sgmodule) |
+| **[Slidebox](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/slidebox-vip/slidebox-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fslidebox-vip%2Fslidebox-vip.snippet%2C%20tag%3DSlidebox%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fslidebox-vip%2Fslidebox-vip.sgmodule) |
+| **[Spotify](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/spotify/spotify.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fspotify%2Fspotify.snippet%2C%20tag%3DSpotify%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fspotify%2Fspotify.sgmodule) |
+| **[SubStore](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/qx/qx.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fqx%2Fqx.snippet%2C%20tag%3DSubStore%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fqx%2Fqx.sgmodule) |
 
 ### T
 
@@ -102,14 +146,35 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[unblockurlinwechat](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/unblockurlinwechat/unblockurlinwechat.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Funblockurlinwechat%2Funblockurlinwechat.snippet%2C%20tag%3Dunblockurlinwechat%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Funblockurlinwechat%2Funblockurlinwechat.sgmodule) |
 | **[uposredirect](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/uposredirect/uposredirect.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fuposredirect%2Fuposredirect.snippet%2C%20tag%3Duposredirect%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fuposredirect%2Fuposredirect.sgmodule) |
+
+### V
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[Vis](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/vis-vip/vis-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fvis-vip%2Fvis-vip.snippet%2C%20tag%3DVis%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fvis-vip%2Fvis-vip.sgmodule) |
 
 ### W
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[万年历](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/wannianli-vip/wannianli-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fwannianli-vip%2Fwannianli-vip.snippet%2C%20tag%3D%E4%B8%87%E5%B9%B4%E5%8E%86%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fwannianli-vip%2Fwannianli-vip.sgmodule) |
+| **[网盘倍速](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/bdpan-unlock/bdpan-unlock.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fbdpan-unlock%2Fbdpan-unlock.snippet%2C%20tag%3D%E7%BD%91%E7%9B%98%E5%80%8D%E9%80%9F%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fbdpan-unlock%2Fbdpan-unlock.sgmodule) |
+| **[微博净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/weiboenhanced/weiboenhanced.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fweiboenhanced%2Fweiboenhanced.snippet%2C%20tag%3D%E5%BE%AE%E5%8D%9A%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fweiboenhanced%2Fweiboenhanced.sgmodule) |
+| **[微信](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/unblockurlinwechat/unblockurlinwechat.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Funblockurlinwechat%2Funblockurlinwechat.snippet%2C%20tag%3D%E5%BE%AE%E4%BF%A1%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Funblockurlinwechat%2Funblockurlinwechat.sgmodule) |
 | **[WeTalk 自动化签到+视频奖励](https://github.com/JuemingDC/WayX/blob/main/Module/Surge/chance/WeTalk/WeTalk.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fchance%2FWeTalk%2FWeTalk.sgmodule) |
+
+### X
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[小红书屏蔽首页及本地视频[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/xiaohongshublockvideo/xiaohongshublockvideo.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fxiaohongshublockvideo%2Fxiaohongshublockvideo.snippet%2C%20tag%3D%E5%B0%8F%E7%BA%A2%E4%B9%A6%E5%B1%8F%E8%94%BD%E9%A6%96%E9%A1%B5%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%A7%86%E9%A2%91%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fxiaohongshublockvideo%2Fxiaohongshublockvideo.sgmodule) |
+
+### Y
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[一言](https://github.com/JuemingDC/WayX/blob/main/Module/Quantumult%20X/ddgksf2013/yiyan-vip/yiyan-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FQuantumult%2520X%2Fddgksf2013%2Fyiyan-vip%2Fyiyan-vip.snippet%2C%20tag%3D%E4%B8%80%E8%A8%80%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FModule%2FSurge%2Fddgksf2013%2Fyiyan-vip%2Fyiyan-vip.sgmodule) |
 
 </details>
 
@@ -118,7 +183,7 @@
 ## Adblock
 
 <details>
-<summary><strong>Adblock</strong> · 348 项</summary>
+<summary><strong>Adblock</strong> · 402 项</summary>
 
 按拉取来源分组，点击展开；各来源内部按名称 A–Z 分栏，中文按拼音首字母，数字单列。
 
@@ -618,7 +683,7 @@
 </details>
 
 <details>
-<summary><strong>墨鱼</strong> · 24 项</summary>
+<summary><strong>墨鱼</strong> · 28 项</summary>
 
 #### B
 
@@ -636,6 +701,12 @@
 | **[菜鸟[菜鸟裹裹](支付宝小程序)净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/cainiaoads/cainiaoads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fcainiaoads%2Fcainiaoads.snippet%2C%20tag%3D%E8%8F%9C%E9%B8%9F%5B%E8%8F%9C%E9%B8%9F%E8%A3%B9%E8%A3%B9%5D(%E6%94%AF%E4%BB%98%E5%AE%9D%E5%B0%8F%E7%A8%8B%E5%BA%8F)%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fcainiaoads%2Fcainiaoads.sgmodule) |
 | **[车来了(小程序)净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/chelaileads/chelaileads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fchelaileads%2Fchelaileads.snippet%2C%20tag%3D%E8%BD%A6%E6%9D%A5%E4%BA%86(%E5%B0%8F%E7%A8%8B%E5%BA%8F)%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fchelaileads%2Fchelaileads.sgmodule) |
 
+#### D
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[豆瓣网页](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/douban/douban.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fdouban%2Fdouban.snippet%2C%20tag%3D%E8%B1%86%E7%93%A3%E7%BD%91%E9%A1%B5%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fdouban%2Fdouban.sgmodule) |
+
 #### G
 
 | Name | Quantumult X | Surge |
@@ -652,6 +723,7 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
+| **[酷安](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/coolapk/coolapk.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fcoolapk%2Fcoolapk.snippet%2C%20tag%3D%E9%85%B7%E5%AE%89%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fcoolapk%2Fcoolapk.sgmodule) |
 | **[Keep应用净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/keepads/keepads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fkeepads%2Fkeepads.snippet%2C%20tag%3DKeep%E5%BA%94%E7%94%A8%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fkeepads%2Fkeepads.sgmodule) |
 
 #### M
@@ -659,6 +731,12 @@
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
 | **[墨迹天气净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/mojiweatherads/mojiweatherads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fmojiweatherads%2Fmojiweatherads.snippet%2C%20tag%3D%E5%A2%A8%E8%BF%B9%E5%A4%A9%E6%B0%94%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fmojiweatherads%2Fmojiweatherads.sgmodule) |
+
+#### P
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[Pixiv](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/pixivads/pixivads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fpixivads%2Fpixivads.snippet%2C%20tag%3DPixiv%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fpixivads%2Fpixivads.sgmodule) |
 
 #### Q
 
@@ -706,13 +784,342 @@
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
-| **[youtubeads](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/youtubeads/youtubeads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fyoutubeads%2Fyoutubeads.snippet%2C%20tag%3Dyoutubeads%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fyoutubeads%2Fyoutubeads.sgmodule) |
+| **[Youtube](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/youtubeads/youtubeads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fyoutubeads%2Fyoutubeads.snippet%2C%20tag%3DYoutube%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fyoutubeads%2Fyoutubeads.sgmodule) |
 
 #### Z
 
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
 | **[中国联通净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/chinaunicomads/chinaunicomads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fchinaunicomads%2Fchinaunicomads.snippet%2C%20tag%3D%E4%B8%AD%E5%9B%BD%E8%81%94%E9%80%9A%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fchinaunicomads%2Fchinaunicomads.sgmodule) |
+
+#### 0–9
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[12306](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/12306/12306.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2F12306%2F12306.snippet%2C%20tag%3D12306%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2F12306%2F12306.sgmodule) |
+
+</details>
+
+<details>
+<summary><strong>ddgksf2013.top</strong> · 39 项</summary>
+
+#### A
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[爱回收净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/aihuishouads/aihuishouads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Faihuishouads%2Faihuishouads.snippet%2C%20tag%3D%E7%88%B1%E5%9B%9E%E6%94%B6%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Faihuishouads%2Faihuishouads.sgmodule) |
+
+#### B
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[百度地图](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/bdmap-ads/bdmap-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fbdmap-ads%2Fbdmap-ads.snippet%2C%20tag%3D%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BE%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fbdmap-ads%2Fbdmap-ads.sgmodule) |
+| **[百度网盘](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/bdpan-ads/bdpan-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fbdpan-ads%2Fbdpan-ads.snippet%2C%20tag%3D%E7%99%BE%E5%BA%A6%E7%BD%91%E7%9B%98%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fbdpan-ads%2Fbdpan-ads.sgmodule) |
+| **[哔哩哔哩广告净化[残缺版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/bilibiliadslite/bilibiliadslite.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fbilibiliadslite%2Fbilibiliadslite.snippet%2C%20tag%3D%E5%93%94%E5%93%A9%E5%93%94%E5%93%A9%E5%B9%BF%E5%91%8A%E5%87%80%E5%8C%96%5B%E6%AE%8B%E7%BC%BA%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fbilibiliadslite%2Fbilibiliadslite.sgmodule) |
+| **[哔哩哔哩广告净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/bilibiliads/bilibiliads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fbilibiliads%2Fbilibiliads.snippet%2C%20tag%3D%E5%93%94%E5%93%A9%E5%93%94%E5%93%A9%E5%B9%BF%E5%91%8A%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fbilibiliads%2Fbilibiliads.sgmodule) |
+
+#### C
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[财新净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/caixinads/caixinads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fcaixinads%2Fcaixinads.snippet%2C%20tag%3D%E8%B4%A2%E6%96%B0%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fcaixinads%2Fcaixinads.sgmodule) |
+
+#### D
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[大麦净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/damaiads/damaiads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fdamaiads%2Fdamaiads.snippet%2C%20tag%3D%E5%A4%A7%E9%BA%A6%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fdamaiads%2Fdamaiads.sgmodule) |
+| **[大师兄净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/dashixiongads/dashixiongads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fdashixiongads%2Fdashixiongads.snippet%2C%20tag%3D%E5%A4%A7%E5%B8%88%E5%85%84%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fdashixiongads%2Fdashixiongads.sgmodule) |
+
+#### G
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[瓜子净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/guazivideoads/guazivideoads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fguazivideoads%2Fguazivideoads.snippet%2C%20tag%3D%E7%93%9C%E5%AD%90%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fguazivideoads%2Fguazivideoads.sgmodule) |
+
+#### H
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[航旅纵横净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/umetripads/umetripads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fumetripads%2Fumetripads.snippet%2C%20tag%3D%E8%88%AA%E6%97%85%E7%BA%B5%E6%A8%AA%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fumetripads%2Fumetripads.sgmodule) |
+| **[和风天气净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/hefengweatherads/hefengweatherads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fhefengweatherads%2Fhefengweatherads.snippet%2C%20tag%3D%E5%92%8C%E9%A3%8E%E5%A4%A9%E6%B0%94%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fhefengweatherads%2Fhefengweatherads.sgmodule) |
+
+#### I
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[iDaily净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/dlabelads/dlabelads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fdlabelads%2Fdlabelads.snippet%2C%20tag%3DiDaily%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fdlabelads%2Fdlabelads.sgmodule) |
+| **[iDaily净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/idailyads/idailyads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fidailyads%2Fidailyads.snippet%2C%20tag%3DiDaily%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fidailyads%2Fidailyads.sgmodule) |
+
+#### J
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[驾校一点通净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/jiaxiaoyidiantongads/jiaxiaoyidiantongads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fjiaxiaoyidiantongads%2Fjiaxiaoyidiantongads.snippet%2C%20tag%3D%E9%A9%BE%E6%A0%A1%E4%B8%80%E7%82%B9%E9%80%9A%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fjiaxiaoyidiantongads%2Fjiaxiaoyidiantongads.sgmodule) |
+| **[金十数据净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/jinshidataads/jinshidataads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fjinshidataads%2Fjinshidataads.snippet%2C%20tag%3D%E9%87%91%E5%8D%81%E6%95%B0%E6%8D%AE%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fjinshidataads%2Fjinshidataads.sgmodule) |
+| **[JavDB应用](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/javdbapp-ads/javdbapp-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fjavdbapp-ads%2Fjavdbapp-ads.snippet%2C%20tag%3DJavDB%E5%BA%94%E7%94%A8%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fjavdbapp-ads%2Fjavdbapp-ads.sgmodule) |
+
+#### K
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[快看漫画净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/kuaikancomicsads/kuaikancomicsads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fkuaikancomicsads%2Fkuaikancomicsads.snippet%2C%20tag%3D%E5%BF%AB%E7%9C%8B%E6%BC%AB%E7%94%BB%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fkuaikancomicsads%2Fkuaikancomicsads.sgmodule) |
+
+#### M
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[埋堆堆净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/maiduiduiads/maiduiduiads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fmaiduiduiads%2Fmaiduiduiads.snippet%2C%20tag%3D%E5%9F%8B%E5%A0%86%E5%A0%86%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fmaiduiduiads%2Fmaiduiduiads.sgmodule) |
+| **[美柚净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/meiyouads/meiyouads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fmeiyouads%2Fmeiyouads.snippet%2C%20tag%3D%E7%BE%8E%E6%9F%9A%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fmeiyouads%2Fmeiyouads.sgmodule) |
+| **[咪咕视频净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/miguvideoads/miguvideoads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fmiguvideoads%2Fmiguvideoads.snippet%2C%20tag%3D%E5%92%AA%E5%92%95%E8%A7%86%E9%A2%91%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fmiguvideoads%2Fmiguvideoads.sgmodule) |
+| **[墨鱼去开屏𝐕𝟐.𝟎](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/startupads/startupads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fstartupads%2Fstartupads.snippet%2C%20tag%3D%E5%A2%A8%E9%B1%BC%E5%8E%BB%E5%BC%80%E5%B1%8F%F0%9D%90%95%F0%9D%9F%90.%F0%9D%9F%8E%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fstartupads%2Fstartupads.sgmodule) |
+| **[MissAV网页](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/missav-ads/missav-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fmissav-ads%2Fmissav-ads.snippet%2C%20tag%3DMissAV%E7%BD%91%E9%A1%B5%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fmissav-ads%2Fmissav-ads.sgmodule) |
+
+#### N
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[NBPro净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/nbproads/nbproads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fnbproads%2Fnbproads.snippet%2C%20tag%3DNBPro%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fnbproads%2Fnbproads.sgmodule) |
+
+#### P
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[Pornhub网页](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/pornhub-ads/pornhub-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fpornhub-ads%2Fpornhub-ads.snippet%2C%20tag%3DPornhub%E7%BD%91%E9%A1%B5%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fpornhub-ads%2Fpornhub-ads.sgmodule) |
+
+#### R
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[瑞幸咖啡净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/luckincoffeeads/luckincoffeeads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fluckincoffeeads%2Fluckincoffeeads.snippet%2C%20tag%3D%E7%91%9E%E5%B9%B8%E5%92%96%E5%95%A1%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fluckincoffeeads%2Fluckincoffeeads.sgmodule) |
+
+#### S
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[山丘阅读](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/shanqiu-vip/shanqiu-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fshanqiu-vip%2Fshanqiu-vip.snippet%2C%20tag%3D%E5%B1%B1%E4%B8%98%E9%98%85%E8%AF%BB%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fshanqiu-vip%2Fshanqiu-vip.sgmodule) |
+| **[随手记](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/suishouji-ads/suishouji-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fsuishouji-ads%2Fsuishouji-ads.snippet%2C%20tag%3D%E9%9A%8F%E6%89%8B%E8%AE%B0%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fsuishouji-ads%2Fsuishouji-ads.sgmodule) |
+
+#### T
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[腾讯文档净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/tencentdocads/tencentdocads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Ftencentdocads%2Ftencentdocads.snippet%2C%20tag%3D%E8%85%BE%E8%AE%AF%E6%96%87%E6%A1%A3%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Ftencentdocads%2Ftencentdocads.sgmodule) |
+
+#### V
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[V2ex网页](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/v2ex-ads/v2ex-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fv2ex-ads%2Fv2ex-ads.snippet%2C%20tag%3DV2ex%E7%BD%91%E9%A1%B5%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fv2ex-ads%2Fv2ex-ads.sgmodule) |
+
+#### W
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[威锋净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/weifengads/weifengads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fweifengads%2Fweifengads.snippet%2C%20tag%3D%E5%A8%81%E9%94%8B%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fweifengads%2Fweifengads.sgmodule) |
+
+#### X
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[小红书净化+功能增强[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/xiaohongshuads/xiaohongshuads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fxiaohongshuads%2Fxiaohongshuads.snippet%2C%20tag%3D%E5%B0%8F%E7%BA%A2%E4%B9%A6%E5%87%80%E5%8C%96%2B%E5%8A%9F%E8%83%BD%E5%A2%9E%E5%BC%BA%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fxiaohongshuads%2Fxiaohongshuads.sgmodule) |
+| **[雪球&雪球基金净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/xueqiuads/xueqiuads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fxueqiuads%2Fxueqiuads.snippet%2C%20tag%3D%E9%9B%AA%E7%90%83%26%E9%9B%AA%E7%90%83%E5%9F%BA%E9%87%91%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fxueqiuads%2Fxueqiuads.sgmodule) |
+
+#### Y
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[养基宝](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/yangjibao-vip/yangjibao-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fyangjibao-vip%2Fyangjibao-vip.snippet%2C%20tag%3D%E5%85%BB%E5%9F%BA%E5%AE%9D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fyangjibao-vip%2Fyangjibao-vip.sgmodule) |
+
+#### Z
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[知乎](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/zhihu-ads/zhihu-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fzhihu-ads%2Fzhihu-ads.snippet%2C%20tag%3D%E7%9F%A5%E4%B9%8E%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fzhihu-ads%2Fzhihu-ads.sgmodule) |
+| **[智联招聘净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/zhilianzhaopinads/zhilianzhaopinads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fzhilianzhaopinads%2Fzhilianzhaopinads.snippet%2C%20tag%3D%E6%99%BA%E8%81%94%E6%8B%9B%E8%81%98%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fzhilianzhaopinads%2Fzhilianzhaopinads.sgmodule) |
+| **[中国广电净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/chinabroadads/chinabroadads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fchinabroadads%2Fchinabroadads.snippet%2C%20tag%3D%E4%B8%AD%E5%9B%BD%E5%B9%BF%E7%94%B5%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fchinabroadads%2Fchinabroadads.sgmodule) |
+| **[中羽在线净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/zhongyuzaixianads/zhongyuzaixianads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fzhongyuzaixianads%2Fzhongyuzaixianads.snippet%2C%20tag%3D%E4%B8%AD%E7%BE%BD%E5%9C%A8%E7%BA%BF%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fzhongyuzaixianads%2Fzhongyuzaixianads.sgmodule) |
+| **[转转净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/zhuanzhuanads/zhuanzhuanads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fzhuanzhuanads%2Fzhuanzhuanads.snippet%2C%20tag%3D%E8%BD%AC%E8%BD%AC%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fzhuanzhuanads%2Fzhuanzhuanads.sgmodule) |
+
+#### 0–9
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[123云盘](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/123pan-ads/123pan-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2F123pan-ads%2F123pan-ads.snippet%2C%20tag%3D123%E4%BA%91%E7%9B%98%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2F123pan-ads%2F123pan-ads.sgmodule) |
+
+</details>
+
+<details>
+<summary><strong>limbopro</strong> · 1 项</summary>
+
+#### D
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[毒奶特供(2026年11月03日更新)](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/adblock4limbo/adblock4limbo.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fadblock4limbo%2Fadblock4limbo.snippet%2C%20tag%3D%E6%AF%92%E5%A5%B6%E7%89%B9%E4%BE%9B(2026%E5%B9%B411%E6%9C%8803%E6%97%A5%E6%9B%B4%E6%96%B0)%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fadblock4limbo%2Fadblock4limbo.sgmodule) |
+
+</details>
+
+<details>
+<summary><strong>Yswag</strong> · 2 项</summary>
+
+#### Q
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[去廣告｜CMS_DEBUG](https://github.com/JuemingDC/WayX/blob/main/Adblock/Surge/ddgksf2013/cmsadblock/cmsadblock.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fcmsadblock%2Fcmsadblock.sgmodule) |
+
+#### T
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[Twitch去廣告](https://github.com/JuemingDC/WayX/blob/main/Adblock/Surge/ddgksf2013/twitchadblock/twitchadblock.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Ftwitchadblock%2Ftwitchadblock.sgmodule) |
+
+</details>
+
+<details>
+<summary><strong>怎么肥事</strong> · 32 项</summary>
+
+#### B
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[B站gRPC数据包净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/bili-view-ad-rewrite/bili-view-ad-rewrite.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fbili-view-ad-rewrite%2Fbili-view-ad-rewrite.snippet%2C%20tag%3DB%E7%AB%99gRPC%E6%95%B0%E6%8D%AE%E5%8C%85%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fbili-view-ad-rewrite%2Fbili-view-ad-rewrite.sgmodule) |
+
+#### C
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[畅玩空间](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/cwkj/cwkj.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fcwkj%2Fcwkj.snippet%2C%20tag%3D%E7%95%85%E7%8E%A9%E7%A9%BA%E9%97%B4%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fcwkj%2Fcwkj.sgmodule) |
+
+#### D
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[滴滴出行](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/didichuxing/didichuxing.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fdidichuxing%2Fdidichuxing.snippet%2C%20tag%3D%E6%BB%B4%E6%BB%B4%E5%87%BA%E8%A1%8C%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fdidichuxing%2Fdidichuxing.sgmodule) |
+
+#### G
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[瓜子影视净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/tilingsales-ad-remove/tilingsales-ad-remove.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ftilingsales-ad-remove%2Ftilingsales-ad-remove.snippet%2C%20tag%3D%E7%93%9C%E5%AD%90%E5%BD%B1%E8%A7%86%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ftilingsales-ad-remove%2Ftilingsales-ad-remove.sgmodule) |
+
+#### H
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[哈啰净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/helloobike/helloobike.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fhelloobike%2Fhelloobike.snippet%2C%20tag%3D%E5%93%88%E5%95%B0%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fhelloobike%2Fhelloobike.sgmodule) |
+| **[哈啰净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/helloobike/helloobike.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fhelloobike%2Fhelloobike.snippet%2C%20tag%3D%E5%93%88%E5%95%B0%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fhelloobike%2Fhelloobike.sgmodule) |
+| **[黑料不打烊净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/hlwxx-remove-ads/hlwxx-remove-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fhlwxx-remove-ads%2Fhlwxx-remove-ads.snippet%2C%20tag%3D%E9%BB%91%E6%96%99%E4%B8%8D%E6%89%93%E7%83%8A%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fhlwxx-remove-ads%2Fhlwxx-remove-ads.sgmodule) |
+| **[虎扑净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/hp/hp.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fhp%2Fhp.snippet%2C%20tag%3D%E8%99%8E%E6%89%91%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fhp%2Fhp.sgmodule) |
+
+#### K
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[酷安全面净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/kuan/kuan.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fkuan%2Fkuan.snippet%2C%20tag%3D%E9%85%B7%E5%AE%89%E5%85%A8%E9%9D%A2%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fkuan%2Fkuan.sgmodule) |
+| **[Keep净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/keep/keep.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fkeep%2Fkeep.snippet%2C%20tag%3DKeep%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fkeep%2Fkeep.sgmodule) |
+
+#### M
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[芒果tv解锁会员](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/mgtv-vip/mgtv-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fmgtv-vip%2Fmgtv-vip.snippet%2C%20tag%3D%E8%8A%92%E6%9E%9Ctv%E8%A7%A3%E9%94%81%E4%BC%9A%E5%91%98%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fmgtv-vip%2Fmgtv-vip.sgmodule) |
+| **[美团App 12.67.403](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/mt/mt.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fmt%2Fmt.snippet%2C%20tag%3D%E7%BE%8E%E5%9B%A2App%2012.67.403%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fmt%2Fmt.sgmodule) |
+| **[美团App 12.67.403](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/mt/mt.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fmt%2Fmt.snippet%2C%20tag%3D%E7%BE%8E%E5%9B%A2App%2012.67.403%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fmt%2Fmt.sgmodule) |
+| **[咪咕视频解锁会员](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/migu-vip-share/migu-vip-share.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fmigu-vip-share%2Fmigu-vip-share.snippet%2C%20tag%3D%E5%92%AA%E5%92%95%E8%A7%86%E9%A2%91%E8%A7%A3%E9%94%81%E4%BC%9A%E5%91%98%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fmigu-vip-share%2Fmigu-vip-share.sgmodule) |
+
+#### P
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[拼多多净化底栏与弹窗](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/pinduoduo/pinduoduo.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fpinduoduo%2Fpinduoduo.snippet%2C%20tag%3D%E6%8B%BC%E5%A4%9A%E5%A4%9A%E5%87%80%E5%8C%96%E5%BA%95%E6%A0%8F%E4%B8%8E%E5%BC%B9%E7%AA%97%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fpinduoduo%2Fpinduoduo.sgmodule) |
+
+#### S
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[什么值得买净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/smzdm/smzdm.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fsmzdm%2Fsmzdm.snippet%2C%20tag%3D%E4%BB%80%E4%B9%88%E5%80%BC%E5%BE%97%E4%B9%B0%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fsmzdm%2Fsmzdm.sgmodule) |
+| **[顺丰app净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/sf/sf.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fsf%2Fsf.snippet%2C%20tag%3D%E9%A1%BA%E4%B8%B0app%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fsf%2Fsf.sgmodule) |
+| **[Soul净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/soul/soul.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fsoul%2Fsoul.snippet%2C%20tag%3DSoul%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fsoul%2Fsoul.sgmodule) |
+
+#### T
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[腾讯视频净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/txvideoad/txvideoad.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Ftxvideoad%2Ftxvideoad.snippet%2C%20tag%3D%E8%85%BE%E8%AE%AF%E8%A7%86%E9%A2%91%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Ftxvideoad%2Ftxvideoad.sgmodule) |
+| **[腾讯视频净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/txvideoad/txvideoad.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ftxvideoad%2Ftxvideoad.snippet%2C%20tag%3D%E8%85%BE%E8%AE%AF%E8%A7%86%E9%A2%91%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ftxvideoad%2Ftxvideoad.sgmodule) |
+| **[腾讯体育净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/txsports-ad-clean/txsports-ad-clean.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Ftxsports-ad-clean%2Ftxsports-ad-clean.snippet%2C%20tag%3D%E8%85%BE%E8%AE%AF%E4%BD%93%E8%82%B2%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Ftxsports-ad-clean%2Ftxsports-ad-clean.sgmodule) |
+| **[腾讯体育净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/txsports-ad-clean/txsports-ad-clean.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ftxsports-ad-clean%2Ftxsports-ad-clean.snippet%2C%20tag%3D%E8%85%BE%E8%AE%AF%E4%BD%93%E8%82%B2%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ftxsports-ad-clean%2Ftxsports-ad-clean.sgmodule) |
+| **[贴吧净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/tb/tb.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ftb%2Ftb.snippet%2C%20tag%3D%E8%B4%B4%E5%90%A7%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ftb%2Ftb.sgmodule) |
+| **[途虎养车净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/th/th.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fth%2Fth.snippet%2C%20tag%3D%E9%80%94%E8%99%8E%E5%85%BB%E8%BD%A6%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fth%2Fth.sgmodule) |
+| **[T3出行](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/t3/t3.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ft3%2Ft3.snippet%2C%20tag%3DT3%E5%87%BA%E8%A1%8C%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ft3%2Ft3.sgmodule) |
+
+#### W
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[微博净化Qx版](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/wb/wb.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fwb%2Fwb.snippet%2C%20tag%3D%E5%BE%AE%E5%8D%9A%E5%87%80%E5%8C%96Qx%E7%89%88%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fwb%2Fwb.sgmodule) |
+| **[wxpuredominion](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/wxpuredominion/wxpuredominion.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fwxpuredominion%2Fwxpuredominion.snippet%2C%20tag%3Dwxpuredominion%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fwxpuredominion%2Fwxpuredominion.sgmodule) |
+
+#### X
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[X字幕 (xzimu) 无限翻译次数](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/xzimu-unlock/xzimu-unlock.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fxzimu-unlock%2Fxzimu-unlock.snippet%2C%20tag%3DX%E5%AD%97%E5%B9%95%20(xzimu)%20%E6%97%A0%E9%99%90%E7%BF%BB%E8%AF%91%E6%AC%A1%E6%95%B0%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fxzimu-unlock%2Fxzimu-unlock.sgmodule) |
+| **[XCamera广告净化合集](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/xhey-ad-clean/xhey-ad-clean.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fxhey-ad-clean%2Fxhey-ad-clean.snippet%2C%20tag%3DXCamera%E5%B9%BF%E5%91%8A%E5%87%80%E5%8C%96%E5%90%88%E9%9B%86%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fxhey-ad-clean%2Fxhey-ad-clean.sgmodule) |
+| **[xterm256](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/xterm256/xterm256.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fxterm256%2Fxterm256.snippet%2C%20tag%3Dxterm256%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fxterm256%2Fxterm256.sgmodule) |
+
+#### Y
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[YouTube 强制简体中文字幕](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/yt-zh/yt-zh.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fyt-zh%2Fyt-zh.snippet%2C%20tag%3DYouTube%20%E5%BC%BA%E5%88%B6%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87%E5%AD%97%E5%B9%95%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fyt-zh%2Fyt-zh.sgmodule) |
+| **[YouTube去广告隐藏Shorts版@Aioneas](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/youtube/youtube.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fyoutube%2Fyoutube.snippet%2C%20tag%3DYouTube%E5%8E%BB%E5%B9%BF%E5%91%8A%E9%9A%90%E8%97%8FShorts%E7%89%88%40Aioneas%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fyoutube%2Fyoutube.sgmodule) |
+
+</details>
+
+<details>
+<summary><strong>Yuheng0101</strong> · 1 项</summary>
+
+#### Z
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[中国移动](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/noads/noads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fnoads%2Fnoads.snippet%2C%20tag%3D%E4%B8%AD%E5%9B%BD%E7%A7%BB%E5%8A%A8%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fnoads%2Fnoads.sgmodule) |
+
+</details>
+
+<details>
+<summary><strong>gist.githubusercontent.com</strong> · 1 项</summary>
+
+#### P
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[皮皮虾](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/pipixia-adblock/pipixia-adblock.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fpipixia-adblock%2Fpipixia-adblock.snippet%2C%20tag%3D%E7%9A%AE%E7%9A%AE%E8%99%BE%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fpipixia-adblock%2Fpipixia-adblock.sgmodule) |
+
+</details>
+
+<details>
+<summary><strong>app2smile</strong> · 1 项</summary>
+
+#### Q
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[起点](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/qidian/qidian.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fqidian%2Fqidian.snippet%2C%20tag%3D%E8%B5%B7%E7%82%B9%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fqidian%2Fqidian.sgmodule) |
+
+</details>
+
+<details>
+<summary><strong>Maasea</strong> · 1 项</summary>
+
+#### W
+
+| Name | Quantumult X | Surge |
+| :--- | :---: | :---: |
+| **[微信阅读精简](https://github.com/JuemingDC/WayX/blob/main/Adblock/Surge/ddgksf2013/weread/weread.sgmodule)** | — | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fweread%2Fweread.sgmodule) |
 
 </details>
 
@@ -824,104 +1231,6 @@
 | Name | Quantumult X | Surge |
 | :--- | :---: | :---: |
 | **[趣智校园净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/JuemingDC/QZXY/QZXY.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FJuemingDC%2FQZXY%2FQZXY.snippet%2C%20tag%3D%E8%B6%A3%E6%99%BA%E6%A0%A1%E5%9B%AD%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | — |
-
-</details>
-
-<details>
-<summary><strong>怎么肥事</strong> · 28 项</summary>
-
-#### B
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[B站gRPC数据包净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/bili-view-ad-rewrite/bili-view-ad-rewrite.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fbili-view-ad-rewrite%2Fbili-view-ad-rewrite.snippet%2C%20tag%3DB%E7%AB%99gRPC%E6%95%B0%E6%8D%AE%E5%8C%85%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fbili-view-ad-rewrite%2Fbili-view-ad-rewrite.sgmodule) |
-
-#### C
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[畅玩空间](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/cwkj/cwkj.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fcwkj%2Fcwkj.snippet%2C%20tag%3D%E7%95%85%E7%8E%A9%E7%A9%BA%E9%97%B4%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fcwkj%2Fcwkj.sgmodule) |
-
-#### D
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[滴滴出行](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/didichuxing/didichuxing.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fdidichuxing%2Fdidichuxing.snippet%2C%20tag%3D%E6%BB%B4%E6%BB%B4%E5%87%BA%E8%A1%8C%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fdidichuxing%2Fdidichuxing.sgmodule) |
-
-#### G
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[瓜子影视净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/tilingsales-ad-remove/tilingsales-ad-remove.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ftilingsales-ad-remove%2Ftilingsales-ad-remove.snippet%2C%20tag%3D%E7%93%9C%E5%AD%90%E5%BD%B1%E8%A7%86%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ftilingsales-ad-remove%2Ftilingsales-ad-remove.sgmodule) |
-
-#### H
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[哈啰净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/helloobike/helloobike.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fhelloobike%2Fhelloobike.snippet%2C%20tag%3D%E5%93%88%E5%95%B0%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fhelloobike%2Fhelloobike.sgmodule) |
-| **[黑料不打烊净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/hlwxx-remove-ads/hlwxx-remove-ads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fhlwxx-remove-ads%2Fhlwxx-remove-ads.snippet%2C%20tag%3D%E9%BB%91%E6%96%99%E4%B8%8D%E6%89%93%E7%83%8A%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fhlwxx-remove-ads%2Fhlwxx-remove-ads.sgmodule) |
-| **[虎扑净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/hp/hp.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fhp%2Fhp.snippet%2C%20tag%3D%E8%99%8E%E6%89%91%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fhp%2Fhp.sgmodule) |
-
-#### K
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[酷安全面净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/kuan/kuan.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fkuan%2Fkuan.snippet%2C%20tag%3D%E9%85%B7%E5%AE%89%E5%85%A8%E9%9D%A2%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fkuan%2Fkuan.sgmodule) |
-| **[Keep净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/keep/keep.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fkeep%2Fkeep.snippet%2C%20tag%3DKeep%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fkeep%2Fkeep.sgmodule) |
-
-#### M
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[芒果tv解锁会员](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/mgtv-vip/mgtv-vip.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fmgtv-vip%2Fmgtv-vip.snippet%2C%20tag%3D%E8%8A%92%E6%9E%9Ctv%E8%A7%A3%E9%94%81%E4%BC%9A%E5%91%98%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fmgtv-vip%2Fmgtv-vip.sgmodule) |
-| **[美团App 12.67.403](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/mt/mt.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fmt%2Fmt.snippet%2C%20tag%3D%E7%BE%8E%E5%9B%A2App%2012.67.403%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fmt%2Fmt.sgmodule) |
-| **[咪咕视频解锁会员](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/migu-vip-share/migu-vip-share.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fmigu-vip-share%2Fmigu-vip-share.snippet%2C%20tag%3D%E5%92%AA%E5%92%95%E8%A7%86%E9%A2%91%E8%A7%A3%E9%94%81%E4%BC%9A%E5%91%98%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fmigu-vip-share%2Fmigu-vip-share.sgmodule) |
-
-#### P
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[拼多多净化底栏与弹窗](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/pinduoduo/pinduoduo.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fpinduoduo%2Fpinduoduo.snippet%2C%20tag%3D%E6%8B%BC%E5%A4%9A%E5%A4%9A%E5%87%80%E5%8C%96%E5%BA%95%E6%A0%8F%E4%B8%8E%E5%BC%B9%E7%AA%97%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fpinduoduo%2Fpinduoduo.sgmodule) |
-
-#### S
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[什么值得买净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/smzdm/smzdm.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fsmzdm%2Fsmzdm.snippet%2C%20tag%3D%E4%BB%80%E4%B9%88%E5%80%BC%E5%BE%97%E4%B9%B0%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fsmzdm%2Fsmzdm.sgmodule) |
-| **[顺丰app净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/sf/sf.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fsf%2Fsf.snippet%2C%20tag%3D%E9%A1%BA%E4%B8%B0app%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fsf%2Fsf.sgmodule) |
-| **[Soul净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/soul/soul.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fsoul%2Fsoul.snippet%2C%20tag%3DSoul%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fsoul%2Fsoul.sgmodule) |
-
-#### T
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[腾讯视频净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/txvideoad/txvideoad.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ftxvideoad%2Ftxvideoad.snippet%2C%20tag%3D%E8%85%BE%E8%AE%AF%E8%A7%86%E9%A2%91%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ftxvideoad%2Ftxvideoad.sgmodule) |
-| **[腾讯体育净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/txsports-ad-clean/txsports-ad-clean.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ftxsports-ad-clean%2Ftxsports-ad-clean.snippet%2C%20tag%3D%E8%85%BE%E8%AE%AF%E4%BD%93%E8%82%B2%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ftxsports-ad-clean%2Ftxsports-ad-clean.sgmodule) |
-| **[贴吧净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/tb/tb.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ftb%2Ftb.snippet%2C%20tag%3D%E8%B4%B4%E5%90%A7%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ftb%2Ftb.sgmodule) |
-| **[途虎养车净化](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/th/th.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fth%2Fth.snippet%2C%20tag%3D%E9%80%94%E8%99%8E%E5%85%BB%E8%BD%A6%E5%87%80%E5%8C%96%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fth%2Fth.sgmodule) |
-| **[T3出行](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/t3/t3.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Ft3%2Ft3.snippet%2C%20tag%3DT3%E5%87%BA%E8%A1%8C%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Ft3%2Ft3.sgmodule) |
-
-#### W
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[微博净化Qx版](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/wb/wb.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fwb%2Fwb.snippet%2C%20tag%3D%E5%BE%AE%E5%8D%9A%E5%87%80%E5%8C%96Qx%E7%89%88%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fwb%2Fwb.sgmodule) |
-| **[wxpuredominion](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/wxpuredominion/wxpuredominion.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fwxpuredominion%2Fwxpuredominion.snippet%2C%20tag%3Dwxpuredominion%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fwxpuredominion%2Fwxpuredominion.sgmodule) |
-
-#### X
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[X字幕 (xzimu) 无限翻译次数](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/xzimu-unlock/xzimu-unlock.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fxzimu-unlock%2Fxzimu-unlock.snippet%2C%20tag%3DX%E5%AD%97%E5%B9%95%20(xzimu)%20%E6%97%A0%E9%99%90%E7%BF%BB%E8%AF%91%E6%AC%A1%E6%95%B0%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fxzimu-unlock%2Fxzimu-unlock.sgmodule) |
-| **[XCamera广告净化合集](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/xhey-ad-clean/xhey-ad-clean.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fxhey-ad-clean%2Fxhey-ad-clean.snippet%2C%20tag%3DXCamera%E5%B9%BF%E5%91%8A%E5%87%80%E5%8C%96%E5%90%88%E9%9B%86%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fxhey-ad-clean%2Fxhey-ad-clean.sgmodule) |
-| **[xterm256](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/xterm256/xterm256.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fxterm256%2Fxterm256.snippet%2C%20tag%3Dxterm256%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fxterm256%2Fxterm256.sgmodule) |
-
-#### Y
-
-| Name | Quantumult X | Surge |
-| :--- | :---: | :---: |
-| **[YouTube 强制简体中文字幕](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/yt-zh/yt-zh.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fyt-zh%2Fyt-zh.snippet%2C%20tag%3DYouTube%20%E5%BC%BA%E5%88%B6%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87%E5%AD%97%E5%B9%95%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fyt-zh%2Fyt-zh.sgmodule) |
-| **[YouTube去广告隐藏Shorts版@Aioneas](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ZenmoFeiShi/youtube/youtube.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2FZenmoFeiShi%2Fyoutube%2Fyoutube.snippet%2C%20tag%3DYouTube%E5%8E%BB%E5%B9%BF%E5%91%8A%E9%9A%90%E8%97%8FShorts%E7%89%88%40Aioneas%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2FZenmoFeiShi%2Fyoutube%2Fyoutube.sgmodule) |
 
 </details>
 

@@ -1,0 +1,31 @@
+#!name=Appraven
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: Appraven
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Module
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/appraven.vip.js
+# *********************************************
+# > 应用名称：墨鱼自用AppRaven脚本
+# > 脚本作者：@ddgksf2013
+# > 微信账号：墨鱼手记
+# > 更新时间：2023-07-24
+# > 通知频道：https://t.me/ddgksf2021
+# > 贡献投稿：https://t.me/ddgksf2013_bot
+# > 问题反馈：ddgksf2013@163.com
+# > 特别提醒：如需转载请注明出处，谢谢合作！
+# > 解锁功能：界面美化[主界面APP应用内购买灰色框太难看了]、使用会员图标功能
+# *********************************************
+
+[Script]
+ddgksf2013_appraven-vip_1 = type=http-response,pattern=^https?:\/\/v2\.appraven\.net\/appraven\/graphql,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Module/Surge/ddgksf2013/appraven-vip/appraven.vip.js,requires-body=true
+
+[MITM]
+hostname = %APPEND% v2.appraven.net

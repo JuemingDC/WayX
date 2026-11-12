@@ -1,0 +1,46 @@
+#!name=百度地图
+#!desc=Native QX conversion
+#!category=WayX
+#!requirement=CORE_VERSION>=20
+# Native QX review count: 0
+
+[Rule]
+# Name: 百度地图
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+# Source: https://ddgksf2013.top/scripts/bdmap.ads.js
+# *********************************
+# 百度地图 去广告
+# 2025.12.28V1.0.6
+# https://t.me/ddgksf2021
+# > 百度地图_首页底部推荐@ddgksf2013
+# > 百度地图_搜索框下足记Tips@ddgksf2013
+;^https?:\/\/newclient\.map\.baidu\.com\/client\/phpui.*qt=rgc url reject-200
+# > 百度地图_搜索推广@ddgksf2013
+# > 百度地图_开屏广告|首页左上角广告@ddgksf2013
+# > 百度地图_DNS处理@ddgksf2013
+# > 百度地图_各种商业推广@ddgksf2013
+# > 百度地图_我的页面地图动态@ddgksf2013
+# > 百度地图_TIPS@ddgksf2013
+# > 百度地图_我页面@ddgksf2013
+# > 百度地图_周边搜索填词@ddgksf2013
+# *********************************
+
+[Map Local]
+^https?:\/\/newclient\.map\.baidu\.com\/client\/phpui.*qt=hw data-type=text data="" status-code=200
+^https?:\/\/newclient\.map\.baidu\.com\/client\/phpui2\/\?qt=ads data-type=text data="" status-code=200
+^https?:\/\/newclient\.map\.baidu\.com\/client\/crossmarketing data-type=text data="" status-code=200
+^https?:\/\/newclient\.map\.baidu\.com\/client\/usersystem\/home\/dynamic data-type=text data="" status-code=200
+^https?:\/\/newclient\.map\.baidu\.com\/contributor-bus/bounty/tips data-type=text data="" status-code=200
+
+[Body Rewrite]
+http-response-jq ^https?:\/\/.*map\.baidu\.com\/.*govui\/rich_content '.data.posts.content=[]'
+http-response-jq ^https?:\/\/httpdns\.baidubce\.com '.data["newclient.map.baidu.com"]={}'
+http-response-jq ^https?:\/\/newclient\.map\.baidu\.com\/usercenter/mine/page 'del(.data.sport_card, .data.gold, .data.gold_coin_card, .data.shop)'
+http-response-jq ^https?:\/\/newclient\.map\.baidu\.com\/living/nearby/hot-words\? '.Result.data=[]'
+
+[MITM]
+hostname = %APPEND% 180.76.76.200, newclient.map.baidu.com, httpdns.baidubce.com, ugc.map.baidu.com

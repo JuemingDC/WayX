@@ -1,0 +1,20 @@
+# Name: 123云盘
+# Updated: 上游未标注
+# Copied by: chance
+# Source Authors: ddgksf2013
+# Category: Adblock
+# Managed by: WayX Native QX
+
+# Source: https://ddgksf2013.top/scripts/123pan.ads.js
+# *********************************************
+# 123盘网页去广告
+
+
+# [rewrite_local]
+
+^https?:\/\/www\.123pan\.com\/s\/[0-9a-zA-Z=_/-]+\.html url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/ddgksf2013/123pan-ads/123pan.js
+
+# [mitm]
+hostname = www.123pan.com
+
+# *********************************************

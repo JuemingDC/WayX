@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "sourceUrl": "https://ddgksf2013.top/scripts/flightradar24.vip.js",
+  "sourceSha256": "49dd7c8b0805f51bf2954091fd18d6fb7cce03622014704e4f161fa0d9bb2634",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "49dd7c8b0805f51bf2954091fd18d6fb7cce03622014704e4f161fa0d9bb2634",
+    "operations": [
+      {
+        "api": "$task",
+        "access": "read",
+        "start": 3475,
+        "end": 3480,
+        "line": 36,
+        "column": 3111,
+        "members": [
+          "$task"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 5668,
+        "end": 5677,
+        "line": 36,
+        "column": 5304,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 9996,
+        "end": 10034,
+        "line": 36,
+        "column": 9632,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 10,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "request": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "49dd7c8b0805f51bf2954091fd18d6fb7cce03622014704e4f161fa0d9bb2634",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$task",
+              "start": 3475,
+              "end": 3480,
+              "line": 36,
+              "column": 3111,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 5668,
+              "end": 5677,
+              "line": 36,
+              "column": 5304,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 9996,
+              "end": 10034,
+              "line": 36,
+              "column": 9632,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}
