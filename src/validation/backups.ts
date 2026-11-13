@@ -2,6 +2,7 @@
 import path from "node:path";
 import crypto from "node:crypto";
 import vm from "node:vm";
+import { executableScript } from "../domain/executable-script.ts";
 import {
   listFiles,
   readJson,
@@ -160,7 +161,8 @@ export async function validateSourceBackups(root: string) {
       add(file, "api-adapter-integrity", e.message);
     }
   }
-  // Modified: 2026-11-05 (chance). Native QX published scripts must match archived author bytes exactly.
+  // Modified: 2026-11-13 (chance). Published native QX scripts must match the
+  // comment-cleaned archive; raw-object checks above still require exact bytes.
   const layout = await readJson<any>(
     path.join(root, ".github/sources/layout-state.json"),
     { scripts: {} },
@@ -174,15 +176,15 @@ export async function validateSourceBackups(root: string) {
     )
       continue;
     const bytes = await readOptional(safePath(root, file));
+    const original = await readOptional(safePath(root, entry.logical));
     if (
       !bytes ||
-      crypto.createHash("sha256").update(bytes).digest("hex") !==
-        index.objects[entry.logical]?.sha256
+      !original || bytes.toString() !== executableScript(original.toString())
     )
       add(
         file,
         "native-script-integrity",
-        "Native QX script differs from archived source",
+        "Native QX script differs from the comment-cleaned archived source",
       );
   }
   for (const [url, file] of Object.entries<any>(index.latest))

@@ -42,6 +42,9 @@ function gh(args: any): any {
   return execFileSync("gh", args, {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
+    // Modified: 2026-11-13 (chance). Bound one projected API page rather than
+    // overflowing Node's default 1 MiB buffer on historical issue bodies.
+    maxBuffer: 32 * 1024 * 1024,
   }).trim();
 }
 function fingerprint(parts: any): any {

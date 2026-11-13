@@ -1,5 +1,5 @@
-// Modified: 2026-11-05 (chance). Native QX is an exact author-script copy;
-// only QX-to-Surge is API-adapted, including repeated publication.
+// Modified: 2026-11-13 (chance). Native QX removes non-executable comments at
+// publication; archives stay byte-exact and only Surge is API-adapted.
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -11,11 +11,13 @@ import {
 } from "../src/application/release-layout.ts";
 import { validateSourceBackups } from "../src/validation/backups.ts";
 import { mergeNativeQxSources } from "../src/publish/workflow.ts";
+import { executableScript } from "../src/domain/executable-script.ts";
 const root = await fs.mkdtemp(path.join(os.tmpdir(), "wayx-native-copy-"));
 const url = "https://author.test/author.js";
 const script = Buffer.from(
   '\ufeff/* installation instructions stay in the native copy */\r\nif(false)return;\r\n$done({body:"native"});\r\n',
 );
+const cleaned = Buffer.from(executableScript(script.toString()));
 const body =
   "# Original comments\n# [rewrite_local]\n^https://example\\.test/ url script-response-body " +
   url +
@@ -66,11 +68,11 @@ try {
     const native = Object.entries(layout.scripts).find(([file]) =>
       file.includes("/Quantumult X/"),
     )!;
-    assert.deepEqual(await fs.readFile(path.join(root, native[0])), script);
+    assert.deepEqual(await fs.readFile(path.join(root, native[0])), cleaned);
     for (const file of Object.keys(layout.scripts).filter((f) =>
       f.includes("/Quantumult X/"),
     ))
-      assert.deepEqual(await fs.readFile(path.join(root, file)), script);
+      assert.deepEqual(await fs.readFile(path.join(root, file)), cleaned);
     const surge = Object.keys(layout.scripts).find((file) =>
       file.includes("/Surge/"),
     )!;
@@ -80,6 +82,9 @@ try {
     const index = JSON.parse(
       await fs.readFile(path.join(root, "Resource/Backup/index.json"), "utf8"),
     );
+    for (const [file, record] of Object.entries<any>(index.objects))
+      if (record.kind === "script")
+        assert.deepEqual(await fs.readFile(path.join(root, file)), script);
     assert.equal(
       Object.values<any>(index.adapters).some((r) => r.targetClient === "qx"),
       false,
@@ -95,7 +100,7 @@ try {
     if (!iteration) await prepareWorkingLayout(root);
   }
   console.log(
-    "Native QX copy: exact BOM/CRLF/comments/code, no QX adapter, Surge-only adaptation and repeat publication passed",
+    "Native QX publication: clean comments, byte-exact archives, no QX adapter, Surge-only adaptation and repeat publication passed",
   );
 } finally {
   await fs.rm(root, { recursive: true, force: true });

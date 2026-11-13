@@ -50,7 +50,7 @@ const issues: any[] = Array.from({ length: 30 }, (_, i) => ({ number: i + 1, tit
 const calls: string[][] = [];
 const call = (args: string[]) => {
   calls.push(args);
-  if (args[0] === "api") return JSON.stringify([structuredClone(issues)]);
+  if (args[0] === "api") return JSON.stringify(structuredClone(issues));
   const number = Number(args[2]);
   const issue = issues.find(value => value.number === number);
   const bodyFile = args.indexOf("--body-file");
@@ -88,10 +88,21 @@ assert.match(issues.find(value => value.title === "[WayX] 拉取失败").body, /
 const failureCalls: string[][] = [];
 await assert.rejects(reconcileGroupedIssues(plans(), "fixture/repo", args => {
   failureCalls.push(args);
-  if (args[0] === "api") return JSON.stringify([[{ number: 1, title: "[conversion-failure:1234567890abcdef] B fetch-upstream", body: "legacy evidence", state: "open" }]]);
+  if (args[0] === "api") return JSON.stringify([{ number: 1, title: "[conversion-failure:1234567890abcdef] B fetch-upstream", body: "legacy evidence", state: "open" }]);
   throw Error("simulated GitHub write failure");
 }), /simulated/);
 assert.ok(!failureCalls.some(args => args[1] === "close"));
+// Modified: 2026-11-13 (chance). Historical issue bodies are not accumulated;
+// every API call projects a single page before Node captures its stdout.
+const pageCalls: string[][] = [];
+await reconcileGroupedIssues(plans([], false), "fixture/repo", args => {
+  pageCalls.push(args);
+  assert.equal(args[0], "api");
+  assert.ok(args.includes("--jq"));
+  assert.match(args[args.indexOf("--jq") + 1], /if \.state == "open" then \.body else "" end/);
+  return JSON.stringify(args[1].endsWith("page=1") ? Array.from({ length: 100 }, (_, i) => ({ number: i, title: "closed history", state: "closed", body: "" })) : []);
+});
+assert.equal(pageCalls.length, 2);
 
 const root = await fs.mkdtemp(path.join(os.tmpdir(), "wayx-adblock-ids-"));
 try {

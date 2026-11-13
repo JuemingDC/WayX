@@ -14,4 +14,4 @@ Known permanently unavailable whole-file sources are disabled in `config/unavail
 
 Final checks cover readable paths, reference closure, script syntax, duplicate Surge script identities, raw archive checksums, and the reversible next-run layout. All code, registry and test changes are prepared before one final Actions publication.
 
-Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。
+Modified: 2026-11-13 (chance). 原生 Quantumult X 配置在格式有效时保留原文；发布版 JS 同样清除安装配置、使用说明和开发注释，仅保留可执行代码与必要许可声明，不添加 API 运行时或改变作者业务逻辑。原始脚本仍逐字节归档，保留注释、BOM 和换行；发布完整性按同一清理策略与原件比较。API 转换仍仅用于 Loon→QX、Loon→Surge、QX→Surge，不因 API 转换诊断停用原生声明。

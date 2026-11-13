@@ -11,9 +11,19 @@ type GitHubCall = (args: string[]) => string;
 export async function reconcileGroupedIssues(plans: IssueGroupPlan[], repository: string, call: GitHubCall, numberById: Record<string, string> = {}) {
   if (plans.length > 5 || new Set(plans.map(plan => plan.title)).size !== plans.length)
     throw Error("At most five unique managed issue categories are allowed");
-  // Fetch all pages once, including closed canonical issues for stable reuse.
-  const pages = JSON.parse(call(["api", "--paginate", "--slurp", `repos/${repository}/issues?state=all&per_page=100`]));
-  const issues: Issue[] = pages.flat().filter((issue: Issue) => !issue.pull_request);
+  // Modified: 2026-11-13 (chance). Project each bounded API page inside gh before Node captures stdout:
+  // closed historical issues need identity, never their full body.
+  // Keep open bodies for migration and reuse closed category identities.
+  const issues: Issue[] = [];
+  for (let page = 1; ; page++) {
+    const items: Issue[] = JSON.parse(call(["api",
+      `repos/${repository}/issues?state=all&per_page=100&page=${page}`,
+      "--jq", '[.[] | {number,title,state,pull_request,body:(if .state == "open" then .body else "" end)}]',
+    ]));
+    if (!Array.isArray(items)) throw Error("Invalid GitHub issue page");
+    issues.push(...items.filter(issue => !issue.pull_request));
+    if (items.length < 100) break;
+  }
   // An incomplete run cannot silently resolve older failures. Migrate their
   // evidence into its category first; pull failures still contain IDs only.
   for (const issue of issues) {

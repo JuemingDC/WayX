@@ -21,4 +21,4 @@ Modified: 2026-11-08 (chance). 可莉目录发现及插件正文拉取已按用�
 
 Modified: 2026-11-05 (chance). Loon→QX、Loon→Surge、QX→Surge 使用独立目标程序，任务和 Module 工具同样参与 API 适配。发布目录及下次同步的还原流程见 [target-publication.md](target-publication.md)。脚本仅包含生效代码与必要许可，安装声明和原注释仍在原始归档。Resource/Backup/script-api-status.json 记录适配结果、原因和方案。缺少来源或声明不阻断转换；真实语法错误且无有效旧版本时仅停用对应声明。
 
-Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。
+Modified: 2026-11-13 (chance). 原生 Quantumult X 配置在格式有效时保留原文；发布版 JS 同样清除安装配置、使用说明和开发注释，仅保留可执行代码与必要许可声明，不添加 API 运行时或改变作者业务逻辑。原始脚本仍逐字节归档，保留注释、BOM 和换行；发布完整性按同一清理策略与原件比较。API 转换仍仅用于 Loon→QX、Loon→Surge、QX→Surge，不因 API 转换诊断停用原生声明。

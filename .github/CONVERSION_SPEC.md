@@ -469,17 +469,17 @@ Modified: 2026-11-05 (chance). 当前用户要求覆盖旧版共享三端脚本�
 
 目标保持真实客户端识别、原生 timers、默认超时和正文限制，不注入虚假 Loon 身份，不模拟 Loon 特有单次 interval 或强加不限正文。Surge 发布脚本名称唯一。已知永久失效 URL 登记在 config/unavailable-sources.json，整文件不获取；部分脚本/依赖失效只注释对应声明，保留其它活动内容。所有变更完成并验证后才一次提交运行 Actions。
 
-Modified: 2026-11-05 (chance). 原生 Quantumult X 配置在格式有效时保留原文，JS 从原始归档逐字节复制（包括注释、BOM、换行），不包裹 API 运行时，不清理安装注释，不因 API 转换诊断停用原生声明。配置仅修正实际不规范的语法；目录迁移只重绑定配置中的脚本地址，不改原生 JS 正文。API 转换仅用于 Loon→QX、Loon→Surge、QX→Surge。此原生直拷政策优先于转换脚本的注释清理要求。
+Modified: 2026-11-13 (chance). 原生 Quantumult X 配置在格式有效时保留原文；发布版 JS 同样清除安装配置、使用说明和开发注释，仅保留可执行代码与必要许可声明，不添加 API 运行时或改变作者业务逻辑。原始脚本仍逐字节归档，保留注释、BOM 和换行；发布完整性按同一清理策略与原件比较。API 转换仍仅用于 Loon→QX、Loon→Surge、QX→Surge，不因 API 转换诊断停用原生声明。
 
 Modified: 2026-11-10 (chance). Adblock、Module 的 `Updated` 复制上游明确标注的更新时间（如 `#!date`、`@UpdateTime`），不得使用拉取、复制或转换时钟；上游未标注时写“上游未标注”，合并多个来源时保留各不相同的原始日期。原生 QX 只修改 WayX 外层日期，原作者正文和原始备份逐字节保留；暂停来源以现存源快照修正自有日期，不恢复拉取。Rule 每次成功同步刷新当天更新时间。手工维护内容保留作者日期。
 
 Modified: 2026-11-08 (chance). 可莉目录接口在 Actions 返回 403 时，保留已登记条目并继续按原始 URL 拉取插件正文，不据此增删目录。目录监控明确记录 DEFERRED（succeeded=false），不更新旧镜像，不声称目录已刷新；官方规范及其它必需监控失败仍阻止发布。仅有既有可莉条目且官方目录返回 403 时允许此隔离，401、格式损坏及无既有目录仍失败。
 
-Modified: 2026-11-10 (chance). runtimePolicyVersion=8：以官方 Surge API 与 NSNanoCat/util 的 fetch/notification 主实现为依据，恢复 QX HTTP bodyBytes 双向转换及通知 open-url/media-url/update-pasteboard 字段。Loon openUrl/clipboard 对应 Surge action/url/text 与 QX open-url/update-pasteboard；Surge 单动作冲突时剪贴板优先。保留字节视图范围与原业务实参求值，未知 getter 不读取；不模拟通知 delay、不把库 Promise.race 当作 QX 原生 timeout 证据。证据及保留边界见 docs/script-api/03-API能力与实施路线.md。原生 QX 仍逐字节复制，自动产物由 Actions 发布。
+Modified: 2026-11-10 (chance). runtimePolicyVersion=8：以官方 Surge API 与 NSNanoCat/util 的 fetch/notification 主实现为依据，恢复 QX HTTP bodyBytes 双向转换及通知 open-url/media-url/update-pasteboard 字段。Loon openUrl/clipboard 对应 Surge action/url/text 与 QX open-url/update-pasteboard；Surge 单动作冲突时剪贴板优先。保留字节视图范围与原业务实参求值，未知 getter 不读取；不模拟通知 delay、不把库 Promise.race 当作 QX 原生 timeout 证据。证据及保留边界见 docs/script-api/03-API能力与实施路线.md。原生 QX 原件仍逐字节归档，发布版按统一策略清理注释，自动产物由 Actions 发布。
 
 Modified: 2026-11-10 (chance). 原生 QX commit/tree 发现通过共享资源传输使用 Actions GITHUB_TOKEN；仅向精确 https://api.github.com origin 自动添加认证，不发送至 raw/第三方来源，不覆盖显式认证。sync 步骤显式注入 token，避免匿名 REST 配额导致全事务失败。保留原子发布与真实失败门禁；403 不自动认定来源失效，也不恢复已暂停可莉来源。
 
-Modified: 2026-11-11 (chance). runtimePolicyVersion=9：生成器按词法 API 引用选择依赖闭包；不以注释/字符串中的 API 字样拉入模块。正文/url 直接读取及静态 body 完成值采用小型词法适配，不注入 Proxy/with；保留完成单次提交、字节视图范围和来源作用域。其它程序保留所需 API 模块，构建时消解一致的客户端/布局常量，移除不可达 helper、未使用 host 捕获、provider 和配置字段。全局对象逃逸、动态全局键、eval/Function/this 等不可静态限定的访问保留完整所需兼容能力，不改写作者业务表达式，不承诺无法证明的细粒度裁剪。原生 QX 继续逐字节复制；作者源码与 API 证据独立归档。差分测试将精简结果与未裁剪 API 内核的输出、调用顺序和异常比较；由现有 Actions 生成和发布产物，不手改交付脚本。
+Modified: 2026-11-11 (chance). runtimePolicyVersion=9：生成器按词法 API 引用选择依赖闭包；不以注释/字符串中的 API 字样拉入模块。正文/url 直接读取及静态 body 完成值采用小型词法适配，不注入 Proxy/with；保留完成单次提交、字节视图范围和来源作用域。其它程序保留所需 API 模块，构建时消解一致的客户端/布局常量，移除不可达 helper、未使用 host 捕获、provider 和配置字段。全局对象逃逸、动态全局键、eval/Function/this 等不可静态限定的访问保留完整所需兼容能力，不改写作者业务表达式，不承诺无法证明的细粒度裁剪。原生 QX 仍不做 API 适配，发布版清理注释；作者原件与 API 证据独立归档。差分测试将精简结果与未裁剪 API 内核的输出、调用顺序和异常比较；由现有 Actions 生成和发布产物，不手改交付脚本。
 
 Modified: 2026-11-11 (chance). runtimePolicyVersion=10：URL/URLSearchParams 引用保持访问时懒加载；不能通过词法参数传值提前触发 getter/provider、越过作者 if/try。以未执行分支零初始化和作者 catch 接收原异常验证。
 
@@ -489,7 +489,7 @@ Modified: 2026-11-11 (chance). runtimePolicyVersion=10：URL/URLSearchParams 引
 
 网站请求按 URL 使用 JSON/HTML Accept、同站 Referer、Accept-Language 和 no-cache/Pragma；资源下载仍使用实测 Surge UA，仅修改网站作用域的请求头，不向其它上游添加网站 Referer 或泄漏 GitHub 认证。
 
-JS 入口只从真实注释中提取 QX 安装声明，不执行业务脚本、不按文件名猜匹配条件；带有原生 QX 声明的 `.js` 配置独立识别。原始响应仍按字节归档，QX 引用的 JS 仍逐字节复制；Surge 端调用原有 QX→Surge 配置/API 转换。功能及会员工具归 Module，去广告归 Adblock。复制显式原作者日期，额外支持安装注释的 `> UpdateTime`，不写抓取时间。
+JS 入口只从真实注释中提取 QX 安装声明，不执行业务脚本、不按文件名猜匹配条件；带有原生 QX 声明的 `.js` 配置独立识别。原始响应仍按字节归档，QX 引用的 JS 发布时按统一策略清理注释，原件逐字节归档；Surge 端调用原有 QX→Surge 配置/API 转换。功能及会员工具归 Module，去广告归 Adblock。复制显式原作者日期，额外支持安装注释的 `> UpdateTime`，不写抓取时间。
 
 原生 Surge 模块只发布 Surge 版本，保持原脚本 SDK，经原生格式验证和同一备份/布局流程发布；不引入未实现的 Surge→QX API 转换。原生 metadata 仅修正目标不支持的元数据形式、布尔字段和不合法参数名；参数别名同步更新三重花括号，业务 argument 键及值不改。模块参数仍遵循官方 ASCII 名称与连续 directive 头。
 
@@ -500,3 +500,5 @@ JS 入口只从真实注释中提取 QX 安装声明，不执行业务脚本、�
 去广告内容使用 `AD0001` 形式的固定编号，保存在 `.github/sources/adblock-numbers.json`。同一来源条目的 QX/Surge 版本共用编号；新增只递增，删除保留登记，排序和目录迁移不重排或回收编号。配置增加 `# WayX ID: AD0001` 注释，README 增加编号列，不以编号替换原文件名或修改脚本业务代码。逻辑路径与发布路径同时保留为查找别名，不参与普通布局路径改写。
 
 五类 Issue 标题固定，重复失败只覆盖该类正文，不追加逐条评论；恢复关闭，再次出现复用原 Issue。拉取类正文每行一个编号，无 URL、错误栈或额外说明；其他类别按问题汇总说明。迁移时先写分类摘要，再关闭旧逐条或重复自动 Issue，历史详情保留在已关闭的 Issue 和 Action 报告。
+
+Modified: 2026-11-13 (chance). Issue 历史按每页 100 条读取，在 gh 输出阶段投影为编号、标题、状态及开放 Issue 的正文；关闭记录正文不传回 Node，不再聚合全部历史正文。Node 捕获使用明确上限，避免 ENOBUFS 使发布门禁失败。
