@@ -1,10 +1,6 @@
-
-
 let body = $response.body;
-
 try {
     let obj = JSON.parse(body);
-
     if (obj?.data) {
         if (Array.isArray(obj.data)) {
             obj.data = obj.data.filter(item => {
@@ -13,16 +9,16 @@ try {
                 }
                 return false;
             });
-        } else {
+        }
+        else {
             if (obj.data.oneCentBuy) {
                 delete obj.data.oneCentBuy;
             }
         }
     }
-
     body = JSON.stringify(obj);
-} catch (e) {
+}
+catch (e) {
     console.log("处理响应出错: " + e);
 }
-
 $done({ body });

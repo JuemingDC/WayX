@@ -1,17 +1,12 @@
-
 const TAG = '[YT-ZH-Sub]';
-
-(function() {
+(function () {
     var url = $request.url;
-
     if (/[?&]tlang=zh/.test(url) || /[?&]lang=zh/.test(url)) {
         console.log(TAG + ' already zh, skip');
         $done({});
         return;
     }
-
     var zhUrl = url + '&tlang=zh-Hans&_ytzhsub=1';
-
     var headers = {};
     if ($request.headers) {
         var keys = Object.keys($request.headers);
@@ -24,25 +19,23 @@ const TAG = '[YT-ZH-Sub]';
     }
     delete headers['Cookie'];
     delete headers['cookie'];
-
     console.log(TAG + ' fetching zh: ' + zhUrl.substring(0, 120));
-
     $task.fetch({
         url: zhUrl,
         method: 'GET',
         headers: headers
-    }).then(function(resp) {
+    }).then(function (resp) {
         var status = resp.statusCode || resp.status || 0;
         console.log(TAG + ' fetch status=' + status + ' bodyLen=' + (resp.body ? resp.body.length : 0));
-
         if (status === 200 && resp.body && resp.body.length > 100) {
             console.log(TAG + ' replaced with zh subtitle');
             $done({ body: resp.body });
-        } else {
+        }
+        else {
             console.log(TAG + ' fetch failed, keep original');
             $done({});
         }
-    }, function(err) {
+    }, function (err) {
         console.log(TAG + ' fetch error: ' + (err.error || err));
         $done({});
     });

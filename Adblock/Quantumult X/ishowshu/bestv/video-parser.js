@@ -1,324 +1,316 @@
-/* 
- * 看东方 
- * 提取会员视频 跳转浏览器HTML页面
- * 2025-04-25
- * 2025-11-15
- * 2026-04-21
- *
-[rewrite_local]
-# NBA视频和电视剧
-https:\/\/bp-api\.bestv\.com\.cn\/cms\/api\/(live\/studio\/id\/v8|c\/player\/common) url script-response-body https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js
-# HTML页面
-^https?:\/\/360\.com\/(?:video|nba\.m3u|dianshi\.m3u)$ url script-response-body https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/KDF/video-parser.js
-
-[mitm]
-hostname = 360.com, bp-api.bestv.com.cn
-*/
-/****************************************************************
- * 看东方 NBA & 电视剧 → HTML + M3U (v2026-04-25)
- ****************************************************************/
-
 const $origDone = $done;
 $done = (obj = {}) => {
-  this.$prefs || (obj.status &&= +String(obj.status).match(/\b\d{3}\b/)[0]);
-  $origDone(obj);
+    this.$prefs || (obj.status &&= +String(obj.status).match(/\b\d{3}\b/)[0]);
+    $origDone(obj);
 };
 const store = {
-  get: this.$prefs?.valueForKey ?? $persistentStore.read,
-  set: (k, v) => (this.$prefs?.setValueForKey ?? $persistentStore.write)(v, k)
+    get: this.$prefs?.valueForKey ?? $persistentStore.read,
+    set: (k, v) => (this.$prefs?.setValueForKey ?? $persistentStore.write)(v, k)
 };
 const UTILS_URL = 'https://raw.githubusercontent.com/xzxxn777/Surge/main/Utils/Utils.js';
 const CACHE_KEY_CODE = 'Utils_Code';
 const CACHE_KEY_TIME = 'Utils_Codetime';
 const KDF_AES_KEY = 'UITN25LMUQC436IM';
-
 function kvGet(key) {
-  try {
-    if (typeof $prefs !== 'undefined' && $prefs.valueForKey)
-      return $prefs.valueForKey(key) || '';
-    if (typeof $persistentStore !== 'undefined' && $persistentStore.read)
-      return $persistentStore.read(key) || '';
-  } catch {}
-  return '';
+    try {
+        if (typeof $prefs !== 'undefined' && $prefs.valueForKey)
+            return $prefs.valueForKey(key) || '';
+        if (typeof $persistentStore !== 'undefined' && $persistentStore.read)
+            return $persistentStore.read(key) || '';
+    }
+    catch { }
+    return '';
 }
 function kvSet(key, val) {
-  try {
-    if (typeof $prefs !== 'undefined' && $prefs.setValueForKey)
-      return $prefs.setValueForKey(val, key);
-    if (typeof $persistentStore !== 'undefined' && $persistentStore.write)
-      return $persistentStore.write(val, key);
-  } catch {}
-  return false;
+    try {
+        if (typeof $prefs !== 'undefined' && $prefs.setValueForKey)
+            return $prefs.setValueForKey(val, key);
+        if (typeof $persistentStore !== 'undefined' && $persistentStore.write)
+            return $persistentStore.write(val, key);
+    }
+    catch { }
+    return false;
 }
 function fetchRemote(options) {
-  return new Promise((resolve, reject) => {
-    const method = (options.method || 'GET').toUpperCase();
-    if (typeof $httpClient !== 'undefined') {
-      const fn = method === 'POST' ? $httpClient.post : $httpClient.get;
-      fn(options, (error, response, body) => {
-        if (error) return reject(error);
-        resolve({ response, body });
-      });
-    } else if (typeof $task !== 'undefined') {
-      if (method === 'POST') options.method = 'POST';
-      $task.fetch(options).then(
-        resp => resolve({ response: resp, body: resp.body }),
-        err  => reject((err && err.error) || err)
-      );
-    } else {
-      reject('Unsupported environment');
-    }
-  });
+    return new Promise((resolve, reject) => {
+        const method = (options.method || 'GET').toUpperCase();
+        if (typeof $httpClient !== 'undefined') {
+            const fn = method === 'POST' ? $httpClient.post : $httpClient.get;
+            fn(options, (error, response, body) => {
+                if (error)
+                    return reject(error);
+                resolve({ response, body });
+            });
+        }
+        else if (typeof $task !== 'undefined') {
+            if (method === 'POST')
+                options.method = 'POST';
+            $task.fetch(options).then(resp => resolve({ response: resp, body: resp.body }), err => reject((err && err.error) || err));
+        }
+        else {
+            reject('Unsupported environment');
+        }
+    });
 }
-
 function safeJson(s) {
-  try { return JSON.parse(s); } catch { return null; }
+    try {
+        return JSON.parse(s);
+    }
+    catch {
+        return null;
+    }
 }
 async function loadUtilsCached() {
-  const cached = kvGet(CACHE_KEY_CODE);
-  if (cached) {
-    try {
-      eval(cached);
-      if (typeof creatUtils === 'function') return creatUtils();
-      if (typeof createUtils === 'function') return createUtils();
-      kvSet(CACHE_KEY_CODE, '');
-    } catch {
-      kvSet(CACHE_KEY_CODE, '');
+    const cached = kvGet(CACHE_KEY_CODE);
+    if (cached) {
+        try {
+            eval(cached);
+            if (typeof creatUtils === 'function')
+                return creatUtils();
+            if (typeof createUtils === 'function')
+                return createUtils();
+            kvSet(CACHE_KEY_CODE, '');
+        }
+        catch {
+            kvSet(CACHE_KEY_CODE, '');
+        }
     }
-  }
-  try {
-    const { body } = await fetchRemote({ url: UTILS_URL, method: 'GET', timeout: 15000 });
-    if (!body) return null;
     try {
-      eval(body);
-      if (typeof creatUtils === 'function' || typeof createUtils === 'function') {
-        kvSet(CACHE_KEY_CODE, body);
-        kvSet(CACHE_KEY_TIME, String(Date.now()));
-        return typeof creatUtils === 'function' ? creatUtils() : createUtils();
-      }
-      return null;
-    } catch {
-      return null;
+        const { body } = await fetchRemote({ url: UTILS_URL, method: 'GET', timeout: 15000 });
+        if (!body)
+            return null;
+        try {
+            eval(body);
+            if (typeof creatUtils === 'function' || typeof createUtils === 'function') {
+                kvSet(CACHE_KEY_CODE, body);
+                kvSet(CACHE_KEY_TIME, String(Date.now()));
+                return typeof creatUtils === 'function' ? creatUtils() : createUtils();
+            }
+            return null;
+        }
+        catch {
+            return null;
+        }
     }
-  } catch {
-    return null;
-  }
+    catch {
+        return null;
+    }
 }
-
 async function getCryptoJS() {
-  if (this.__GLOBAL_CryptoJS) return this.__GLOBAL_CryptoJS;
-  const utils = await loadUtilsCached();
-  if (!utils || typeof utils.createCryptoJS !== 'function') return null;
-  const CryptoJS = utils.createCryptoJS();
-  this.__GLOBAL_CryptoJS = CryptoJS;
-  return CryptoJS;
+    if (this.__GLOBAL_CryptoJS)
+        return this.__GLOBAL_CryptoJS;
+    const utils = await loadUtilsCached();
+    if (!utils || typeof utils.createCryptoJS !== 'function')
+        return null;
+    const CryptoJS = utils.createCryptoJS();
+    this.__GLOBAL_CryptoJS = CryptoJS;
+    return CryptoJS;
 }
-
 async function decryptKDFBody(cipherText) {
-  const CryptoJS = await getCryptoJS();
-  if (!CryptoJS) return '';
-
-  let txt = String(cipherText || '').trim();
-  txt = txt.replace(/\s+/g, '');
-  txt = txt.replace(/^"|"$/g, '');
-  if (!txt) return '';
-  const key = CryptoJS.enc.Utf8.parse(KDF_AES_KEY);
-  try {
-    const ct = CryptoJS.enc.Base64.parse(txt);
-    const bytes = CryptoJS.AES.decrypt(
-      { ciphertext: ct }, key,
-      { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 }
-    );
-    const result = bytes.toString(CryptoJS.enc.Utf8);
-    if (result && (result[0] === '{' || result[0] === '[')) return result;
-  } catch (e) {}
-  try {
-    const ctHex = CryptoJS.enc.Hex.parse(txt);
-    const bytes = CryptoJS.AES.decrypt(
-      { ciphertext: ctHex }, key,
-      { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 }
-    );
-    const result = bytes.toString(CryptoJS.enc.Utf8);
-    if (result && (result[0] === '{' || result[0] === '[')) return result;
-  } catch (e) {}
-  return '';
+    const CryptoJS = await getCryptoJS();
+    if (!CryptoJS)
+        return '';
+    let txt = String(cipherText || '').trim();
+    txt = txt.replace(/\s+/g, '');
+    txt = txt.replace(/^"|"$/g, '');
+    if (!txt)
+        return '';
+    const key = CryptoJS.enc.Utf8.parse(KDF_AES_KEY);
+    try {
+        const ct = CryptoJS.enc.Base64.parse(txt);
+        const bytes = CryptoJS.AES.decrypt({ ciphertext: ct }, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
+        const result = bytes.toString(CryptoJS.enc.Utf8);
+        if (result && (result[0] === '{' || result[0] === '['))
+            return result;
+    }
+    catch (e) { }
+    try {
+        const ctHex = CryptoJS.enc.Hex.parse(txt);
+        const bytes = CryptoJS.AES.decrypt({ ciphertext: ctHex }, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
+        const result = bytes.toString(CryptoJS.enc.Utf8);
+        if (result && (result[0] === '{' || result[0] === '['))
+            return result;
+    }
+    catch (e) { }
+    return '';
 }
-
 const M3U_HEADER = '#EXTM3U x-tvg-url="https://t.me/GithubYu9191"';
 const extraLines = t => [
-  `#EXTINF:-1 tvg-id="频道说明" tvg-name="频道说明" tvg-logo="https://epg.iill.top/logo/温馨提示.png" group-title="•${t}",欢迎订阅频道：https://t.me/GithubYu9191`,
-  'https://t.me/GithubYu9191'
+    `#EXTINF:-1 tvg-id="频道说明" tvg-name="频道说明" tvg-logo="https://epg.iill.top/logo/温馨提示.png" group-title="•${t}",欢迎订阅频道：https://t.me/GithubYu9191`,
+    'https://t.me/GithubYu9191'
 ];
-
 const url = $request.url || '';
-if (
-  url.includes('/api/v1/nba/game/') ||
-  url.includes('/cms/api/live/studio/id/v8') ||
-  url.includes('/cms/api/c/player/common')
-) {
-  parseVideoApi();
-} else if (url.includes('360.com/nba.m3u')) {
-  renderM3U('nba');
-} else if (url.includes('360.com/dianshi.m3u')) {
-  renderM3U('tv');
-} else if (url.includes('360.com/video')) {
-  renderHtml();
-} else {
-  $done({});
+if (url.includes('/api/v1/nba/game/') ||
+    url.includes('/cms/api/live/studio/id/v8') ||
+    url.includes('/cms/api/c/player/common')) {
+    parseVideoApi();
 }
-
+else if (url.includes('360.com/nba.m3u')) {
+    renderM3U('nba');
+}
+else if (url.includes('360.com/dianshi.m3u')) {
+    renderM3U('tv');
+}
+else if (url.includes('360.com/video')) {
+    renderHtml();
+}
+else {
+    $done({});
+}
 async function parseVideoApi() {
-  try {
-    let raw = $response.body;
-    if (typeof raw !== 'string') raw = String(raw || '');
-    let parsed = safeJson(raw);
-    if (!parsed) {
-      const decrypted = await decryptKDFBody(raw);
-      if (!decrypted) { console.log('KDF: 解密失败'); return $done({}); }
-      parsed = safeJson(decrypted);
-      if (!parsed) { console.log('KDF: JSON 解析失败'); return $done({}); }
+    try {
+        let raw = $response.body;
+        if (typeof raw !== 'string')
+            raw = String(raw || '');
+        let parsed = safeJson(raw);
+        if (!parsed) {
+            const decrypted = await decryptKDFBody(raw);
+            if (!decrypted) {
+                console.log('KDF: 解密失败');
+                return $done({});
+            }
+            parsed = safeJson(decrypted);
+            if (!parsed) {
+                console.log('KDF: JSON 解析失败');
+                return $done({});
+            }
+        }
+        const body = parsed;
+        if (body.dt?.liveStudioStreamRelVoList)
+            return handleNBA(body.dt);
+        if (body.dt?.medias)
+            return handleTV(body.dt);
+        console.log('KDF: 未识别内容');
+        $done({});
     }
-    const body = parsed;
-    if (body.dt?.liveStudioStreamRelVoList) return handleNBA(body.dt);
-    if (body.dt?.medias) return handleTV(body.dt);
-    console.log('KDF: 未识别内容');
-    $done({});
-  } catch (e) {
-    console.log('KDF: parseVideoApi 异常: ' + e);
-    $done({});
-  }
+    catch (e) {
+        console.log('KDF: parseVideoApi 异常: ' + e);
+        $done({});
+    }
 }
-
 function handleNBA(dt) {
-  store.set('content_type', 'nba');
-  store.set('nba_game_title', dt.title);
-  store.set('nba_game_description', dt.description || '');
-  store.set('nba_game_cover', dt.sourceCover);
-  store.set('nba_game_background', dt.backgroundCover || dt.sourceCover);
-
-  const streams = (dt.liveStudioStreamRelVoList || []).map(s => {
-    const best = s.qualitys?.find(q => /1080/.test(q.qualityShortName || '')) ?? s.qualitys?.[0] ?? {};
-    return {
-      title: s.title, cover: s.cover, canSee: s.canSee,
-      qualitys: s.qualitys || [], playUrl: best.qualityUrl || ''
-    };
-  });
-  store.set('nba_streams', JSON.stringify(streams));
-  if (dt.studioTabVoList) store.set('nba_tabs', JSON.stringify(dt.studioTabVoList));
-  notify(dt.title, 'NBA比赛');
-  $done({});
+    store.set('content_type', 'nba');
+    store.set('nba_game_title', dt.title);
+    store.set('nba_game_description', dt.description || '');
+    store.set('nba_game_cover', dt.sourceCover);
+    store.set('nba_game_background', dt.backgroundCover || dt.sourceCover);
+    const streams = (dt.liveStudioStreamRelVoList || []).map(s => {
+        const best = s.qualitys?.find(q => /1080/.test(q.qualityShortName || '')) ?? s.qualitys?.[0] ?? {};
+        return {
+            title: s.title, cover: s.cover, canSee: s.canSee,
+            qualitys: s.qualitys || [], playUrl: best.qualityUrl || ''
+        };
+    });
+    store.set('nba_streams', JSON.stringify(streams));
+    if (dt.studioTabVoList)
+        store.set('nba_tabs', JSON.stringify(dt.studioTabVoList));
+    notify(dt.title, 'NBA比赛');
+    $done({});
 }
-
 function handleTV(dt) {
-  const cur = dt.currentMedias || {};
-  store.set('content_type', 'tv');
-  store.set('tv_title', cur.contentName || '');
-  store.set('tv_cover', cur.mediaCover || '');
-  store.set('tv_description', cur.shareDesc || '');
-  store.set('tv_current_ep', cur.episodeNumber || 1);
-  store.set('tv_current_media', JSON.stringify(cur));
-
-  const rawEps = Array.isArray(dt.medias) ? dt.medias : (dt.medias?.data || []);
-  const pickBest = (qArr = [], fallback = '') => {
-    if (!Array.isArray(qArr) || qArr.length === 0) return fallback;
-    return qArr.map(q => ({
-      url: q.qualityUrl || q.originalUrl || '',
-      score: /1080|FHD/i.test(q.qualityShortName || q.bitrateType) ? 3 :
-             /720|HD/i.test(q.qualityShortName || q.bitrateType) ? 2 : 1,
-      bw: +(q.bandWidth || 0)
-    })).filter(o => o.url).sort((a, b) => b.score - a.score || b.bw - a.bw)[0].url;
-  };
-  const episodes = rawEps.map(ep => ({
-    episodeNumber: ep.episodeNumber, title: ep.mediaName, subTitle: ep.mediaSubTitle,
-    cover: ep.mediaCover, duration: ep.duration, qualitys: ep.qualitys || [],
-    playUrl: pickBest(ep.qualitys, ep.mediaUrl || '')
-  }));
-  store.set('tv_episodes', JSON.stringify(episodes));
-  notify(cur.contentName || '电视剧', '电视剧');
-  $done({});
+    const cur = dt.currentMedias || {};
+    store.set('content_type', 'tv');
+    store.set('tv_title', cur.contentName || '');
+    store.set('tv_cover', cur.mediaCover || '');
+    store.set('tv_description', cur.shareDesc || '');
+    store.set('tv_current_ep', cur.episodeNumber || 1);
+    store.set('tv_current_media', JSON.stringify(cur));
+    const rawEps = Array.isArray(dt.medias) ? dt.medias : (dt.medias?.data || []);
+    const pickBest = (qArr = [], fallback = '') => {
+        if (!Array.isArray(qArr) || qArr.length === 0)
+            return fallback;
+        return qArr.map(q => ({
+            url: q.qualityUrl || q.originalUrl || '',
+            score: /1080|FHD/i.test(q.qualityShortName || q.bitrateType) ? 3 :
+                /720|HD/i.test(q.qualityShortName || q.bitrateType) ? 2 : 1,
+            bw: +(q.bandWidth || 0)
+        })).filter(o => o.url).sort((a, b) => b.score - a.score || b.bw - a.bw)[0].url;
+    };
+    const episodes = rawEps.map(ep => ({
+        episodeNumber: ep.episodeNumber, title: ep.mediaName, subTitle: ep.mediaSubTitle,
+        cover: ep.mediaCover, duration: ep.duration, qualitys: ep.qualitys || [],
+        playUrl: pickBest(ep.qualitys, ep.mediaUrl || '')
+    }));
+    store.set('tv_episodes', JSON.stringify(episodes));
+    notify(cur.contentName || '电视剧', '电视剧');
+    $done({});
 }
-
 function notify(title, type) {
-  const link = 'https://360.com/video';
-  const msg = type === 'NBA比赛' ? '点击查看比赛直播和集锦' : '点击查看剧集';
-  if (typeof $notify !== 'undefined') {
-    $notify(title || '看东方', '', msg, { 'open-url': link, url: link });
-  } else if (typeof $notification !== 'undefined') {
-    $notification.post(title || '看东方', '', msg, { 'open-url': link, openUrl: link, url: link });
-  }
+    const link = 'https://360.com/video';
+    const msg = type === 'NBA比赛' ? '点击查看比赛直播和集锦' : '点击查看剧集';
+    if (typeof $notify !== 'undefined') {
+        $notify(title || '看东方', '', msg, { 'open-url': link, url: link });
+    }
+    else if (typeof $notification !== 'undefined') {
+        $notification.post(title || '看东方', '', msg, { 'open-url': link, openUrl: link, url: link });
+    }
 }
-
 function buildM3U(kind) {
-  const lines = [M3U_HEADER];
-  if (kind === 'nba') {
-    const title = store.get('nba_game_title') || 'NBA';
-    lines.push(...extraLines(title));
-    JSON.parse(store.get('nba_streams') || '[]').forEach(s => {
-      if (!s.playUrl) return;
-      lines.push(`#EXTINF:-1 tvg-id="${s.title}" tvg-name="${s.title}" tvg-logo="${s.cover}" group-title="${s.title}「1080」",${s.title}`);
-      lines.push(s.playUrl);
-    });
-  } else {
-    const title = store.get('tv_title') || '电视剧';
-    lines.push(...extraLines(title));
-    JSON.parse(store.get('tv_episodes') || '[]').forEach(ep => {
-      const u = ep.playUrl || (ep.qualitys?.find(q => q.qualityUrl)?.qualityUrl) || ep.mediaUrl || '';
-      if (!u) return;
-      const name = `${title} - 第${ep.episodeNumber}集`;
-      lines.push(`#EXTINF:-1 tvg-id="${name}" tvg-name="${name}" tvg-logo="${ep.cover}" group-title="${title}",${name}`);
-      lines.push(u);
-    });
-  }
-  return lines.join('\n');
+    const lines = [M3U_HEADER];
+    if (kind === 'nba') {
+        const title = store.get('nba_game_title') || 'NBA';
+        lines.push(...extraLines(title));
+        JSON.parse(store.get('nba_streams') || '[]').forEach(s => {
+            if (!s.playUrl)
+                return;
+            lines.push(`#EXTINF:-1 tvg-id="${s.title}" tvg-name="${s.title}" tvg-logo="${s.cover}" group-title="${s.title}「1080」",${s.title}`);
+            lines.push(s.playUrl);
+        });
+    }
+    else {
+        const title = store.get('tv_title') || '电视剧';
+        lines.push(...extraLines(title));
+        JSON.parse(store.get('tv_episodes') || '[]').forEach(ep => {
+            const u = ep.playUrl || (ep.qualitys?.find(q => q.qualityUrl)?.qualityUrl) || ep.mediaUrl || '';
+            if (!u)
+                return;
+            const name = `${title} - 第${ep.episodeNumber}集`;
+            lines.push(`#EXTINF:-1 tvg-id="${name}" tvg-name="${name}" tvg-logo="${ep.cover}" group-title="${title}",${name}`);
+            lines.push(u);
+        });
+    }
+    return lines.join('\n');
 }
-
 function renderM3U(kind) {
-  $done({
-    status: 'HTTP/1.1 200 OK',
-    headers: { 'Content-Type': 'audio/x-mpegurl; charset=utf-8' },
-    body: buildM3U(kind)
-  });
-}
-
-function renderHtml() {
-  try {
-    const type = store.get('content_type') || 'nba';
-    type === 'nba' ? htmlNBA() : htmlTV();
-  } catch (e) {
     $done({
-      status: 'HTTP/1.1 500',
-      headers: { 'Content-Type': 'text/html; charset=utf-8' },
-      body: `<h1>Error</h1><p>${e}</p>`
+        status: 'HTTP/1.1 200 OK',
+        headers: { 'Content-Type': 'audio/x-mpegurl; charset=utf-8' },
+        body: buildM3U(kind)
     });
-  }
 }
-
-/* ---- NBA 页面 ---- */
+function renderHtml() {
+    try {
+        const type = store.get('content_type') || 'nba';
+        type === 'nba' ? htmlNBA() : htmlTV();
+    }
+    catch (e) {
+        $done({
+            status: 'HTTP/1.1 500',
+            headers: { 'Content-Type': 'text/html; charset=utf-8' },
+            body: `<h1>Error</h1><p>${e}</p>`
+        });
+    }
+}
 function htmlNBA() {
-  const title   = store.get('nba_game_title')        || 'NBA';
-  const desc    = store.get('nba_game_description')  || '';
-  const cover   = store.get('nba_game_cover')        || '';
-  const bg      = store.get('nba_game_background')   || cover;
-  const streams = JSON.parse(store.get('nba_streams') || '[]');
-  const tabs    = JSON.parse(store.get('nba_tabs')    || '[]');
-
-  const streamsHTML = streams.map(s => {
-    const badge = !s.canSee ? '<span class="vip-badge">会员</span>' : '';
-    const qBtns = (s.qualitys || []).map(q =>
-      `<a href="javascript:void(0)" data-url="${encodeURIComponent(q.qualityUrl || '')}" data-name="${escapeAttr(s.title + ' ' + (q.qualityShortName || ''))}" class="quality-btn" onclick="playWith(this)">${q.qualityShortName}</a>`
-    ).join('');
-    return `<div class="video-item">
+    const title = store.get('nba_game_title') || 'NBA';
+    const desc = store.get('nba_game_description') || '';
+    const cover = store.get('nba_game_cover') || '';
+    const bg = store.get('nba_game_background') || cover;
+    const streams = JSON.parse(store.get('nba_streams') || '[]');
+    const tabs = JSON.parse(store.get('nba_tabs') || '[]');
+    const streamsHTML = streams.map(s => {
+        const badge = !s.canSee ? '<span class="vip-badge">会员</span>' : '';
+        const qBtns = (s.qualitys || []).map(q => `<a href="javascript:void(0)" data-url="${encodeURIComponent(q.qualityUrl || '')}" data-name="${escapeAttr(s.title + ' ' + (q.qualityShortName || ''))}" class="quality-btn" onclick="playWith(this)">${q.qualityShortName}</a>`).join('');
+        return `<div class="video-item">
       <div class="video-thumbnail${!s.canSee ? ' vip-content' : ''}"><img src="${s.cover}" alt="${escapeAttr(s.title)}" onerror="this.src=''">${badge}</div>
       <h3>${s.title}</h3><div class="quality-options">${qBtns}</div></div>`;
-  }).join('');
-
-  const tabsHTML = tabs.filter(t => t.address)
-    .map(t => `<a href="${t.address}" class="tab-btn" target="_blank">${t.name}</a>`).join('');
-
-  $done({
-    status: 'HTTP/1.1 200 OK',
-    headers: { 'Content-Type': 'text/html; charset=utf-8' },
-    body: `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>${css()}
+    }).join('');
+    const tabsHTML = tabs.filter(t => t.address)
+        .map(t => `<a href="${t.address}" class="tab-btn" target="_blank">${t.name}</a>`).join('');
+    $done({
+        status: 'HTTP/1.1 200 OK',
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+        body: `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>${css()}
     .videos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:15px;margin-top:10px}
     </style></head><body>
     <div class="header"><div class="header-bg" style="background-image:url('${bg}')"></div><div class="header-overlay"></div>
@@ -328,31 +320,24 @@ function htmlNBA() {
       <div class="videos-grid">${streamsHTML}</div></div>
     ${playerPickerHTML()}
     <script>${playerJS()}\nfunction copyM3U(k){navigator.clipboard.writeText(k==='nba'?'https://360.com/nba.m3u':'https://360.com/dianshi.m3u').then(()=>alert('已复制 M3U 源'));}</script></body></html>`
-  });
+    });
 }
-
-/* ---- 电视剧 页面 ---- */
 function htmlTV() {
-  const title    = store.get('tv_title')           || '电视剧';
-  const desc     = store.get('tv_description')     || '';
-  const cover    = store.get('tv_cover')           || '';
-  const curEp    = +store.get('tv_current_ep')     || 1;
-  const episodes = JSON.parse(store.get('tv_episodes')      || '[]');
-  const curMedia = JSON.parse(store.get('tv_current_media') || '{}');
-
-  const epsHTML = episodes.map(ep => `
+    const title = store.get('tv_title') || '电视剧';
+    const desc = store.get('tv_description') || '';
+    const cover = store.get('tv_cover') || '';
+    const curEp = +store.get('tv_current_ep') || 1;
+    const episodes = JSON.parse(store.get('tv_episodes') || '[]');
+    const curMedia = JSON.parse(store.get('tv_current_media') || '{}');
+    const epsHTML = episodes.map(ep => `
     <div class="episode-item ${ep.episodeNumber === curEp ? 'active' : ''}">
       <div class="episode-thumbnail"><img src="${ep.cover}" alt="${escapeAttr(ep.title || '')}" onerror="this.src=''"></div>
       <h3>${ep.title}</h3><p class="subtitle">${ep.subTitle || ''}</p></div>`).join('');
-
-  const qBtns = (curMedia.qualitys || []).map(q =>
-    `<a href="javascript:void(0)" data-url="${encodeURIComponent(q.qualityUrl || '')}" data-name="${escapeAttr((curMedia.mediaName || '') + ' ' + (q.qualityShortName || ''))}" class="quality-btn" onclick="playWith(this)">${q.qualityShortName}</a>`
-  ).join('');
-
-  $done({
-    status: 'HTTP/1.1 200 OK',
-    headers: { 'Content-Type': 'text/html; charset=utf-8' },
-    body: `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>${css()}
+    const qBtns = (curMedia.qualitys || []).map(q => `<a href="javascript:void(0)" data-url="${encodeURIComponent(q.qualityUrl || '')}" data-name="${escapeAttr((curMedia.mediaName || '') + ' ' + (q.qualityShortName || ''))}" class="quality-btn" onclick="playWith(this)">${q.qualityShortName}</a>`).join('');
+    $done({
+        status: 'HTTP/1.1 200 OK',
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+        body: `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>${css()}
     .episodes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:15px;margin-top:20px}
     .episode-item{position:relative;background:var(--card);border-radius:8px;overflow:hidden;transition:.2s;padding-bottom:10px;cursor:pointer}
     .episode-item.active{border:2px solid var(--primary-color)}.episode-item:hover{transform:translateY(-5px)}
@@ -369,16 +354,13 @@ function htmlTV() {
       <div class="episodes-grid">${epsHTML}</div></div>
     ${playerPickerHTML()}
     <script>${playerJS()}\nfunction copyM3U(k){navigator.clipboard.writeText(k==='nba'?'https://360.com/nba.m3u':'https://360.com/dianshi.m3u').then(()=>alert('已复制 M3U 源'));}</script></body></html>`
-  });
+    });
 }
-
 function escapeAttr(s) {
-  return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 }
-
-/* ---------- 通用 CSS ---------- */
 function css() {
-  return `
+    return `
 :root{--primary-color:#f39c12;--bg:#0c0c0c;--card:#1a1a1a;--text:#fff;--sec:#333;--hover:#555}
 *{box-sizing:border-box}
 body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
@@ -418,10 +400,8 @@ h1{margin:0 0 10px;font-size:24px;font-weight:700;text-shadow:0 2px 4px rgba(0,0
 .player-close{display:block;margin:14px auto 0;padding:6px 18px;background:var(--primary-color);border:0;border-radius:5px;color:#fff;cursor:pointer}
 `;
 }
-
-/* ---------- 播放器选择器 ---------- */
 function playerPickerHTML() {
-  return `<div id="player-mask" class="player-mask" onclick="if(event.target.id==='player-mask')closePlayerPicker()">
+    return `<div id="player-mask" class="player-mask" onclick="if(event.target.id==='player-mask')closePlayerPicker()">
     <div class="player-dialog">
       <h3>选择默认播放器</h3>
       <div class="player-list" id="player-list"></div>
@@ -429,9 +409,8 @@ function playerPickerHTML() {
     </div>
   </div>`;
 }
-
 function playerJS() {
-  return `
+    return `
 const PLAYERS = {
   "默认浏览器": { scheme: "", needEncode: false, supportName: false },
   "Lenna":     { scheme: "lenna://x-callback-url/play?url=",      needEncode: true,  supportName: false },

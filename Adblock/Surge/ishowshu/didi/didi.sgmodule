@@ -1,4 +1,5 @@
 #!name=滴滴出行
+# WayX ID: AD0095
 # Icon: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/didi.png
 # Icon Collection: https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/icons-all.json
 #!desc=Native QX conversion
@@ -60,9 +61,8 @@ IP-CIDR,123.207.209.39/32,REJECT,no-resolve
 # 订单详情页底部推广调研反馈
 # 订单页面右上角地址分享图标
 # 我的页面底部菜单及推广
-# Source declaration: ^https:\/\/common\.diditaxi\.com\.cn\/common\/v5\/usercenter\/layout url jsonjq-response-body del(.data.instances.center_marketing_card, .data.instances.center_tool_card, .data.instances.center_widget_list, .data.instances.center_res_light_guide) | .data.instances.center_wallet_finance_card.data.view_info |= map(select(.title == "优惠卡券"))
-# 首页菜单图标和底部栏
-# Source declaration: ^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v1\/core\? url jsonjq-response-body .data.disorder_cards.bottom_nav_list.data |= [.[] | select(.id == "home_page" or .id == "user_center")] | .data.order_cards.nav_list_card.data |= [.[] | select(.nav_id == "bike" or .nav_id == "driverservice" or .nav_id == "carmate")]
+# Source declaration: ^https:\/\/common\.diditaxi\.com\.cn\/common\/v5\/usercenter\/layout url jsonjq-response-body del(.data.instances.center_marketing_card, .data.instances.center_tool_card, .data.instances.center_widget_list, .data.instances.center_res_light_guide)
+# Source declaration: ^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v1\/core\? url jsonjq-response-body .data.order_cards.nav_list_card.data |= [.[] | select(.nav_id == "bike" or .nav_id == "driverservice" or .nav_id == "carmate")]
 # 订单进行页面各种推广
 # Source declaration: ^https:\/\/api\.udache\.com\/gulfstream\/passenger-center\/v2\/other\/pInTripLayout url jsonjq-response-body .data.order_components |= map(select((.name != "passenger_common_casper") and (.name != "xp-card")))
 # Source declaration: ^https:\/\/api\.udache\.com\/gulfstream\/passenger-center\/v2\/bronze\/pEndTripPaidLayout url jsonjq-response-body .data.layout.order |= ["finish-order-01"] | del(."data"."layout"."disorder"."member-growth")
@@ -79,8 +79,8 @@ IP-CIDR,123.207.209.39/32,REJECT,no-resolve
 ^https:\/\/api\.udache\.com\/gulfstream\/pandora\/v1\/invitation\/shareAddress\/pGetShareAddressPage data-type=text data="{}" status-code=200 header="Content-Type:application/json"
 
 [Body Rewrite]
-http-response-jq ^https:\/\/common\.diditaxi\.com\.cn\/common\/v5\/usercenter\/layout 'del(.data.instances.center_marketing_card, .data.instances.center_tool_card, .data.instances.center_widget_list, .data.instances.center_res_light_guide) | .data.instances.center_wallet_finance_card.data.view_info |= map(select(.title == "优惠卡券"))'
-http-response-jq ^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v1\/core\? '.data.disorder_cards.bottom_nav_list.data |= [.[] | select(.id == "home_page" or .id == "user_center")] | .data.order_cards.nav_list_card.data |= [.[] | select(.nav_id == "bike" or .nav_id == "driverservice" or .nav_id == "carmate")]'
+http-response-jq ^https:\/\/common\.diditaxi\.com\.cn\/common\/v5\/usercenter\/layout 'del(.data.instances.center_marketing_card, .data.instances.center_tool_card, .data.instances.center_widget_list, .data.instances.center_res_light_guide)'
+http-response-jq ^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v1\/core\? '.data.order_cards.nav_list_card.data |= [.[] | select(.nav_id == "bike" or .nav_id == "driverservice" or .nav_id == "carmate")]'
 http-response-jq ^https:\/\/api\.udache\.com\/gulfstream\/passenger-center\/v2\/other\/pInTripLayout '.data.order_components |= map(select((.name != "passenger_common_casper") and (.name != "xp-card")))'
 http-response-jq ^https:\/\/api\.udache\.com\/gulfstream\/passenger-center\/v2\/bronze\/pEndTripPaidLayout '.data.layout.order |= ["finish-order-01"] | del(."data"."layout"."disorder"."member-growth")'
 http-response-jq ^https:\/\/api\.udache\.com\/gulfstream\/passenger-center\/v2\/bronze\/pInTripLayout '.data.layout.order |= ["header-card-1", "driver-card-1"]'

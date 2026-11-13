@@ -1,16 +1,6 @@
-/*
-[rewrite]
-http:\/\/www\.google\..* url script-response-body Endless_Google.user.js
-
-[mitm]
-www.google.*
- 
-*/
-
-let body = $response.body
-
+let body = $response.body;
 if (/<\/html>|<\/body>/.test(body)) {
-  body = body.replace('</body>', `
+    body = body.replace('</body>', `
 
 <script>
 const elecJSPack = function(){// ==UserScript==
@@ -154,7 +144,6 @@ function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
-}()</script></body>`)
-
+}()</script></body>`);
 }
-$done({ body })
+$done({ body });

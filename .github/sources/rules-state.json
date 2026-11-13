@@ -19,7 +19,7 @@
     "Rule/Quantumult X/WayX/cn/cn.list": "97fa5f673446865670217647a6c4ba3608e53ba06a0e5739fee0b16a351476c3",
     "Rule/Quantumult X/WayX/proxy/proxy.list": "ceb4c66b33359a45ea8becf8ab6506e5bb6269bf50e4b4407c28a22a3e1f511a",
     "Rule/Quantumult X/WayX/adblock/adblock.list": "a8904a6756f7c50411e40878409b49b985445db4d18dd61708b7b563811a7c65",
-    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": "f1977a4db97eaf89f5fdf4d10ec61198c4d11d242e42031dd808914764d4bc0b",
+    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": "1c6d426bc06d071ddfcadd06cb38914c4eeb4729f918ac57e2dc60ada482d336",
     "Rule/Surge/WayX/google/google.list": "912e0c6188e8ba45b52e86b262bb46ce9f2c31cb29b0cbe28a13f04e5482eaa9",
     "Rule/Surge/WayX/youtube/youtube.list": "1f5a9d6d4d357d6b2c8f012f624ff96eb05d525bc83557144bb78f48f3dde038",
     "Rule/Surge/WayX/ai/ai.list": "cc7e68e29b22236d7c3e5ac17d187de7c622142eedc04b7b02ab1d892f091e2b",
@@ -41,7 +41,7 @@
     "Rule/Surge/WayX/cn/cn.list": "07e83d4f772fa1615b2821db7f2b32f9b0b7b4af9b255f96c4e534c689022cf6",
     "Rule/Surge/WayX/proxy/proxy.list": "22eb2cf61fd41770ea2f476cfe4d5a26eca240ce4d2ec8874808dfbf507aaeb7",
     "Rule/Surge/WayX/adblock/adblock.list": "b2bd9d995fd431bf920c27b49fea9f911cc08be045b806a784a7afaac29c548a",
-    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": "0cd87cce14356b5026eb2c446ca81d346436c8ebe08ee32a3b6d8de23a0b07de",
+    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": "c06ea68b44592a13991028284dfaaddb243fa85cfd0c5afb1ecf0e69d288c478",
     "Rule/Quantumult X/WayX/filterfix/filterfix.list": "bc2f4b0be6d4d4f0a9c490b2f4e3259cabeda3ae6cd729a4c7d32d76fc1edffd",
     "Rule/Surge/WayX/filterfix/filterfix.dconf": "ba43f26b47a1eb7f9b8659d65da7c41e5a9639f23a6a8b20b673c559359befeb"
   },
@@ -64,7 +64,7 @@
     "Rule/Quantumult X/WayX/cn/cn.list": 127961,
     "Rule/Quantumult X/WayX/proxy/proxy.list": 34241,
     "Rule/Quantumult X/WayX/adblock/adblock.list": 299997,
-    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": 149432,
+    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": 149575,
     "Rule/Surge/WayX/google/google.list": 897,
     "Rule/Surge/WayX/youtube/youtube.list": 182,
     "Rule/Surge/WayX/ai/ai.list": 817,
@@ -86,7 +86,7 @@
     "Rule/Surge/WayX/cn/cn.list": 127961,
     "Rule/Surge/WayX/proxy/proxy.list": 34241,
     "Rule/Surge/WayX/adblock/adblock.list": 299997,
-    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": 149432,
+    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": 149575,
     "Rule/Quantumult X/WayX/filterfix/filterfix.list": 63,
     "Rule/Surge/WayX/filterfix/filterfix.dconf": 63
   },
@@ -140,7 +140,7 @@
       "max_age_days": 7,
       "timeout": 8,
       "fetched_url": "https://ruleset.skk.moe/List/domainset/reject.conf",
-      "sha256": "8654cc2d985b940a151eaed70ddc50f463b18d71616e1c10a96673548b7e1e9f"
+      "sha256": "6e656ffe38dbf730a1f4034d9b658473600abead527702b4e59e9c2faef665bc"
     },
     {
       "id": "mihomo-proxy",
@@ -1022,20 +1022,20 @@
       "id": "geosite",
       "author": "V2Fly",
       "format": "protobuf",
-      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261110034535/dlc.dat",
+      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261112220449/dlc.dat",
       "license": "MIT",
-      "revision": "20261110034535",
-      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261110034535/dlc.dat",
-      "sha256": "6cc4decf520dbfd96e1e3750661976eb31d2a5381090b8768cb2ab1528201fcf"
+      "revision": "20261112220449",
+      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261112220449/dlc.dat",
+      "sha256": "02ad51927d05608b672bbcdf37f37b94ce1fdb7dcd10852f367ed457ad56280b"
     },
     {
       "id": "geosite-checksum",
       "author": "V2Fly",
       "format": "checksum",
-      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261110034535/dlc.dat.sha256sum",
+      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261112220449/dlc.dat.sha256sum",
       "license": "MIT",
-      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261110034535/dlc.dat.sha256sum",
-      "sha256": "50a9d09a191e9be7942ce3f745501697d41606b985a80cf29454df7791c1c36e"
+      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261112220449/dlc.dat.sha256sum",
+      "sha256": "84756f38fb90e0bdab7172d55a6477582f9d994be47fb5ff88e41885f6410577"
     }
   ],
   "configuration": "7d854fd64bcbd3fa990304f7fc517f888d803383e9d7efb5c9684fb4055e30e7",
