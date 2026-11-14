@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-1.min.js",
-  "sourceSha256": "ba435eb8f75cd84bd9053cd04980128e2a606983ecdfab95431d7a24f2611d37",
+  "sourceSha256": "59c52849450df65b09737a0810cfe1ec604ed6a2e87ca50a81d25fb4eef4b1de",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "ba435eb8f75cd84bd9053cd04980128e2a606983ecdfab95431d7a24f2611d37",
+    "sha256": "59c52849450df65b09737a0810cfe1ec604ed6a2e87ca50a81d25fb4eef4b1de",
     "operations": [
       {
         "api": "require",
@@ -1422,8 +1422,8 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1254216,
-        "end": 1254226,
+        "start": 1254240,
+        "end": 1254250,
         "line": 1598,
         "column": 71,
         "members": [
@@ -1433,8 +1433,8 @@
       {
         "api": "TextEncoder",
         "access": "read",
-        "start": 1281805,
-        "end": 1281816,
+        "start": 1281829,
+        "end": 1281840,
         "line": 1633,
         "column": 1493,
         "members": [
@@ -1444,8 +1444,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 1281821,
-        "end": 1281838,
+        "start": 1281845,
+        "end": 1281862,
         "line": 1633,
         "column": 1509,
         "members": [
@@ -1464,7 +1464,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "ba435eb8f75cd84bd9053cd04980128e2a606983ecdfab95431d7a24f2611d37",
+        "analysisSourceSha256": "59c52849450df65b09737a0810cfe1ec604ed6a2e87ca50a81d25fb4eef4b1de",
         "operations": [
           {
             "id": "api:0",
@@ -4537,8 +4537,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1254216,
-              "end": 1254226,
+              "start": 1254240,
+              "end": 1254250,
               "line": 1598,
               "column": 71,
               "access": "read",
@@ -4561,8 +4561,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 1281805,
-              "end": 1281816,
+              "start": 1281829,
+              "end": 1281840,
               "line": 1633,
               "column": 1493,
               "access": "read",
@@ -4585,8 +4585,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 1281821,
-              "end": 1281838,
+              "start": 1281845,
+              "end": 1281862,
               "line": 1633,
               "column": 1509,
               "access": "call",

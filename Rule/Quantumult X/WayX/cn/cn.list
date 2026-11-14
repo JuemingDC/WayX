@@ -1,11 +1,11 @@
 # Name: cn
-# Updated: 2026-11-14 06:48:31 UTC
+# Updated: 2026-11-14 09:22:05 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 128066
+# Rules: 128067
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -119889,6 +119889,7 @@ ip-cidr,182.238.0.0/16,direct
 ip-cidr,182.239.0.0/19,direct
 ip-cidr,182.240.0.0/13,direct
 ip-cidr,182.254.0.0/16,direct
+ip-cidr,182.255.60.0/22,direct
 ip-cidr,182.32.0.0/12,direct
 ip-cidr,182.48.112.0/21,direct
 ip-cidr,182.48.96.0/19,direct
