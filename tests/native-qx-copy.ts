@@ -12,6 +12,19 @@ import {
 import { validateSourceBackups } from "../src/validation/backups.ts";
 import { mergeNativeQxSources } from "../src/publish/workflow.ts";
 import { executableScript } from "../src/domain/executable-script.ts";
+// Modified: 2026-11-14 (chance). Reproduce the failed upstream revision and
+// preserve the author's corrected rule, unrelated declarations and strict validation.
+const limboUrl = "https://raw.githubusercontent.com/limbopro/Adblock4limbo/main/Adblock4limbo.conf";
+const invalidHeader = String.raw`^https:\/\/kanav\.ad\/ url request-header url`;
+const authorHeader = String.raw`^https:\/\/kanav\.ad\/ url request-header (\r\n)Accept-Encoding:.+(\r\n) request-header $1Accept-Encoding: identity$2`;
+const sibling = "^https://example.test/ads url reject";
+const repaired = mergeNativeQxSources([{url: limboUrl, text: invalidHeader + "\n" + sibling}], {name: "Limbo"});
+assert.ok(repaired.includes("\n" + authorHeader + "\n"));
+assert.ok(repaired.includes("# Source declaration: " + invalidHeader));
+assert.ok(repaired.includes(sibling));
+const authorText = authorHeader + "\n" + sibling + "\n";
+assert.ok(mergeNativeQxSources([{url: limboUrl, text: authorText}], {name: "Limbo"}).includes(authorText));
+assert.throws(() => mergeNativeQxSources([{url: "https://other.test/example.conf", text: invalidHeader}], {name: "Other"}), /unsupported/);
 const root = await fs.mkdtemp(path.join(os.tmpdir(), "wayx-native-copy-"));
 const url = "https://author.test/author.js";
 const script = Buffer.from(

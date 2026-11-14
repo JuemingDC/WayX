@@ -122,7 +122,9 @@ jobs:
 
       - name: Generate reconciliation and Review inventory
         id: reports
-        if: always()
+        # Modified: 2026-11-14 (chance). Reconcile only a published-layout snapshot
+        # that passed verification; dependency failures stay in their own stage.
+        if: always() && steps.loon_sync.outputs.publishable == 'true' && steps.verify.outcome == 'success'
         continue-on-error: true
         run: node src/cli.ts reports 2>&1 | tee .github/monitor/.runtime/reports.log
 

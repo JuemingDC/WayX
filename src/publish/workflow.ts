@@ -358,8 +358,18 @@ export async function writeManagedTargets(state: any, out: any): Promise<any> {
 // Modified: 2026-10-25 (chance). Import native QX resources without passing
 // through the Loon compiler. Keep upstream active text/order; backup publication later rebinds only script operands.
 const NATIVE_QX_MARKER: any = "# Managed by: WayX Native QX";
-// Modified: 2026-11-01 (chance). User-authorized repair is restricted to this exact upstream declaration; retain its original text and do not generalize malformed replacement handling.
+// Modified: 2026-11-14 (chance). Restrict native repairs to exact known source
+// declarations; preserve originals and refuse unrelated malformed replacements.
 export function repairNativeQxSource(source: {url: string; text: string}): string {
+  // Modified: 2026-11-14 (chance). Apply only the author's exact kanav fix
+  // (limbopro/Adblock4limbo@685809e4); raw input archives remain unchanged.
+  if (source.url === "https://raw.githubusercontent.com/limbopro/Adblock4limbo/main/Adblock4limbo.conf") {
+    const original = String.raw`^https:\/\/kanav\.ad\/ url request-header url`;
+    const corrected = String.raw`^https:\/\/kanav\.ad\/ url request-header (\r\n)Accept-Encoding:.+(\r\n) request-header $1Accept-Encoding: identity$2`;
+    return source.text.split("\n").map(line => line === original
+      ? "# Modified: 2026-11-14 (chance). Apply upstream 685809e4 Accept-Encoding correction.\n# Source declaration: " + original + "\n" + corrected
+      : line).join("\n");
+  }
   if (source.url !== "https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/Function/EmbyPlugin.conf") return source.text;
   const original = String.raw`\/Users\/\w{32}\/Items\/\d+\? url request-header (\r\n)Accept-Encoding:.+ request-header $Accept-Encoding: gzip, deflate, br`;
   const corrected = String.raw`\/Users\/\w{32}\/Items\/\d+\? url request-header (\r\n)Accept-Encoding:.+(\r\n) request-header $1Accept-Encoding: gzip, deflate, br$2`;

@@ -1,3 +1,4 @@
+import { checkFailureExcerpt } from "../domain/check-failure.ts";
 // Modified: 2026-10-30 (chance). One TypeScript application owns checks, gates
 // and publication; GitHub Actions only dispatches commands and stores artifacts.
 import fs from "node:fs/promises";
@@ -115,19 +116,15 @@ export async function executeChecks(
       }
     if (item.status === "failed") {
       const text = await fs.readFile(log, "utf8");
-      item.detail =
-        text.length <= 4000
-          ? text
-          : text.slice(0, 2000) +
-            "\n[full log in artifact]\n" +
-            text.slice(-2000);
+      // Modified: 2026-11-14 (chance). Surface mid-log failures before progress.
+      item.detail = checkFailureExcerpt(text);
       console.error(
         `::error title=WayX validation::${stage}/${id}: see ${log}`,
       );
     }
-    // Modified: 2026-11-01 (chance). Surface the actual failure tail in Actions instead of forcing a download of the full artifact to diagnose acquisition/API errors.
+    // Modified: 2026-11-14 (chance). Actions and Issues share the error-first excerpt.
     if (item.status === "failed")
-      console.error((await fs.readFile(log, "utf8")).slice(-12000));
+      console.error(item.detail);
     results.push(item);
     await writeReport("validation-results.json", report);
   }

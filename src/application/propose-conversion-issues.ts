@@ -1,3 +1,4 @@
+import { checkFailureExcerpt } from "../domain/check-failure.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript application layer; preserve source behavior.
 // WayX automated conversion issue proposer.
 // Author: chance
@@ -510,13 +511,14 @@ export function validationFailureIssueBody(failure: any): any {
       "- Log: " + (check.log || "workflow stage log"),
       "",
       "~~~text",
-      JSON.stringify(
+      // Modified: 2026-11-14 (chance). Keep plain log lines readable and error-first;
+      // JSON escaping previously spent the excerpt budget on routine progress.
+      checkFailureExcerpt(
         check.findings?.length
-          ? check.findings
+          ? JSON.stringify(check.findings, null, 2)
           : check.detail || "Check failed",
-        null,
-        2,
-      ).slice(0, 1400),
+        1400,
+      ),
       "~~~",
       "",
     );
