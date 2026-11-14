@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-hub.js",
-  "sourceSha256": "6a0c1d8e05136e7f134bfbf0dd94a8ab7356b22607a1ba7bace57820e2bc7af1",
+  "sourceSha256": "f99b893402fe30b783a10faf22a8f18c0fb86d30618f6e057545e04982e9ce7c",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "6a0c1d8e05136e7f134bfbf0dd94a8ab7356b22607a1ba7bace57820e2bc7af1",
+    "sha256": "f99b893402fe30b783a10faf22a8f18c0fb86d30618f6e057545e04982e9ce7c",
     "operations": [
       {
         "api": "$request",
@@ -35,9 +35,9 @@
       {
         "api": "$httpAPI",
         "access": "call",
-        "start": 245383,
-        "end": 245452,
-        "line": 1680,
+        "start": 246797,
+        "end": 246866,
+        "line": 1708,
         "column": 5,
         "members": [
           "$httpAPI"
@@ -46,9 +46,9 @@
       {
         "api": "$environment",
         "access": "read",
-        "start": 246040,
-        "end": 246052,
-        "line": 1687,
+        "start": 247454,
+        "end": 247466,
+        "line": 1715,
         "column": 561,
         "members": [
           "$environment"
@@ -57,9 +57,9 @@
       {
         "api": "$environment.surge-version",
         "access": "read",
-        "start": 246054,
-        "end": 246083,
-        "line": 1687,
+        "start": 247468,
+        "end": 247497,
+        "line": 1715,
         "column": 575,
         "members": [
           "$environment",
@@ -69,9 +69,9 @@
       {
         "api": "$environment",
         "access": "read",
-        "start": 246112,
-        "end": 246124,
-        "line": 1687,
+        "start": 247526,
+        "end": 247538,
+        "line": 1715,
         "column": 633,
         "members": [
           "$environment"
@@ -80,9 +80,9 @@
       {
         "api": "$environment.stash-version",
         "access": "read",
-        "start": 246126,
-        "end": 246155,
-        "line": 1687,
+        "start": 247540,
+        "end": 247569,
+        "line": 1715,
         "column": 647,
         "members": [
           "$environment",
@@ -92,9 +92,9 @@
       {
         "api": "$task",
         "access": "read",
-        "start": 246237,
-        "end": 246242,
-        "line": 1687,
+        "start": 247651,
+        "end": 247656,
+        "line": 1715,
         "column": 758,
         "members": [
           "$task"
@@ -103,9 +103,9 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 246278,
-        "end": 246283,
-        "line": 1687,
+        "start": 247692,
+        "end": 247697,
+        "line": 1715,
         "column": 799,
         "members": [
           "$loon"
@@ -114,9 +114,9 @@
       {
         "api": "$rocket",
         "access": "read",
-        "start": 246311,
-        "end": 246318,
-        "line": 1687,
+        "start": 247725,
+        "end": 247732,
+        "line": 1715,
         "column": 832,
         "members": [
           "$rocket"
@@ -125,9 +125,9 @@
       {
         "api": "$persistentStore.read",
         "access": "call",
-        "start": 249113,
-        "end": 249137,
-        "line": 1687,
+        "start": 250527,
+        "end": 250551,
+        "line": 1715,
         "column": 3634,
         "members": [
           "$persistentStore",
@@ -137,9 +137,9 @@
       {
         "api": "$prefs.valueForKey",
         "access": "call",
-        "start": 249164,
-        "end": 249185,
-        "line": 1687,
+        "start": 250578,
+        "end": 250599,
+        "line": 1715,
         "column": 3685,
         "members": [
           "$prefs",
@@ -149,9 +149,9 @@
       {
         "api": "$persistentStore.write",
         "access": "call",
-        "start": 249387,
-        "end": 249414,
-        "line": 1687,
+        "start": 250801,
+        "end": 250828,
+        "line": 1715,
         "column": 3908,
         "members": [
           "$persistentStore",
@@ -161,9 +161,9 @@
       {
         "api": "$prefs.setValueForKey",
         "access": "call",
-        "start": 249441,
-        "end": 249467,
-        "line": 1687,
+        "start": 250855,
+        "end": 250881,
+        "line": 1715,
         "column": 3962,
         "members": [
           "$prefs",
@@ -173,9 +173,9 @@
       {
         "api": "$httpClient.get",
         "access": "call",
-        "start": 250302,
-        "end": 250426,
-        "line": 1687,
+        "start": 251716,
+        "end": 251840,
+        "line": 1715,
         "column": 4823,
         "members": [
           "$httpClient",
@@ -185,9 +185,9 @@
       {
         "api": "$task.fetch",
         "access": "call",
-        "start": 250525,
-        "end": 250539,
-        "line": 1687,
+        "start": 251939,
+        "end": 251953,
+        "line": 1715,
         "column": 5046,
         "members": [
           "$task",
@@ -197,9 +197,9 @@
       {
         "api": "$httpClient.<runtime-key>",
         "access": "call",
-        "start": 251749,
-        "end": 251872,
-        "line": 1687,
+        "start": 253163,
+        "end": 253286,
+        "line": 1715,
         "column": 6270,
         "members": [
           "$httpClient",
@@ -209,9 +209,9 @@
       {
         "api": "$task.fetch",
         "access": "call",
-        "start": 251983,
-        "end": 251997,
-        "line": 1687,
+        "start": 253397,
+        "end": 253411,
+        "line": 1715,
         "column": 6504,
         "members": [
           "$task",
@@ -221,9 +221,9 @@
       {
         "api": "$notification.post",
         "access": "call",
-        "start": 253948,
-        "end": 253978,
-        "line": 1687,
+        "start": 255362,
+        "end": 255392,
+        "line": 1715,
         "column": 8469,
         "members": [
           "$notification",
@@ -233,9 +233,9 @@
       {
         "api": "$notify",
         "access": "call",
-        "start": 254004,
-        "end": 254023,
-        "line": 1687,
+        "start": 255418,
+        "end": 255437,
+        "line": 1715,
         "column": 8525,
         "members": [
           "$notify"
@@ -244,9 +244,9 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 254548,
-        "end": 254563,
-        "line": 1687,
+        "start": 255962,
+        "end": 255977,
+        "line": 1715,
         "column": 9069,
         "members": [
           "setTimeout"
@@ -255,9 +255,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 254680,
-        "end": 254688,
-        "line": 1687,
+        "start": 256094,
+        "end": 256102,
+        "line": 1715,
         "column": 9201,
         "members": [
           "$done"
@@ -275,7 +275,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "6a0c1d8e05136e7f134bfbf0dd94a8ab7356b22607a1ba7bace57820e2bc7af1",
+        "analysisSourceSha256": "f99b893402fe30b783a10faf22a8f18c0fb86d30618f6e057545e04982e9ce7c",
         "operations": [
           {
             "id": "api:0",
@@ -333,9 +333,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpAPI",
-              "start": 245383,
-              "end": 245452,
-              "line": 1680,
+              "start": 246797,
+              "end": 246866,
+              "line": 1708,
               "column": 5,
               "access": "call",
               "memberPath": []
@@ -357,9 +357,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment",
-              "start": 246040,
-              "end": 246052,
-              "line": 1687,
+              "start": 247454,
+              "end": 247466,
+              "line": 1715,
               "column": 561,
               "access": "read",
               "memberPath": []
@@ -381,9 +381,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment.surge-version",
-              "start": 246054,
-              "end": 246083,
-              "line": 1687,
+              "start": 247468,
+              "end": 247497,
+              "line": 1715,
               "column": 575,
               "access": "read",
               "memberPath": [
@@ -407,9 +407,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment",
-              "start": 246112,
-              "end": 246124,
-              "line": 1687,
+              "start": 247526,
+              "end": 247538,
+              "line": 1715,
               "column": 633,
               "access": "read",
               "memberPath": []
@@ -431,9 +431,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment.stash-version",
-              "start": 246126,
-              "end": 246155,
-              "line": 1687,
+              "start": 247540,
+              "end": 247569,
+              "line": 1715,
               "column": 647,
               "access": "read",
               "memberPath": [
@@ -457,9 +457,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$task",
-              "start": 246237,
-              "end": 246242,
-              "line": 1687,
+              "start": 247651,
+              "end": 247656,
+              "line": 1715,
               "column": 758,
               "access": "read",
               "memberPath": []
@@ -481,9 +481,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 246278,
-              "end": 246283,
-              "line": 1687,
+              "start": 247692,
+              "end": 247697,
+              "line": 1715,
               "column": 799,
               "access": "read",
               "memberPath": []
@@ -505,9 +505,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$rocket",
-              "start": 246311,
-              "end": 246318,
-              "line": 1687,
+              "start": 247725,
+              "end": 247732,
+              "line": 1715,
               "column": 832,
               "access": "read",
               "memberPath": []
@@ -529,9 +529,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore.read",
-              "start": 249113,
-              "end": 249137,
-              "line": 1687,
+              "start": 250527,
+              "end": 250551,
+              "line": 1715,
               "column": 3634,
               "access": "call",
               "memberPath": [
@@ -555,9 +555,9 @@
             "kind": "storage",
             "source": {
               "api": "$prefs.valueForKey",
-              "start": 249164,
-              "end": 249185,
-              "line": 1687,
+              "start": 250578,
+              "end": 250599,
+              "line": 1715,
               "column": 3685,
               "access": "call",
               "memberPath": [
@@ -581,9 +581,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore.write",
-              "start": 249387,
-              "end": 249414,
-              "line": 1687,
+              "start": 250801,
+              "end": 250828,
+              "line": 1715,
               "column": 3908,
               "access": "call",
               "memberPath": [
@@ -607,9 +607,9 @@
             "kind": "storage",
             "source": {
               "api": "$prefs.setValueForKey",
-              "start": 249441,
-              "end": 249467,
-              "line": 1687,
+              "start": 250855,
+              "end": 250881,
+              "line": 1715,
               "column": 3962,
               "access": "call",
               "memberPath": [
@@ -633,9 +633,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient.get",
-              "start": 250302,
-              "end": 250426,
-              "line": 1687,
+              "start": 251716,
+              "end": 251840,
+              "line": 1715,
               "column": 4823,
               "access": "call",
               "memberPath": [
@@ -659,9 +659,9 @@
             "kind": "http",
             "source": {
               "api": "$task.fetch",
-              "start": 250525,
-              "end": 250539,
-              "line": 1687,
+              "start": 251939,
+              "end": 251953,
+              "line": 1715,
               "column": 5046,
               "access": "call",
               "memberPath": [
@@ -685,9 +685,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient.<runtime-key>",
-              "start": 251749,
-              "end": 251872,
-              "line": 1687,
+              "start": 253163,
+              "end": 253286,
+              "line": 1715,
               "column": 6270,
               "access": "call",
               "memberPath": [
@@ -711,9 +711,9 @@
             "kind": "http",
             "source": {
               "api": "$task.fetch",
-              "start": 251983,
-              "end": 251997,
-              "line": 1687,
+              "start": 253397,
+              "end": 253411,
+              "line": 1715,
               "column": 6504,
               "access": "call",
               "memberPath": [
@@ -737,9 +737,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$notification.post",
-              "start": 253948,
-              "end": 253978,
-              "line": 1687,
+              "start": 255362,
+              "end": 255392,
+              "line": 1715,
               "column": 8469,
               "access": "call",
               "memberPath": [
@@ -763,9 +763,9 @@
             "kind": "notification",
             "source": {
               "api": "$notify",
-              "start": 254004,
-              "end": 254023,
-              "line": 1687,
+              "start": 255418,
+              "end": 255437,
+              "line": 1715,
               "column": 8525,
               "access": "call",
               "memberPath": []
@@ -787,9 +787,9 @@
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 254548,
-              "end": 254563,
-              "line": 1687,
+              "start": 255962,
+              "end": 255977,
+              "line": 1715,
               "column": 9069,
               "access": "call",
               "memberPath": []
@@ -811,9 +811,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 254680,
-              "end": 254688,
-              "line": 1687,
+              "start": 256094,
+              "end": 256102,
+              "line": 1715,
               "column": 9201,
               "access": "call",
               "memberPath": []

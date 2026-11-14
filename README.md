@@ -183,7 +183,7 @@
 ## Adblock
 
 <details>
-<summary><strong>Adblock</strong> · 402 项</summary>
+<summary><strong>Adblock</strong> · 403 项</summary>
 
 按拉取来源分组，点击展开；各来源内部按名称 A–Z 分栏，中文按拼音首字母，数字单列。
 
@@ -801,7 +801,7 @@
 </details>
 
 <details>
-<summary><strong>ddgksf2013.top</strong> · 39 项</summary>
+<summary><strong>ddgksf2013.top</strong> · 40 项</summary>
 
 #### A
 
@@ -940,6 +940,7 @@
 | AD0021 | **[中国广电净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/chinabroadads/chinabroadads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fchinabroadads%2Fchinabroadads.snippet%2C%20tag%3D%E4%B8%AD%E5%9B%BD%E5%B9%BF%E7%94%B5%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fchinabroadads%2Fchinabroadads.sgmodule) |
 | AD0081 | **[中羽在线净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/zhongyuzaixianads/zhongyuzaixianads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fzhongyuzaixianads%2Fzhongyuzaixianads.snippet%2C%20tag%3D%E4%B8%AD%E7%BE%BD%E5%9C%A8%E7%BA%BF%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fzhongyuzaixianads%2Fzhongyuzaixianads.sgmodule) |
 | AD0082 | **[转转净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/zhuanzhuanads/zhuanzhuanads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fzhuanzhuanads%2Fzhuanzhuanads.snippet%2C%20tag%3D%E8%BD%AC%E8%BD%AC%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fzhuanzhuanads%2Fzhuanzhuanads.sgmodule) |
+| AD0402 | **[Zaker净化[墨鱼版]](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/zakerads/zakerads.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fzakerads%2Fzakerads.snippet%2C%20tag%3DZaker%E5%87%80%E5%8C%96%5B%E5%A2%A8%E9%B1%BC%E7%89%88%5D%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fzakerads%2Fzakerads.sgmodule) |
 
 #### 0–9
 
@@ -956,7 +957,7 @@
 
 | 编号 | Name | Quantumult X | Surge |
 | :--- | :--- | :---: | :---: |
-| AD0007 | **[毒奶特供(2026年11月03日更新)](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/adblock4limbo/adblock4limbo.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fadblock4limbo%2Fadblock4limbo.snippet%2C%20tag%3D%E6%AF%92%E5%A5%B6%E7%89%B9%E4%BE%9B(2026%E5%B9%B411%E6%9C%8803%E6%97%A5%E6%9B%B4%E6%96%B0)%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fadblock4limbo%2Fadblock4limbo.sgmodule) |
+| AD0007 | **[毒奶特供(2026年11月14日更新)](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ddgksf2013/adblock4limbo/adblock4limbo.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fddgksf2013%2Fadblock4limbo%2Fadblock4limbo.snippet%2C%20tag%3D%E6%AF%92%E5%A5%B6%E7%89%B9%E4%BE%9B(2026%E5%B9%B411%E6%9C%8814%E6%97%A5%E6%9B%B4%E6%96%B0)%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fddgksf2013%2Fadblock4limbo%2Fadblock4limbo.sgmodule) |
 
 </details>
 

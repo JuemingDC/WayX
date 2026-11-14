@@ -1,7 +1,10 @@
 {
   "version": 1,
   "scriptCleanup": {
-    "removed": [],
+    "removed": [
+      "Script/Adblock/raw.githubusercontent.com-c29ecf653b69/qx/pixiv_enhanced.js",
+      "Script/Adblock/raw.githubusercontent.com-c29ecf653b69/surge/pixiv_enhanced.js"
+    ],
     "retainedGenerated": 456,
     "policy": "unreferenced-generated-only; active/transitive/manual/source dependencies retained"
   },
@@ -64,16 +67,16 @@
       "status": "converted"
     }
   ],
-  "pluginSources": 449,
+  "pluginSources": 450,
   "scriptUrls": 330,
   "backedUpScripts": 326,
-  "rewrittenArtifacts": 0,
+  "rewrittenArtifacts": 2,
   "scriptApi": {
     "universal": 421,
-    "adapted": 1250,
+    "adapted": 1251,
     "blocked": 0,
     "excluded": 0,
-    "nativeCopied": 734
+    "nativeCopied": 735
   },
   "unresolvedReferences": 0,
   "disabledSources": [

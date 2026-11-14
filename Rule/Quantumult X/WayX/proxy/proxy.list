@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-13 02:00:37 UTC
+# Updated: 2026-11-14 05:40:02 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34241
+# Rules: 34242
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -5087,6 +5087,7 @@ host-suffix,51lieqi.com,ssid
 host-suffix,51luoben.com,ssid
 host-suffix,51luoli.info,ssid
 host-suffix,51mh.app,ssid
+host-suffix,51papaya.com,ssid
 host-suffix,51pincha.cc,ssid
 host-suffix,51tuqiang.com,ssid
 host-suffix,520aa.tv,ssid

@@ -20,7 +20,7 @@
     {
       "repository": "fmz200/wool_scripts",
       "prefix": "fmz200_",
-      "commit": "009b501adaebb3428461e91c98a17a556249e076"
+      "commit": "d7b274483d944fe65fbc2e3318ddff85147db543"
     }
   ],
   "inputs": [
@@ -946,7 +946,7 @@
       "path": "AdBlock/adblock4limbo.conf",
       "acquiredUrl": "https://raw.githubusercontent.com/limbopro/Adblock4limbo/main/Adblock4limbo.conf",
       "sourceUrl": "https://raw.githubusercontent.com/limbopro/Adblock4limbo/main/Adblock4limbo.conf",
-      "sha256": "e26d8daa8ed0b19c454264757df77d4de805eba42adea3ba733f6edfbe86e9bd"
+      "sha256": "049e699364bdcad75972faa9f0a82a73ddf32baf4a966041336f3577c1400c89"
     },
     {
       "repository": "ddgksf2013/Rewrite",
@@ -1237,6 +1237,13 @@
     },
     {
       "repository": "ddgksf2013/Rewrite",
+      "path": "AdBlock/zakerads.conf",
+      "acquiredUrl": "https://ddgksf2013.top/rewrite/ZakerAds.conf",
+      "sourceUrl": "https://ddgksf2013.top/rewrite/ZakerAds.conf",
+      "sha256": "5eac633f7512c364abc10a64c0260dc70fd32d1959a5c9cb2853f6536a76d495"
+    },
+    {
+      "repository": "ddgksf2013/Rewrite",
       "path": "AdBlock/BingSimplify.conf",
       "acquiredUrl": "https://raw.githubusercontent.com/ddgksf2013/Rewrite/dc3ea2c1fb2db870676b26da24006083eb1d44d3/AdBlock/BingSimplify.conf",
       "sourceUrl": "https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/BingSimplify.conf",
@@ -1280,14 +1287,14 @@
     {
       "repository": "fmz200/wool_scripts",
       "path": "QuantumultX/rewrite/rewrite.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/009b501adaebb3428461e91c98a17a556249e076/QuantumultX/rewrite/rewrite.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/d7b274483d944fe65fbc2e3318ddff85147db543/QuantumultX/rewrite/rewrite.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/rewrite.snippet",
       "sha256": "8a8499e50d0311a078e4c4bf0c48097c3840843bd76bffab390c8a259fab0574"
     },
     {
       "repository": "fmz200/wool_scripts",
       "path": "QuantumultX/rewrite/split/partX/Xiaohongshu.snippet",
-      "acquiredUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/009b501adaebb3428461e91c98a17a556249e076/QuantumultX/rewrite/split/partX/Xiaohongshu.snippet",
+      "acquiredUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/d7b274483d944fe65fbc2e3318ddff85147db543/QuantumultX/rewrite/split/partX/Xiaohongshu.snippet",
       "sourceUrl": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/split/partX/Xiaohongshu.snippet",
       "sha256": "36d353c2f2c3dd7a671ca36daf34a42807edec57083576f70891ff36f5e2568e"
     }
@@ -1428,9 +1435,9 @@
     {
       "source": "https://ddgksf2013.top/",
       "catalogUrl": "https://ddgksf2013.top/data.json",
-      "catalogSha256": "57d5f8638284c18d7998e4a1b844091cfee59ac69cdadd056ac012ca85de3814",
-      "total": 140,
-      "eligible": 119,
+      "catalogSha256": "ee200c77058eb5792c43e5df5c760afe3fce7accd50bbb85a4c6a9050596aaf9",
+      "total": 141,
+      "eligible": 120,
       "ignored": [
         {
           "name": "墨鱼小白2.0",
@@ -1567,7 +1574,7 @@
         "Function/UposRedirect.conf",
         "Html/EndlessGoogle.conf"
       ],
-      "sourceResources": 123,
+      "sourceResources": 124,
       "nativeSurgeResources": 6,
       "skipped": [
         {
@@ -1581,7 +1588,7 @@
           "reason": "HTTP 200 returns the website HTML fallback instead of a rewrite resource"
         }
       ],
-      "outputs": 240
+      "outputs": 242
     }
   ],
   "outputs": [
@@ -1913,6 +1920,8 @@
     "Adblock/Surge/ddgksf2013/txsports-ad-clean/txsports-ad-clean.sgmodule",
     "Adblock/Quantumult X/ddgksf2013/zhuanzhuanads/zhuanzhuanads.snippet",
     "Adblock/Surge/ddgksf2013/zhuanzhuanads/zhuanzhuanads.sgmodule",
+    "Adblock/Quantumult X/ddgksf2013/zakerads/zakerads.snippet",
+    "Adblock/Surge/ddgksf2013/zakerads/zakerads.sgmodule",
     "Adblock/Quantumult X/ddgksf2013/bingsimplify/bingsimplify.snippet",
     "Adblock/Surge/ddgksf2013/bingsimplify/bingsimplify.sgmodule",
     "Adblock/Quantumult X/ddgksf2013/wechat/wechat.snippet",
