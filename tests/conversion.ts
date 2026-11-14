@@ -1996,11 +1996,12 @@ if(selectedCase==='conversion-policy.mjs') {
   console.log('Real same-regex declaration retention passed: Taqu, XiaobaiPrint and Zhihu retain all independent JSON/JQ rules in both targets');
 }
 
+// Modified: 2026-11-14 (chance). JQ dependency records retain source program whitespace.
 if(selectedCase==='conversion-policy.mjs') {
   const entry={id:'DependencyShapes',source:'https://example.test/main.lpx',category:'Test'};
   for(const section of ['Rewrite','Script']) for(const [kind,action,materialize,payload] of [
     ['mock','response.body.mock_file("text","one.txt",200)',materializeMockFiles,{bodyText:'.a = 1',sourceFile:'https://example.test/one.txt'}],
-    ['jq','response.json.jq_file("one.txt")',materializeJqFiles,{content:'.a=1',sourceFile:'https://example.test/one.txt',legacyAlias:false}],
+    ['jq','response.json.jq_file("one.txt")',materializeJqFiles,{content:'.a=1',program:'.a = 1',sourceFile:'https://example.test/one.txt',legacyAlias:false}],
   ]) {
     const line='response if ${url} ~= /api/ then response.header.del("X") | '+action;
     let calls=0;

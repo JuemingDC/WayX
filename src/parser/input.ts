@@ -496,13 +496,15 @@ export async function materializeJqFiles(
             throw new Error(
               dependency?.reason || "JQ dependency is not resolvable",
             );
-          const content: any = minifyJqFile(
-            await reads.fetchText(dependency.url),
-          );
+          // Modified: 2026-11-14 (chance). Keep the standard jq file program
+          // separate from the single-line expression required by target configs.
+          const program = await reads.fetchText(dependency.url);
+          const content: any = minifyJqFile(program);
           if (!content)
             throw new Error("JQ dependency resolved to empty content");
           return {
             content,
+            program,
             sourceFile: dependency.url,
             legacyAlias: Boolean(dependency.legacyAlias),
           };
@@ -540,6 +542,8 @@ export async function materializeJqFiles(
       if (!content) throw new Error("JQ dependency resolved to empty content");
       out.set(item.line, {
         content,
+        // Modified: 2026-11-14 (chance). Preserve legacy jq-path file programs too.
+        program: text,
         sourceFile: spec.url,
         legacyAlias: Boolean(spec.legacyAlias),
       });

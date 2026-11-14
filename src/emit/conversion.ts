@@ -1,3 +1,4 @@
+import { standardJqPrograms } from "../parser/rewrite.ts";
 import { compactGeneratedPluginComments } from "../domain/output-comments.ts";
 // Modified: 2026-11-03 (chance). Remove unused parser dependencies from the active conversion path.
 import { repairScriptEchoDeclarations } from "../parser/backup-references.ts";
@@ -1207,6 +1208,8 @@ export function convertPlugin(
       source,
     ),
     generatedScripts: new Map([...qx.generatedScripts, ...sg.generatedScripts]),
+    // Modified: 2026-11-14 (chance). Publish standard jq files alongside target lowering.
+    generatedJqFiles: standardJqPrograms(jqFiles),
   };
 }
 
@@ -1310,6 +1313,15 @@ export function convertPluginWithContext(
     jqFiles: context.jqFiles,
     rawBase,
   });
+  // Modified: 2026-11-14 (chance). Link the repository's standard .jq resources;
+  // execution uses native target JQ declarations, never invented jq_file options.
+  const jqBase = rawBase || "https://raw.githubusercontent.com/JuemingDC/WayX/main";
+  const jqLinks = [...out.generatedJqFiles.keys()].map(name =>
+    "# JQ File: " + jqBase.replace(/\/$/, "") + "/Resource/JQ/" + encodeURIComponent(entry.id) + "/" + encodeURIComponent(name),
+  );
+  if (jqLinks.length)
+    for (const target of ["qx", "surge"])
+      out[target] = out[target].replace(/^((?:#![^\n]*\n)*)/, (_: string, directives: string) => directives + jqLinks.join("\n") + "\n");
   // Modified: 2026-11-01 (chance). Bind verified established backup paths at emission; the shared backup pass handles newly discovered URLs.
   if (backupIndex)
     for (const target of ["qx", "surge"])

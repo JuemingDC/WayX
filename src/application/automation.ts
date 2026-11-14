@@ -20,6 +20,8 @@ const managed = [
   // Modified: 2026-11-05 (chance). Publish migrated manual-resource references with their target files.
   ".github/manual-assets.json",
   "Resource/Loon",
+  // Modified: 2026-11-14 (chance). Publish official-format jq file resources.
+  "Resource/JQ",
   "Resource/Encrypted",
   // Modified: 2026-11-01 (chance). Publish exact upstream archives and their source-to-backup index with generated targets.
   "Resource/Backup",

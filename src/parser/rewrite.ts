@@ -1491,6 +1491,27 @@ export function minifyJq(expr: any): any {
 export function minifyJqFile(expr: any): any {
   return minifyJq(stripJqComments(expr));
 }
+// Modified: 2026-11-14 (chance). Export resolved Loon jq_file dependencies as
+// ordinary UTF-8 jq programs, without configuration wrappers or shell quoting.
+export function standardJqPrograms(files: Map<string, any>): Map<string, string> {
+  const programs = new Map<string, string>();
+  for (const group of files.values()) {
+    for (const file of group?.byAction ? Object.values(group.byAction) as any[] : [group]) {
+      if (file?.error || !file?.sourceFile || typeof file.content !== "string") continue;
+      const source = new URL(file.sourceFile);
+      const stem = decodeURIComponent(source.pathname).replace(/\.[^./]+$/, "")
+        .replace(/[^\p{L}\p{N}_.-]+/gu, "-").replace(/^-+|-+$/g, "");
+      if (!stem || Buffer.byteLength(stem) > 180) throw new Error("JQ source needs a readable filename: " + file.sourceFile);
+      const name = stem + ".jq";
+      const program = repairUpstreamJq(file.program ?? file.content).jq.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").replace(/\n*$/, "\n");
+      if (!program.trim()) throw new Error("JQ file has no program: " + file.sourceFile);
+      if (programs.has(name) && programs.get(name) !== program)
+        throw new Error("Conflicting JQ resource filename: " + name);
+      programs.set(name, program);
+    }
+  }
+  return programs;
+}
 export function normalizeJqForSingleQuotedConfig(expr: any): any {
   const jq: any = String(expr);
   let out: any = "",
