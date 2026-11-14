@@ -1,21 +1,21 @@
 {
   "version": 1,
   "sourceUrl": "https://ddgksf2013.top/scripts/weibo_json.js",
-  "sourceSha256": "5cdffae6d1a4b8c6c7067778a958176cf51c3ebf06b8572f4c60221e0d3f91e3",
+  "sourceSha256": "192a89649dfcd10c976c3dc77476a0c964e803ad07ca7a11fe81a7218da2ee64",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "5cdffae6d1a4b8c6c7067778a958176cf51c3ebf06b8572f4c60221e0d3f91e3",
+    "sha256": "192a89649dfcd10c976c3dc77476a0c964e803ad07ca7a11fe81a7218da2ee64",
     "operations": [
       {
         "api": "setTimeout",
         "access": "read",
-        "start": 137121,
-        "end": 137131,
+        "start": 138903,
+        "end": 138913,
         "line": 5,
-        "column": 137056,
+        "column": 138838,
         "members": [
           "setTimeout"
         ]
@@ -23,10 +23,10 @@
       {
         "api": "$done",
         "access": "read",
-        "start": 186522,
-        "end": 186527,
+        "start": 211154,
+        "end": 211159,
         "line": 5,
-        "column": 186457,
+        "column": 211089,
         "members": [
           "$done"
         ]
@@ -34,10 +34,10 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 186577,
-        "end": 186585,
+        "start": 211220,
+        "end": 211228,
         "line": 5,
-        "column": 186512,
+        "column": 211155,
         "members": [
           "$request"
         ]
@@ -45,10 +45,10 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 186607,
-        "end": 186615,
+        "start": 211248,
+        "end": 211256,
         "line": 5,
-        "column": 186542,
+        "column": 211183,
         "members": [
           "$request"
         ]
@@ -56,10 +56,10 @@
       {
         "api": "$prefs",
         "access": "read",
-        "start": 186672,
-        "end": 186678,
+        "start": 211341,
+        "end": 211347,
         "line": 5,
-        "column": 186607,
+        "column": 211276,
         "members": [
           "$prefs"
         ]
@@ -67,10 +67,10 @@
       {
         "api": "$prefs",
         "access": "read",
-        "start": 186698,
-        "end": 186704,
+        "start": 211367,
+        "end": 211373,
         "line": 5,
-        "column": 186633,
+        "column": 211302,
         "members": [
           "$prefs"
         ]
@@ -78,10 +78,10 @@
       {
         "api": "$task",
         "access": "read",
-        "start": 186724,
-        "end": 186729,
+        "start": 211412,
+        "end": 211417,
         "line": 5,
-        "column": 186659,
+        "column": 211347,
         "members": [
           "$task"
         ]
@@ -89,10 +89,10 @@
       {
         "api": "$task",
         "access": "read",
-        "start": 186749,
-        "end": 186754,
+        "start": 211436,
+        "end": 211441,
         "line": 5,
-        "column": 186684,
+        "column": 211371,
         "members": [
           "$task"
         ]
@@ -100,10 +100,10 @@
       {
         "api": "$persistentStore",
         "access": "read",
-        "start": 186775,
-        "end": 186791,
+        "start": 211490,
+        "end": 211506,
         "line": 5,
-        "column": 186710,
+        "column": 211425,
         "members": [
           "$persistentStore"
         ]
@@ -111,10 +111,10 @@
       {
         "api": "$persistentStore",
         "access": "read",
-        "start": 186811,
-        "end": 186827,
+        "start": 211536,
+        "end": 211552,
         "line": 5,
-        "column": 186746,
+        "column": 211471,
         "members": [
           "$persistentStore"
         ]
@@ -122,10 +122,10 @@
       {
         "api": "$httpClient",
         "access": "read",
-        "start": 186875,
-        "end": 186886,
+        "start": 211572,
+        "end": 211583,
         "line": 5,
-        "column": 186810,
+        "column": 211507,
         "members": [
           "$httpClient"
         ]
@@ -133,10 +133,10 @@
       {
         "api": "$httpClient",
         "access": "read",
-        "start": 186905,
-        "end": 186916,
+        "start": 211598,
+        "end": 211609,
         "line": 5,
-        "column": 186840,
+        "column": 211533,
         "members": [
           "$httpClient"
         ]
@@ -144,10 +144,10 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 186936,
-        "end": 186941,
+        "start": 211629,
+        "end": 211634,
         "line": 5,
-        "column": 186871,
+        "column": 211564,
         "members": [
           "$loon"
         ]
@@ -155,10 +155,10 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 186961,
-        "end": 186966,
+        "start": 211654,
+        "end": 211659,
         "line": 5,
-        "column": 186896,
+        "column": 211589,
         "members": [
           "$loon"
         ]
@@ -166,10 +166,10 @@
       {
         "api": "$rocket",
         "access": "read",
-        "start": 186993,
-        "end": 187000,
+        "start": 211686,
+        "end": 211693,
         "line": 5,
-        "column": 186928,
+        "column": 211621,
         "members": [
           "$rocket"
         ]
@@ -177,10 +177,10 @@
       {
         "api": "$rocket",
         "access": "read",
-        "start": 187022,
-        "end": 187029,
+        "start": 211724,
+        "end": 211731,
         "line": 5,
-        "column": 186957,
+        "column": 211659,
         "members": [
           "$rocket"
         ]
@@ -188,10 +188,10 @@
       {
         "api": "$environment",
         "access": "read",
-        "start": 187074,
-        "end": 187086,
+        "start": 211757,
+        "end": 211769,
         "line": 5,
-        "column": 187009,
+        "column": 211692,
         "members": [
           "$environment"
         ]
@@ -199,10 +199,10 @@
       {
         "api": "$environment.<runtime-key>",
         "access": "read",
-        "start": 187105,
-        "end": 187148,
+        "start": 211789,
+        "end": 211832,
         "line": 5,
-        "column": 187040,
+        "column": 211724,
         "members": [
           "$environment",
           "<runtime-key>"
@@ -211,10 +211,10 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 187177,
-        "end": 187193,
+        "start": 211861,
+        "end": 211877,
         "line": 5,
-        "column": 187112,
+        "column": 211796,
         "members": [
           "$done"
         ]
@@ -222,10 +222,10 @@
       {
         "api": "$response",
         "access": "read",
-        "start": 187752,
-        "end": 187761,
+        "start": 212412,
+        "end": 212421,
         "line": 5,
-        "column": 187687,
+        "column": 212347,
         "members": [
           "$response"
         ]
@@ -233,24 +233,24 @@
       {
         "api": "$response",
         "access": "read",
-        "start": 187792,
-        "end": 187801,
+        "start": 212442,
+        "end": 212451,
         "line": 5,
-        "column": 187727,
+        "column": 212377,
         "members": [
           "$response"
         ]
       },
       {
-        "api": "$response.<runtime-key>",
+        "api": "$response.body",
         "access": "read",
-        "start": 187802,
-        "end": 187829,
+        "start": 212452,
+        "end": 212469,
         "line": 5,
-        "column": 187737,
+        "column": 212387,
         "members": [
           "$response",
-          "<runtime-key>"
+          "body"
         ]
       }
     ],
@@ -265,7 +265,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "5cdffae6d1a4b8c6c7067778a958176cf51c3ebf06b8572f4c60221e0d3f91e3",
+        "analysisSourceSha256": "192a89649dfcd10c976c3dc77476a0c964e803ad07ca7a11fe81a7218da2ee64",
         "operations": [
           {
             "id": "api:0",
@@ -273,10 +273,10 @@
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 137121,
-              "end": 137131,
+              "start": 138903,
+              "end": 138913,
               "line": 5,
-              "column": 137056,
+              "column": 138838,
               "access": "read",
               "memberPath": []
             },
@@ -297,10 +297,10 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 186522,
-              "end": 186527,
+              "start": 211154,
+              "end": 211159,
               "line": 5,
-              "column": 186457,
+              "column": 211089,
               "access": "read",
               "memberPath": []
             },
@@ -321,10 +321,10 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 186577,
-              "end": 186585,
+              "start": 211220,
+              "end": 211228,
               "line": 5,
-              "column": 186512,
+              "column": 211155,
               "access": "read",
               "memberPath": []
             },
@@ -345,10 +345,10 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 186607,
-              "end": 186615,
+              "start": 211248,
+              "end": 211256,
               "line": 5,
-              "column": 186542,
+              "column": 211183,
               "access": "read",
               "memberPath": []
             },
@@ -369,10 +369,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$prefs",
-              "start": 186672,
-              "end": 186678,
+              "start": 211341,
+              "end": 211347,
               "line": 5,
-              "column": 186607,
+              "column": 211276,
               "access": "read",
               "memberPath": []
             },
@@ -393,10 +393,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$prefs",
-              "start": 186698,
-              "end": 186704,
+              "start": 211367,
+              "end": 211373,
               "line": 5,
-              "column": 186633,
+              "column": 211302,
               "access": "read",
               "memberPath": []
             },
@@ -417,10 +417,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$task",
-              "start": 186724,
-              "end": 186729,
+              "start": 211412,
+              "end": 211417,
               "line": 5,
-              "column": 186659,
+              "column": 211347,
               "access": "read",
               "memberPath": []
             },
@@ -441,10 +441,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$task",
-              "start": 186749,
-              "end": 186754,
+              "start": 211436,
+              "end": 211441,
               "line": 5,
-              "column": 186684,
+              "column": 211371,
               "access": "read",
               "memberPath": []
             },
@@ -465,10 +465,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore",
-              "start": 186775,
-              "end": 186791,
+              "start": 211490,
+              "end": 211506,
               "line": 5,
-              "column": 186710,
+              "column": 211425,
               "access": "read",
               "memberPath": []
             },
@@ -489,10 +489,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore",
-              "start": 186811,
-              "end": 186827,
+              "start": 211536,
+              "end": 211552,
               "line": 5,
-              "column": 186746,
+              "column": 211471,
               "access": "read",
               "memberPath": []
             },
@@ -513,10 +513,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient",
-              "start": 186875,
-              "end": 186886,
+              "start": 211572,
+              "end": 211583,
               "line": 5,
-              "column": 186810,
+              "column": 211507,
               "access": "read",
               "memberPath": []
             },
@@ -537,10 +537,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient",
-              "start": 186905,
-              "end": 186916,
+              "start": 211598,
+              "end": 211609,
               "line": 5,
-              "column": 186840,
+              "column": 211533,
               "access": "read",
               "memberPath": []
             },
@@ -561,10 +561,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 186936,
-              "end": 186941,
+              "start": 211629,
+              "end": 211634,
               "line": 5,
-              "column": 186871,
+              "column": 211564,
               "access": "read",
               "memberPath": []
             },
@@ -585,10 +585,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 186961,
-              "end": 186966,
+              "start": 211654,
+              "end": 211659,
               "line": 5,
-              "column": 186896,
+              "column": 211589,
               "access": "read",
               "memberPath": []
             },
@@ -609,10 +609,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$rocket",
-              "start": 186993,
-              "end": 187000,
+              "start": 211686,
+              "end": 211693,
               "line": 5,
-              "column": 186928,
+              "column": 211621,
               "access": "read",
               "memberPath": []
             },
@@ -633,10 +633,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$rocket",
-              "start": 187022,
-              "end": 187029,
+              "start": 211724,
+              "end": 211731,
               "line": 5,
-              "column": 186957,
+              "column": 211659,
               "access": "read",
               "memberPath": []
             },
@@ -657,10 +657,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment",
-              "start": 187074,
-              "end": 187086,
+              "start": 211757,
+              "end": 211769,
               "line": 5,
-              "column": 187009,
+              "column": 211692,
               "access": "read",
               "memberPath": []
             },
@@ -681,10 +681,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment.<runtime-key>",
-              "start": 187105,
-              "end": 187148,
+              "start": 211789,
+              "end": 211832,
               "line": 5,
-              "column": 187040,
+              "column": 211724,
               "access": "read",
               "memberPath": [
                 "<runtime-key>"
@@ -707,10 +707,10 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 187177,
-              "end": 187193,
+              "start": 211861,
+              "end": 211877,
               "line": 5,
-              "column": 187112,
+              "column": 211796,
               "access": "call",
               "memberPath": []
             },
@@ -731,10 +731,10 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 187752,
-              "end": 187761,
+              "start": 212412,
+              "end": 212421,
               "line": 5,
-              "column": 187687,
+              "column": 212347,
               "access": "read",
               "memberPath": []
             },
@@ -755,10 +755,10 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 187792,
-              "end": 187801,
+              "start": 212442,
+              "end": 212451,
               "line": 5,
-              "column": 187727,
+              "column": 212377,
               "access": "read",
               "memberPath": []
             },
@@ -775,25 +775,25 @@
           },
           {
             "id": "api:21",
-            "rule": "response.context",
+            "rule": "response.body",
             "kind": "context",
             "source": {
-              "api": "$response.<runtime-key>",
-              "start": 187802,
-              "end": 187829,
+              "api": "$response.body",
+              "start": 212452,
+              "end": 212469,
               "line": 5,
-              "column": 187737,
+              "column": 212387,
               "access": "read",
               "memberPath": [
-                "<runtime-key>"
+                "body"
               ]
             },
-            "canonical": "response.context",
+            "canonical": "response.body",
             "value": "runtime value",
             "target": {
               "capability": "runtime",
-              "api": "$response",
-              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -809,7 +809,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "5cdffae6d1a4b8c6c7067778a958176cf51c3ebf06b8572f4c60221e0d3f91e3",
+        "analysisSourceSha256": "192a89649dfcd10c976c3dc77476a0c964e803ad07ca7a11fe81a7218da2ee64",
         "operations": [
           {
             "id": "api:0",
@@ -817,10 +817,10 @@
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 137121,
-              "end": 137131,
+              "start": 138903,
+              "end": 138913,
               "line": 5,
-              "column": 137056,
+              "column": 138838,
               "access": "read",
               "memberPath": []
             },
@@ -841,10 +841,10 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 186522,
-              "end": 186527,
+              "start": 211154,
+              "end": 211159,
               "line": 5,
-              "column": 186457,
+              "column": 211089,
               "access": "read",
               "memberPath": []
             },
@@ -865,10 +865,10 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 186577,
-              "end": 186585,
+              "start": 211220,
+              "end": 211228,
               "line": 5,
-              "column": 186512,
+              "column": 211155,
               "access": "read",
               "memberPath": []
             },
@@ -889,10 +889,10 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 186607,
-              "end": 186615,
+              "start": 211248,
+              "end": 211256,
               "line": 5,
-              "column": 186542,
+              "column": 211183,
               "access": "read",
               "memberPath": []
             },
@@ -913,10 +913,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$prefs",
-              "start": 186672,
-              "end": 186678,
+              "start": 211341,
+              "end": 211347,
               "line": 5,
-              "column": 186607,
+              "column": 211276,
               "access": "read",
               "memberPath": []
             },
@@ -937,10 +937,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$prefs",
-              "start": 186698,
-              "end": 186704,
+              "start": 211367,
+              "end": 211373,
               "line": 5,
-              "column": 186633,
+              "column": 211302,
               "access": "read",
               "memberPath": []
             },
@@ -961,10 +961,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$task",
-              "start": 186724,
-              "end": 186729,
+              "start": 211412,
+              "end": 211417,
               "line": 5,
-              "column": 186659,
+              "column": 211347,
               "access": "read",
               "memberPath": []
             },
@@ -985,10 +985,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$task",
-              "start": 186749,
-              "end": 186754,
+              "start": 211436,
+              "end": 211441,
               "line": 5,
-              "column": 186684,
+              "column": 211371,
               "access": "read",
               "memberPath": []
             },
@@ -1009,10 +1009,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore",
-              "start": 186775,
-              "end": 186791,
+              "start": 211490,
+              "end": 211506,
               "line": 5,
-              "column": 186710,
+              "column": 211425,
               "access": "read",
               "memberPath": []
             },
@@ -1033,10 +1033,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore",
-              "start": 186811,
-              "end": 186827,
+              "start": 211536,
+              "end": 211552,
               "line": 5,
-              "column": 186746,
+              "column": 211471,
               "access": "read",
               "memberPath": []
             },
@@ -1057,10 +1057,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient",
-              "start": 186875,
-              "end": 186886,
+              "start": 211572,
+              "end": 211583,
               "line": 5,
-              "column": 186810,
+              "column": 211507,
               "access": "read",
               "memberPath": []
             },
@@ -1081,10 +1081,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient",
-              "start": 186905,
-              "end": 186916,
+              "start": 211598,
+              "end": 211609,
               "line": 5,
-              "column": 186840,
+              "column": 211533,
               "access": "read",
               "memberPath": []
             },
@@ -1105,10 +1105,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 186936,
-              "end": 186941,
+              "start": 211629,
+              "end": 211634,
               "line": 5,
-              "column": 186871,
+              "column": 211564,
               "access": "read",
               "memberPath": []
             },
@@ -1129,10 +1129,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 186961,
-              "end": 186966,
+              "start": 211654,
+              "end": 211659,
               "line": 5,
-              "column": 186896,
+              "column": 211589,
               "access": "read",
               "memberPath": []
             },
@@ -1153,10 +1153,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$rocket",
-              "start": 186993,
-              "end": 187000,
+              "start": 211686,
+              "end": 211693,
               "line": 5,
-              "column": 186928,
+              "column": 211621,
               "access": "read",
               "memberPath": []
             },
@@ -1177,10 +1177,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$rocket",
-              "start": 187022,
-              "end": 187029,
+              "start": 211724,
+              "end": 211731,
               "line": 5,
-              "column": 186957,
+              "column": 211659,
               "access": "read",
               "memberPath": []
             },
@@ -1201,10 +1201,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment",
-              "start": 187074,
-              "end": 187086,
+              "start": 211757,
+              "end": 211769,
               "line": 5,
-              "column": 187009,
+              "column": 211692,
               "access": "read",
               "memberPath": []
             },
@@ -1225,10 +1225,10 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment.<runtime-key>",
-              "start": 187105,
-              "end": 187148,
+              "start": 211789,
+              "end": 211832,
               "line": 5,
-              "column": 187040,
+              "column": 211724,
               "access": "read",
               "memberPath": [
                 "<runtime-key>"
@@ -1251,10 +1251,10 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 187177,
-              "end": 187193,
+              "start": 211861,
+              "end": 211877,
               "line": 5,
-              "column": 187112,
+              "column": 211796,
               "access": "call",
               "memberPath": []
             },
@@ -1275,10 +1275,10 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 187752,
-              "end": 187761,
+              "start": 212412,
+              "end": 212421,
               "line": 5,
-              "column": 187687,
+              "column": 212347,
               "access": "read",
               "memberPath": []
             },
@@ -1299,10 +1299,10 @@
             "kind": "context",
             "source": {
               "api": "$response",
-              "start": 187792,
-              "end": 187801,
+              "start": 212442,
+              "end": 212451,
               "line": 5,
-              "column": 187727,
+              "column": 212377,
               "access": "read",
               "memberPath": []
             },
@@ -1319,25 +1319,25 @@
           },
           {
             "id": "api:21",
-            "rule": "response.context",
+            "rule": "response.body",
             "kind": "context",
             "source": {
-              "api": "$response.<runtime-key>",
-              "start": 187802,
-              "end": 187829,
+              "api": "$response.body",
+              "start": 212452,
+              "end": 212469,
               "line": 5,
-              "column": 187737,
+              "column": 212387,
               "access": "read",
               "memberPath": [
-                "<runtime-key>"
+                "body"
               ]
             },
-            "canonical": "response.context",
+            "canonical": "response.body",
             "value": "runtime value",
             "target": {
               "capability": "runtime",
-              "api": "$response",
-              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",

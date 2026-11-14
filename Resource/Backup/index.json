@@ -7222,14 +7222,14 @@
     "Resource/Backup/plugin/81307e6ea6809fcd058a8a5b5c546887e4ce86c15738bbfd1d82080a07e50f56/WeiboEnhanced.conf": {
       "url": "https://ddgksf2013.top/rewrite/WeiboEnhanced.conf",
       "path": "Resource/Backup/plugin/81307e6ea6809fcd058a8a5b5c546887e4ce86c15738bbfd1d82080a07e50f56/WeiboEnhanced.conf",
-      "sha256": "904a1e60e07225f875853bed2005bbd781c443916dca05ce834374ee9def7eab",
-      "size": 2304,
+      "sha256": "c01238dcce45cfdfaaa47d49a3650665a7560202423d12633469f70fa18aae49",
+      "size": 2317,
       "kind": "plugin",
       "provenance": "run-response",
       "acquiredUrl": "https://ddgksf2013.top/rewrite/WeiboEnhanced.conf",
       "author": "chance",
       "category": "Upstream plugin backup",
-      "updatedAt": "2026-11-12T12:34:51.867Z"
+      "updatedAt": "2026-11-14T06:49:14.631Z"
     },
     "Resource/Backup/plugin/5fbb5e7ff7538ed566dc6e2f5f81e2e183781fdc5ae8fe824fb27df2a1094e64/StartUpAds.conf": {
       "url": "https://ddgksf2013.top/rewrite/StartUpAds.conf",
@@ -8376,12 +8376,12 @@
     "Resource/Backup/script/6077b7f5c773456950eb5f6a6efa51f9a4934d69410603f976b099977c0434a6/weibo_json.js": {
       "url": "https://ddgksf2013.top/scripts/weibo_json.js",
       "path": "Resource/Backup/script/6077b7f5c773456950eb5f6a6efa51f9a4934d69410603f976b099977c0434a6/weibo_json.js",
-      "sha256": "5cdffae6d1a4b8c6c7067778a958176cf51c3ebf06b8572f4c60221e0d3f91e3",
-      "size": 198605,
+      "sha256": "192a89649dfcd10c976c3dc77476a0c964e803ad07ca7a11fe81a7218da2ee64",
+      "size": 223892,
       "kind": "script",
       "author": "chance",
       "category": "Upstream script backup",
-      "updatedAt": "2026-11-14T05:40:43.177Z"
+      "updatedAt": "2026-11-14T06:49:16.867Z"
     },
     "Resource/Backup/script/6cda933422fec8a6e3a3df870b13d0676e4097023ac0aa395e12cc3eda6823c9/main.js": {
       "url": "https://gist.github.com/RavelloH/68ed0626dae69a1ce7c8ad6887087ea1/raw/c008127260bc4dcd550fcd98285048cf6176f602/main.js",
@@ -104038,8 +104038,8 @@
     "Module/Surge/ddgksf2013/weiboenhanced/weibo_json.js": {
       "path": "Module/Surge/ddgksf2013/weiboenhanced/weibo_json.js",
       "sourceUrl": "https://ddgksf2013.top/scripts/weibo_json.js",
-      "sourceSha256": "5cdffae6d1a4b8c6c7067778a958176cf51c3ebf06b8572f4c60221e0d3f91e3",
-      "sha256": "328ce5f8c16bca602f7eadd7d313a79c34eaae0f454d55635bb56ab25df2631f",
+      "sourceSha256": "192a89649dfcd10c976c3dc77476a0c964e803ad07ca7a11fe81a7218da2ee64",
+      "sha256": "60d21bbf345302393fbc8543d74e95ae075c215ca737cfa39dedc06bca46bad6",
       "from": "qx",
       "targetClient": "surge",
       "directionPolicyVersion": 2,
@@ -104309,7 +104309,7 @@
         "$prefs",
         "$request",
         "$response",
-        "$response.<runtime-key>",
+        "$response.body",
         "$rocket",
         "$task",
         "setTimeout"
@@ -110326,8 +110326,8 @@
     },
     "https://ddgksf2013.top/scripts/weibo_json.js": {
       "path": "Resource/Backup/script-api/6077b7f5c773456950eb5f6a6efa51f9a4934d69410603f976b099977c0434a6.json",
-      "sha256": "89257be1e2053849f4881e5ae2734d0f001776dea8062d5aabb769af29a7971e",
-      "sourceSha256": "5cdffae6d1a4b8c6c7067778a958176cf51c3ebf06b8572f4c60221e0d3f91e3"
+      "sha256": "96888836949a495fe1c8eceb788421455245e6b732ee816deb724426b34c8a28",
+      "sourceSha256": "192a89649dfcd10c976c3dc77476a0c964e803ad07ca7a11fe81a7218da2ee64"
     },
     "https://ddgksf2013.top/scripts/yiyan.vip.js": {
       "path": "Resource/Backup/script-api/eef567ef63bbf05800d71d6c829630e65f7757d5e7b0623b5840370d7e61d004.json",
