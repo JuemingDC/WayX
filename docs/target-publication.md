@@ -17,10 +17,8 @@ Final checks cover readable paths, reference closure, script syntax, duplicate S
 Modified: 2026-11-13 (chance). 原生 Quantumult X 配置在格式有效时保留原文；发布版 JS 同样清除安装配置、使用说明和开发注释，仅保留可执行代码与必要许可声明，不添加 API 运行时或改变作者业务逻辑。原始脚本仍逐字节归档，保留注释、BOM 和换行；发布完整性按同一清理策略与原件比较。API 转换仍仅用于 Loon→QX、Loon→Surge、QX→Surge，不因 API 转换诊断停用原生声明。
 
 
-## JQ 文件
+## JQ 文件依赖转为内联
 
-Modified: 2026-11-14 (chance). Loon `request.json.jq_file`、`response.json.jq_file` 和旧版 `jq-path` 引用解析后，转换器在 `Resource/JQ/<插件ID>/` 生成纯 UTF-8 `.jq` 程序，文件名沿用可读的源资源路径。文件不包含 Loon Action、Shell 命令或目标配置的外层引号，使用官方 `jq --from-file` 和空输入编译验证后，与配置、脚本一起事务提交。源归档保持原样。删除依赖时同步移除本插件过期的 `.jq` 文件。
+Modified: 2026-11-14 (chance). Actions 解析 Loon 的 `jq_file` / `jq-path` 并读取同一轮资源快照中的 JQ 程序；QX 输出 `jsonjq-request-body` / `jsonjq-response-body`，Surge 输出 `[Body Rewrite]` 的 `http-request-jq` / `http-response-jq`。程序只做目标配置所需的单行化和引号转义，保留字符串内容、嵌套插值、注释续行、条件、阶段与操作顺序。完整 JQ 表达式优先交由客户端原生 JQ 处理。
 
-QX 与 Surge 按用户要求默认支持完整 jq 语言，原生 JQ 输出不限制为 JavaScript 可模拟的固定操作子集。QX 使用官方示例的 `jsonjq-request-body` / `jsonjq-response-body`；Surge 使用 `[Body Rewrite]` 的 `http-request-jq` / `http-response-jq`。配置中的 `# JQ File:` 链接指向本仓库保留的 `.jq` 文件，Actions 读取同一程序生成客户端原生表达式；该注释是资源引用说明，并非客户端运行时远程加载指令。
-
-依据：<https://jqlang.org/manual/#invoking-jq>、<https://nsloon.app/docs/Rewrite/rewrite_v2/>、<https://manual.nssurge.com/http/body-rewrite.html>，以及项目提供的 Quantumult X 官方示例。
+不再生成 `Resource/JQ` 副本及 `# JQ File:` 注释链接；Actions 发布迁移同时删除上一版产生的内容，源插件与原始归档保持原样。jq 命令行的 `-f` 不属于客户端配置语法，官方工具文件读取能力不能直接用来证明客户端文件引用接口。官方 jq 对照测试验证程序内联前后的样本行为，不代表客户端全部运行边界已得到实机验证。

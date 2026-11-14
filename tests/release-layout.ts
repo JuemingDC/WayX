@@ -87,7 +87,14 @@ try {
       validateSurgeModule(sg, { id: "duplicate" }, { uniqueScripts: true }),
     /duplicate Surge script name/,
   );
+  // Modified: 2026-11-14 (chance). Publication removes the mistaken jq copies/links.
+  await write("Resource/JQ/Demo/filter.jq", ".\n");
+  for (const file of ["Adblock/Quantumult X/Demo.snippet", "Adblock/Surge/Demo.sgmodule"])
+    await write(file, "# JQ File: " + raw + "Resource/JQ/Demo/filter.jq\n" + await fs.readFile(path.join(root, file), "utf8"));
   const first = await publishLayout(root);
+  await assert.rejects(fs.stat(path.join(root, "Resource/JQ/Demo/filter.jq")), /ENOENT/);
+  for (const file of [first.artifacts["Adblock/Quantumult X/Demo.snippet"], first.artifacts["Adblock/Surge/Demo.sgmodule"]])
+    assert.doesNotMatch(await fs.readFile(path.join(root, file), "utf8"), /JQ File:|Resource\/JQ/);
   assert.equal(
     first.artifacts["Adblock/Quantumult X/Demo.snippet"],
     "Adblock/Quantumult X/Kelee/Demo/Demo.snippet",

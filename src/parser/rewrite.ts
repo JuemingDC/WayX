@@ -1,3 +1,4 @@
+import { transformJqText } from "./jq-text.ts";
 import type { RewriteAst, RewriteSemanticIr } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
@@ -1318,45 +1319,9 @@ export function renderFixedJsonMutationJq(operation: any, entries: any): any {
       .join(" | ");
   throw new Error("unsupported fixed JSON mutation: " + operation);
 }
+// Modified: 2026-11-14 (chance). jq comments respect interpolation and line continuation.
 export function stripJqComments(expr: any): any {
-  const input: any = String(expr);
-  let out: any = "",
-    quote: any = null,
-    esc: any = false,
-    comment: any = false;
-  for (const ch of input) {
-    if (comment) {
-      if (ch === "\n" || ch === "\r") {
-        comment = false;
-        out += " ";
-      }
-      continue;
-    }
-    if (quote) {
-      out += ch;
-      if (esc) {
-        esc = false;
-        continue;
-      }
-      if (ch === "\\") {
-        esc = true;
-        continue;
-      }
-      if (ch === quote) quote = null;
-      continue;
-    }
-    if (ch === '"' || ch === "'") {
-      quote = ch;
-      out += ch;
-      continue;
-    }
-    if (ch === "#") {
-      comment = true;
-      continue;
-    }
-    out += ch;
-  }
-  return out;
+  return transformJqText(String(expr));
 }
 // 上游错误：jq keyword whitespace lost after an identity selector.
 // Failed case: KuGou / Issue #162 / `else .end;` -> `else . end;`.
@@ -1445,117 +1410,16 @@ export function repairUpstreamJq(expr: any): any {
   upstreamJqRepairCache.set(original, result);
   return result;
 }
+// Modified: 2026-11-14 (chance). Compact only jq code; preserve string data,
+// nested interpolation, token boundaries and official continued-comment behavior.
 export function minifyJq(expr: any): any {
-  const input: any = String(expr).trim();
-  let out: any = "",
-    quote: any = null,
-    esc: any = false,
-    pending: any = false;
-  const noSpaceBefore: any = new Set([")", "]", ",", "|", "="]),
-    noSpaceAfter: any = new Set(["(", "[", ",", "|", "="]);
-  for (const ch of input) {
-    if (quote) {
-      out += ch;
-      if (esc) {
-        esc = false;
-        continue;
-      }
-      if (ch === "\\") {
-        esc = true;
-        continue;
-      }
-      if (ch === quote) quote = null;
-      continue;
-    }
-    if (ch === '"' || ch === "'") {
-      if (pending && out && !noSpaceAfter.has(out.at(-1))) out += " ";
-      pending = false;
-      quote = ch;
-      out += ch;
-      continue;
-    }
-    if (/\s/.test(ch)) {
-      pending = true;
-      continue;
-    }
-    if (pending) {
-      const prev: any = out.at(-1);
-      if (prev && !noSpaceAfter.has(prev) && !noSpaceBefore.has(ch)) out += " ";
-      pending = false;
-    }
-    if (noSpaceBefore.has(ch) && out.endsWith(" ")) out = out.slice(0, -1);
-    out += ch;
-  }
-  return out.trim();
+  return transformJqText(String(expr), {compact: true});
 }
 export function minifyJqFile(expr: any): any {
-  return minifyJq(stripJqComments(expr));
-}
-// Modified: 2026-11-14 (chance). Export resolved Loon jq_file dependencies as
-// ordinary UTF-8 jq programs, without configuration wrappers or shell quoting.
-export function standardJqPrograms(files: Map<string, any>): Map<string, string> {
-  const programs = new Map<string, string>();
-  for (const group of files.values()) {
-    for (const file of group?.byAction ? Object.values(group.byAction) as any[] : [group]) {
-      if (file?.error || !file?.sourceFile || typeof file.content !== "string") continue;
-      const source = new URL(file.sourceFile);
-      const stem = decodeURIComponent(source.pathname).replace(/\.[^./]+$/, "")
-        .replace(/[^\p{L}\p{N}_.-]+/gu, "-").replace(/^-+|-+$/g, "");
-      if (!stem || Buffer.byteLength(stem) > 180) throw new Error("JQ source needs a readable filename: " + file.sourceFile);
-      const name = stem + ".jq";
-      const program = repairUpstreamJq(file.program ?? file.content).jq.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").replace(/\n*$/, "\n");
-      if (!program.trim()) throw new Error("JQ file has no program: " + file.sourceFile);
-      if (programs.has(name) && programs.get(name) !== program)
-        throw new Error("Conflicting JQ resource filename: " + name);
-      programs.set(name, program);
-    }
-  }
-  return programs;
+  return minifyJq(String(expr).replace(/^\uFEFF/, ""));
 }
 export function normalizeJqForSingleQuotedConfig(expr: any): any {
-  const jq: any = String(expr);
-  let out: any = "",
-    inString: any = false,
-    esc: any = false;
-  for (const ch of jq) {
-    if (inString) {
-      if (esc) {
-        out += ch;
-        esc = false;
-        continue;
-      }
-      if (ch === "\\") {
-        out += ch;
-        esc = true;
-        continue;
-      }
-      if (ch === '"') {
-        out += ch;
-        inString = false;
-        continue;
-      }
-      if (ch === "'") {
-        out += "\\u0027";
-        continue;
-      }
-      out += ch;
-      continue;
-    }
-    if (ch === '"') {
-      inString = true;
-      out += ch;
-      continue;
-    }
-    if (ch === "'") {
-      throw new Error(
-        "JQ contains a single quote outside a JSON string; target quoting is not proven safe",
-      );
-    }
-    out += ch;
-  }
-  if (inString || esc)
-    throw new Error("JQ contains an unterminated JSON string");
-  return out;
+  return transformJqText(String(expr), {quoteSafe: true});
 }
 export function quoteJq(expr: any): any {
   return `'${normalizeJqForSingleQuotedConfig(expr)}'`;

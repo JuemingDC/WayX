@@ -1,4 +1,3 @@
-import { planJqFileChanges } from "./jq-files.ts";
 // Modified: 2026-11-12 (chance). Website-listed resources supersede the limited
 // GitHub directory subset; embedded QX and native Surge keep separate handling.
 import {ddgksfCatalogUrl,parseDdgksfCatalog,websiteQxConfiguration} from "../ingest/ddgksf.ts";
@@ -249,7 +248,8 @@ export async function syncGeneratedScripts(
   }
   return changed;
 }
-// Internal workflow transaction; the public converter index remains unchanged.
+// Modified: 2026-11-14 (chance). Restore the source/script/target transaction;
+// inline JQ needs no standalone file compiler or file publication writes.
 export async function commitManagedConversion(
   root: any,
   entry: any,
@@ -264,10 +264,6 @@ export async function commitManagedConversion(
     writeSource = writeManagedSource,
   }: any = {},
 ): Promise<any> {
-  // Modified: 2026-11-14 (chance). Validate jq files before any managed write;
-  // snapshot generated/deleted files with scripts, source and client outputs.
-  onStage("validate-generated-jq-files");
-  const jqChanges = await planJqFileChanges(root, entry.id, out.generatedJqFiles ?? new Map());
   const stale: any = await staleGeneratedHelpers(
     root,
     entry,
@@ -277,7 +273,6 @@ export async function commitManagedConversion(
     state.qxPath,
     state.surgePath,
     ...(sourceState ? [sourceState.sourcePath] : []),
-    ...[...jqChanges.keys()].map(file => path.join(root, file)),
   ];
   for (const name of new Set([...out.generatedScripts.keys(), ...stale])) {
     if (path.basename(name) !== name)
@@ -297,12 +292,6 @@ export async function commitManagedConversion(
     ),
   );
   try {
-    onStage("write-generated-jq-files");
-    for (const [relative, program] of jqChanges) {
-      const file = path.join(root, relative);
-      if (program === null) await fs.rm(file, {force: true});
-      else { await fs.mkdir(path.dirname(file), {recursive: true}); await fs.writeFile(file, program); }
-    }
     onStage("write-generated-helpers");
     const helperChanges: any = await writeHelpers(
       root,
@@ -315,7 +304,7 @@ export async function commitManagedConversion(
       onStage("write-source");
       await writeSource(sourceState, source);
     }
-    return { helperChanges: [...helperChanges, ...jqChanges.keys()], targetChanges };
+    return { helperChanges, targetChanges };
   } catch (error: any) {
     const rollbackErrors: any = [];
     for (const [file, bytes] of snapshot)

@@ -289,6 +289,10 @@ export async function publishLayout(
     { objects: {}, adapters: {}, bindings: {} },
   );
   const changes = new Map<string, string | Uint8Array | null>();
+  // Modified: 2026-11-14 (chance). Retire the mistaken standalone jq publication;
+  // native client expressions remain inline and source archives stay untouched.
+  for (const file of await listFiles(path.join(root, "Resource/JQ")))
+    changes.set("Resource/JQ/" + file, null);
   const state: Layout = {
     version: 1,
     phase: "published",
@@ -438,6 +442,9 @@ export async function publishLayout(
         new URL(ref.value).hash +
         next.slice(ref.end);
     }
+    // Modified: 2026-11-14 (chance). Remove misleading file-link metadata from
+    // regenerated and retained configurations before publication.
+    next = next.replace(/^# JQ File:[^\n]*(?:\n|$)/gm, "");
     // Modified: 2026-11-08 (chance). Migrate retained timestamp headers after operand offsets are consumed.
     next = migrateUpdateMetadata(rewrite(next, state.artifacts), logical.endsWith(".snippet") && /^# Managed by: WayX Native QX\r?$/m.test(text));
     // Modified: 2026-11-10 (chance). Correct retained/paused plugin wrappers from
