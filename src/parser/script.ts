@@ -602,7 +602,7 @@ function validateOptions(options: any, phase: any): any {
   }
 }
 // Shared lexical splitting preserves regex alternation, raw/JQ strings and options.
-export function splitScriptPipelineSources(source: any): any {
+export function splitScriptPipelineSources(source: any, {preserveJsonPipelines = false}: any = {}): any {
   const text: any = String(source ?? "").trim();
   const found: any = scanState(text, (i: any): any =>
     /^\s+then\s+/.test(text.slice(i))
@@ -630,7 +630,18 @@ export function splitScriptPipelineSources(source: any): any {
   segments.push(tail.slice(start).trim());
   if (segments.some((part: any): any => !part))
     throw new Error("Empty action in source pipeline");
-  return segments.map(
+  // Modified: 2026-11-15 (chance). Keep consecutive JSON/JQ actions together
+  // when projecting a mixed Script declaration for target conversion.
+  const groups: string[] = [];
+  let previousJson = false;
+  for (const part of segments) {
+    const json = /^(?:request|response)\.json\.(?:add|delete|replace|jq|jq_file)\s*\(/.test(part);
+    if (preserveJsonPipelines && json && previousJson)
+      groups[groups.length - 1] += " | " + part;
+    else groups.push(part);
+    previousJson = json;
+  }
+  return groups.map(
     (part: any): any => text.slice(0, found.index) + " then " + part,
   );
 }

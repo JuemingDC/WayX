@@ -405,7 +405,7 @@ class Parser {
 export function parseRewriteV2(s: string): RewriteAst {
   return new Parser(s).parse();
 }
-// Preserve every action with its original dependency index for separate output.
+// Modified: 2026-11-15 (chance). Preserve source action indices independently of target pipeline grouping.
 export function selectRewritePipelineLayer(ast: any): any {
   if (ast.sourceActionIndices) return ast;
   if (ast.actions.length < 2) return ast;
@@ -1955,7 +1955,7 @@ export function supportsRewritePhaseActions(ast: any, target: any): any {
   );
 }
 // Native JQ is a target capability, not a reason to introduce an HTTP Script.
-// Multiple known single-output JQ actions can also stay in one native rule;
+// Author JQ actions in one source pipeline stay in one native rule;
 // filters run in source order using native jq error propagation.
 function nativeJqPriorityPlan(ast: any, target: any): any {
   if (!ast.actions.every((a: any): any => a.name === ast.phase + ".json.jq"))
@@ -1967,17 +1967,12 @@ function nativeJqPriorityPlan(ast: any, target: any): any {
         throw new Error("native JQ requires fixed source expression");
       return parts.map((p: any): any => p[1]).join("");
     });
-    if (
-      ast.actions.length > 1 &&
-      ast.actions.some((a: any): any => fixedJqOperations(a) === null)
-    )
-      throw new Error(
-        "native multi-action JQ requires proven single-output filters",
-      );
+    // Modified: 2026-11-15 (chance). Keep author JQ filters in their source
+    // pipeline, including streams/errors; parentheses preserve lexical scope.
     const jq: any =
       filters.length === 1
         ? filters[0]
-        : filters.map((filter: any): any => "(" + filter + ")").join(" | ");
+        : filters.map((filter: any): any => "(" + minifyJqFile(filter) + ")").join(" | ");
     const nativeAst: any = {
       ...ast,
       actions: [
@@ -2005,6 +2000,7 @@ function nativeJqPriorityPlan(ast: any, target: any): any {
     return unsupported(String(error?.message || error));
   }
 }
+// Modified: 2026-11-15 (chance). Prefer one native jq rule for the entire source JSON/JQ pipeline.
 function nativeJsonPriorityPlan(ast: any, target: any): any {
   if (
     ast.actions.length === 1 &&
@@ -2013,7 +2009,7 @@ function nativeJsonPriorityPlan(ast: any, target: any): any {
     return null;
   if (
     !ast.actions.every((action: any): any =>
-      new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace)$").test(
+      new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq)$").test(
         action.name,
       ),
     )
@@ -2494,7 +2490,7 @@ export function jsonActionToJq(action: any): any {
   });
   return { ok: true, jq: ops.join(" | ") };
 }
-function fixedObjectKeyPath(node: any, actionName: any): any {
+function fixedJsonKeyPath(node: any, actionName: any): any {
   if (!["string", "raw-string"].includes(node?.type))
     throw new Error(actionName + ": key path must be a fixed string");
   const pieces: any = stringTemplateParts(node);
@@ -2505,18 +2501,11 @@ function fixedObjectKeyPath(node: any, actionName: any): any {
   const parts: any = parseKeyPath(
     pieces.map((piece: any): any => piece[1]).join(""),
   );
-  // Numeric String keys and length can mutate arrays through JS properties.
-  // Their source behavior needs an array-aware lowering, even without [n].
-  return parts.every(
-    (part: any): any =>
-      typeof part === "string" &&
-      part !== "length" &&
-      !/^(?:0|[1-9]\d*)$/.test(part),
-  )
-    ? parts
-    : null;
+  // Modified: 2026-11-15 (chance). Use the existing native path lowering for
+  // whole pipelines, including array indices and ordered deletion effects.
+  return parts;
 }
-function fixedObjectJsonOps(action: any): any {
+function fixedJsonOps(action: any): any {
   const name: any = action?.name || "";
   if (!/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(name)) {
     return unsupported(
@@ -2535,15 +2524,10 @@ function fixedObjectJsonOps(action: any): any {
   for (let index: any = 0; index < paths.length; index++) {
     let key: any;
     try {
-      key = fixedObjectKeyPath(paths[index], name);
+      key = fixedJsonKeyPath(paths[index], name);
     } catch (error: any) {
       return unsupported(String(error?.message || error));
     }
-    if (key === null)
-      return unsupported(
-        name +
-          ": native multi-action JQ currently requires fixed object key paths",
-      );
     if (operation === "delete") {
       entries.push({ parts: key });
       continue;
@@ -2568,18 +2552,28 @@ export function jsonPipelineToSafeNativeJq(ast: any): any {
   if (
     ast.actions.some(
       (action: any): any =>
-        !new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace)$").test(
+        !new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq)$").test(
           action.name,
         ),
     )
   ) {
     return unsupported(
-      "native JSON pipeline requires same-phase add/delete/replace actions only",
+      "native JSON pipeline requires same-phase add/delete/replace/jq actions only",
     );
   }
   const ops: any = [];
+  // Modified: 2026-11-15 (chance). Translate each action inside the source
+  // declaration directly to jq; never split its pipeline into target rules.
   for (const action of ast.actions) {
-    const mapped: any = fixedObjectJsonOps(action);
+    if (action.name === ast.phase + ".json.jq") {
+      const parts = stringTemplateParts(action.args[0]);
+      if (parts.some((part: any): boolean => part[0] !== "s"))
+        return unsupported("native JQ requires fixed source expression");
+      const expression = parts.map((part: any): string => part[1]).join("");
+      ops.push("(" + minifyJqFile(expression) + ")");
+      continue;
+    }
+    const mapped: any = fixedJsonOps(action);
     if (!mapped.ok) return mapped;
     ops.push(...mapped.ops);
   }

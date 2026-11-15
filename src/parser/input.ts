@@ -191,8 +191,9 @@ export function groupSourceSectionItems(lines: any = []): any {
       pending.push(lines[sourceIndex]);
       continue;
     }
+    // Modified: 2026-11-15 (chance). Retain JSON blocks while projecting mixed Script declarations.
     const members: any = isScriptV2(trimmed)
-      ? splitScriptPipelineSources(trimmed)
+      ? splitScriptPipelineSources(trimmed, {preserveJsonPipelines: true})
       : [trimmed];
     members.forEach((line: any, index: any): any =>
       items.push({

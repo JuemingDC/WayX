@@ -2364,8 +2364,10 @@ const indexedJsonPipelineSource='response if ${url} ~= /api/ then response.json.
 const indexedJsonPipelineCtx=ctx();
 const indexedJsonPipeline=planQxRewrite(v2(indexedJsonPipelineSource),indexedJsonPipelineCtx);
 assert.equal(indexedJsonPipeline.section,'rewrite');
-assert.match(indexedJsonPipeline.line,/^api url script-response-body /);
-assert.equal(indexedJsonPipelineCtx.generatedScripts.size,1);
+// Modified: 2026-11-15 (chance). Indexed JSON pipelines use the same native jq path lowering as single actions.
+assert.match(indexedJsonPipeline.line,/^api url jsonjq-response-body /);
+assert.match(indexedJsonPipeline.line,/delpaths/);
+assert.equal(indexedJsonPipelineCtx.generatedScripts.size,0);
 
 const nonExactJsonPipelineSource='response if ${request.header[\'X-Region\']} == "CN" then response.json.add("flag",true) | response.json.delete("old")';
 const nonExactJsonPipelineCtx=ctx();

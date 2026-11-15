@@ -6,7 +6,6 @@
 import assert from "node:assert/strict";
 import { compileRegexForTarget, normalizePluginSource, parseLoonPlugin, convertPlugin, materializeJqFiles, materializeMockFiles, discoverSourceScriptUrls, inspectSourceScript, materializeSourceScripts, materializeConversionContext, validateQX, validateSurgeModule, parseRewriteV2, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRejectRewritePlan, renderQxInlineMockScript, surgeInlineMockPlan, qxPrimitiveForRewriteV2Action, qxRule, surgeRule, rewriteV2AstToSemanticIr, legacyRewriteToSemanticIr, planQxRewrite, planSurgeRewrite, parseScriptDeclaration, planQxScript, planSurgeScript, parseConfigurationDeclaration, planConfiguration, WAYX_SUPPORTED_SOURCE_SECTIONS, cleanSourceComments, groupSourceSectionItems, isSupportedSourceSection, sourceCommentText, attachQxInlineNote, looksLikeCommentedSourceDeclaration, parseSourceMetadataHeader, renderQxSnippetHeader, renderSurgeModuleHeader, compactOutputLines, finalizeOutputLines, hasActiveOutputLines, appendQxOutput, createQxOutputState, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, appendSurgeOutput, createSurgeOutputState, renderSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, validateConversionMetadata } from "../src/index.ts";
 import { materializeConversionRunContext, convertPluginWithContext, validateConvertedPlugin } from "../src/emit/conversion.ts";
-import {quoteJq} from "../src/parser/rewrite.ts";
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -1964,8 +1963,8 @@ if(selectedCase==='conversion-policy.mjs') {
   const out=convertPlugin(entry,'[Rewrite]\n'+line,{...options,jqFiles:files});
   for(const target of ['qx','surge']) {
     assert.match(out[target],/REVIEW REQUIRED.*missing file/);
-    assert.match(active(out[target]),/\.before/);
-    assert.match(active(out[target]),/setpath\(\["after"\]; true\)/);
+    // Modified: 2026-11-15 (chance). A missing dependency diagnoses the whole JSON pipeline.
+    assert.doesNotMatch(active(out[target]),/\.before|setpath\(\["after"\]; true\)/);
   }
   assert.match(out.surge,/header-add X-Before yes/);
   console.log('Independent action output passed: both phases/sections/orders, original Script URL, JSON and Header retention, and per-file failure isolation');
@@ -1991,21 +1990,11 @@ if(selectedCase==='conversion-policy.mjs') {
       const inlinePattern=compileRegexForTarget(asts[0].condition.right,{target}).pattern;
       const prefix=target==='qx'?inlinePattern+' url jsonjq-response-body ': 'http-response-jq '+inlinePattern+' ';
       const active=out[target].split('\n').filter(x=>x.startsWith(prefix));
-      // Modified: 2026-11-15 (chance). QX retains all programs in one ordered
-      // rule; Surge continues to retain independent declarations.
-      // Zhihu has an intervening active rewrite; retain that execution boundary.
-      assert.equal(active.length,target==='qx'?(name==='Zhihu'?2:1):asts.length,name+' same-regex JSON/JQ output');
-      if(target==='qx') {
-        const programs=asts.map(ast=>{
-          const line=qxDirectRewritePlan(ast).line;
-          return '('+line.slice(line.indexOf(" '")+2,-1)+')';
-        });
-        if(active.length===1) assert.equal(active[0],prefix+quoteJq(programs.join(' | ')),name+' preserves every operation in source order');
-        else for(const ast of asts) assert.ok(active.join('\n').includes(qxDirectRewritePlan(ast).line.slice(prefix.length)),name+' retains programs across an execution barrier');
-      }
+      // Modified: 2026-11-15 (chance). URL equality does not merge independent source declarations.
+      assert.equal(active.length,asts.length,name+' retains each independent source JSON/JQ declaration');
     }
   }
-  console.log('Real same-regex declarations: Taqu, XiaobaiPrint and Zhihu keep ordered QX programs with execution barriers and independent Surge rules');
+  console.log('Real same-regex declarations: independent source rules remain independent in QX and Surge');
 }
 
 if(selectedCase==='conversion-policy.mjs') {

@@ -6,7 +6,7 @@ import { upstreamUpdateTime } from "../domain/update-metadata.ts";
 // Consolidated: 2026-10-03
 // Author: chance
 // Category: Converter / output
-import { isRewriteV2, quoteJq } from "../parser/rewrite.ts";
+import { isRewriteV2 } from "../parser/rewrite.ts";
 import { parseLegacyScriptLine } from "../parser/script.ts";
 import { cleanSourceComments, sourceCommentText } from "../parser/input.ts";
 import {
@@ -289,70 +289,6 @@ export function qxRewriteOutputDestination(state: any, section: any): any {
     return qxOutputDestination(state, "rewrite");
   return qxOutputDestination(state, "notes");
 }
-// Modified: 2026-11-15 (chance). Compose sequential jq operations for an identical
-// Quantumult X URL/headers matcher and direction into a single native rewrite.
-// Only consecutive executable rules may be combined; crossing another active
-// rewrite could change execution order for overlapping URL regular expressions.
-function qxJqRewriteCandidate(raw: any): any {
-  const text: string = String(raw ?? "").trim();
-  const note: any = text.match(/^(\{#\s*[\s\S]*?\s*#\}\s+)([\s\S]+)$/);
-  const body: string = note ? note[2] : text;
-  const parsed: any = splitQxRewriteLine(body);
-  if (!parsed) return null;
-  const action: any = parsed.action.match(/^jsonjq-(request|response)-body\s+'(.+)'$/);
-  if (!action) return null;
-  return {
-    key: JSON.stringify([parsed.matcher, parsed.urlPattern, parsed.headersPattern, action[1]]),
-    phase: action[1],
-    expression: action[2],
-    prefix: (note ? note[1] : "") + body.slice(0, body.length - parsed.action.length),
-    note: note ? note[1].trim() : null,
-  };
-}
-function qxJqCommentOrBlank(raw: any): boolean {
-  const line: string = String(raw ?? "").trim();
-  return !line || /^(?:#|;|\/\/)/.test(line);
-}
-export function mergeQxJsonJqRewriteLines(lines: any[] = []): any[] {
-  const output: any[] = [];
-  for (let i = 0; i < lines.length;) {
-    const first: any = qxJqRewriteCandidate(lines[i]);
-    if (!first) { output.push(lines[i++]); continue; }
-    const expressions: string[] = [first.expression];
-    let last: number = i;
-    for (let j = i + 1; j < lines.length; j++) {
-      if (qxJqCommentOrBlank(lines[j])) continue;
-      const next: any = qxJqRewriteCandidate(lines[j]);
-      if (!next || next.key !== first.key) break;
-      expressions.push(next.expression);
-      last = j;
-    }
-    if (expressions.length === 1) { output.push(lines[i++]); continue; }
-    let merged: string;
-    try {
-      // Parentheses retain each source program's precedence and lexical scope.
-      // Do not deduplicate identical jq filters: repeated updates can be observable.
-      merged = first.prefix + "jsonjq-" + first.phase + "-body " +
-        quoteJq(expressions.map(expr => "(" + expr + ")").join(" | "));
-    } catch {
-      // A source that cannot be quoted safely must not be changed.
-      output.push(...lines.slice(i, last + 1));
-      i = last + 1;
-      continue;
-    }
-    // Preserve every original comment and additional inline source annotation.
-    for (let j = i + 1; j <= last; j++) {
-      if (qxJqCommentOrBlank(lines[j])) output.push(lines[j]);
-      else {
-        const next: any = qxJqRewriteCandidate(lines[j]);
-        if (next?.note) output.push("# " + next.note);
-      }
-    }
-    output.push(merged);
-    i = last + 1;
-  }
-  return output;
-}
 // Modified: 2026-10-25 (chance). Every author/app emits one mixed snippet;
 // filter, rewrite and MITM stay together for the single rewrite subscription.
 export function renderQxOutput({ state, headerLines, entry, stamp }: any): any {
@@ -365,7 +301,8 @@ export function renderQxOutput({ state, headerLines, entry, stamp }: any): any {
     ...compactOutputLines(uniqueRoutingLines(state.filter)),
     "",
     "# [rewrite_local]",
-    ...compactOutputLines(mergeQxJsonJqRewriteLines(state.rewrite)),
+    // Modified: 2026-11-15 (chance). Preserve source declaration boundaries; JSON pipelines are planned intact.
+    ...compactOutputLines(state.rewrite),
     "",
     ...(state.task.length
       ? ["# [task_local]", ...compactOutputLines(state.task), ""]

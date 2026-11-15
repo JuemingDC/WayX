@@ -21,18 +21,17 @@ JSON/JQ 表达式以 jqlang 官方标准为依据，不采用第三方转换器�
 
 ## 2.2 编译与目标规划
 
-Modified: 2026-11-15 (chance). 按用户要求，QX 同一 snippet 中连续有效重写的匹配器完全相同、方向相同的 jsonjq 规则合并为一条：按声明顺序输出 `(JQ1) | (JQ2)`。保留每段运算和注释，不按表达式去重；括号隔离逗号优先级和局部定义。request/response、url/url-and-header、不同 URL 正则或 Header 条件分别分组，不猜测正则覆盖关系，不跨独立订阅拼接；遇到其他有效重写时不跨行重排，以免改变重叠 URL 的规则执行顺序。该策略覆盖 Loon 转换与原生 QX 合集，原始归档不变；单条和 Surge 输出保持原样。依据上传官方 sample 的 jsonjq-request/response-body 格式与 jqlang 官方 Pipe/Parenthesis 定义验证目标行为，不据此宣称源客户端的错误回滚或多输出流具备设备等价性。
-
+Modified: 2026-11-15 (chance). 按用户澄清，在解析后的源声明动作层保留 JSON/JQ 管道，QX 与 Surge 均将同一源声明内的连续 JSON add/delete/replace/jq/jq_file 操作整体转换为一条标准 jq 表达式。保留操作顺序、每个作者 jq 的作用域、条件、方向和文件依赖原索引；任一依赖失败时整体诊断该 JSON 管道，不发布删减后的部分管道。纯 JSON/JQ 声明不拆分；混合声明以非 JSON 动作为边界保留连续 JSON 管道。独立源声明即使 URL 一样仍独立，不再在渲染或原生 QX 合集中按 URL 合并规则；原始 jq 文件仍按既有方式内联。不同平台的空输出/错误保留行为不据此宣称设备等价。官方目标格式以上传 QX sample 的 jsonjq-request/response-body 与 https://manual.nssurge.com/http/body-rewrite.html 的 http-request/response-jq 为准。
 
 Modified: 2026-11-01 (chance). 用户授权修正墨鱼 EmbyPlugin 的指定错误声明：仅当源 URL 为 ddgksf2013/Rewrite/master/Function/EmbyPlugin.conf 且整条原文完全匹配时，将 `$Accept-Encoding` 修正为双 CRLF 捕获引用 `$1Accept-Encoding: gzip, deflate, br$2`。保留原声明注释，不推广至其他源、不改变 URL 或脚本。见 docs/moyu-sources.md。
 
-数据流为源解析 → target-neutral Semantic IR → 分条及目标规划 → 目标输出 → 一次最终产物检查。oracle/canonical 为开发者按需运行的工具，不进入日常同步 Action。通用 parser 保留源声明、section/phase、条件、Regex body/flags、captures、变量、选项及动作和声明顺序，不提前套用目标语法。含 Script 的混合声明使用共同词法 scanner 保留并拆分各 action，不把 Script 加入官方 Rewrite action registry。
+数据流为源解析 → target-neutral Semantic IR → 分条及目标规划 → 目标输出 → 一次最终产物检查。oracle/canonical 为开发者按需运行的工具，不进入日常同步 Action。通用 parser 保留源声明、section/phase、条件、Regex body/flags、captures、变量、选项及动作和声明顺序，不提前套用目标语法。含 Script 的混合声明使用共同词法 scanner 保留连续 JSON/JQ 管道并分离其它 action，不把 Script 加入官方 Rewrite action registry。
 
 IR 不包含目标 action 名、section 名、helper URL 或目标 fallback。共享 planner 的结果分为 native-equivalent、guarded-helper、phase-dispatcher、unsupported；转换结果可同时带兼容限制或明确的用户策略说明。
 
 能够证明完整等价时优先 native；必要且已支持的语义缺口由共同 helper/dispatcher 承担；不能安全表示则注释源声明并诊断，不生成假可用规则。不得按插件 id、名称、作者或完整 catalog signature 特判。
 
-用户指定的 QX 正则 flags 省略策略、QX 强制 enable、作者 argument 省略、单条 pipeline 分条输出和 JSON add/replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
+用户指定的 QX 正则 flags 省略策略、QX 强制 enable、作者 argument 省略、非 JSON 动作分条输出、JSON/JQ 源管道整体输出和 JSON add/replace 直接 setpath 是明确的转换策略，不能称为完整源语义等价。除此之外，不静默删除条件或动作。
 
 <!-- Modified: 2026-10-25 (chance). Make source/target semantic equivalence the default invariant and distinguish explicit semantic exceptions from syntax preferences. -->
 
@@ -54,7 +53,7 @@ Surge 输出的目的 IP 类规则（IP-CIDR、IP-CIDR6、GEOIP、IP-ASN，包�
 
 组合指一条声明 action 区域中的 `|`，不指分开的同正则声明。独立声明按源顺序转换，不能因正则相同而跨声明择一或去重。
 
-单条声明中的各 action 按源顺序分别规划和输出，保留 Script、Header、Body、JSON/JQ、Mock 和 URL 动作，不再按家族择一。Script 使用已校验的 WayX 备份地址及原声明受支持选项；不能原生表达的独立 action 使用既有 helper 或明确诊断，失败 action 不删除其余成功 action。
+单条声明按源顺序规划：连续 JSON/JQ actions 整体生成一条 jq，Script、Header、Body、Mock 和 URL 动作保留既有独立规划，不再按家族择一。Script 使用已校验的 WayX 备份地址及原声明受支持选项；不能原生表达的独立 action 使用既有 helper 或明确诊断，JSON/JQ 管道内任一依赖失败时保留整段诊断；其它独立 action 的失败不删除相邻成功 action。
 
 动作分隔使用共同词法扫描器，保护 Regex alternation、逻辑 `||`、String/Raw String 内部 JQ 管道、变量、括号与 Script with 选项。数组批量参数仍属于一个 action，按数组顺序输出其目标操作。各文件依赖按原 action 索引绑定，Script 混合声明的分条在依赖发现、源审查和转换中使用同一入口。
 
@@ -111,7 +110,7 @@ Key Path 解析为 String/Number segments，支持 dot key、数字索引及 quo
 
 - replace：直接 `setpath(PATH; VALUE)`，不添加 getpath/has 或字段存在性检查。PATH 为保留 String/Number 类型的路径数组；批量替换按源顺序用 ` | ` 连接。遵循 jq 原生设置语义，包括缺失路径创建及类型错误。VALUE 保留源声明类型：字符串 `"[]"` 不等于数组 `[]`，不得统一字符串化。必要 JSON replace helper 同样执行路径设置，不检查末端字段是否存在。
 
-add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊键和数组索引不改变含义。生成的原生表达式不添加统一 type guard、`$__wayx_before` 或 try/catch 回滚，使用 jqlang 原生类型、错误和管道语义；作者自带 if/try/catch 保留。批量动作内部可形成有序原生操作，多个源 actions 仍按 2.3 分条。
+add/replace 的 PATH 使用保留 String/Number 类型的路径数组，特殊键和数组索引不改变含义。生成的原生表达式不添加统一 type guard、`$__wayx_before` 或 try/catch 回滚，使用 jqlang 原生类型、错误和管道语义；作者自带 if/try/catch 保留。批量动作及同一源声明内连续 JSON/JQ actions 均按源顺序形成一条标准 jq 管道，数组索引沿用单 action 的路径转换语义。
 
 单条固定作者 jq 或文件 jq 优先使用原 URL matcher 和 QX jsonjq-request/response-body、Surge http-request/response-jq；不因可编译为 JavaScript、嵌套路径、flags 或同阶段其它声明自动迁为 Script。原生 matcher 无法表示的纯 jq 声明保持既有 Review/注释边界。
 
@@ -284,9 +283,9 @@ Review inventory baseline 必须可读且结构有效，不能跳过比较。同
 
 Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生成脚本/原生 jq 对照。覆盖命中/no-op、URL/method/headers/body/status、captures、动作顺序、阶段所有权、单次 `$done`、missing/null/false/空值、Unicode/转义/原型键、依赖失败隔离与事务回滚。条件证据分别统计 false-positive / false-negative evidence；finite fixture 不能单独证明 native-equivalent，仍须结构及官方能力依据。
 
-用户降级策略的目标预期与源全行为 oracle 分开，不据 flags 恢复或 JQ 分条宣称源行为完全等价。Golden 在独立语义检查通过后仅用于发现输出漂移，不用更新 Golden 掩盖错误。真实 jq 编译和结果/错误传播同时验证。
+用户降级策略的目标预期与源全行为 oracle 分开，不据 flags 恢复或 JQ 管道输出宣称源行为完全等价。Golden 在独立语义检查通过后仅用于发现输出漂移，不用更新 Golden 掩盖错误。真实 jq 编译和结果/错误传播同时验证。
 
-验收包括上游预检/目录/转换一致选层、真实同正则独立规则保留、分条 JSON/JQ、错误 JQ 诊断作用域、README 来源分组/折叠及增减、完整 Action 和逐文件内容比较。零 Review/Issue 不等于全 Loon 语法或真实客户端行为已证明。
+验收包括上游预检/目录/转换一致选层、真实同正则独立规则保留、源声明 JSON/JQ 整体输出、错误 JQ 管道诊断作用域、README 来源分组/折叠及增减、完整 Action 和逐文件内容比较。零 Review/Issue 不等于全 Loon 语法或真实客户端行为已证明。
 
 ## 2.18 实现组织与契约对应
 
@@ -310,7 +309,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 
 | 契约 | 实现入口 | 验证 |
 | --- | --- | --- |
-| Script/JSON/JQ 全动作分条 | splitScriptPipelineSources、selectRewritePipelineLayer、rewriteV2Action | conversion-policy、upstream-automation、catalog |
+| JSON/JQ 源管道整体输出；其它动作独立规划 | splitScriptPipelineSources、selectRewritePipelineLayer、rewriteV2Action | conversion-policy、upstream-automation、catalog |
 | 原 action 索引与依赖隔离 | input materializers、resolveRewriteJqDependencies | conversion-context、runtime/file isolation |
 | 复杂脚本及阶段 owner | planRewriteFeatureHelper、prepareRewriteDispatchers | runtime/oracle、phase/author ownership |
 | 作者选项与参数 | Script planners、共同绑定校验 | script、conversion-policy |

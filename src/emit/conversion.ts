@@ -333,18 +333,25 @@ function rewriteV2Action(line: any, target: any, ctx: any): any {
       );
     }
   };
-  return ast.sourceActionCount
-    ? {
-        section: "split",
-        members: ast.actions.map((action: any, index: any): any =>
-          plan({
-            ...ast,
-            actions: [action],
-            sourceActionIndices: [ast.sourceActionIndices[index]],
-          }),
-        ),
-      }
-    : plan(ast);
+  // Modified: 2026-11-15 (chance). Lower a source JSON/JQ pipeline as one
+  // declaration in both clients; dependency indices remain source-relative.
+  const isJsonAction = (action: any): boolean =>
+    new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq|jq_file)$").test(action.name);
+  if (!ast.sourceActionCount || ast.actions.every(isJsonAction)) return plan(ast);
+  const members: any[] = [];
+  for (let index = 0; index < ast.actions.length; index++) {
+    const action = ast.actions[index];
+    const previous = members.at(-1);
+    if (isJsonAction(action) && previous?.actions.every(isJsonAction)) {
+      previous.actions.push(action);
+      previous.sourceActionIndices.push(ast.sourceActionIndices[index]);
+    } else members.push({
+      ...ast,
+      actions: [action],
+      sourceActionIndices: [ast.sourceActionIndices[index]],
+    });
+  }
+  return {section: "split", members: members.map(plan)};
 }
 function planDisabledSurgeRewriteComments(comments: any, ctx: any): any {
   const passthrough: any = [];

@@ -1,6 +1,6 @@
 {
-  "version": 16,
-  "modified": "2026-11-15 (chance): Combine the two PinDuoDuo homepage QX JQ rules in source order; all other golden fields remain unchanged.",
+  "version": 17,
+  "modified": "2026-11-15 (chance): Preserve source declaration boundaries; remove QX post-render grouping. Source JSON pipelines are emitted intact for both clients.",
   "stamp": "2026-09-29 12:00:00 +08:00",
   "cases": {
     "HTTPDNS": {
@@ -20,9 +20,9 @@
       ]
     },
     "PinDuoDuo": {
-      "qxSha256": "c1bb7ba8feb0bc1e371ba3f838bce1c44e0ca3bee23a8fa772f34ad101f5e74c",
+      "qxSha256": "730407cc7d1ff136d94d9b78baf56fe28898f140ff36b5546dc764c68faee310",
       "surgeSha256": "1ba784adeb2d640e9469af00045c59010b154dbee357e8c94cac21f5a424fa21",
-      "qxBytes": 5363,
+      "qxBytes": 5449,
       "surgeBytes": 6792,
       "sourceScriptCount": 1,
       "generatedScriptCount": 0,
