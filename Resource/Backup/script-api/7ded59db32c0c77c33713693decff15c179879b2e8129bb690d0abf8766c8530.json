@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js",
-  "sourceSha256": "5036a1bee2c83ad3c92f5d2707ed3964d98c005aa84013a1a1ece70b0a0c4bf0",
+  "sourceSha256": "3838293c25c91aaebc98cd9464b30a3055a7116ba3c78f4cd4c09e37c20c8e87",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "5036a1bee2c83ad3c92f5d2707ed3964d98c005aa84013a1a1ece70b0a0c4bf0",
+    "sha256": "3838293c25c91aaebc98cd9464b30a3055a7116ba3c78f4cd4c09e37c20c8e87",
     "operations": [
       {
         "api": "require",
@@ -1444,9 +1444,9 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1281819,
-        "end": 1281829,
-        "line": 1604,
+        "start": 1282144,
+        "end": 1282154,
+        "line": 1606,
         "column": 71,
         "members": [
           "$arguments"
@@ -1464,7 +1464,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "5036a1bee2c83ad3c92f5d2707ed3964d98c005aa84013a1a1ece70b0a0c4bf0",
+        "analysisSourceSha256": "3838293c25c91aaebc98cd9464b30a3055a7116ba3c78f4cd4c09e37c20c8e87",
         "operations": [
           {
             "id": "api:0",
@@ -4585,9 +4585,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1281819,
-              "end": 1281829,
-              "line": 1604,
+              "start": 1282144,
+              "end": 1282154,
+              "line": 1606,
               "column": 71,
               "access": "read",
               "memberPath": []

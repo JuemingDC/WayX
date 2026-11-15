@@ -1,11 +1,11 @@
 # Name: cn
-# Updated: 2026-11-14 09:22:05 UTC
+# Updated: 2026-11-15 01:10:15 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 128067
+# Rules: 128082
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -11815,6 +11815,7 @@ host-suffix,adpchina.com,direct
 host-suffix,adpfm513.com,direct
 host-suffix,adplusx.com,direct
 host-suffix,adpsh.com,direct
+host-suffix,adqiyu.com,direct
 host-suffix,adqtt.net,direct
 host-suffix,adquan.com,direct
 host-suffix,adrkwai.com,direct
@@ -41275,7 +41276,6 @@ host-suffix,goofish.pro,direct
 host-suffix,google-hub.com,direct
 host-suffix,googlebbs.net,direct
 host-suffix,googlenav.com,direct
-host-suffix,googleplus.party,direct
 host-suffix,googleppy.com,direct
 host-suffix,googlevoice.org,direct
 host-suffix,googleyixia.com,direct
@@ -69413,7 +69413,6 @@ host-suffix,mrjiang.com,direct
 host-suffix,mrjjxw.com,direct
 host-suffix,mrlian.club,direct
 host-suffix,mrlika.com,direct
-host-suffix,mrlxc51byo.com,direct
 host-suffix,mrmfsc.ltd,direct
 host-suffix,mro365.com,direct
 host-suffix,mro9.com,direct
@@ -84493,7 +84492,6 @@ host-suffix,shomyq.com,direct
 host-suffix,shonfer.com,direct
 host-suffix,shootmedia.net,direct
 host-suffix,shop-isv.com,direct
-host-suffix,shop265.com,direct
 host-suffix,shop2cn.com,direct
 host-suffix,shopbackdrop.com,direct
 host-suffix,shopchaoren.com,direct
@@ -115930,7 +115928,6 @@ ip-cidr,103.176.52.0/23,direct
 ip-cidr,103.177.136.0/24,direct
 ip-cidr,103.177.162.0/23,direct
 ip-cidr,103.177.28.0/23,direct
-ip-cidr,103.177.44.0/23,direct
 ip-cidr,103.177.71.0/24,direct
 ip-cidr,103.178.240.0/23,direct
 ip-cidr,103.179.76.0/22,direct
@@ -118879,7 +118876,10 @@ ip-cidr,122.128.120.0/21,direct
 ip-cidr,122.13.0.0/16,direct
 ip-cidr,122.136.0.0/13,direct
 ip-cidr,122.14.0.0/17,direct
-ip-cidr,122.14.128.0/20,direct
+ip-cidr,122.14.128.0/22,direct
+ip-cidr,122.14.133.0/24,direct
+ip-cidr,122.14.134.0/23,direct
+ip-cidr,122.14.136.0/21,direct
 ip-cidr,122.14.144.0/22,direct
 ip-cidr,122.14.148.0/24,direct
 ip-cidr,122.14.150.0/23,direct
@@ -119128,7 +119128,7 @@ ip-cidr,124.204.0.0/14,direct
 ip-cidr,124.21.144.0/20,direct
 ip-cidr,124.21.160.0/19,direct
 ip-cidr,124.21.208.0/20,direct
-ip-cidr,124.21.224.0/19,direct
+ip-cidr,124.21.224.0/20,direct
 ip-cidr,124.21.32.0/19,direct
 ip-cidr,124.21.80.0/20,direct
 ip-cidr,124.21.96.0/19,direct
@@ -122461,7 +122461,13 @@ ip-cidr,223.223.176.0/20,direct
 ip-cidr,223.223.192.0/20,direct
 ip-cidr,223.240.0.0/13,direct
 ip-cidr,223.248.0.0/14,direct
-ip-cidr,223.252.128.0/17,direct
+ip-cidr,223.252.128.0/19,direct
+ip-cidr,223.252.160.0/21,direct
+ip-cidr,223.252.168.0/22,direct
+ip-cidr,223.252.172.0/24,direct
+ip-cidr,223.252.174.0/23,direct
+ip-cidr,223.252.176.0/20,direct
+ip-cidr,223.252.192.0/18,direct
 ip-cidr,223.252.194.0/24,direct
 ip-cidr,223.252.196.0/24,direct
 ip-cidr,223.252.199.0/24,direct
@@ -124762,7 +124768,19 @@ ip6-cidr,2402:7e20::/32,direct
 ip6-cidr,2402:7ee0::/32,direct
 ip6-cidr,2402:8160::/32,direct
 ip6-cidr,2402:8180::/32,direct
-ip6-cidr,2402:8260::/32,direct
+ip6-cidr,2402:8260:1000::/36,direct
+ip6-cidr,2402:8260:2000::/35,direct
+ip6-cidr,2402:8260:4000::/37,direct
+ip6-cidr,2402:8260:4800::/38,direct
+ip6-cidr,2402:8260:4d00::/40,direct
+ip6-cidr,2402:8260:4e00::/39,direct
+ip6-cidr,2402:8260:5000::/36,direct
+ip6-cidr,2402:8260:6000::/35,direct
+ip6-cidr,2402:8260:8000::/33,direct
+ip6-cidr,2402:8260:900::/40,direct
+ip6-cidr,2402:8260::/37,direct
+ip6-cidr,2402:8260:b00::/40,direct
+ip6-cidr,2402:8260:c00::/38,direct
 ip6-cidr,2402:8300::/32,direct
 ip6-cidr,2402:8380::/32,direct
 ip6-cidr,2402:840::/32,direct
@@ -126269,7 +126287,9 @@ ip6-cidr,2406:840:96c0::/42,direct
 ip6-cidr,2406:840:9809::/48,direct
 ip6-cidr,2406:840:980a::/47,direct
 ip6-cidr,2406:840:980c::/46,direct
-ip6-cidr,2406:840:9810::/45,direct
+ip6-cidr,2406:840:9811::/48,direct
+ip6-cidr,2406:840:9812::/47,direct
+ip6-cidr,2406:840:9814::/46,direct
 ip6-cidr,2406:840:9818::/47,direct
 ip6-cidr,2406:840:981b::/48,direct
 ip6-cidr,2406:840:9820::/43,direct
@@ -126616,35 +126636,30 @@ ip6-cidr,2406:840:fd41::/48,direct
 ip6-cidr,2406:840:fd42::/47,direct
 ip6-cidr,2406:840:fd44::/48,direct
 ip6-cidr,2406:840:fd47::/48,direct
-ip6-cidr,2406:840:fd48::/48,direct
 ip6-cidr,2406:840:fd4a::/47,direct
 ip6-cidr,2406:840:fd4c::/46,direct
 ip6-cidr,2406:840:fd51::/48,direct
 ip6-cidr,2406:840:fd52::/47,direct
 ip6-cidr,2406:840:fd54::/48,direct
 ip6-cidr,2406:840:fd57::/48,direct
-ip6-cidr,2406:840:fd58::/48,direct
 ip6-cidr,2406:840:fd5a::/47,direct
 ip6-cidr,2406:840:fd5c::/46,direct
 ip6-cidr,2406:840:fd61::/48,direct
 ip6-cidr,2406:840:fd62::/47,direct
 ip6-cidr,2406:840:fd64::/48,direct
 ip6-cidr,2406:840:fd67::/48,direct
-ip6-cidr,2406:840:fd68::/48,direct
 ip6-cidr,2406:840:fd6a::/47,direct
 ip6-cidr,2406:840:fd6c::/46,direct
 ip6-cidr,2406:840:fd71::/48,direct
 ip6-cidr,2406:840:fd72::/47,direct
 ip6-cidr,2406:840:fd74::/48,direct
 ip6-cidr,2406:840:fd77::/48,direct
-ip6-cidr,2406:840:fd78::/48,direct
 ip6-cidr,2406:840:fd7a::/47,direct
 ip6-cidr,2406:840:fd7c::/46,direct
 ip6-cidr,2406:840:fd81::/48,direct
 ip6-cidr,2406:840:fd82::/47,direct
 ip6-cidr,2406:840:fd84::/48,direct
 ip6-cidr,2406:840:fd87::/48,direct
-ip6-cidr,2406:840:fd88::/48,direct
 ip6-cidr,2406:840:fd8a::/47,direct
 ip6-cidr,2406:840:fd8c::/46,direct
 ip6-cidr,2406:840:fd94::/46,direct

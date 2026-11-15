@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-1.min.js",
-  "sourceSha256": "59c52849450df65b09737a0810cfe1ec604ed6a2e87ca50a81d25fb4eef4b1de",
+  "sourceSha256": "c215ce2c929e564c5922afb720b6be23deefc3fb4f027d2adc906ceb8bd493e7",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "59c52849450df65b09737a0810cfe1ec604ed6a2e87ca50a81d25fb4eef4b1de",
+    "sha256": "c215ce2c929e564c5922afb720b6be23deefc3fb4f027d2adc906ceb8bd493e7",
     "operations": [
       {
         "api": "require",
@@ -1422,9 +1422,9 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1254240,
-        "end": 1254250,
-        "line": 1598,
+        "start": 1254565,
+        "end": 1254575,
+        "line": 1600,
         "column": 71,
         "members": [
           "$arguments"
@@ -1433,9 +1433,9 @@
       {
         "api": "TextEncoder",
         "access": "read",
-        "start": 1281829,
-        "end": 1281840,
-        "line": 1633,
+        "start": 1282154,
+        "end": 1282165,
+        "line": 1635,
         "column": 1493,
         "members": [
           "TextEncoder"
@@ -1444,9 +1444,9 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 1281845,
-        "end": 1281862,
-        "line": 1633,
+        "start": 1282170,
+        "end": 1282187,
+        "line": 1635,
         "column": 1509,
         "members": [
           "TextEncoder"
@@ -1464,7 +1464,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "59c52849450df65b09737a0810cfe1ec604ed6a2e87ca50a81d25fb4eef4b1de",
+        "analysisSourceSha256": "c215ce2c929e564c5922afb720b6be23deefc3fb4f027d2adc906ceb8bd493e7",
         "operations": [
           {
             "id": "api:0",
@@ -4537,9 +4537,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1254240,
-              "end": 1254250,
-              "line": 1598,
+              "start": 1254565,
+              "end": 1254575,
+              "line": 1600,
               "column": 71,
               "access": "read",
               "memberPath": []
@@ -4561,9 +4561,9 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 1281829,
-              "end": 1281840,
-              "line": 1633,
+              "start": 1282154,
+              "end": 1282165,
+              "line": 1635,
               "column": 1493,
               "access": "read",
               "memberPath": []
@@ -4585,9 +4585,9 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 1281845,
-              "end": 1281862,
-              "line": 1633,
+              "start": 1282170,
+              "end": 1282187,
+              "line": 1635,
               "column": 1509,
               "access": "call",
               "memberPath": []
