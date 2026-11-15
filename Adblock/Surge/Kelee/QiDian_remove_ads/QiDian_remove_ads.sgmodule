@@ -16,9 +16,8 @@
 # Source: https://kelee.one/Tool/Loon/Lpx/QiDian_remove_ads.lpx
 
 [Body Rewrite]
-http-response-jq (?i)^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ 'setpath(["Data","WolfEye"]; 0) | setpath(["Data","CloudSetting","TeenShowFreq"]; 0)'
 
-http-response-jq (?i)^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ 'del(.Data.ActivityPageBackPushNoticeFrequency,.Data.ActivityIcon,.Data.ActivityPopup,.Data.LuckBag)'
+http-response-jq (?i)^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ 'setpath(["Data","WolfEye"]; 0) | setpath(["Data","CloudSetting","TeenShowFreq"]; 0) | del(.Data.ActivityPageBackPushNoticeFrequency,.Data.ActivityIcon,.Data.ActivityPopup,.Data.LuckBag)'
 
 http-response-jq (?i)^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v2\/dailyrecommend\/getdailyrecommend\? 'setpath(["Data","Items"]; "[]")'
 

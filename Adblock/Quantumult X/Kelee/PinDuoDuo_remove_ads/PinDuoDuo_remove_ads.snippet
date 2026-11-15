@@ -57,9 +57,7 @@ host, apm-a.pinduoduo.com, reject
 
 (?i)^https:\/\/api\.pinduoduo\.com\/api\/caterham\/v2\/query\/goods_detail_with_tags\? url reject-dict
 
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url jsonjq-response-body 'del(.result.dy_module.irregular_banner_dy,.result.icon_set,.result.search_bar_hot_query,.result.dy_module.irregular_banner_dy)'
-
-(?i)^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url jsonjq-response-body '.result.bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.buffer_bottom_tabs? |= map(select(.link | IN("index.html", "chat_list.html", "personal.html"))) | .result.all_top_opts |= map(del(.selected_image, .image, .height, .width))'
+(?i)^https:\/\/api\.pinduoduo\.com\/api\/alexa\/homepage\/hub\? url jsonjq-response-body 'del(.result.dy_module.irregular_banner_dy,.result.icon_set,.result.search_bar_hot_query,.result.dy_module.irregular_banner_dy) | (.result.bottom_tabs?|=map(select(.link|IN("index.html","chat_list.html","personal.html")))|.result.buffer_bottom_tabs?|=map(select(.link|IN("index.html","chat_list.html","personal.html")))|.result.all_top_opts|=map(del(.selected_image,.image,.height,.width)))'
 
 (?i)^https:\/\/api\.pinduoduo\.com\/search\? url jsonjq-response-body 'del(.expansion)'
 

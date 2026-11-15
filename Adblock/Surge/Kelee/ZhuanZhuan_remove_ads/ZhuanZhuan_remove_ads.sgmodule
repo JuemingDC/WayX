@@ -25,8 +25,7 @@ http-response-jq (?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getfee
 
 http-response-jq (?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmymoretools$ 'walk(if type == "object" and .name == "免流量特权" then empty else . end) | del(.respData.groupList[] | select(.groupName == "活动参与" or .groupName == "金融工具"))'
 
-http-response-jq (?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ 'del(.respData.bmNewInfo)'
-http-response-jq (?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ 'del(.respData.itemGroupList[].itemList[] | select(.name == "天天赚钱" or .name == "借钱")) | del(.respData.itemGroupList[] | select(.groupType == 15))'
+http-response-jq (?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ 'del(.respData.bmNewInfo) | (del(.respData.itemGroupList[].itemList[]|select(.name=="天天赚钱" or .name=="借钱"))|del(.respData.itemGroupList[]|select(.groupType==15)))'
 
 [Map Local]
 (?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzlogic\/getOpenScreen$ data-type=text data="{}" status-code=200 header="Content-Type:application/json"

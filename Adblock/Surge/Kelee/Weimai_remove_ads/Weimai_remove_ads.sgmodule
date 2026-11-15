@@ -17,8 +17,7 @@
 # Source: https://kelee.one/Tool/Loon/Lpx/Weimai_remove_ads.lpx
 
 [Body Rewrite]
-http-response-jq (?i)^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'setpath(["isShowCJAd"]; 0)'
-http-response-jq (?i)^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'del(.launchAd,.adBanners,.ad)'
+http-response-jq (?i)^https:\/\/confssl\d?\.iweimai\.cn\/wm_ios_update\.json\? 'setpath(["isShowCJAd"]; 0) | del(.launchAd,.adBanners,.ad)'
 
 [MITM]
 hostname = %APPEND% confssl*.iweimai.cn

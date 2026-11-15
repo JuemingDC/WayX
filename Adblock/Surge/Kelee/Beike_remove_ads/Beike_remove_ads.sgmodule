@@ -18,9 +18,7 @@
 [Body Rewrite]
 http-response-jq (?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/homepage\/initData\/mini\? 'del(.data.bootpage,.data.bottom_bar_activity)'
 
-http-response-jq (?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? 'del(.data.islandModule)'
-
-http-response-jq (?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? 'del(.data.mainIcons.list[] | select(.indexKey == "coupon"))'
+http-response-jq (?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? 'del(.data.islandModule) | (del(.data.mainIcons.list[]|select(.indexKey=="coupon")))'
 
 http-response-jq (?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/myhome\/pagedetail\? '.data.moduleList |= map(select(.tab != "myHomeDecorV4"))'
 

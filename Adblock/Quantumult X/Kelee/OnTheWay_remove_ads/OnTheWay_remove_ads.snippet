@@ -20,8 +20,7 @@
 
 (?i)^https:\/\/www\.imxingzhe\.com\/api\/v4\/account\/get_user_info\? url jsonjq-response-body 'del(.banner)'
 
-(?i)^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body 'del(.banners,.ad)'
-(?i)^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body '.display_areas |= map(select(.name == "赛事" or .name == "行者帮" or .name == "头条" or .name == "排行榜" or .name == "约伴"))'
+(?i)^https:\/\/www\.imxingzhe\.com\/api\/v4\/discovery\/ios\/\? url jsonjq-response-body 'del(.banners,.ad) | (.display_areas|=map(select(.name=="赛事" or .name=="行者帮" or .name=="头条" or .name=="排行榜" or .name=="约伴")))'
 
 # [mitm]
 hostname = www.imxingzhe.com

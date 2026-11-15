@@ -20,9 +20,7 @@ http-response-jq (?i)^https:\/\/headline\.qiumibao\.com\/recommend\/list\? '.new
 
 http-response-jq (?i)^https:\/\/a\.qiumibao\.com\/found\/\? 'map(select(.is_game != true))'
 
-http-response-jq (?i)^https:\/\/a\.qiumibao\.com\/ios\/config\/\? 'del(.skin,.advert,.advert_config,.mall,.httpdns,.reward,.pgame,.corner_mark,.liveshop,.theme,.pop,.live_activity_push)'
-
-http-response-jq (?i)^https:\/\/a\.qiumibao\.com\/ios\/config\/\? '.all_sections.match_sections.labels |= (if . then (.blacks_disable |= if . then map(select(. != "游戏")) else . end) | (.show |= if . then map(select(. != "游戏")) else . end) else . end)'
+http-response-jq (?i)^https:\/\/a\.qiumibao\.com\/ios\/config\/\? 'del(.skin,.advert,.advert_config,.mall,.httpdns,.reward,.pgame,.corner_mark,.liveshop,.theme,.pop,.live_activity_push) | (.all_sections.match_sections.labels|=(if . then (.blacks_disable|=if . then map(select(. !="游戏")) else . end)|(.show|=if . then map(select(. !="游戏")) else . end) else . end))'
 http-response-jq (?i)^https:\/\/guess\.qiumibao\.com\/api\/n\/rcd$ 'del(.data.banner)'
 http-response-jq (?i)^https:\/\/pre-match\.qiumibao\.com\/pre_match_data\/v\d\/\d+-\d+-\d+\/\d+_fund\.htm\? 'del(.data[] | select(.type == "guide"))'
 

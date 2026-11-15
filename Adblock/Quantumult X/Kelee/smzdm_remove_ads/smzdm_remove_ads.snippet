@@ -19,11 +19,7 @@ host, adx-api.zdmimg.com, reject
 # [rewrite_local]
 (?i)^https:\/\/app-api\.smzdm\.com\/util\/loading\? url reject-dict
 
-(?i)^https:\/\/app-api\.smzdm\.com\/util\/update$ url jsonjq-response-body 'setpath(["data","silence_local_push"]; 0) | setpath(["data","baichuan_redirect_switch"]; 0)'
-
-(?i)^https:\/\/app-api\.smzdm\.com\/util\/update$ url jsonjq-response-body 'del(.data.silence_local_push_msg,.data.video_cache_num_configs,.data.haojia_widget,.data.widget,.data.operation_float)'
-
-(?i)^https:\/\/app-api\.smzdm\.com\/util\/update$ url jsonjq-response-body 'def r: if type=="object" then if has("ad_campaign_name") and (.ad_campaign_name|type=="string") and (.ad_campaign_name|test("\\S")) then empty else . end elif type=="array" then map(r) else . end; .data.operation_float |= map(map(r))'
+(?i)^https:\/\/app-api\.smzdm\.com\/util\/update$ url jsonjq-response-body 'setpath(["data","silence_local_push"]; 0) | setpath(["data","baichuan_redirect_switch"]; 0) | del(.data.silence_local_push_msg,.data.video_cache_num_configs,.data.haojia_widget,.data.widget,.data.operation_float) | (def r: if type=="object" then if has("ad_campaign_name") and (.ad_campaign_name|type=="string") and (.ad_campaign_name|test("\\S")) then empty else . end elif type=="array" then map(r) else . end; .data.operation_float|=map(map(r)))'
 
 (?i)^https:\/\/homepage-api\.smzdm\.com\/v3\/home\? url jsonjq-response-body '.data.component|=map(if (.zz_content|type)=="array" then .zz_content|=map(select(((.ad_campaign_id?|type=="string" and length > 0) // false) or ((.tag?|type=="string" and length > 0) // false) or ((.model_type?=="ads" and (type=="string")) // false)|not)) else . end)|.data.component|=map(select(.zz_type=="circular_banner" or .zz_type=="filter" or .zz_type=="list"))|.data.component|=map(.zz_content|=(if type=="array" then map(if type=="object" and (.article_channel_type // "")=="questionnaire" then empty else . end) else . end))|del(.data.theme)|.data.component|=map(if .zz_content|type=="object" then .zz_content|=del(.circular_banner_option) else . end)'
 
@@ -31,9 +27,7 @@ host, adx-api.zdmimg.com, reject
 
 (?i)^https:\/\/h5\.smzdm\.com\/user\/coupon\/coupon_list\? url reject
 
-(?i)^https:\/\/haojia-api\.smzdm\.com\/home\/list\? url jsonjq-response-body 'del(.data.header_operation.theme)'
-
-(?i)^https:\/\/haojia-api\.smzdm\.com\/home\/list\? url jsonjq-response-body '.data.rows |= map(select(.cell_type == "39001")) | .data.banner_v2 |= map(select(.cell_type == "21028"))'
+(?i)^https:\/\/haojia-api\.smzdm\.com\/home\/list\? url jsonjq-response-body 'del(.data.header_operation.theme) | (.data.rows|=map(select(.cell_type=="39001"))|.data.banner_v2|=map(select(.cell_type=="21028")))'
 
 (?i)^https:\/\/haojia\.m\.smzdm\.com\/detail_modul\/user_related_modul\? url jsonjq-response-body 'del(.data.super_coupon)'
 
@@ -49,9 +43,7 @@ host, adx-api.zdmimg.com, reject
 
 (?i)^https:\/\/s-api\.smzdm\.com\/sou\/list_v10\? url jsonjq-response-body '.data.rows |= map(select(.model_type != "ads")) | .data.top_aladdin |= map(select(has("ad") | not))'
 
-(?i)^https:\/\/s-api\.smzdm\.com\/sou\/filter\/tags\/hot_tags\? url jsonjq-response-body 'del(.data.search_faxian,.data.tonglan,.data.hongbao)'
-
-(?i)^https:\/\/s-api\.smzdm\.com\/sou\/filter\/tags\/hot_tags\? url jsonjq-response-body '.data.hot_tab |= (if type == "array" then map(select(.search_method != "热点主题榜")) else . end) | if .data.hot_tab then .data.hot_tab |= map(if .search_method == "热搜榜搜索热榜" and .rows then .rows |= map(select(.pos != null and ((.pos | tonumber) != null))) else . end) else . end'
+(?i)^https:\/\/s-api\.smzdm\.com\/sou\/filter\/tags\/hot_tags\? url jsonjq-response-body 'del(.data.search_faxian,.data.tonglan,.data.hongbao) | (.data.hot_tab|=(if type=="array" then map(select(.search_method !="热点主题榜")) else . end)|if .data.hot_tab then .data.hot_tab|=map(if .search_method=="热搜榜搜索热榜" and .rows then .rows|=map(select(.pos !=null and ((.pos|tonumber) !=null))) else . end) else . end)'
 
 (?i)^https:\/\/s-api\.smzdm\.com\/sou\/popup_coupon\? url reject-dict
 
