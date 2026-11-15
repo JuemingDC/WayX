@@ -20,7 +20,9 @@
 
 (?i)^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/getBrand$ url jsonjq-response-body '.data |= map(select(.advertisementName == "路跑赛事" or .advertisementName == "线上赛" or .advertisementName == "越野赛事"))'
 
-(?i)^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/get$ url jsonjq-response-body '(del(.data.topHotSearchList,.data.bannerListTwo,.data.textAdvertisementList)) | (.data.recommendList |= map(select(.raceAdList | not or length == 0)))'
+(?i)^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/get$ url jsonjq-response-body 'del(.data.topHotSearchList,.data.bannerListTwo,.data.textAdvertisementList)'
+
+(?i)^https:\/\/api-changzheng\.chinaath\.com\/changzheng-race-proxy-api\/api\/home\/page\/get$ url jsonjq-response-body '.data.recommendList |= map(select(.raceAdList | not or length == 0))'
 
 (?i)^https:\/\/api-changzheng\.chinaath\.com\/changzheng-basic-center-api\/api\/appConfigBanner\/listBannerRelease\? url reject-dict
 

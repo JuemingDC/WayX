@@ -18,7 +18,9 @@
 # [rewrite_local]
 (?i)^https:\/\/www\.kookapp\.cn\/api\/v3\/ad\/config$ url reject-dict
 
-(?i)^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ url jsonjq-response-body '(del(.ad_banner,.advertise_on_off)) | (setpath(["ios_mall_switch"]; false))'
+(?i)^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ url jsonjq-response-body 'del(.ad_banner,.advertise_on_off)'
+
+(?i)^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ url jsonjq-response-body 'setpath(["ios_mall_switch"]; false)'
 
 (?i)^https:\/\/www\.kookapp\.cn\/api\/v3\/promotion\/ongoing$ url reject-dict
 

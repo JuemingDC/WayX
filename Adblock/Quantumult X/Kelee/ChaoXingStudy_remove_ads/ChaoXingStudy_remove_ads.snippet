@@ -21,7 +21,9 @@
 (?i)^https:\/\/home-yd\.chaoxing\.com\/apis\/data\/getAdsRecommend\? url reject-dict
 (?i)^https:\/\/home-yd\.chaoxing\.com\/apis\/banner\/getConfigInfoForXsqy\? url reject-dict
 
-(?i)^https:\/\/apps\.chaoxing\.com\/apis\/home\/getHpXsqy\.jspx\? url jsonjq-response-body '(.data.list |= map(select(.pid == 4 or .pid == 44)) | .data.list_xsqy |= map(select(.pid == 4 or .pid == 44)) | .data.list_xysqbj |= map(select(.pid == 4 or .pid == 44)) | .data.lanmu |= map(select(.id == 4 or .id == 44))) | (del(.data.list_timeapp))'
+(?i)^https:\/\/apps\.chaoxing\.com\/apis\/home\/getHpXsqy\.jspx\? url jsonjq-response-body '.data.list |= map(select(.pid == 4 or .pid == 44)) | .data.list_xsqy |= map(select(.pid == 4 or .pid == 44)) | .data.list_xysqbj |= map(select(.pid == 4 or .pid == 44)) | .data.lanmu |= map(select(.id == 4 or .id == 44))'
+
+(?i)^https:\/\/apps\.chaoxing\.com\/apis\/home\/getHpXsqy\.jspx\? url jsonjq-response-body 'del(.data.list_timeapp)'
 
 (?i)^https:\/\/groupyd2\.chaoxing\.com\/apis\/activity\/getActivitys_attention\? url reject-dict
 (?i)^https:\/\/appswh\.chaoxing\.com\/apis\/activity\/getNoteTopicList\? url reject-dict

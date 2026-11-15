@@ -21,7 +21,9 @@
 
 (?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/feed\? url reject-dict
 
-(?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? url jsonjq-response-body '(del(.data.islandModule)) | (del(.data.mainIcons.list[] | select(.indexKey == "coupon")))'
+(?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? url jsonjq-response-body 'del(.data.islandModule)'
+
+(?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/userCenter\/info\? url jsonjq-response-body 'del(.data.mainIcons.list[] | select(.indexKey == "coupon"))'
 
 (?i)^https:\/\/apps\.api\.ke\.com\/platform\/shellapp\/myhome\/pagedetail\? url jsonjq-response-body '.data.moduleList |= map(select(.tab != "myHomeDecorV4"))'
 

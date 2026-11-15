@@ -21,7 +21,9 @@
 (?i)^https:\/\/nine\.ifeng\.com\/startUpAdPrestrainList\? url reject-dict
 (?i)^https:\/\/nine\.ifeng\.com\/startUpAddAd\? url reject-dict
 
-(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body '(.bottomNav|=map(select(.NavId=="bottomNavNews" or .NavId=="bottomNavMine"))) | (del(.zip_url))'
+(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body '.bottomNav|=map(select(.NavId=="bottomNavNews" or .NavId=="bottomNavMine"))'
+
+(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/cow\? url jsonjq-response-body 'del(.zip_url)'
 
 (?i)^https:\/\/config\.nine\.ifeng\.com\/news\/h5prepublish\? url reject
 
@@ -32,7 +34,8 @@
 
 (?i)^https:\/\/user\.iclient\.ifeng\.com\/active_task\/channel\? url reject-dict
 
-(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body '(.defaultChannel |= map(select(.id == "commenterch" or .id == "sy" or .id == "vipchannel" or .id == "rank_hot_merge" or .id == "rtnews" or .id == "sp" or .id == "mil" or .id == "finance" or .id == "history" or .id == "momentsnew" or .id == "taihai" or .id == "focusnews" or .id == "rcmd" or .id == "tw" or .id == "HK" or .id == "dawanqu1"))) | (del(.more,.youngChannel))'
+(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body '.defaultChannel |= map(select(.id == "commenterch" or .id == "sy" or .id == "vipchannel" or .id == "rank_hot_merge" or .id == "rtnews" or .id == "sp" or .id == "mil" or .id == "finance" or .id == "history" or .id == "momentsnew" or .id == "taihai" or .id == "focusnews" or .id == "rcmd" or .id == "tw" or .id == "HK" or .id == "dawanqu1"))'
+(?i)^https:\/\/config\.nine\.ifeng\.com\/news\/channel\? url jsonjq-response-body 'del(.more,.youngChannel)'
 
 (?i)^https:\/\/nine\.ifeng\.com\/headline\? url jsonjq-response-body 'walk(if type == "object" and has("item") and (.item | type == "array") then .item |= map(select(.type == "phvideo" or .type == "doc" or .type == "phreclist")) else . end)'
 

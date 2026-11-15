@@ -16,7 +16,8 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/api\.romielf\.com\/index\/indexv\d\? url jsonjq-response-body '(setpath(["data","advertisement"]; "[]") | setpath(["data","listadvertising"]; "[]")) | (.data.list |= map(select(.type == 1)))'
+(?i)^https:\/\/api\.romielf\.com\/index\/indexv\d\? url jsonjq-response-body 'setpath(["data","advertisement"]; "[]") | setpath(["data","listadvertising"]; "[]")'
+(?i)^https:\/\/api\.romielf\.com\/index\/indexv\d\? url jsonjq-response-body '.data.list |= map(select(.type == 1))'
 
 # [mitm]
 hostname = api.romielf.com

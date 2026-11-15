@@ -20,7 +20,8 @@ host, adui.tg.meitu.com, reject
 (?i)^https:\/\/api\.meiyan\.com\/operation\/home_banner\.json\? url reject-dict
 
 (?i)^https:\/\/api\.meiyan\.com\/vip\/permission_update_popup\.json\? url reject-dict
-(?i)^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? url jsonjq-response-body '(del(.response.time_limit,.response.bubble,.response.person_center)) | (setpath(["response","function_pop","meiyan_style","is_pop"]; false) | setpath(["response","onoff","vip_half_window_exit_remain_popup","open"]; 0) | setpath(["response","onoff","vip_home_exit_remain_popup"]; 0))'
+(?i)^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? url jsonjq-response-body 'del(.response.time_limit,.response.bubble,.response.person_center)'
+(?i)^https:\/\/api\.meiyan\.com\/operation\/get_config\.json\? url jsonjq-response-body 'setpath(["response","function_pop","meiyan_style","is_pop"]; false) | setpath(["response","onoff","vip_half_window_exit_remain_popup","open"]; 0) | setpath(["response","onoff","vip_home_exit_remain_popup"]; 0)'
 # 精简首页功能栏目并移除美颜推荐
 (?i)^https:\/\/api\.meiyan\.com\/operation\/home\.json\? url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/MeituMYXJ_remove_ads/MeituMYXJ_remove_ads.js
 
