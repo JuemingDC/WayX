@@ -674,6 +674,81 @@ function sanitizeName(value: any): any {
       .slice(0, 64) || "script"
   );
 }
+// Modified: 2026-11-15 (chance). Form one source JSON pipeline per fixed URL
+// condition/phase before either target planner runs. Resolve each original file
+// action against its original declaration/index; never merge emitted rule text.
+function prepareJsonUrlGroups(plugin: any, ctx: any): any {
+  const groups = new Map<string, any[]>();
+  const sections = new Map(plugin.sections);
+  const sectionItems = new Map<string, any[]>();
+  for (const section of ["Rewrite", "Script"]) {
+    const lines = sections.get(section);
+    if (!lines) continue;
+    const items = groupSourceSectionItems(lines);
+    sectionItems.set(section, items);
+    for (const item of items) {
+      if (!item.line || !isRewriteV2(item.line) || isScriptV2(item.line)) continue;
+      try {
+        const ast = preparedRewriteAst(ctx.declarations, item.line);
+        validateRewriteV2Ast(ast);
+        if (!simpleUrlRewriteCondition(ast).ok || !ast.actions.every((action: any): boolean =>
+          new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq|jq_file)$").test(action.name),
+        )) continue;
+        const key = JSON.stringify([ast.phase, ast.condition]);
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push({item, ast});
+      } catch { /* Preserve the ordinary source diagnostic. */ }
+    }
+  }
+  const replacement = new Map<any, string | null>();
+  const comments = new Map<any, string[]>();
+  for (const group of groups.values()) {
+    if (group.length < 2) continue;
+    let actions: any[] = [];
+    let failure: any = null;
+    for (const member of group) {
+      try {
+        actions.push(...resolveRewriteJqDependencies(member.ast, member.item.line, ctx).actions.filter((action: any): boolean =>
+          action.name !== member.ast.phase + ".json.jq" ||
+          !["string", "raw-string"].includes(action.args[0]?.type) ||
+          String(action.args[0].value).trim() !== "",
+        ));
+      } catch (error) {
+        failure ??= error;
+        actions.push(...member.ast.actions);
+      }
+    }
+    if (!actions.length) continue;
+    const ast = {
+      ...group[0].ast,
+      actions,
+      sourceActionCount: actions.length,
+      sourceActionIndices: actions.map((_: any, index: number): number => index),
+    };
+    const line = rewriteV2ToSource(ast);
+    ast.raw = line;
+    ctx.declarations.set(line, failure ? {error: failure} : {ast});
+    replacement.set(group[0].item, line);
+    comments.set(group[0].item, group.flatMap(member => member.item.comments));
+    for (const member of group.slice(1)) {
+      replacement.set(member.item, null);
+      comments.set(member.item, []);
+    }
+  }
+  if (!replacement.size) return plugin;
+  for (const [section, items] of sectionItems) {
+    if (!items.some(item => replacement.has(item))) continue;
+    const lines: string[] = [];
+    for (const item of items) {
+      lines.push(...(comments.get(item) ?? item.comments));
+      const line = replacement.has(item) ? replacement.get(item) : item.line;
+      if (line) lines.push(line);
+    }
+    sections.set(section, lines);
+  }
+  return {...plugin, sections};
+}
+
 export function convertPlugin(
   entry: any,
   source: any,
@@ -689,9 +764,9 @@ export function convertPlugin(
   }: any = {},
 ): any {
   if (!stamp) throw new Error("convertPlugin requires a conversion stamp");
-  const plugin: any = parsed ?? parseLoonPlugin(source);
+  let plugin: any = parsed ?? parseLoonPlugin(source);
   // Modified: 2026-10-25 (chance). Both targets consume one prepared source IR.
-  declarations = declarations ?? prepareRewriteDeclarations(plugin);
+  declarations = new Map(declarations ?? prepareRewriteDeclarations(plugin));
   const sourceHeader: any = plugin.header;
   const qx: any = createQxOutputState();
   const sg: any = createSurgeOutputState();
@@ -758,6 +833,7 @@ export function convertPlugin(
     argumentTable: surgeArgumentTable,
     rawBase,
   };
+  plugin = prepareJsonUrlGroups(plugin, qctx);
   if (argumentAnalysis.undeclaredRefs.length) {
     const refs: any = [
       ...new Set(

@@ -31,9 +31,9 @@ for (const phase of ['request', 'response']) for (const section of ['Rewrite', '
     assert.equal(evaluate(expression(active[0]), '{"x":0,"ads":1,"old":2}'), '{"x":2,"added":true,"count":3}');
   }
   assert.equal(out.generatedScripts.size, 0);
-  // Equal URL matchers do not turn two independent declarations into a pipeline.
+  // Repeated URL conditions are grouped before planning, including separate source declarations.
   const independent = convertPlugin(entry, `[${section}]\n` + actions.slice(0,2).map(action => declaration(phase,[action])).join('\n'), options);
-  for (const target of ['qx','surge']) assert.equal(rules(independent[target],target,phase).length,2);
+  for (const target of ['qx','surge']) assert.equal(rules(independent[target],target,phase).length,1);
   // Keep the JSON block intact even when an original Script follows it.
   const mixed = convertPlugin(entry, `[${section}]\n` + declaration(phase,[...actions,'script("https://example.test/original.js") with requires_body=true,tag="Original"']), options);
   for (const target of ['qx','surge']) {
@@ -85,4 +85,4 @@ for (const target of ['qx','surge']) {
 // Native QX source text and distinct declarations are no longer post-merged.
 const native = "^https://example.test/api url jsonjq-response-body '.x += 1'\n# author note\n^https://example.test/api url jsonjq-response-body '.x += 2'\n";
 assert.ok(mergeNativeQxSources([{url:'https://source.test/a.snippet',text:native}],{name:'Native'}).includes(native));
-console.log('Source JSON/JQ pipelines: QX/Surge, both phases/sections, source order, mixed Scripts, dependency indices, streams and independent declarations passed');
+console.log('Source JSON/JQ pipelines: QX/Surge, both phases/sections, source order, mixed Scripts, dependency indices, streams and source URL groups passed');

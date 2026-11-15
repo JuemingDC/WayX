@@ -1990,11 +1990,11 @@ if(selectedCase==='conversion-policy.mjs') {
       const inlinePattern=compileRegexForTarget(asts[0].condition.right,{target}).pattern;
       const prefix=target==='qx'?inlinePattern+' url jsonjq-response-body ': 'http-response-jq '+inlinePattern+' ';
       const active=out[target].split('\n').filter(x=>x.startsWith(prefix));
-      // Modified: 2026-11-15 (chance). URL equality does not merge independent source declarations.
-      assert.equal(active.length,asts.length,name+' retains each independent source JSON/JQ declaration');
+      // Modified: 2026-11-15 (chance). Prepare one source JSON pipeline per URL/phase before planning.
+      assert.equal(active.length,1,name+' has one JSON/JQ rule for its source URL condition in '+target);
     }
   }
-  console.log('Real same-regex declarations: independent source rules remain independent in QX and Surge');
+  console.log('Real source URL groups: Taqu, XiaobaiPrint and Zhihu each emit one JSON/JQ rule in QX and Surge');
 }
 
 if(selectedCase==='conversion-policy.mjs') {

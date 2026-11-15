@@ -21,7 +21,7 @@ JSON/JQ 表达式以 jqlang 官方标准为依据，不采用第三方转换器�
 
 ## 2.2 编译与目标规划
 
-Modified: 2026-11-15 (chance). 按用户澄清，在解析后的源声明动作层保留 JSON/JQ 管道，QX 与 Surge 均将同一源声明内的连续 JSON add/delete/replace/jq/jq_file 操作整体转换为一条标准 jq 表达式。保留操作顺序、每个作者 jq 的作用域、条件、方向和文件依赖原索引；任一依赖失败时整体诊断该 JSON 管道，不发布删减后的部分管道。纯 JSON/JQ 声明不拆分；混合声明以非 JSON 动作为边界保留连续 JSON 管道。独立源声明即使 URL 一样仍独立，不再在渲染或原生 QX 合集中按 URL 合并规则；原始 jq 文件仍按既有方式内联。不同平台的空输出/错误保留行为不据此宣称设备等价。官方目标格式以上传 QX sample 的 jsonjq-request/response-body 与 https://manual.nssurge.com/http/body-rewrite.html 的 http-request/response-jq 为准。
+Modified: 2026-11-15 (chance). 按用户澄清，在解析后的源声明动作层保留 JSON/JQ 管道，QX 与 Surge 均将同一源声明内的连续 JSON add/delete/replace/jq/jq_file 操作整体转换为一条标准 jq 表达式。保留操作顺序、每个作者 jq 的作用域、条件、方向和文件依赖原索引；任一依赖失败时整体诊断该 JSON 管道，不发布删减后的部分管道。纯 JSON/JQ 声明不拆分；混合声明以非 JSON 动作为边界保留连续 JSON 管道。同一固定 URL 条件和方向下，跨源声明的 JSON/JQ 操作在目标规划之前归入一个源管道；文件依赖先按各自原声明与原 action 索引解析，动作保持源顺序、注释保留。不同匹配条件、flags 和方向分别处理，不在已生成的目标规则字符串上事后合并；原始 jq 文件仍按既有方式内联。不同平台的空输出/错误保留行为不据此宣称设备等价。官方目标格式以上传 QX sample 的 jsonjq-request/response-body 与 https://manual.nssurge.com/http/body-rewrite.html 的 http-request/response-jq 为准。
 
 Modified: 2026-11-01 (chance). 用户授权修正墨鱼 EmbyPlugin 的指定错误声明：仅当源 URL 为 ddgksf2013/Rewrite/master/Function/EmbyPlugin.conf 且整条原文完全匹配时，将 `$Accept-Encoding` 修正为双 CRLF 捕获引用 `$1Accept-Encoding: gzip, deflate, br$2`。保留原声明注释，不推广至其他源、不改变 URL 或脚本。见 docs/moyu-sources.md。
 
@@ -285,7 +285,7 @@ Oracle 使用独立源 reference evaluator、目标 lowering 模型及实际生�
 
 用户降级策略的目标预期与源全行为 oracle 分开，不据 flags 恢复或 JQ 管道输出宣称源行为完全等价。Golden 在独立语义检查通过后仅用于发现输出漂移，不用更新 Golden 掩盖错误。真实 jq 编译和结果/错误传播同时验证。
 
-验收包括上游预检/目录/转换一致选层、真实同正则独立规则保留、源声明 JSON/JQ 整体输出、错误 JQ 管道诊断作用域、README 来源分组/折叠及增减、完整 Action 和逐文件内容比较。零 Review/Issue 不等于全 Loon 语法或真实客户端行为已证明。
+验收包括上游预检/目录/转换一致选层、真实同正则 JSON/JQ 在源 IR 中归组、源声明 JSON/JQ 整体输出、错误 JQ 管道诊断作用域、README 来源分组/折叠及增减、完整 Action 和逐文件内容比较。零 Review/Issue 不等于全 Loon 语法或真实客户端行为已证明。
 
 ## 2.18 实现组织与契约对应
 
