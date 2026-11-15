@@ -7,6 +7,7 @@ import os from "node:os";
 import { spawnSync } from "node:child_process";
 import { materializeConversionRunContext, convertPluginWithContext } from "../src/emit/conversion.ts";
 import { minifyJqFile, quoteJq } from "../src/parser/rewrite.ts";
+import { mergeQxJsonJqRewriteLines } from "../src/validation/output.ts";
 const root = await fs.mkdtemp(path.join(os.tmpdir(), "wayx-jq-inline-"));
 const entry = {id: "Inline", source: "https://example.test/main.lpx", file: "main.lpx", qx: "main.snippet", surge: "main.sgmodule", category: "Test"};
 const cases = [
@@ -56,12 +57,47 @@ try {
     const out = convertPluginWithContext(entry, source, context, {stamp:"2026-11-14"});
     for (const target of ["qx", "surge"]) {
       const expressions = out[target].split('\n').filter((line: string) => target === "qx" ? line.includes(`url jsonjq-${phase}-body `) : line.startsWith(`http-${phase}-jq `)).map((line: string) => line.slice(line.indexOf(" '") + 2, -1));
-      assert.equal(expressions.length, 2, out[target]);
-      const result = spawnSync("jq", ["-c", expressions.join(" | ")], {input:'{}', encoding:"utf8"});
+      assert.equal(expressions.length, target === "qx" ? 1 : 2, out[target]);
+      const result = spawnSync("jq", ["-c", target === "qx" ? expressions[0] : expressions.join(" | ")], {input:'{}', encoding:"utf8"});
       assert.equal(result.stdout.trim(), '{"x":3}');
     }
   }
+  // Exact matcher, direction, and headers are required. Comments are kept,
+  // and repeated stateful filters must still execute the same number of times.
+  const increment = "^https://example\\.test/api$ url jsonjq-response-body '(.count += 1)'";
+  const append = "^https://example\\.test/api$ url jsonjq-response-body '(.tags += [\"b\"])'";
+  const grouped = mergeQxJsonJqRewriteLines([
+    "# original rule A", increment,
+    "# original rule B", "{# original inline note #} " + append,
+    "# original rule C", increment,
+  ]);
+  const groupedActive = grouped.filter((line: string) => / url jsonjq-response-body /.test(line));
+  assert.equal(groupedActive.length, 1, grouped.join("\n"));
+  assert.ok(grouped.includes("# original rule A"));
+  assert.ok(grouped.includes("# original rule B"));
+  assert.ok(grouped.includes("# original rule C"));
+  assert.ok(grouped.includes("# {# original inline note #}"));
+  assert.deepEqual(mergeQxJsonJqRewriteLines(grouped), grouped, "jq merging is idempotent");
+  const mergedProgram = groupedActive[0].slice(groupedActive[0].indexOf(" '") + 2, -1);
+  const checked = spawnSync("jq", ["-c", mergedProgram], {
+    input: '{"count":0,"tags":[]}', encoding: "utf8",
+  });
+  assert.equal(checked.status, 0, checked.stderr);
+  assert.equal(checked.stdout.trim(), '{"count":2,"tags":["b"]}');
+
+  // An intervening executable rewrite or a distinct request/response phase
+  // is a barrier even if a different regex might overlap the same URL.
+  const barrier = "^https://example\\.test/ url reject";
+  assert.deepEqual(
+    mergeQxJsonJqRewriteLines([increment, barrier, increment]),
+    [increment, barrier, increment],
+  );
+  const request = "^https://example\\.test/api$ url jsonjq-request-body '(.count += 1)'";
+  assert.deepEqual(mergeQxJsonJqRewriteLines([increment, request]), [increment, request]);
+  const headerRule = "^https://example\\.test/api$ ^GET[ ] url-and-header jsonjq-response-body '(.count += 1)'";
+  assert.deepEqual(mergeQxJsonJqRewriteLines([increment, headerRule]), [increment, headerRule]);
+  assert.deepEqual(mergeQxJsonJqRewriteLines([increment, append.replace("/api$", "/other$")]), [increment, append.replace("/api$", "/other$")]);
 } finally {
   await fs.rm(root, {recursive: true, force:true});
 }
-console.log("jq file/inline differential: both clients, nested strings, continued comments, streams, errors, phases and order passed");
+console.log("jq file/inline differential and QX same-matcher jq consolidation passed");
