@@ -6,6 +6,7 @@
 import assert from "node:assert/strict";
 import { compileRegexForTarget, normalizePluginSource, parseLoonPlugin, convertPlugin, materializeJqFiles, materializeMockFiles, discoverSourceScriptUrls, inspectSourceScript, materializeSourceScripts, materializeConversionContext, validateQX, validateSurgeModule, parseRewriteV2, qxDirectRewritePlan, surgeDirectRewritePlan, surgeRejectRewritePlan, renderQxInlineMockScript, surgeInlineMockPlan, qxPrimitiveForRewriteV2Action, qxRule, surgeRule, rewriteV2AstToSemanticIr, legacyRewriteToSemanticIr, planQxRewrite, planSurgeRewrite, parseScriptDeclaration, planQxScript, planSurgeScript, parseConfigurationDeclaration, planConfiguration, WAYX_SUPPORTED_SOURCE_SECTIONS, cleanSourceComments, groupSourceSectionItems, isSupportedSourceSection, sourceCommentText, attachQxInlineNote, looksLikeCommentedSourceDeclaration, parseSourceMetadataHeader, renderQxSnippetHeader, renderSurgeModuleHeader, compactOutputLines, finalizeOutputLines, hasActiveOutputLines, appendQxOutput, createQxOutputState, qxOutputDestination, qxRuleOutputDestination, qxRewriteOutputDestination, renderQxOutput, appendSurgeOutput, createSurgeOutputState, renderSurgeOutput, surgeOutputDestination, surgeRuleOutputDestination, surgeRewriteOutputDestination, validateConversionMetadata } from "../src/index.ts";
 import { materializeConversionRunContext, convertPluginWithContext, validateConvertedPlugin } from "../src/emit/conversion.ts";
+import {quoteJq} from "../src/parser/rewrite.ts";
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -1990,10 +1991,21 @@ if(selectedCase==='conversion-policy.mjs') {
       const inlinePattern=compileRegexForTarget(asts[0].condition.right,{target}).pattern;
       const prefix=target==='qx'?inlinePattern+' url jsonjq-response-body ': 'http-response-jq '+inlinePattern+' ';
       const active=out[target].split('\n').filter(x=>x.startsWith(prefix));
-      assert.equal(active.length,asts.length,name+' retains every independent same-regex JSON/JQ declaration');
+      // Modified: 2026-11-15 (chance). QX retains all programs in one ordered
+      // rule; Surge continues to retain independent declarations.
+      // Zhihu has an intervening active rewrite; retain that execution boundary.
+      assert.equal(active.length,target==='qx'?(name==='Zhihu'?2:1):asts.length,name+' same-regex JSON/JQ output');
+      if(target==='qx') {
+        const programs=asts.map(ast=>{
+          const line=qxDirectRewritePlan(ast).line;
+          return '('+line.slice(line.indexOf(" '")+2,-1)+')';
+        });
+        if(active.length===1) assert.equal(active[0],prefix+quoteJq(programs.join(' | ')),name+' preserves every operation in source order');
+        else for(const ast of asts) assert.ok(active.join('\n').includes(qxDirectRewritePlan(ast).line.slice(prefix.length)),name+' retains programs across an execution barrier');
+      }
     }
   }
-  console.log('Real same-regex declaration retention passed: Taqu, XiaobaiPrint and Zhihu retain all independent JSON/JQ rules in both targets');
+  console.log('Real same-regex declarations: Taqu, XiaobaiPrint and Zhihu keep ordered QX programs with execution barriers and independent Surge rules');
 }
 
 if(selectedCase==='conversion-policy.mjs') {

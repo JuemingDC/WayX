@@ -19,7 +19,7 @@ import { loadAdblockNumbers, adblockNumberForPath } from "../application/adblock
 import crypto from "node:crypto";
 import { convertNativeQxToSurge } from "../emit/conversion.ts";
 import { quoteJq } from "../parser/rewrite.ts";
-import { validateQX,validateSurgeModule } from "../validation/output.ts";
+import { validateQX,validateSurgeModule,mergeQxJsonJqRewriteLines } from "../validation/output.ts";
 import { spawnSync } from "node:child_process";
 import { normalizePluginSource, parseLoonPlugin } from "../parser/input.ts";
 
@@ -436,7 +436,8 @@ export function mergeNativeQxSources(
     }
     out.push("");
   }
-  const text = out.join("\n").replace(/\n*$/, "\n");
+  // Modified: 2026-11-15 (chance). Apply the same JQ grouping to native QX sources.
+  const text = mergeQxJsonJqRewriteLines(out.join("\n").split("\n")).join("\n").replace(/\n*$/, "\n");
   validateQX(text, {id: name ?? "native_qx"});
   return text;
 }

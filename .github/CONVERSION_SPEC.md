@@ -21,6 +21,9 @@ JSON/JQ 表达式以 jqlang 官方标准为依据，不采用第三方转换器�
 
 ## 2.2 编译与目标规划
 
+Modified: 2026-11-15 (chance). 按用户要求，QX 同一 snippet 中连续有效重写的匹配器完全相同、方向相同的 jsonjq 规则合并为一条：按声明顺序输出 `(JQ1) | (JQ2)`。保留每段运算和注释，不按表达式去重；括号隔离逗号优先级和局部定义。request/response、url/url-and-header、不同 URL 正则或 Header 条件分别分组，不猜测正则覆盖关系，不跨独立订阅拼接；遇到其他有效重写时不跨行重排，以免改变重叠 URL 的规则执行顺序。该策略覆盖 Loon 转换与原生 QX 合集，原始归档不变；单条和 Surge 输出保持原样。依据上传官方 sample 的 jsonjq-request/response-body 格式与 jqlang 官方 Pipe/Parenthesis 定义验证目标行为，不据此宣称源客户端的错误回滚或多输出流具备设备等价性。
+
+
 Modified: 2026-11-01 (chance). 用户授权修正墨鱼 EmbyPlugin 的指定错误声明：仅当源 URL 为 ddgksf2013/Rewrite/master/Function/EmbyPlugin.conf 且整条原文完全匹配时，将 `$Accept-Encoding` 修正为双 CRLF 捕获引用 `$1Accept-Encoding: gzip, deflate, br$2`。保留原声明注释，不推广至其他源、不改变 URL 或脚本。见 docs/moyu-sources.md。
 
 数据流为源解析 → target-neutral Semantic IR → 分条及目标规划 → 目标输出 → 一次最终产物检查。oracle/canonical 为开发者按需运行的工具，不进入日常同步 Action。通用 parser 保留源声明、section/phase、条件、Regex body/flags、captures、变量、选项及动作和声明顺序，不提前套用目标语法。含 Script 的混合声明使用共同词法 scanner 保留并拆分各 action，不把 Script 加入官方 Rewrite action registry。
