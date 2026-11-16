@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Revised | 2026-11-16 |
+| Revised | 2026-11-17 |
 | Maintainer | chance |
 | Authority | Single conversion and maintenance specification |
 | Format | English headings, dated tables, mapping examples |
@@ -42,7 +42,7 @@
 | 2026-11-16 | Surge | [Official manual](https://manual.nssurge.com/), [URL Rewrite](https://manual.nssurge.com/http/url-rewrite.html), [Body Rewrite](https://manual.nssurge.com/http/body-rewrite.html), [API](https://manual.nssurge.com/scripting/api.html) |
 | 2026-11-16 | Regex dialect | [ICU syntax](https://unicode-org.github.io/icu/userguide/strings/regexp.html); user-supplied QX author confirmation (2026-10-26) and Surge support confirmation (2026-11-01) for inline modes |
 | 2026-11-16 | JQ | [jqlang 1.8 manual](https://jqlang.org/manual/v1.8/); official jq 1.8.2 binary + pinned SHA-256 in Actions; no inferred client engine version/file API |
-| 2026-11-16 | New callback trailers | [Official Surge TestFlight post /460](https://t.me/SurgeTestFlightFeed/460); no guessed minimum build |
+| 2026-11-17 | Callback trailers | [Official API reference](https://manual.nssurge.com/scripting/api.html#httpclient) and [TestFlight post /460](https://t.me/SurgeTestFlightFeed/460); documented minimum iOS 6.0.0 / Mac 6.12.0; no inferred build number |
 | 2026-11-10 | Compatibility examples | [NSNanoCat fetch](https://github.com/NSNanoCat/util/blob/49e40678c71f5075f451bf9aea6a91fd5c75ca5f/polyfill/fetch.mjs), [notification](https://github.com/NSNanoCat/util/blob/3cfb2cac62f0331344a44ea7e3d0b18ce7c82058/lib/notification.mjs), [done](https://github.com/NSNanoCat/util/blob/main/lib/done.mjs); implementation evidence ≠ official contract or device test |
 
 ## 2. Parsing, Conditions and Regex
@@ -381,14 +381,17 @@ http-response-jq ^https:\/\/api\.example\/v1 'setpath(["data","enabled"]; false)
 | 2026-11-16 | Omitted completion trailers | Omitted | Preserve upstream trailers |
 | 2026-11-16 | Explicit empty dictionary | `trailers: {}` | Clear trailer section |
 | 2026-11-16 | Whole response completion | Keep mapped trailers | No accidental loss after read/edit |
-| 2026-11-16 | Callback `response.h2_trailers` | Actual `$httpClient` callback `response.trailers` | Seven HTTP methods; independent of intercepted request/response/task phase, requires-body and binary mode |
+| 2026-11-17 | Callback `response.h2_trailers` | Actual `$httpClient` callback `response.trailers` | Chunked HTTP/1.1 or HTTP/2 response with a trailer section; seven methods; independent of intercept phase/requires-body/binary mode; no HTTP/2-only read restriction |
 | 2026-11-16 | Callback absence / empty | Absent stays absent; explicit `{}` stays present | Preserve native response ownership, getters, callback errors and exact data bytes |
 | 2026-11-16 | Native field/value array → Loon | Case-insensitive dictionary | Last duplicate wins; no array-duplicate preservation claim |
 | 2026-11-16 | Direct native trailer array result | Preserve order/duplicates | Validate String field/value; do not mutate input |
 | 2026-11-16 | Request/synthetic/QX trailers | No new mapping | Response/callback feature does not establish request/echo/Promise trailer API |
 | 2026-11-16 | Filtering / limits | Native Surge enforcement | Invalid field filtering, 32-field response-script limit, HTTP/2 writes; no protocol fabrication/old-client emulation |
 | 2026-11-16 | gRPC status/message | Preserve unless author explicitly edits | Body changes or `$done({})` do not clear trailers |
-| 2026-11-16 | Callback API version | Official TestFlight /460 | No guessed build; response-script minimum not reused as callback minimum |
+| 2026-11-17 | Callback API version | Official API reference: iOS 6.0.0+ / Mac 6.12.0+ | Explicitly documented callback minimum; no guessed build or old-client emulation |
+| 2026-11-17 | Callback full-header-mode | Default dictionary; enabled mode supplies `{field, value}` arrays for headers and trailers | Preserve `(error, response, data)`; no trailer section means no trailers key; Loon facade keeps its documented dictionary projection |
+| 2026-11-17 | gRPC headers-only early failure | Author reads `response.h2_trailers || response.headers` through Loon facade; native Surge reads `response.trailers || response.headers` | Do not synthesize trailers from headers, rewrite author business logic or infer RPC success from HTTP 200 |
+| 2026-11-17 | Request trailers | Not exposed to http-request scripts; author explicitly defers support | No invented request mapping; no body-buffer/forwarding emulation |
 
 ```javascript
 // 2026-11-16 | Loon source -> Surge target
@@ -398,6 +401,24 @@ $httpClient.get(url, (error, response, data) => {
   const status = response.h2_trailers?.["grpc-status"];
   // Source facade reads the actual Surge callback response.trailers.
 });
+```
+
+```javascript
+// 2026-11-17 | Loon source: explicitly authored gRPC status lookup
+$httpClient.post(options, (error, response, data) => {
+  if (error || !response) {
+    $done({});
+    return;
+  }
+  const fields = response.h2_trailers || response.headers;
+  console.log(fields["grpc-status"]);
+  $done({});
+});
+
+// Native Surge equivalent lookup:
+// const fields = response.trailers || response.headers;
+// HTTP 200 alone does not establish gRPC success.
+// Conversion preserves an absent trailer section; it adds no fallback itself.
 ```
 
 ## 6. Acquisition, Metadata and Resource Lifecycle
@@ -545,6 +566,7 @@ $httpClient.get(url, (error, response, data) => {
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
+| 2026-11-17 | Official callback contract clarification | Chunked HTTP/1.1 + HTTP/2; iOS 6.0.0 / Mac 6.12.0; dictionary/array/absence contract; headers-only gRPC example; request trailers remain unsupported |
 | 2026-11-16 | Single English specification | Duplicate conversion/maintenance docs → this file; dated rule tables + examples; history in Git |
 | 2026-11-16 | JSON/JQ dependency-failure regression | Missing file → withhold entire JSON/JQ pipeline; independent Header mutation survives |
 | 2026-11-16 | Source regex validation, Issue #517 | `(?>indexopsmodules\|loadsplashconfig)` → unchanged ICU-native QX/Surge matcher; invalid ICU still fails |
