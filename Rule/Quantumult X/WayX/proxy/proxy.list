@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-15 03:57:40 UTC
+# Updated: 2026-11-16 00:10:52 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34242
+# Rules: 34251
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -188,6 +188,7 @@ host,beatselectronicsllc.tt.omtrdc.net,ssid
 host,bj1.api.bing.com,ssid
 host,blizzard.nefficient.co.kr,ssid
 host,bookkeeper.itunes.apple.com,ssid
+host,builds.dotnet.microsoft.com,ssid
 host,cache.pack.google.com,ssid
 host,cbsplaylistserver.aws.syncbak.com,ssid
 host,cbsservice.aws.syncbak.com,ssid
@@ -197,6 +198,7 @@ host,client-api.itunes.apple.com,ssid
 host,cloudsync-prod.s3.amazonaws.com,ssid
 host,cma.itunes.apple.com,ssid
 host,cn.download.nvidia.com,ssid
+host,configuration.ls.apple.com,ssid
 host,csis-prod.s3.amazonaws.com,ssid
 host,datarouter.apps.netherrealm.com,ssid
 host,dc.applicationinsights.azure.com,ssid
@@ -333,9 +335,11 @@ host,misc-assets.itunes.apple.com,ssid
 host,mobilelive-hamivideo.cdn.hinet.net,ssid
 host,mozilla.map.fastly.net,ssid
 host,msh.amazon.co.uk,ssid
+host,musicstatus.itunes.apple.com,ssid
 host,musicstatus.music.apple.com,ssid
 host,mvod.itunes.apple.com,ssid
 host,myapp.itunes.apple.com,ssid
+host,mzstorekit.itunes.apple.com,ssid
 host,na1r.services.adobe.com,ssid
 host,notary-submissions-prod.s3-accelerate.amazonaws.com,ssid
 host,np-edge.itunes.apple.com,ssid
@@ -819,6 +823,7 @@ host,dl.google.com,ssid
 host,dlgarenanow-a.akamaihd.net,ssid
 host,dlmobilegarena-a.akamaihd.net,ssid
 host,dmqdd6hw24ucf.cloudfront.net,ssid
+host,dotnetcli.trafficmanager.net,ssid
 host,download.microsoft.com,ssid
 host,doy2mn9upadnk.cloudfront.net,ssid
 host,dqd0jw5gvbchn.cloudfront.net,ssid
@@ -1189,6 +1194,7 @@ host,stocks-sparkline.apple.com,ssid
 host,store.apple.com,ssid
 host,storeedge.microsoft.com,ssid
 host,straitsx-826709081262441084-b790f87a2ae6fd417434295.freshchat.com,ssid
+host,sundry-star-net-geo.trafficmanager.net,ssid
 host,supercell.helpshift.com,ssid
 host,supercell.zendesk.com,ssid
 host,support.apple.com,ssid
@@ -2104,6 +2110,7 @@ host-suffix,canon.com.my,ssid
 host-suffix,canon.com.tr,ssid
 host-suffix,canon.com.tw,ssid
 host-suffix,cap.org.hk,ssid
+host-suffix,captive.apple.com,ssid
 host-suffix,cari.com.my,ssid
 host-suffix,carousell.com.hk,ssid
 host-suffix,cartola.com.br,ssid
@@ -11883,6 +11890,7 @@ host-suffix,dealtree.org,ssid
 host-suffix,deasians.com,ssid
 host-suffix,debank.com,ssid
 host-suffix,debian.org,ssid
+host-suffix,debot.ai,ssid
 host-suffix,debug.com,ssid
 host-suffix,debuggex.com,ssid
 host-suffix,debugproject.com,ssid
@@ -26046,6 +26054,7 @@ host-suffix,reiporno.com,ssid
 host-suffix,relateiq.com,ssid
 host-suffix,religionnews.com,ssid
 host-suffix,remirepo.net,ssid
+host-suffix,remna.dev,ssid
 host-suffix,remna.st,ssid
 host-suffix,rencapbank.ru,ssid
 host-suffix,renchead.com,ssid

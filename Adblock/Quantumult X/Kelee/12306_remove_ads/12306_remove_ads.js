@@ -3,7 +3,7 @@
     const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, global: globalThis };
     if ((__wayxHost.response === undefined ? 'request' : 'response') !== "request")
         throw new Error('Unregistered HTTP source/target declaration');
-    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "statusCode", "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" } } };
+    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "statusCode", "responseTrailers": null, "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" } } };
     return (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
@@ -88,8 +88,14 @@
                 if (!own(result, 'path'))
                     result.path = rawPath(originalRequest);
             }
-            if (value.headers !== undefined)
-                result.headers = headers(value.headers);
+            const nativeHeaders = value.headers;
+            if (nativeHeaders !== undefined)
+                result.headers = headers(nativeHeaders);
+            if (!requestRole && null && true) {
+                const field = null, present = own(result, field), value = result[field];
+                delete result[field];
+                ;
+            }
             if (own(value, "statusCode")) {
                 result["status"] = status(value["statusCode"]);
                 delete result["statusCode"];
@@ -141,7 +147,7 @@
             }
             ;
             for (const key of Object.keys(out))
-                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...(!synthetic ? ['path'] : []), ...([])].includes(key)) {
+                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...(!synthetic ? ['path'] : []), ...([]), ...([])].includes(key)) {
                     delete out[key];
                 }
             delete out.abort;
@@ -158,7 +164,7 @@
                 return finish({});
             if (value === response || value === request) {
                 const out = {};
-                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...([]), "status"])
+                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...(["h2_trailers"]), ...([]), "status"])
                     if (own(value, k))
                         out[k] = value[k];
                 value = out;

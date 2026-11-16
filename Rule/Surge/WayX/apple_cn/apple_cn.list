@@ -1,11 +1,11 @@
 # Name: apple_cn
-# Updated: 2026-11-15 03:57:40 UTC
+# Updated: 2026-11-16 00:10:52 UTC
 # Converted by: chance
 # Source Authors: DustinWin, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1965
+# Rules: 1969
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,api.smoot.apple.cn
@@ -257,6 +257,7 @@ DOMAIN,bookkeeper.itunes.apple.com
 DOMAIN,cds-cdn.v.aaplimg.com
 DOMAIN,client-api.itunes.apple.com
 DOMAIN,cma.itunes.apple.com
+DOMAIN,configuration.ls.apple.com
 DOMAIN,download.developer.apple.com
 DOMAIN,downloaddispatch.itunes.apple.com
 DOMAIN,entitlements-edge.itunes.apple.com
@@ -292,9 +293,11 @@ DOMAIN,itunes-apple.com.akadns.net
 DOMAIN,km.support.apple.com
 AND,((DOMAIN,linear.tv.apple.com),(NOT,((DOMAIN-SUFFIX,tv.apple.com))))
 DOMAIN,misc-assets.itunes.apple.com
+DOMAIN,musicstatus.itunes.apple.com
 DOMAIN,musicstatus.music.apple.com
 DOMAIN,mvod.itunes.apple.com
 DOMAIN,myapp.itunes.apple.com
+DOMAIN,mzstorekit.itunes.apple.com
 DOMAIN,notary-submissions-prod.s3-accelerate.amazonaws.com
 DOMAIN,osxapps.itunes.apple.com
 DOMAIN,pd-nk.itunes.apple.com
@@ -533,6 +536,7 @@ DOMAIN-SUFFIX,appstore.co.id
 DOMAIN-SUFFIX,beats1.com.cn
 DOMAIN-SUFFIX,beats2.com.cn
 DOMAIN-SUFFIX,beatsbydre.com.cn
+DOMAIN-SUFFIX,captive.apple.com
 AND,((DOMAIN-SUFFIX,developer.apple.com),(NOT,((OR,((DOMAIN,developer.apple.com),(DOMAIN,docs-assets.developer.apple.com))))))
 DOMAIN-SUFFIX,developerservices2.apple.com
 DOMAIN-SUFFIX,ecgapp.com.cn

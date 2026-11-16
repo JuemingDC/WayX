@@ -471,6 +471,50 @@
         ]
       },
       {
+        "api": "require",
+        "access": "call",
+        "start": 51653,
+        "end": 51666,
+        "line": 1521,
+        "column": 2048,
+        "members": [
+          "require"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "call",
+        "start": 51697,
+        "end": 51712,
+        "line": 1521,
+        "column": 2092,
+        "members": [
+          "require"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "call",
+        "start": 52011,
+        "end": 52024,
+        "line": 1521,
+        "column": 2406,
+        "members": [
+          "require"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "call",
+        "start": 52055,
+        "end": 52070,
+        "line": 1521,
+        "column": 2450,
+        "members": [
+          "require"
+        ]
+      },
+      {
         "api": "$persistentStore.read",
         "access": "call",
         "start": 53294,
@@ -519,6 +563,28 @@
         ]
       },
       {
+        "api": "require",
+        "access": "call",
+        "start": 53818,
+        "end": 53832,
+        "line": 1521,
+        "column": 4213,
+        "members": [
+          "require"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "call",
+        "start": 53872,
+        "end": 53895,
+        "line": 1521,
+        "column": 4267,
+        "members": [
+          "require"
+        ]
+      },
+      {
         "api": "$httpClient.get",
         "access": "call",
         "start": 54483,
@@ -543,6 +609,17 @@
         ]
       },
       {
+        "api": "require",
+        "access": "call",
+        "start": 54920,
+        "end": 54941,
+        "line": 1521,
+        "column": 5315,
+        "members": [
+          "require"
+        ]
+      },
+      {
         "api": "$httpClient.<runtime-key>",
         "access": "call",
         "start": 55918,
@@ -564,6 +641,17 @@
         "members": [
           "$task",
           "fetch"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "call",
+        "start": 56365,
+        "end": 56386,
+        "line": 1521,
+        "column": 6760,
+        "members": [
+          "require"
         ]
       },
       {
@@ -614,7 +702,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 10,
+  "runtimePolicyVersion": 11,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
@@ -1630,6 +1718,102 @@
           },
           {
             "id": "api:41",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 51653,
+              "end": 51666,
+              "line": 1521,
+              "column": 2048,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:42",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 51697,
+              "end": 51712,
+              "line": 1521,
+              "column": 2092,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:43",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 52011,
+              "end": 52024,
+              "line": 1521,
+              "column": 2406,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:44",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 52055,
+              "end": 52070,
+              "line": 1521,
+              "column": 2450,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:45",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1655,7 +1839,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:42",
+            "id": "api:46",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1681,7 +1865,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:43",
+            "id": "api:47",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1707,7 +1891,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:44",
+            "id": "api:48",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1733,7 +1917,55 @@
             "diagnostics": []
           },
           {
-            "id": "api:45",
+            "id": "api:49",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 53818,
+              "end": 53832,
+              "line": 1521,
+              "column": 4213,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:50",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 53872,
+              "end": 53895,
+              "line": 1521,
+              "column": 4267,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:51",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -1759,7 +1991,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:46",
+            "id": "api:52",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1785,7 +2017,31 @@
             "diagnostics": []
           },
           {
-            "id": "api:47",
+            "id": "api:53",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 54920,
+              "end": 54941,
+              "line": 1521,
+              "column": 5315,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:54",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -1811,7 +2067,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:48",
+            "id": "api:55",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1837,7 +2093,31 @@
             "diagnostics": []
           },
           {
-            "id": "api:49",
+            "id": "api:56",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 56365,
+              "end": 56386,
+              "line": 1521,
+              "column": 6760,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:57",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -1863,7 +2143,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:50",
+            "id": "api:58",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1887,7 +2167,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:51",
+            "id": "api:59",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -1911,7 +2191,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:52",
+            "id": "api:60",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1928,7 +2208,7 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -2949,6 +3229,102 @@
           },
           {
             "id": "api:41",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 51653,
+              "end": 51666,
+              "line": 1521,
+              "column": 2048,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:42",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 51697,
+              "end": 51712,
+              "line": 1521,
+              "column": 2092,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:43",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 52011,
+              "end": 52024,
+              "line": 1521,
+              "column": 2406,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:44",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 52055,
+              "end": 52070,
+              "line": 1521,
+              "column": 2450,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:45",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -2974,7 +3350,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:42",
+            "id": "api:46",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3000,7 +3376,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:43",
+            "id": "api:47",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -3026,7 +3402,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:44",
+            "id": "api:48",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3052,7 +3428,55 @@
             "diagnostics": []
           },
           {
-            "id": "api:45",
+            "id": "api:49",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 53818,
+              "end": 53832,
+              "line": 1521,
+              "column": 4213,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:50",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 53872,
+              "end": 53895,
+              "line": 1521,
+              "column": 4267,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:51",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -3078,7 +3502,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:46",
+            "id": "api:52",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3104,7 +3528,31 @@
             "diagnostics": []
           },
           {
-            "id": "api:47",
+            "id": "api:53",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 54920,
+              "end": 54941,
+              "line": 1521,
+              "column": 5315,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:54",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -3130,7 +3578,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:48",
+            "id": "api:55",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3156,7 +3604,31 @@
             "diagnostics": []
           },
           {
-            "id": "api:49",
+            "id": "api:56",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 56365,
+              "end": 56386,
+              "line": 1521,
+              "column": 6760,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:57",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -3182,7 +3654,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:50",
+            "id": "api:58",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3206,7 +3678,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:51",
+            "id": "api:59",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -3230,7 +3702,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:52",
+            "id": "api:60",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3247,7 +3719,7 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",

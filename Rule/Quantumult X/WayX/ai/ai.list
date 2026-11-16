@@ -1,11 +1,11 @@
 # Name: ai
-# Updated: 2026-11-15 03:57:40 UTC
+# Updated: 2026-11-16 00:10:52 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.json ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-intelligence.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/meta.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list ; https://ruleset.skk.moe/List/ip/ai.conf ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/ai.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 817
+# Rules: 820
 # Managed by: WayX Rule Aggregator
 
 host,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe,ssid
@@ -21,6 +21,7 @@ host,alkalimakersuite-pa.clients6.google.com,ssid
 host,apple-relay.mask.apple-dns.net,ssid
 host,appsgenaiserver-pa.clients.google.com,ssid
 host,appsgenaiserver-pa.clients6.google.com,ssid
+host,daily-cloudcode-pa.sandbox.googleapis.com,ssid
 host,gateway.ai.cloudflare.com,ssid
 host,geminiweb-pa.clients.google.com,ssid
 host,geminiweb-pa.clients6.google.com,ssid
@@ -32,6 +33,7 @@ host,production-copilot-host-westus.webpubsub.azure.com,ssid
 host,server.self-serve.windsurf.com,ssid
 host,webchannel-alkalimakersuite-pa.clients6.google.com,ssid
 host,ai.google.dev,ssid
+host,aicode.googleapis.com,ssid
 host,aida.googleapis.com,ssid
 host,aisandbox-pa.googleapis.com,ssid
 host,aistudio.google.com,ssid
@@ -48,6 +50,7 @@ host,apple-relay.fastly-edge.com,ssid
 host,appsgenaiserver-pa.googleapis.com,ssid
 host,bard.google.com,ssid
 host,cdn.usefathom.com,ssid
+host,cloud.zed.dev,ssid
 host,cloudaicompanion.googleapis.com,ssid
 host,cloudcode-pa.googleapis.com,ssid
 host,console.groq.com,ssid

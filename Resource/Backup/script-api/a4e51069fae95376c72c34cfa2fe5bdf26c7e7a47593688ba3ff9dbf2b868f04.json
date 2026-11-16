@@ -10,6 +10,28 @@
     "sha256": "b61d3c03029a71983a7a41c08b8bd1458f6e38f14b9f735e6a2294dda5739aec",
     "operations": [
       {
+        "api": "require",
+        "access": "call",
+        "start": 966,
+        "end": 979,
+        "line": 19,
+        "column": 221,
+        "members": [
+          "require"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "call",
+        "start": 993,
+        "end": 1008,
+        "line": 19,
+        "column": 248,
+        "members": [
+          "require"
+        ]
+      },
+      {
         "api": "$task",
         "access": "read",
         "start": 1313,
@@ -158,6 +180,17 @@
         "members": [
           "$task",
           "fetch"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "call",
+        "start": 2741,
+        "end": 2795,
+        "line": 19,
+        "column": 1996,
+        "members": [
+          "require"
         ]
       },
       {
@@ -1055,7 +1088,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 10,
+  "runtimePolicyVersion": 11,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
@@ -1068,6 +1101,54 @@
         "operations": [
           {
             "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 966,
+              "end": 979,
+              "line": 19,
+              "column": 221,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 993,
+              "end": 1008,
+              "line": 19,
+              "column": 248,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1091,7 +1172,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:1",
+            "id": "api:3",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -1115,7 +1196,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:2",
+            "id": "api:4",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1139,7 +1220,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:3",
+            "id": "api:5",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1163,7 +1244,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:4",
+            "id": "api:6",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1187,7 +1268,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:5",
+            "id": "api:7",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1213,7 +1294,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:6",
+            "id": "api:8",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -1239,7 +1320,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:7",
+            "id": "api:9",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1265,7 +1346,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:8",
+            "id": "api:10",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -1291,7 +1372,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:9",
+            "id": "api:11",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1317,7 +1398,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:10",
+            "id": "api:12",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -1343,7 +1424,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:11",
+            "id": "api:13",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -1369,7 +1450,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:12",
+            "id": "api:14",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1395,7 +1476,31 @@
             "diagnostics": []
           },
           {
-            "id": "api:13",
+            "id": "api:15",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 2741,
+              "end": 2795,
+              "line": 19,
+              "column": 1996,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -1419,7 +1524,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:17",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -1445,7 +1550,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:18",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1469,7 +1574,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:16",
+            "id": "api:19",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -1493,7 +1598,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:17",
+            "id": "api:20",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1510,14 +1615,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:18",
+            "id": "api:21",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1534,14 +1639,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:19",
+            "id": "api:22",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -1567,7 +1672,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:20",
+            "id": "api:23",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1584,14 +1689,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:21",
+            "id": "api:24",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -1615,7 +1720,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:22",
+            "id": "api:25",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -1641,7 +1746,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:23",
+            "id": "api:26",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -1668,7 +1773,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:24",
+            "id": "api:27",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -1695,7 +1800,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:25",
+            "id": "api:28",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1712,14 +1817,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:26",
+            "id": "api:29",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1736,14 +1841,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:27",
+            "id": "api:30",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -1767,7 +1872,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:28",
+            "id": "api:31",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -1793,7 +1898,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:29",
+            "id": "api:32",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -1819,7 +1924,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:30",
+            "id": "api:33",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1836,14 +1941,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:31",
+            "id": "api:34",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1860,14 +1965,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:32",
+            "id": "api:35",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1894,7 +1999,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:33",
+            "id": "api:36",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1920,7 +2025,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:34",
+            "id": "api:37",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1947,7 +2052,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:35",
+            "id": "api:38",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1975,7 +2080,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:36",
+            "id": "api:39",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -1999,7 +2104,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:37",
+            "id": "api:40",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2025,7 +2130,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:38",
+            "id": "api:41",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2051,7 +2156,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:39",
+            "id": "api:42",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -2075,7 +2180,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:40",
+            "id": "api:43",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2099,7 +2204,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:41",
+            "id": "api:44",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2125,7 +2230,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:42",
+            "id": "api:45",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2152,7 +2257,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:43",
+            "id": "api:46",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2180,7 +2285,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:44",
+            "id": "api:47",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2204,7 +2309,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:45",
+            "id": "api:48",
             "rule": "timer.setInterval",
             "kind": "environment",
             "source": {
@@ -2228,7 +2333,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:46",
+            "id": "api:49",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2254,7 +2359,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:47",
+            "id": "api:50",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2281,7 +2386,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:48",
+            "id": "api:51",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2309,7 +2414,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:49",
+            "id": "api:52",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -2335,7 +2440,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:50",
+            "id": "api:53",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -2361,7 +2466,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:51",
+            "id": "api:54",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -2378,14 +2483,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:52",
+            "id": "api:55",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -2402,14 +2507,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:53",
+            "id": "api:56",
             "rule": "codec.btoa",
             "kind": "codec",
             "source": {
@@ -2433,7 +2538,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:54",
+            "id": "api:57",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -2459,7 +2564,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:55",
+            "id": "api:58",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -2483,7 +2588,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:56",
+            "id": "api:59",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -2509,7 +2614,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:57",
+            "id": "api:60",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -2535,7 +2640,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:58",
+            "id": "api:61",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -2561,7 +2666,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:59",
+            "id": "api:62",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -2587,7 +2692,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:60",
+            "id": "api:63",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -2613,7 +2718,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:61",
+            "id": "api:64",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -2630,14 +2735,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:62",
+            "id": "api:65",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2661,7 +2766,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:63",
+            "id": "api:66",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -2678,14 +2783,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:64",
+            "id": "api:67",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -2702,14 +2807,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:65",
+            "id": "api:68",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -2733,7 +2838,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:66",
+            "id": "api:69",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -2759,7 +2864,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:67",
+            "id": "api:70",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -2785,7 +2890,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:68",
+            "id": "api:71",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -2809,7 +2914,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:69",
+            "id": "api:72",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -2835,7 +2940,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:70",
+            "id": "api:73",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -2862,7 +2967,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:71",
+            "id": "api:74",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -2889,7 +2994,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:72",
+            "id": "api:75",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -2915,7 +3020,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:73",
+            "id": "api:76",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -2941,7 +3046,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:74",
+            "id": "api:77",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -2967,7 +3072,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:75",
+            "id": "api:78",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -2991,7 +3096,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:76",
+            "id": "api:79",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -3017,7 +3122,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:77",
+            "id": "api:80",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -3043,7 +3148,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:78",
+            "id": "api:81",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -3067,7 +3172,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:79",
+            "id": "api:82",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -3093,7 +3198,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:80",
+            "id": "api:83",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -3119,7 +3224,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:81",
+            "id": "api:84",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -3143,7 +3248,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:82",
+            "id": "api:85",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -3169,7 +3274,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:83",
+            "id": "api:86",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -3195,7 +3300,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:84",
+            "id": "api:87",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3212,14 +3317,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:85",
+            "id": "api:88",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -3243,7 +3348,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:86",
+            "id": "api:89",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -3269,7 +3374,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:87",
+            "id": "api:90",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3286,14 +3391,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:88",
+            "id": "api:91",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3310,7 +3415,7 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -3331,6 +3436,54 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
+              "api": "require",
+              "start": 966,
+              "end": 979,
+              "line": 19,
+              "column": 221,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 993,
+              "end": 1008,
+              "line": 19,
+              "column": 248,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
               "api": "$task",
               "start": 1313,
               "end": 1318,
@@ -3351,7 +3504,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:1",
+            "id": "api:3",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -3375,7 +3528,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:2",
+            "id": "api:4",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3399,7 +3552,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:3",
+            "id": "api:5",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3423,7 +3576,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:4",
+            "id": "api:6",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3447,7 +3600,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:5",
+            "id": "api:7",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3473,7 +3626,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:6",
+            "id": "api:8",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -3499,7 +3652,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:7",
+            "id": "api:9",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3525,7 +3678,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:8",
+            "id": "api:10",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -3551,7 +3704,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:9",
+            "id": "api:11",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3577,7 +3730,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:10",
+            "id": "api:12",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -3603,7 +3756,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:11",
+            "id": "api:13",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -3629,7 +3782,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:12",
+            "id": "api:14",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3655,7 +3808,31 @@
             "diagnostics": []
           },
           {
-            "id": "api:13",
+            "id": "api:15",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 2741,
+              "end": 2795,
+              "line": 19,
+              "column": 1996,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -3679,7 +3856,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:17",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -3705,7 +3882,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:18",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -3729,7 +3906,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:16",
+            "id": "api:19",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -3753,7 +3930,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:17",
+            "id": "api:20",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3770,14 +3947,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:18",
+            "id": "api:21",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3794,14 +3971,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:19",
+            "id": "api:22",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -3827,7 +4004,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:20",
+            "id": "api:23",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3844,14 +4021,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:21",
+            "id": "api:24",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -3875,7 +4052,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:22",
+            "id": "api:25",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -3901,7 +4078,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:23",
+            "id": "api:26",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -3928,7 +4105,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:24",
+            "id": "api:27",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -3955,7 +4132,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:25",
+            "id": "api:28",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3972,14 +4149,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:26",
+            "id": "api:29",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -3996,14 +4173,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:27",
+            "id": "api:30",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -4027,7 +4204,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:28",
+            "id": "api:31",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -4053,7 +4230,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:29",
+            "id": "api:32",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -4079,7 +4256,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:30",
+            "id": "api:33",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -4096,14 +4273,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:31",
+            "id": "api:34",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -4120,14 +4297,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:32",
+            "id": "api:35",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4154,7 +4331,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:33",
+            "id": "api:36",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4180,7 +4357,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:34",
+            "id": "api:37",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4207,7 +4384,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:35",
+            "id": "api:38",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4235,7 +4412,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:36",
+            "id": "api:39",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -4259,7 +4436,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:37",
+            "id": "api:40",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4285,7 +4462,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:38",
+            "id": "api:41",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4311,7 +4488,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:39",
+            "id": "api:42",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -4335,7 +4512,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:40",
+            "id": "api:43",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4359,7 +4536,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:41",
+            "id": "api:44",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4385,7 +4562,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:42",
+            "id": "api:45",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4412,7 +4589,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:43",
+            "id": "api:46",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4440,7 +4617,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:44",
+            "id": "api:47",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4464,7 +4641,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:45",
+            "id": "api:48",
             "rule": "timer.setInterval",
             "kind": "environment",
             "source": {
@@ -4488,7 +4665,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:46",
+            "id": "api:49",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4514,7 +4691,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:47",
+            "id": "api:50",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4541,7 +4718,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:48",
+            "id": "api:51",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4569,7 +4746,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:49",
+            "id": "api:52",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -4595,7 +4772,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:50",
+            "id": "api:53",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -4621,7 +4798,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:51",
+            "id": "api:54",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -4638,14 +4815,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:52",
+            "id": "api:55",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -4662,14 +4839,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:53",
+            "id": "api:56",
             "rule": "codec.btoa",
             "kind": "codec",
             "source": {
@@ -4693,7 +4870,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:54",
+            "id": "api:57",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -4719,7 +4896,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:55",
+            "id": "api:58",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -4743,7 +4920,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:56",
+            "id": "api:59",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -4769,7 +4946,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:57",
+            "id": "api:60",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -4795,7 +4972,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:58",
+            "id": "api:61",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -4821,7 +4998,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:59",
+            "id": "api:62",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -4847,7 +5024,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:60",
+            "id": "api:63",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -4873,7 +5050,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:61",
+            "id": "api:64",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -4890,14 +5067,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:62",
+            "id": "api:65",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -4921,7 +5098,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:63",
+            "id": "api:66",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -4938,14 +5115,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:64",
+            "id": "api:67",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -4962,14 +5139,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:65",
+            "id": "api:68",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -4993,7 +5170,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:66",
+            "id": "api:69",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -5019,7 +5196,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:67",
+            "id": "api:70",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -5045,7 +5222,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:68",
+            "id": "api:71",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -5069,7 +5246,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:69",
+            "id": "api:72",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -5095,7 +5272,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:70",
+            "id": "api:73",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -5122,7 +5299,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:71",
+            "id": "api:74",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -5149,7 +5326,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:72",
+            "id": "api:75",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -5175,7 +5352,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:73",
+            "id": "api:76",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -5201,7 +5378,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:74",
+            "id": "api:77",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -5227,7 +5404,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:75",
+            "id": "api:78",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -5251,7 +5428,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:76",
+            "id": "api:79",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -5277,7 +5454,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:77",
+            "id": "api:80",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -5303,7 +5480,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:78",
+            "id": "api:81",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -5327,7 +5504,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:79",
+            "id": "api:82",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -5353,7 +5530,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:80",
+            "id": "api:83",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -5379,7 +5556,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:81",
+            "id": "api:84",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -5403,7 +5580,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:82",
+            "id": "api:85",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -5429,7 +5606,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:83",
+            "id": "api:86",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -5455,7 +5632,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:84",
+            "id": "api:87",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -5472,14 +5649,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:85",
+            "id": "api:88",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -5503,7 +5680,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:86",
+            "id": "api:89",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -5529,7 +5706,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:87",
+            "id": "api:90",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -5546,14 +5723,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:88",
+            "id": "api:91",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -5570,7 +5747,7 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -5593,6 +5770,54 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
+              "api": "require",
+              "start": 966,
+              "end": 979,
+              "line": 19,
+              "column": 221,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 993,
+              "end": 1008,
+              "line": 19,
+              "column": 248,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
               "api": "$task",
               "start": 1313,
               "end": 1318,
@@ -5613,7 +5838,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:1",
+            "id": "api:3",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -5637,7 +5862,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:2",
+            "id": "api:4",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -5661,7 +5886,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:3",
+            "id": "api:5",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -5685,7 +5910,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:4",
+            "id": "api:6",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -5709,7 +5934,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:5",
+            "id": "api:7",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -5735,7 +5960,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:6",
+            "id": "api:8",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -5761,7 +5986,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:7",
+            "id": "api:9",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -5787,7 +6012,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:8",
+            "id": "api:10",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -5813,7 +6038,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:9",
+            "id": "api:11",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -5839,7 +6064,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:10",
+            "id": "api:12",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -5865,7 +6090,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:11",
+            "id": "api:13",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -5891,7 +6116,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:12",
+            "id": "api:14",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -5917,7 +6142,31 @@
             "diagnostics": []
           },
           {
-            "id": "api:13",
+            "id": "api:15",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 2741,
+              "end": 2795,
+              "line": 19,
+              "column": 1996,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -5941,7 +6190,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:17",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -5967,7 +6216,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:18",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -5991,7 +6240,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:16",
+            "id": "api:19",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -6015,7 +6264,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:17",
+            "id": "api:20",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -6032,14 +6281,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:18",
+            "id": "api:21",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -6056,14 +6305,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:19",
+            "id": "api:22",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -6089,7 +6338,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:20",
+            "id": "api:23",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -6106,14 +6355,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:21",
+            "id": "api:24",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -6137,7 +6386,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:22",
+            "id": "api:25",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -6163,7 +6412,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:23",
+            "id": "api:26",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -6190,7 +6439,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:24",
+            "id": "api:27",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -6217,7 +6466,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:25",
+            "id": "api:28",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -6234,14 +6483,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:26",
+            "id": "api:29",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -6258,14 +6507,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:27",
+            "id": "api:30",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -6289,7 +6538,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:28",
+            "id": "api:31",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -6315,7 +6564,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:29",
+            "id": "api:32",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -6341,7 +6590,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:30",
+            "id": "api:33",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -6358,14 +6607,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:31",
+            "id": "api:34",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -6382,14 +6631,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:32",
+            "id": "api:35",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6416,7 +6665,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:33",
+            "id": "api:36",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6442,7 +6691,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:34",
+            "id": "api:37",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6469,7 +6718,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:35",
+            "id": "api:38",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6497,7 +6746,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:36",
+            "id": "api:39",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -6521,7 +6770,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:37",
+            "id": "api:40",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6547,7 +6796,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:38",
+            "id": "api:41",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6573,7 +6822,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:39",
+            "id": "api:42",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -6597,7 +6846,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:40",
+            "id": "api:43",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6621,7 +6870,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:41",
+            "id": "api:44",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6647,7 +6896,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:42",
+            "id": "api:45",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6674,7 +6923,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:43",
+            "id": "api:46",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6702,7 +6951,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:44",
+            "id": "api:47",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6726,7 +6975,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:45",
+            "id": "api:48",
             "rule": "timer.setInterval",
             "kind": "environment",
             "source": {
@@ -6750,7 +6999,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:46",
+            "id": "api:49",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6776,7 +7025,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:47",
+            "id": "api:50",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6803,7 +7052,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:48",
+            "id": "api:51",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -6831,7 +7080,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:49",
+            "id": "api:52",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -6857,7 +7106,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:50",
+            "id": "api:53",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -6883,7 +7132,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:51",
+            "id": "api:54",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -6900,14 +7149,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:52",
+            "id": "api:55",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -6924,14 +7173,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:53",
+            "id": "api:56",
             "rule": "codec.btoa",
             "kind": "codec",
             "source": {
@@ -6955,7 +7204,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:54",
+            "id": "api:57",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -6981,7 +7230,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:55",
+            "id": "api:58",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -7005,7 +7254,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:56",
+            "id": "api:59",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7031,7 +7280,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:57",
+            "id": "api:60",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7057,7 +7306,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:58",
+            "id": "api:61",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -7083,7 +7332,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:59",
+            "id": "api:62",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -7109,7 +7358,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:60",
+            "id": "api:63",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -7135,7 +7384,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:61",
+            "id": "api:64",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -7152,14 +7401,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:62",
+            "id": "api:65",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -7183,7 +7432,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:63",
+            "id": "api:66",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -7200,14 +7449,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:64",
+            "id": "api:67",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -7224,14 +7473,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:65",
+            "id": "api:68",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -7255,7 +7504,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:66",
+            "id": "api:69",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7281,7 +7530,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:67",
+            "id": "api:70",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7307,7 +7556,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:68",
+            "id": "api:71",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -7331,7 +7580,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:69",
+            "id": "api:72",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -7357,7 +7606,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:70",
+            "id": "api:73",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -7384,7 +7633,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:71",
+            "id": "api:74",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -7411,7 +7660,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:72",
+            "id": "api:75",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -7437,7 +7686,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:73",
+            "id": "api:76",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -7463,7 +7712,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:74",
+            "id": "api:77",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -7489,7 +7738,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:75",
+            "id": "api:78",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -7513,7 +7762,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:76",
+            "id": "api:79",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7539,7 +7788,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:77",
+            "id": "api:80",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7565,7 +7814,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:78",
+            "id": "api:81",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -7589,7 +7838,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:79",
+            "id": "api:82",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7615,7 +7864,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:80",
+            "id": "api:83",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7641,7 +7890,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:81",
+            "id": "api:84",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -7665,7 +7914,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:82",
+            "id": "api:85",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7691,7 +7940,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:83",
+            "id": "api:86",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -7717,7 +7966,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:84",
+            "id": "api:87",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -7734,14 +7983,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:85",
+            "id": "api:88",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -7765,7 +8014,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:86",
+            "id": "api:89",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -7791,7 +8040,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:87",
+            "id": "api:90",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -7808,14 +8057,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:88",
+            "id": "api:91",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -7832,7 +8081,7 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -7853,6 +8102,54 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
+              "api": "require",
+              "start": 966,
+              "end": 979,
+              "line": 19,
+              "column": 221,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 993,
+              "end": 1008,
+              "line": 19,
+              "column": 248,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
               "api": "$task",
               "start": 1313,
               "end": 1318,
@@ -7873,7 +8170,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:1",
+            "id": "api:3",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -7897,7 +8194,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:2",
+            "id": "api:4",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -7921,7 +8218,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:3",
+            "id": "api:5",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -7945,7 +8242,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:4",
+            "id": "api:6",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -7969,7 +8266,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:5",
+            "id": "api:7",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -7995,7 +8292,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:6",
+            "id": "api:8",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
@@ -8021,7 +8318,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:7",
+            "id": "api:9",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8047,7 +8344,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:8",
+            "id": "api:10",
             "rule": "storage.write",
             "kind": "storage",
             "source": {
@@ -8073,7 +8370,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:9",
+            "id": "api:11",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8099,7 +8396,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:10",
+            "id": "api:12",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -8125,7 +8422,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:11",
+            "id": "api:13",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -8151,7 +8448,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:12",
+            "id": "api:14",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8177,7 +8474,31 @@
             "diagnostics": []
           },
           {
-            "id": "api:13",
+            "id": "api:15",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 2741,
+              "end": 2795,
+              "line": 19,
+              "column": 1996,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -8201,7 +8522,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:17",
             "rule": "notify",
             "kind": "notification",
             "source": {
@@ -8227,7 +8548,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:18",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8251,7 +8572,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:16",
+            "id": "api:19",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -8275,7 +8596,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:17",
+            "id": "api:20",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -8292,14 +8613,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:18",
+            "id": "api:21",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -8316,14 +8637,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:19",
+            "id": "api:22",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -8349,7 +8670,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:20",
+            "id": "api:23",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -8366,14 +8687,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:21",
+            "id": "api:24",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -8397,7 +8718,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:22",
+            "id": "api:25",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -8423,7 +8744,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:23",
+            "id": "api:26",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -8450,7 +8771,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:24",
+            "id": "api:27",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -8477,7 +8798,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:25",
+            "id": "api:28",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -8494,14 +8815,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:26",
+            "id": "api:29",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -8518,14 +8839,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:27",
+            "id": "api:30",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -8549,7 +8870,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:28",
+            "id": "api:31",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -8575,7 +8896,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:29",
+            "id": "api:32",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -8601,7 +8922,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:30",
+            "id": "api:33",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -8618,14 +8939,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:31",
+            "id": "api:34",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -8642,14 +8963,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:32",
+            "id": "api:35",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8676,7 +8997,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:33",
+            "id": "api:36",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8702,7 +9023,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:34",
+            "id": "api:37",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8729,7 +9050,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:35",
+            "id": "api:38",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8757,7 +9078,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:36",
+            "id": "api:39",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -8781,7 +9102,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:37",
+            "id": "api:40",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8807,7 +9128,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:38",
+            "id": "api:41",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8833,7 +9154,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:39",
+            "id": "api:42",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
@@ -8857,7 +9178,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:40",
+            "id": "api:43",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8881,7 +9202,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:41",
+            "id": "api:44",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8907,7 +9228,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:42",
+            "id": "api:45",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8934,7 +9255,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:43",
+            "id": "api:46",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8962,7 +9283,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:44",
+            "id": "api:47",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -8986,7 +9307,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:45",
+            "id": "api:48",
             "rule": "timer.setInterval",
             "kind": "environment",
             "source": {
@@ -9010,7 +9331,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:46",
+            "id": "api:49",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -9036,7 +9357,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:47",
+            "id": "api:50",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -9063,7 +9384,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:48",
+            "id": "api:51",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -9091,7 +9412,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:49",
+            "id": "api:52",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -9117,7 +9438,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:50",
+            "id": "api:53",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -9143,7 +9464,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:51",
+            "id": "api:54",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -9160,14 +9481,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:52",
+            "id": "api:55",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -9184,14 +9505,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:53",
+            "id": "api:56",
             "rule": "codec.btoa",
             "kind": "codec",
             "source": {
@@ -9215,7 +9536,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:54",
+            "id": "api:57",
             "rule": "http.request",
             "kind": "http",
             "source": {
@@ -9241,7 +9562,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:55",
+            "id": "api:58",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -9265,7 +9586,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:56",
+            "id": "api:59",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9291,7 +9612,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:57",
+            "id": "api:60",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9317,7 +9638,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:58",
+            "id": "api:61",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -9343,7 +9664,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:59",
+            "id": "api:62",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -9369,7 +9690,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:60",
+            "id": "api:63",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -9395,7 +9716,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:61",
+            "id": "api:64",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -9412,14 +9733,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:62",
+            "id": "api:65",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -9443,7 +9764,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:63",
+            "id": "api:66",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -9460,14 +9781,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:64",
+            "id": "api:67",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -9484,14 +9805,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:65",
+            "id": "api:68",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -9515,7 +9836,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:66",
+            "id": "api:69",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9541,7 +9862,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:67",
+            "id": "api:70",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9567,7 +9888,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:68",
+            "id": "api:71",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -9591,7 +9912,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:69",
+            "id": "api:72",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -9617,7 +9938,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:70",
+            "id": "api:73",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -9644,7 +9965,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:71",
+            "id": "api:74",
             "rule": "request.headers",
             "kind": "context",
             "source": {
@@ -9671,7 +9992,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:72",
+            "id": "api:75",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -9697,7 +10018,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:73",
+            "id": "api:76",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -9723,7 +10044,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:74",
+            "id": "api:77",
             "rule": "request.body",
             "kind": "context",
             "source": {
@@ -9749,7 +10070,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:75",
+            "id": "api:78",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -9773,7 +10094,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:76",
+            "id": "api:79",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9799,7 +10120,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:77",
+            "id": "api:80",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9825,7 +10146,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:78",
+            "id": "api:81",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -9849,7 +10170,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:79",
+            "id": "api:82",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9875,7 +10196,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:80",
+            "id": "api:83",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9901,7 +10222,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:81",
+            "id": "api:84",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -9925,7 +10246,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:82",
+            "id": "api:85",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9951,7 +10272,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:83",
+            "id": "api:86",
             "rule": "request.url",
             "kind": "context",
             "source": {
@@ -9977,7 +10298,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:84",
+            "id": "api:87",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -9994,14 +10315,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:85",
+            "id": "api:88",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -10025,7 +10346,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:86",
+            "id": "api:89",
             "rule": "response.body",
             "kind": "context",
             "source": {
@@ -10051,7 +10372,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:87",
+            "id": "api:90",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -10068,14 +10389,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:88",
+            "id": "api:91",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -10092,7 +10413,7 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",

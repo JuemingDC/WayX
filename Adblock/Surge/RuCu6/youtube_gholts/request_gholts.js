@@ -3,7 +3,7 @@
     const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, store: typeof $persistentStore === 'undefined' ? undefined : $persistentStore, argument: typeof $argument === 'undefined' ? undefined : $argument, global: globalThis };
     if ((__wayxHost.response === undefined ? 'request' : 'response') !== "request")
         throw new Error('Unregistered HTTP source/target declaration');
-    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } } };
+    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "status", "responseTrailers": "trailers", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } } };
     return (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
@@ -73,6 +73,20 @@
                 return status(Number(m[1]));
             return fail('invalid HTTP status');
         };
+        function trailers(value) {
+            if (Array.isArray(value))
+                return value.map(row => {
+                    if (!row || typeof row !== 'object')
+                        return fail('trailer array requires field/value strings');
+                    const field = row.field, entry = row.value;
+                    if (typeof field !== 'string' || typeof entry !== 'string')
+                        return fail('trailer array requires field/value strings');
+                    return { field, value: entry };
+                });
+            if (!value || typeof value !== 'object')
+                return fail('trailers require a dictionary or field/value array');
+            return Object.assign({}, headers(value));
+        }
         const requestParts = value => typeof value === 'string' ? /^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value) : null;
         const originalRequest = requestParts(host.request && host.request.url);
         const rawPath = parts => parts[3] ? (parts[3][0] === '?' ? '/' : '') + parts[3] : '/';
@@ -86,8 +100,14 @@
                 if (!own(result, 'path'))
                     result.path = rawPath(originalRequest);
             }
-            if (value.headers !== undefined)
-                result.headers = headers(value.headers);
+            const nativeHeaders = value.headers;
+            if (nativeHeaders !== undefined)
+                result.headers = headers(Array.isArray(nativeHeaders) ? Object.fromEntries(trailers(nativeHeaders).map(row => [row.field, row.value])) : nativeHeaders);
+            if (!requestRole && "trailers" && true) {
+                const field = "trailers", present = own(result, field), value = result[field];
+                delete result[field];
+                ;
+            }
             if (own(value, "status")) {
                 result["status"] = status(value["status"]);
                 ;
@@ -140,10 +160,17 @@
             if (binary(out.body)) {
                 out.body = bytes(out.body);
             }
-            for (const key of ['h2_trailers', 'node', 'policy'])
-                delete out[key];
+            {
+                if (own(out, 'h2_trailers') && true && false && true && !synthetic)
+                    out.trailers = out.h2_trailers;
+                for (const key of ['h2_trailers', 'node', 'policy'])
+                    delete out[key];
+                if (own(out, 'trailers')) {
+                    delete out.trailers;
+                }
+            }
             for (const key of Object.keys(out))
-                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...([]), ...([])].includes(key)) {
+                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...([]), ...([]), ...(['trailers'])].includes(key)) {
                     fail('unmapped completion field: ' + key);
                 }
             ;
@@ -159,7 +186,7 @@
                 return finish({});
             if (value === response || value === request) {
                 const out = {};
-                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...([]), "status"])
+                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...(["h2_trailers"]), ...([]), "status"])
                     if (own(value, k))
                         out[k] = value[k];
                 value = out;
@@ -229,8 +256,8 @@
                             return {};
                         }
                     }
-                    function writeConfig(config, key = CONFIG_KEY) {
-                        return $persistentStore.write(JSON.stringify(config), key);
+                    function writeConfig(config) {
+                        return $persistentStore.write(JSON.stringify(config), CONFIG_KEY);
                     }
                     function concatBytes(chunks) {
                         const result = new Uint8Array(chunks.reduce((n, b) => n + b.length, 0));
@@ -375,9 +402,7 @@
                         const config = readConfig();
                         if (!Object.hasOwn(config, platform))
                             return;
-                        const current = config[platform];
-                        const snapshot = expected;
-                        if (JSON.stringify(current) === JSON.stringify(snapshot)) {
+                        if (JSON.stringify(config[platform]) === JSON.stringify(expected)) {
                             delete config[platform];
                             return writeConfig(config);
                         }
@@ -394,6 +419,15 @@
                             first = field.data;
                         }
                         return first;
+                    }
+                    function binaryAt(bytes, path) {
+                        let current = bytes;
+                        for (const no of path) {
+                            current = bytesField(current, no, true);
+                            if (!current)
+                                return;
+                        }
+                        return current;
                     }
                     function decodeBase64(value) {
                         const normalized = value.replace(/[-_\s=]/g, (character) => (character === "-" ? "+" : character === "_" ? "/" : ""));
@@ -478,7 +512,7 @@
                             const signed = config && bytesField(config.data, 1);
                             if (!signed?.length)
                                 return;
-                            const quality = readConfig(QUALITY_KEY, QUALITY_LIMIT)?.[decodeURIComponent(match[1])];
+                            const quality = readConfig(QUALITY_KEY, QUALITY_LIMIT)[decodeURIComponent(match[1])];
                             if (!validQuality(quality))
                                 return;
                             const formats = [], premium = [];

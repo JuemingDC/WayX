@@ -1,11 +1,11 @@
 # Name: microsoft
-# Updated: 2026-11-15 03:57:40 UTC
+# Updated: 2026-11-16 00:10:52 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, QuixoticHeart, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/azure@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bing@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft-pki.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft@cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 845
+# Rules: 848
 # Managed by: WayX Rule Aggregator
 
 host,b.c2r.ts.cdn.office.net,direct
@@ -200,6 +200,7 @@ host-suffix,xboxlive.cn,direct
 host,prodforza.blob.core.windows.net,ssid
 host,vscode.blob.core.windows.net,ssid
 host,az764295.vo.msecnd.net,ssid
+host,builds.dotnet.microsoft.com,ssid
 host,dc.applicationinsights.azure.com,ssid
 host,dc.services.visualstudio.com,ssid
 host,live.applicationinsights.azure.com,ssid
@@ -211,6 +212,7 @@ host,bingsettingssearch.trafficmanager.net,ssid
 host,client-teamviewer-com.trafficmanager.net,ssid
 host,crl.microsoft.com,ssid
 host,default.exp-tas.com,ssid
+host,dotnetcli.trafficmanager.net,ssid
 host,dtlgalleryint.cloudapp.net,ssid
 host,gigabyte2.azureedge.net,ssid
 host,img-prod-cms-rt-microsoft-com.akamaized.net,ssid
@@ -229,6 +231,7 @@ host,rink.hockeyapp.net,ssid
 host,statics-marketingsites-eas-ms-com.akamaized.net,ssid
 host,statics-marketingsites-eus-ms-com.akamaized.net,ssid
 host,statics-marketingsites-wcus-ms-com.akamaized.net,ssid
+host,sundry-star-net-geo.trafficmanager.net,ssid
 host,supercell.helpshift.com,ssid
 host,vscode-sync-insiders.trafficmanager.net,ssid
 host,vscode-sync.trafficmanager.net,ssid

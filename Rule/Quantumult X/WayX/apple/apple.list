@@ -1,11 +1,11 @@
 # Name: apple
-# Updated: 2026-11-15 03:57:40 UTC
+# Updated: 2026-11-16 00:10:52 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, QuixoticHeart, Sukka, Tartarus2014, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 2004
+# Rules: 2008
 # Managed by: WayX Rule Aggregator
 
 host,api.smoot.apple.cn,direct
@@ -296,6 +296,7 @@ host,bookkeeper.itunes.apple.com,direct
 host,cds-cdn.v.aaplimg.com,direct
 host,client-api.itunes.apple.com,direct
 host,cma.itunes.apple.com,direct
+host,configuration.ls.apple.com,direct
 host,download.developer.apple.com,direct
 host,downloaddispatch.itunes.apple.com,direct
 host,entitlements-edge.itunes.apple.com,direct
@@ -331,9 +332,11 @@ host,itunes-apple.com.akadns.net,direct
 host,km.support.apple.com,direct
 host,linear.tv.apple.com,direct
 host,misc-assets.itunes.apple.com,direct
+host,musicstatus.itunes.apple.com,direct
 host,musicstatus.music.apple.com,direct
 host,mvod.itunes.apple.com,direct
 host,myapp.itunes.apple.com,direct
+host,mzstorekit.itunes.apple.com,direct
 host,notary-submissions-prod.s3-accelerate.amazonaws.com,direct
 host,osxapps.itunes.apple.com,direct
 host,pd-nk.itunes.apple.com,direct
@@ -572,6 +575,7 @@ host-suffix,appstore.co.id,direct
 host-suffix,beats1.com.cn,direct
 host-suffix,beats2.com.cn,direct
 host-suffix,beatsbydre.com.cn,direct
+host-suffix,captive.apple.com,direct
 host-suffix,developer.apple.com,direct
 host-suffix,developerservices2.apple.com,direct
 host-suffix,ecgapp.com.cn,direct

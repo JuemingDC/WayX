@@ -3,7 +3,7 @@
     const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, store: typeof $persistentStore === 'undefined' ? undefined : $persistentStore, global: globalThis };
     if ((__wayxHost.response === undefined ? 'request' : 'response') !== "response")
         throw new Error('Unregistered HTTP source/target declaration');
-    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "status", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } } };
+    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "status", "responseTrailers": "trailers", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } } };
     return (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
@@ -73,6 +73,20 @@
                 return status(Number(m[1]));
             return fail('invalid HTTP status');
         };
+        function trailers(value) {
+            if (Array.isArray(value))
+                return value.map(row => {
+                    if (!row || typeof row !== 'object')
+                        return fail('trailer array requires field/value strings');
+                    const field = row.field, entry = row.value;
+                    if (typeof field !== 'string' || typeof entry !== 'string')
+                        return fail('trailer array requires field/value strings');
+                    return { field, value: entry };
+                });
+            if (!value || typeof value !== 'object')
+                return fail('trailers require a dictionary or field/value array');
+            return Object.assign({}, headers(value));
+        }
         const requestParts = value => typeof value === 'string' ? /^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value) : null;
         const originalRequest = requestParts(host.request && host.request.url);
         const rawPath = parts => parts[3] ? (parts[3][0] === '?' ? '/' : '') + parts[3] : '/';
@@ -86,8 +100,17 @@
                 if (!own(result, 'path'))
                     result.path = rawPath(originalRequest);
             }
-            if (value.headers !== undefined)
-                result.headers = headers(value.headers);
+            const nativeHeaders = value.headers;
+            if (nativeHeaders !== undefined)
+                result.headers = headers(Array.isArray(nativeHeaders) ? Object.fromEntries(trailers(nativeHeaders).map(row => [row.field, row.value])) : nativeHeaders);
+            if (!requestRole && "trailers" && true) {
+                const field = "trailers", present = own(result, field), value = result[field];
+                delete result[field];
+                if (present && value !== undefined) {
+                    const fields = trailers(value);
+                    result["h2_trailers"] = headers(Array.isArray(fields) ? Object.fromEntries(fields.map(row => [row.field, row.value])) : fields);
+                }
+            }
             if (own(value, "status")) {
                 result["status"] = status(value["status"]);
                 ;
@@ -140,10 +163,20 @@
             if (binary(out.body)) {
                 out.body = bytes(out.body);
             }
-            for (const key of ['h2_trailers', 'node', 'policy'])
-                delete out[key];
+            {
+                if (own(out, 'h2_trailers') && true && true && true && !synthetic)
+                    out.trailers = out.h2_trailers;
+                for (const key of ['h2_trailers', 'node', 'policy'])
+                    delete out[key];
+                if (own(out, 'trailers')) {
+                    if (!synthetic && out.trailers !== undefined)
+                        out.trailers = trailers(out.trailers);
+                    else
+                        delete out.trailers;
+                }
+            }
             for (const key of Object.keys(out))
-                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...([]), ...([])].includes(key)) {
+                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...([]), ...([]), ...(['trailers'])].includes(key)) {
                     fail('unmapped completion field: ' + key);
                 }
             ;
@@ -159,7 +192,7 @@
                 return finish({});
             if (value === response || value === request) {
                 const out = {};
-                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...([]), "status"])
+                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...(["h2_trailers"]), ...([]), "status"])
                     if (own(value, k))
                         out[k] = value[k];
                 value = out;
@@ -227,8 +260,8 @@
                             return {};
                         }
                     }
-                    function writeConfig(config, key = CONFIG_KEY) {
-                        return $persistentStore.write(JSON.stringify(config), key);
+                    function writeConfig(config) {
+                        return $persistentStore.write(JSON.stringify(config), CONFIG_KEY);
                     }
                     function keyCandidates(stored) {
                         if (!stored)
@@ -247,9 +280,7 @@
                         const config = readConfig();
                         if (!Object.hasOwn(config, platform))
                             return;
-                        const current = config[platform];
-                        const snapshot = expected;
-                        if (JSON.stringify(current) === JSON.stringify(snapshot)) {
+                        if (JSON.stringify(config[platform]) === JSON.stringify(expected)) {
                             delete config[platform];
                             return writeConfig(config);
                         }
@@ -323,6 +354,15 @@
                         }
                         return first;
                     }
+                    function binaryAt(bytes, path) {
+                        let current = bytes;
+                        for (const no of path) {
+                            current = bytesField(current, no, true);
+                            if (!current)
+                                return;
+                        }
+                        return current;
+                    }
                     function platformKey(request) {
                         return Object.entries(request.headers ?? {}).some(([name, value]) => name.toLowerCase() === "user-agent" && /music/i.test(value))
                             ? "youtubeMusic"
@@ -333,21 +373,19 @@
                             const endpoint = $request.url.split("?")[0].split("/youtubei/v1/")[1];
                             if ((endpoint !== "config" && endpoint !== "log_event") || !$response.body?.length)
                                 return $done();
-                            let group = $response.body;
-                            for (const no of [1, 16, 7, 138536474, 146311580]) {
-                                group = bytesField(group, no, true);
-                                if (!group)
-                                    return $done();
-                            }
+                            const group = binaryAt($response.body, [1, 16, 7, 138536474, 146311580]);
+                            if (!group)
+                                return $done();
                             const clientKey = bytesField(group, 1, true), encryptKey = bytesField(group, 2, true);
                             if (clientKey?.length && encryptKey?.length && clientKey.length <= 4096 && encryptKey.length <= 4096) {
                                 const platform = platformKey($request), config = readConfig();
+                                const current = config[platform];
                                 const value = {
                                     clientKey: clientKey.toBase64(),
                                     encryptKey: encryptKey.toBase64(),
                                 };
-                                if (config[platform]?.clientKey !== value.clientKey || config[platform]?.encryptKey !== value.encryptKey) {
-                                    const previous = keyCandidates(config[platform])
+                                if (current?.clientKey !== value.clientKey || current?.encryptKey !== value.encryptKey) {
+                                    const previous = keyCandidates(current)
                                         .filter((pair) => pair.clientKey !== value.clientKey || pair.encryptKey !== value.encryptKey)
                                         .slice(0, 3)
                                         .map(({ clientKey, encryptKey }) => ({

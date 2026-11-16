@@ -45,6 +45,41 @@
         ]
       },
       {
+        "api": "globalThis",
+        "access": "read",
+        "start": 515,
+        "end": 525,
+        "line": 3,
+        "column": 407,
+        "members": [
+          "globalThis"
+        ]
+      },
+      {
+        "api": "globalThis.crypto",
+        "access": "read",
+        "start": 527,
+        "end": 544,
+        "line": 3,
+        "column": 419,
+        "members": [
+          "globalThis",
+          "crypto"
+        ]
+      },
+      {
+        "api": "globalThis.crypto",
+        "access": "read",
+        "start": 545,
+        "end": 562,
+        "line": 3,
+        "column": 437,
+        "members": [
+          "globalThis",
+          "crypto"
+        ]
+      },
+      {
         "api": "window",
         "access": "read",
         "start": 587,
@@ -123,6 +158,39 @@
         "column": 602,
         "members": [
           "require"
+        ]
+      },
+      {
+        "api": "require",
+        "access": "call",
+        "start": 724,
+        "end": 741,
+        "line": 3,
+        "column": 616,
+        "members": [
+          "require"
+        ]
+      },
+      {
+        "api": "globalThis",
+        "access": "read",
+        "start": 48590,
+        "end": 48600,
+        "line": 4,
+        "column": 165,
+        "members": [
+          "globalThis"
+        ]
+      },
+      {
+        "api": "globalThis",
+        "access": "read",
+        "start": 48601,
+        "end": 48611,
+        "line": 4,
+        "column": 176,
+        "members": [
+          "globalThis"
         ]
       },
       {
@@ -384,7 +452,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 10,
+  "runtimePolicyVersion": 11,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
@@ -476,6 +544,82 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
+              "api": "globalThis",
+              "start": 515,
+              "end": 525,
+              "line": 3,
+              "column": 407,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis.crypto",
+              "start": 527,
+              "end": 544,
+              "line": 3,
+              "column": 419,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis.crypto",
+              "start": 545,
+              "end": 562,
+              "line": 3,
+              "column": 437,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
               "api": "window",
               "start": 587,
               "end": 593,
@@ -496,7 +640,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:4",
+            "id": "api:7",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -522,7 +666,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:5",
+            "id": "api:8",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -548,7 +692,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:6",
+            "id": "api:9",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -572,7 +716,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:7",
+            "id": "api:10",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -598,7 +742,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:8",
+            "id": "api:11",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -624,7 +768,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:9",
+            "id": "api:12",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -648,7 +792,79 @@
             "diagnostics": []
           },
           {
-            "id": "api:10",
+            "id": "api:13",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "require",
+              "start": 724,
+              "end": 741,
+              "line": 3,
+              "column": 616,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis",
+              "start": 48590,
+              "end": 48600,
+              "line": 4,
+              "column": 165,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:15",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis",
+              "start": 48601,
+              "end": 48611,
+              "line": 4,
+              "column": 176,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
             "rule": "codec.TextEncoder",
             "kind": "codec",
             "source": {
@@ -672,7 +888,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:11",
+            "id": "api:17",
             "rule": "codec.TextEncoder",
             "kind": "codec",
             "source": {
@@ -699,7 +915,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:12",
+            "id": "api:18",
             "rule": "codec.TextEncoder",
             "kind": "codec",
             "source": {
@@ -723,7 +939,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:13",
+            "id": "api:19",
             "rule": "codec.TextDecoder",
             "kind": "codec",
             "source": {
@@ -747,7 +963,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:20",
             "rule": "codec.TextDecoder",
             "kind": "codec",
             "source": {
@@ -774,7 +990,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:21",
             "rule": "codec.TextDecoder",
             "kind": "codec",
             "source": {
@@ -798,7 +1014,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:16",
+            "id": "api:22",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -822,7 +1038,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:17",
+            "id": "api:23",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -848,7 +1064,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:18",
+            "id": "api:24",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -876,7 +1092,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:19",
+            "id": "api:25",
             "rule": "request.context",
             "kind": "context",
             "source": {
@@ -902,7 +1118,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:20",
+            "id": "api:26",
             "rule": "codec.TextEncoder",
             "kind": "codec",
             "source": {
@@ -926,7 +1142,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:21",
+            "id": "api:27",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -950,7 +1166,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:22",
+            "id": "api:28",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -976,7 +1192,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:23",
+            "id": "api:29",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -1002,7 +1218,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:24",
+            "id": "api:30",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -1028,7 +1244,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:25",
+            "id": "api:31",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -1054,7 +1270,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:26",
+            "id": "api:32",
             "rule": "response.context",
             "kind": "context",
             "source": {
@@ -1080,7 +1296,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:27",
+            "id": "api:33",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1097,14 +1313,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:28",
+            "id": "api:34",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1121,14 +1337,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:29",
+            "id": "api:35",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1145,14 +1361,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:30",
+            "id": "api:36",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1169,14 +1385,14 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:31",
+            "id": "api:37",
             "rule": "complete",
             "kind": "completion",
             "source": {
@@ -1193,7 +1409,7 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",

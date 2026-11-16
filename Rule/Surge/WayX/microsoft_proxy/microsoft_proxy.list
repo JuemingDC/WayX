@@ -1,16 +1,17 @@
 # Name: microsoft_proxy
-# Updated: 2026-11-15 03:57:40 UTC
+# Updated: 2026-11-16 00:10:52 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, QuixoticHeart, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft-pki.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 655
+# Rules: 658
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,prodforza.blob.core.windows.net
 DOMAIN,vscode.blob.core.windows.net
 DOMAIN,az764295.vo.msecnd.net
+DOMAIN,builds.dotnet.microsoft.com
 DOMAIN,dc.applicationinsights.azure.com
 DOMAIN,dc.services.visualstudio.com
 DOMAIN,live.applicationinsights.azure.com
@@ -22,6 +23,7 @@ DOMAIN,bingsettingssearch.trafficmanager.net
 DOMAIN,client-teamviewer-com.trafficmanager.net
 DOMAIN,crl.microsoft.com
 DOMAIN,default.exp-tas.com
+DOMAIN,dotnetcli.trafficmanager.net
 DOMAIN,dtlgalleryint.cloudapp.net
 DOMAIN,gigabyte2.azureedge.net
 DOMAIN,img-prod-cms-rt-microsoft-com.akamaized.net
@@ -40,6 +42,7 @@ DOMAIN,rink.hockeyapp.net
 DOMAIN,statics-marketingsites-eas-ms-com.akamaized.net
 DOMAIN,statics-marketingsites-eus-ms-com.akamaized.net
 DOMAIN,statics-marketingsites-wcus-ms-com.akamaized.net
+DOMAIN,sundry-star-net-geo.trafficmanager.net
 DOMAIN,supercell.helpshift.com
 DOMAIN,vscode-sync-insiders.trafficmanager.net
 DOMAIN,vscode-sync.trafficmanager.net

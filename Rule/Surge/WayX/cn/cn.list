@@ -1,11 +1,11 @@
 # Name: cn
-# Updated: 2026-11-15 03:57:40 UTC
+# Updated: 2026-11-16 00:10:52 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 128082
+# Rules: 128090
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -125,6 +125,7 @@ DOMAIN,cds-cdn.v.aaplimg.com
 DOMAIN,client-api.itunes.apple.com
 DOMAIN,cma.itunes.apple.com
 DOMAIN,cn.download.nvidia.com
+DOMAIN,configuration.ls.apple.com
 DOMAIN,dc1-cert.ksn.kaspersky-labs.com
 DOMAIN,dc1-file.ksn.kaspersky-labs.com
 DOMAIN,dc1-pp.ksn.kaspersky-labs.com
@@ -209,9 +210,11 @@ DOMAIN,ksn-verdict.geoksn.kaspersky.com
 DOMAIN,mdr.ksn.kaspersky-labs.com
 DOMAIN,media.cdn.queniuqe.com
 DOMAIN,misc-assets.itunes.apple.com
+DOMAIN,musicstatus.itunes.apple.com
 DOMAIN,musicstatus.music.apple.com
 DOMAIN,mvod.itunes.apple.com
 DOMAIN,myapp.itunes.apple.com
+DOMAIN,mzstorekit.itunes.apple.com
 DOMAIN,np-edge.itunes.apple.com
 DOMAIN,opencourse.pku.edu.cn
 DOMAIN,osxapps.itunes.apple.com
@@ -1014,6 +1017,7 @@ DOMAIN-SUFFIX,c-nfa.jd.com
 DOMAIN-SUFFIX,caijing.com.cn
 DOMAIN-SUFFIX,cainiao.com.cn
 DOMAIN-SUFFIX,caocao.com.cn
+DOMAIN-SUFFIX,captive.apple.com
 DOMAIN-SUFFIX,cb.baidu.com
 DOMAIN-SUFFIX,cbern.com.cn
 DOMAIN-SUFFIX,cbjs.baidu.com
@@ -115652,6 +115656,7 @@ IP-CIDR,103.130.228.0/22,no-resolve
 IP-CIDR,103.131.138.0/23,no-resolve
 IP-CIDR,103.131.152.0/22,no-resolve
 IP-CIDR,103.131.168.0/22,no-resolve
+IP-CIDR,103.131.194.0/23,no-resolve
 IP-CIDR,103.131.20.0/22,no-resolve
 IP-CIDR,103.131.224.0/21,no-resolve
 IP-CIDR,103.131.240.0/22,no-resolve
@@ -119167,6 +119172,7 @@ IP-CIDR,124.71.128.0/18,no-resolve
 IP-CIDR,124.71.192.0/19,no-resolve
 IP-CIDR,124.71.224.0/20,no-resolve
 IP-CIDR,124.71.240.0/21,no-resolve
+IP-CIDR,124.71.241.0/24,no-resolve
 IP-CIDR,124.71.244.0/23,no-resolve
 IP-CIDR,124.71.250.0/23,no-resolve
 IP-CIDR,124.71.250.0/24,no-resolve
@@ -119523,7 +119529,6 @@ IP-CIDR,156.107.160.0/23,no-resolve
 IP-CIDR,156.107.170.0/24,no-resolve
 IP-CIDR,156.107.179.0/24,no-resolve
 IP-CIDR,156.107.181.0/24,no-resolve
-IP-CIDR,156.227.239.0/24,no-resolve
 IP-CIDR,156.232.10.0/23,no-resolve
 IP-CIDR,156.232.9.0/24,no-resolve
 IP-CIDR,157.0.0.0/16,no-resolve
@@ -119976,6 +119981,7 @@ IP-CIDR,192.163.11.0/24,no-resolve
 IP-CIDR,192.232.34.0/23,no-resolve
 IP-CIDR,192.232.44.0/22,no-resolve
 IP-CIDR,192.232.97.0/24,no-resolve
+IP-CIDR,192.41.192.0/24,no-resolve
 IP-CIDR,192.51.172.0/23,no-resolve
 IP-CIDR,192.55.46.0/23,no-resolve
 IP-CIDR,192.55.68.0/22,no-resolve
@@ -120028,6 +120034,7 @@ IP-CIDR,202.12.116.0/24,no-resolve
 IP-CIDR,202.12.17.0/24,no-resolve
 IP-CIDR,202.12.18.0/24,no-resolve
 IP-CIDR,202.12.2.0/24,no-resolve
+IP-CIDR,202.12.30.0/24,no-resolve
 IP-CIDR,202.12.72.0/24,no-resolve
 IP-CIDR,202.12.84.0/23,no-resolve
 IP-CIDR,202.12.96.0/24,no-resolve
@@ -121814,6 +121821,7 @@ IP-CIDR,211.102.240.0/21,no-resolve
 IP-CIDR,211.102.248.0/24,no-resolve
 IP-CIDR,211.102.80.0/20,no-resolve
 IP-CIDR,211.103.0.0/16,no-resolve
+IP-CIDR,211.120.240.0/21,no-resolve
 IP-CIDR,211.136.0.0/13,no-resolve
 IP-CIDR,211.144.0.0/14,no-resolve
 IP-CIDR,211.144.10.0/24,no-resolve
@@ -124479,11 +124487,9 @@ IP-CIDR6,2401:b180::/32,no-resolve
 IP-CIDR6,2401:b220::/32,no-resolve
 IP-CIDR6,2401:b340::/32,no-resolve
 IP-CIDR6,2401:b360::/32,no-resolve
-IP-CIDR6,2401:b400:11::/48,no-resolve
 IP-CIDR6,2401:b400:14::/48,no-resolve
 IP-CIDR6,2401:b400:16::/47,no-resolve
 IP-CIDR6,2401:b400:20::/47,no-resolve
-IP-CIDR6,2401:b400:8::/47,no-resolve
 IP-CIDR6,2401:b400::/32,no-resolve
 IP-CIDR6,2401:b400::/45,no-resolve
 IP-CIDR6,2401:b40::/32,no-resolve
@@ -126385,7 +126391,9 @@ IP-CIDR6,2406:840:e0ce::/48,no-resolve
 IP-CIDR6,2406:840:e0d0::/44,no-resolve
 IP-CIDR6,2406:840:e0e4::/48,no-resolve
 IP-CIDR6,2406:840:e0e6::/47,no-resolve
-IP-CIDR6,2406:840:e0e8::/45,no-resolve
+IP-CIDR6,2406:840:e0e9::/48,no-resolve
+IP-CIDR6,2406:840:e0ea::/47,no-resolve
+IP-CIDR6,2406:840:e0ec::/46,no-resolve
 IP-CIDR6,2406:840:e0f0::/44,no-resolve
 IP-CIDR6,2406:840:e100::/45,no-resolve
 IP-CIDR6,2406:840:e108::/46,no-resolve

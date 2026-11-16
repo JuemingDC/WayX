@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js",
-  "sourceSha256": "3838293c25c91aaebc98cd9464b30a3055a7116ba3c78f4cd4c09e37c20c8e87",
+  "sourceSha256": "8daf1eaa880ed7cc114af15ce00e2b8aa3bcda2b243c0f5bac6cf73e35056803",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "3838293c25c91aaebc98cd9464b30a3055a7116ba3c78f4cd4c09e37c20c8e87",
+    "sha256": "8daf1eaa880ed7cc114af15ce00e2b8aa3bcda2b243c0f5bac6cf73e35056803",
     "operations": [
       {
         "api": "require",
@@ -74,6 +74,28 @@
         "members": [
           "require",
           "apply"
+        ]
+      },
+      {
+        "api": "globalThis",
+        "access": "read",
+        "start": 961,
+        "end": 971,
+        "line": 1,
+        "column": 962,
+        "members": [
+          "globalThis"
+        ]
+      },
+      {
+        "api": "globalThis",
+        "access": "read",
+        "start": 983,
+        "end": 993,
+        "line": 1,
+        "column": 984,
+        "members": [
+          "globalThis"
         ]
       },
       {
@@ -185,6 +207,55 @@
         "column": 57860,
         "members": [
           "global"
+        ]
+      },
+      {
+        "api": "globalThis",
+        "access": "read",
+        "start": 209159,
+        "end": 209169,
+        "line": 20,
+        "column": 94772,
+        "members": [
+          "globalThis"
+        ]
+      },
+      {
+        "api": "globalThis.crypto",
+        "access": "read",
+        "start": 209175,
+        "end": 209192,
+        "line": 20,
+        "column": 94788,
+        "members": [
+          "globalThis",
+          "crypto"
+        ]
+      },
+      {
+        "api": "globalThis.crypto.getRandomValues",
+        "access": "read",
+        "start": 209194,
+        "end": 209227,
+        "line": 20,
+        "column": 94807,
+        "members": [
+          "globalThis",
+          "crypto",
+          "getRandomValues"
+        ]
+      },
+      {
+        "api": "globalThis.crypto.getRandomValues",
+        "access": "call",
+        "start": 209257,
+        "end": 209294,
+        "line": 20,
+        "column": 94870,
+        "members": [
+          "globalThis",
+          "crypto",
+          "getRandomValues"
         ]
       },
       {
@@ -301,8 +372,8 @@
       {
         "api": "TextDecoder",
         "access": "read",
-        "start": 643767,
-        "end": 643778,
+        "start": 645185,
+        "end": 645196,
         "line": 148,
         "column": 1136,
         "members": [
@@ -312,8 +383,8 @@
       {
         "api": "TextDecoder",
         "access": "call",
-        "start": 643791,
-        "end": 643806,
+        "start": 645209,
+        "end": 645224,
         "line": 148,
         "column": 1160,
         "members": [
@@ -323,8 +394,8 @@
       {
         "api": "TextEncoder",
         "access": "read",
-        "start": 643824,
-        "end": 643835,
+        "start": 645242,
+        "end": 645253,
         "line": 148,
         "column": 1193,
         "members": [
@@ -334,8 +405,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 643848,
-        "end": 643863,
+        "start": 645266,
+        "end": 645281,
         "line": 148,
         "column": 1217,
         "members": [
@@ -345,8 +416,8 @@
       {
         "api": "btoa",
         "access": "read",
-        "start": 644682,
-        "end": 644686,
+        "start": 646100,
+        "end": 646104,
         "line": 148,
         "column": 2051,
         "members": [
@@ -356,8 +427,8 @@
       {
         "api": "btoa",
         "access": "call",
-        "start": 644702,
-        "end": 644709,
+        "start": 646120,
+        "end": 646127,
         "line": 148,
         "column": 2071,
         "members": [
@@ -367,8 +438,8 @@
       {
         "api": "atob",
         "access": "read",
-        "start": 646261,
-        "end": 646265,
+        "start": 647679,
+        "end": 647683,
         "line": 148,
         "column": 3630,
         "members": [
@@ -378,8 +449,8 @@
       {
         "api": "atob",
         "access": "call",
-        "start": 646281,
-        "end": 646292,
+        "start": 647699,
+        "end": 647710,
         "line": 148,
         "column": 3650,
         "members": [
@@ -389,8 +460,8 @@
       {
         "api": "$task",
         "access": "read",
-        "start": 647630,
-        "end": 647635,
+        "start": 649048,
+        "end": 649053,
         "line": 148,
         "column": 4999,
         "members": [
@@ -400,8 +471,8 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 647650,
-        "end": 647655,
+        "start": 649068,
+        "end": 649073,
         "line": 148,
         "column": 5019,
         "members": [
@@ -411,8 +482,8 @@
       {
         "api": "$httpClient",
         "access": "read",
-        "start": 647690,
-        "end": 647701,
+        "start": 649108,
+        "end": 649119,
         "line": 148,
         "column": 5059,
         "members": [
@@ -422,8 +493,8 @@
       {
         "api": "$environment",
         "access": "read",
-        "start": 647768,
-        "end": 647780,
+        "start": 649186,
+        "end": 649198,
         "line": 148,
         "column": 5137,
         "members": [
@@ -433,8 +504,8 @@
       {
         "api": "$environment.stash-version",
         "access": "read",
-        "start": 647786,
-        "end": 647815,
+        "start": 649204,
+        "end": 649233,
         "line": 148,
         "column": 5155,
         "members": [
@@ -445,8 +516,8 @@
       {
         "api": "$rocket",
         "access": "read",
-        "start": 647826,
-        "end": 647833,
+        "start": 649244,
+        "end": 649251,
         "line": 148,
         "column": 5195,
         "members": [
@@ -456,8 +527,8 @@
       {
         "api": "$native",
         "access": "read",
-        "start": 647848,
-        "end": 647855,
+        "start": 649266,
+        "end": 649273,
         "line": 148,
         "column": 5217,
         "members": [
@@ -467,8 +538,8 @@
       {
         "api": "$Plugins",
         "access": "read",
-        "start": 647870,
-        "end": 647878,
+        "start": 649288,
+        "end": 649296,
         "line": 148,
         "column": 5239,
         "members": [
@@ -476,12 +547,46 @@
         ]
       },
       {
+        "api": "$loon",
+        "access": "read",
+        "start": 649315,
+        "end": 649320,
+        "line": 148,
+        "column": 5266,
+        "members": [
+          "$loon"
+        ]
+      },
+      {
+        "api": "$loon",
+        "access": "read",
+        "start": 649332,
+        "end": 649337,
+        "line": 148,
+        "column": 5283,
+        "members": [
+          "$loon"
+        ]
+      },
+      {
+        "api": "$loon.isSubsCheckPro",
+        "access": "read",
+        "start": 649346,
+        "end": 649366,
+        "line": 148,
+        "column": 5297,
+        "members": [
+          "$loon",
+          "isSubsCheckPro"
+        ]
+      },
+      {
         "api": "setTimeout",
         "access": "call",
-        "start": 648807,
-        "end": 648835,
+        "start": 650296,
+        "end": 650324,
         "line": 148,
-        "column": 6176,
+        "column": 6247,
         "members": [
           "setTimeout"
         ]
@@ -489,10 +594,10 @@
       {
         "api": "$prefs.valueForKey",
         "access": "call",
-        "start": 648964,
-        "end": 648993,
+        "start": 650453,
+        "end": 650482,
         "line": 148,
-        "column": 6333,
+        "column": 6404,
         "members": [
           "$prefs",
           "valueForKey"
@@ -501,10 +606,10 @@
       {
         "api": "$persistentStore.read",
         "access": "call",
-        "start": 649039,
-        "end": 649071,
+        "start": 650528,
+        "end": 650560,
         "line": 148,
-        "column": 6408,
+        "column": 6479,
         "members": [
           "$persistentStore",
           "read"
@@ -513,10 +618,10 @@
       {
         "api": "$Plugins.SubStoreCache.get",
         "access": "call",
-        "start": 649107,
-        "end": 649144,
+        "start": 650596,
+        "end": 650633,
         "line": 148,
-        "column": 6476,
+        "column": 6547,
         "members": [
           "$Plugins",
           "SubStoreCache",
@@ -526,10 +631,10 @@
       {
         "api": "$prefs.setValueForKey",
         "access": "call",
-        "start": 650482,
-        "end": 650519,
+        "start": 651971,
+        "end": 652008,
         "line": 148,
-        "column": 7851,
+        "column": 7922,
         "members": [
           "$prefs",
           "setValueForKey"
@@ -538,10 +643,10 @@
       {
         "api": "$persistentStore.write",
         "access": "call",
-        "start": 650534,
-        "end": 650572,
+        "start": 652023,
+        "end": 652061,
         "line": 148,
-        "column": 7903,
+        "column": 7974,
         "members": [
           "$persistentStore",
           "write"
@@ -550,10 +655,10 @@
       {
         "api": "$Plugins.SubStoreCache.set",
         "access": "call",
-        "start": 650577,
-        "end": 650619,
+        "start": 652066,
+        "end": 652108,
         "line": 148,
-        "column": 7946,
+        "column": 8017,
         "members": [
           "$Plugins",
           "SubStoreCache",
@@ -563,10 +668,10 @@
       {
         "api": "$persistentStore.write",
         "access": "call",
-        "start": 650987,
-        "end": 651014,
+        "start": 652476,
+        "end": 652503,
         "line": 148,
-        "column": 8356,
+        "column": 8427,
         "members": [
           "$persistentStore",
           "write"
@@ -575,10 +680,10 @@
       {
         "api": "$prefs.setValueForKey",
         "access": "call",
-        "start": 651028,
-        "end": 651054,
+        "start": 652517,
+        "end": 652543,
         "line": 148,
-        "column": 8397,
+        "column": 8468,
         "members": [
           "$prefs",
           "setValueForKey"
@@ -587,10 +692,10 @@
       {
         "api": "$Plugins.SubStoreCache.set",
         "access": "call",
-        "start": 651089,
-        "end": 651120,
+        "start": 652578,
+        "end": 652609,
         "line": 148,
-        "column": 8458,
+        "column": 8529,
         "members": [
           "$Plugins",
           "SubStoreCache",
@@ -600,10 +705,10 @@
       {
         "api": "$persistentStore.read",
         "access": "call",
-        "start": 651251,
-        "end": 651275,
+        "start": 652740,
+        "end": 652764,
         "line": 148,
-        "column": 8620,
+        "column": 8691,
         "members": [
           "$persistentStore",
           "read"
@@ -612,10 +717,10 @@
       {
         "api": "$prefs.valueForKey",
         "access": "call",
-        "start": 651289,
-        "end": 651310,
+        "start": 652778,
+        "end": 652799,
         "line": 148,
-        "column": 8658,
+        "column": 8729,
         "members": [
           "$prefs",
           "valueForKey"
@@ -624,10 +729,10 @@
       {
         "api": "$Plugins.SubStoreCache.get",
         "access": "call",
-        "start": 651350,
-        "end": 651379,
+        "start": 652839,
+        "end": 652868,
         "line": 148,
-        "column": 8719,
+        "column": 8790,
         "members": [
           "$Plugins",
           "SubStoreCache",
@@ -637,10 +742,10 @@
       {
         "api": "$persistentStore.write",
         "access": "call",
-        "start": 651499,
-        "end": 651529,
+        "start": 652988,
+        "end": 653018,
         "line": 148,
-        "column": 8868,
+        "column": 8939,
         "members": [
           "$persistentStore",
           "write"
@@ -649,10 +754,10 @@
       {
         "api": "$prefs.removeValueForKey",
         "access": "call",
-        "start": 651543,
-        "end": 651570,
+        "start": 653032,
+        "end": 653059,
         "line": 148,
-        "column": 8912,
+        "column": 8983,
         "members": [
           "$prefs",
           "removeValueForKey"
@@ -661,10 +766,10 @@
       {
         "api": "$Plugins.SubStoreCache.remove",
         "access": "call",
-        "start": 651608,
-        "end": 651640,
+        "start": 653097,
+        "end": 653129,
         "line": 148,
-        "column": 8977,
+        "column": 9048,
         "members": [
           "$Plugins",
           "SubStoreCache",
@@ -674,10 +779,10 @@
       {
         "api": "$notify",
         "access": "call",
-        "start": 651804,
-        "end": 651843,
+        "start": 653293,
+        "end": 653332,
         "line": 148,
-        "column": 9173,
+        "column": 9244,
         "members": [
           "$notify"
         ]
@@ -685,10 +790,10 @@
       {
         "api": "$notification.post",
         "access": "call",
-        "start": 651854,
-        "end": 651959,
+        "start": 653343,
+        "end": 653448,
         "line": 148,
-        "column": 9223,
+        "column": 9294,
         "members": [
           "$notification",
           "post"
@@ -697,8 +802,8 @@
       {
         "api": "$notification.post",
         "access": "call",
-        "start": 652059,
-        "end": 652101,
+        "start": 653548,
+        "end": 653590,
         "line": 149,
         "column": 150,
         "members": [
@@ -709,8 +814,8 @@
       {
         "api": "$notification.post",
         "access": "call",
-        "start": 652102,
-        "end": 652146,
+        "start": 653591,
+        "end": 653635,
         "line": 149,
         "column": 193,
         "members": [
@@ -721,8 +826,8 @@
       {
         "api": "$Plugins.Notify",
         "access": "call",
-        "start": 653077,
-        "end": 653120,
+        "start": 654566,
+        "end": 654609,
         "line": 160,
         "column": 221,
         "members": [
@@ -733,8 +838,8 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 653359,
-        "end": 653374,
+        "start": 654848,
+        "end": 654863,
         "line": 161,
         "column": 250,
         "members": [
@@ -744,8 +849,8 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 653406,
-        "end": 653414,
+        "start": 654895,
+        "end": 654903,
         "line": 161,
         "column": 297,
         "members": [
@@ -755,8 +860,8 @@
       {
         "api": "$context",
         "access": "read",
-        "start": 653426,
-        "end": 653434,
+        "start": 654915,
+        "end": 654923,
         "line": 161,
         "column": 317,
         "members": [
@@ -766,8 +871,8 @@
       {
         "api": "$context.headers",
         "access": "write",
-        "start": 653441,
-        "end": 653457,
+        "start": 654930,
+        "end": 654946,
         "line": 161,
         "column": 332,
         "members": [
@@ -778,8 +883,8 @@
       {
         "api": "$context.statusCode",
         "access": "write",
-        "start": 653468,
-        "end": 653487,
+        "start": 654957,
+        "end": 654976,
         "line": 161,
         "column": 359,
         "members": [
@@ -790,8 +895,8 @@
       {
         "api": "$context.body",
         "access": "write",
-        "start": 653501,
-        "end": 653514,
+        "start": 654990,
+        "end": 655003,
         "line": 161,
         "column": 392,
         "members": [
@@ -802,10 +907,10 @@
       {
         "api": "$environment.surge-build",
         "access": "read",
-        "start": 654987,
-        "end": 655014,
+        "start": 656494,
+        "end": 656521,
         "line": 161,
-        "column": 1878,
+        "column": 1896,
         "members": [
           "$environment",
           "surge-build"
@@ -814,10 +919,10 @@
       {
         "api": "$task.fetch",
         "access": "call",
-        "start": 655131,
-        "end": 655228,
+        "start": 656638,
+        "end": 656735,
         "line": 161,
-        "column": 2022,
+        "column": 2040,
         "members": [
           "$task",
           "fetch"
@@ -826,10 +931,10 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 656157,
-        "end": 656174,
+        "start": 657664,
+        "end": 657681,
         "line": 161,
-        "column": 3048,
+        "column": 3066,
         "members": [
           "URL"
         ]
@@ -837,10 +942,10 @@
       {
         "api": "$httpClient.<runtime-key>",
         "access": "call",
-        "start": 657378,
-        "end": 657538,
+        "start": 658885,
+        "end": 659045,
         "line": 161,
-        "column": 4269,
+        "column": 4287,
         "members": [
           "$httpClient",
           "<runtime-key>"
@@ -849,10 +954,10 @@
       {
         "api": "$Plugins.Requests",
         "access": "call",
-        "start": 657626,
-        "end": 657809,
+        "start": 659133,
+        "end": 659316,
         "line": 161,
-        "column": 4517,
+        "column": 4535,
         "members": [
           "$Plugins",
           "Requests"
@@ -861,10 +966,10 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 658216,
-        "end": 658359,
+        "start": 659723,
+        "end": 659866,
         "line": 161,
-        "column": 5107,
+        "column": 5125,
         "members": [
           "setTimeout"
         ]
@@ -872,10 +977,10 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 661651,
-        "end": 661661,
+        "start": 663158,
+        "end": 663168,
         "line": 161,
-        "column": 8542,
+        "column": 8560,
         "members": [
           "URL"
         ]
@@ -883,10 +988,10 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 661710,
-        "end": 661720,
+        "start": 663217,
+        "end": 663227,
         "line": 161,
-        "column": 8601,
+        "column": 8619,
         "members": [
           "URL"
         ]
@@ -894,10 +999,10 @@
       {
         "api": "$argument",
         "access": "read",
-        "start": 661887,
-        "end": 661896,
+        "start": 663394,
+        "end": 663403,
         "line": 161,
-        "column": 8778,
+        "column": 8796,
         "members": [
           "$argument"
         ]
@@ -905,10 +1010,10 @@
       {
         "api": "$argument",
         "access": "read",
-        "start": 661908,
-        "end": 661917,
+        "start": 663415,
+        "end": 663424,
         "line": 161,
-        "column": 8799,
+        "column": 8817,
         "members": [
           "$argument"
         ]
@@ -916,10 +1021,10 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 663040,
-        "end": 663050,
+        "start": 664547,
+        "end": 664557,
         "line": 161,
-        "column": 9931,
+        "column": 9949,
         "members": [
           "URL"
         ]
@@ -927,8 +1032,8 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 665085,
-        "end": 665093,
+        "start": 666592,
+        "end": 666600,
         "line": 162,
         "column": 1904,
         "members": [
@@ -938,8 +1043,8 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 665652,
-        "end": 665660,
+        "start": 667159,
+        "end": 667167,
         "line": 162,
         "column": 2471,
         "members": [
@@ -949,8 +1054,8 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 665672,
-        "end": 665691,
+        "start": 667179,
+        "end": 667198,
         "line": 162,
         "column": 2491,
         "members": [
@@ -960,8 +1065,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 675101,
-        "end": 675118,
+        "start": 676608,
+        "end": 676625,
         "line": 162,
         "column": 11920,
         "members": [
@@ -969,10 +1074,56 @@
         ]
       },
       {
+        "api": "globalThis",
+        "access": "read",
+        "start": 677287,
+        "end": 677297,
+        "line": 162,
+        "column": 12599,
+        "members": [
+          "globalThis"
+        ]
+      },
+      {
+        "api": "globalThis.crypto",
+        "access": "read",
+        "start": 677308,
+        "end": 677325,
+        "line": 162,
+        "column": 12620,
+        "members": [
+          "globalThis",
+          "crypto"
+        ]
+      },
+      {
+        "api": "globalThis",
+        "access": "read",
+        "start": 710780,
+        "end": 710790,
+        "line": 162,
+        "column": 46092,
+        "members": [
+          "globalThis"
+        ]
+      },
+      {
+        "api": "globalThis.crypto",
+        "access": "read",
+        "start": 710801,
+        "end": 710818,
+        "line": 162,
+        "column": 46113,
+        "members": [
+          "globalThis",
+          "crypto"
+        ]
+      },
+      {
         "api": "TextDecoder",
         "access": "call",
-        "start": 802996,
-        "end": 803013,
+        "start": 804503,
+        "end": 804520,
         "line": 162,
         "column": 139815,
         "members": [
@@ -982,8 +1133,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 805164,
-        "end": 805181,
+        "start": 806671,
+        "end": 806688,
         "line": 166,
         "column": 25,
         "members": [
@@ -993,8 +1144,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 805235,
-        "end": 805252,
+        "start": 806742,
+        "end": 806759,
         "line": 166,
         "column": 96,
         "members": [
@@ -1004,8 +1155,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 806308,
-        "end": 806325,
+        "start": 807815,
+        "end": 807832,
         "line": 167,
         "column": 1030,
         "members": [
@@ -1015,8 +1166,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 806999,
-        "end": 807016,
+        "start": 808506,
+        "end": 808523,
         "line": 167,
         "column": 1721,
         "members": [
@@ -1026,8 +1177,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 807522,
-        "end": 807539,
+        "start": 809029,
+        "end": 809046,
         "line": 167,
         "column": 2244,
         "members": [
@@ -1037,8 +1188,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 807702,
-        "end": 807719,
+        "start": 809209,
+        "end": 809226,
         "line": 167,
         "column": 2424,
         "members": [
@@ -1048,8 +1199,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 807775,
-        "end": 807792,
+        "start": 809282,
+        "end": 809299,
         "line": 167,
         "column": 2497,
         "members": [
@@ -1059,8 +1210,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 807963,
-        "end": 807980,
+        "start": 809470,
+        "end": 809487,
         "line": 167,
         "column": 2685,
         "members": [
@@ -1070,8 +1221,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 808036,
-        "end": 808053,
+        "start": 809543,
+        "end": 809560,
         "line": 167,
         "column": 2758,
         "members": [
@@ -1081,8 +1232,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 808394,
-        "end": 808411,
+        "start": 809901,
+        "end": 809918,
         "line": 167,
         "column": 3116,
         "members": [
@@ -1092,8 +1243,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 808835,
-        "end": 808852,
+        "start": 810342,
+        "end": 810359,
         "line": 167,
         "column": 3557,
         "members": [
@@ -1103,8 +1254,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 809433,
-        "end": 809450,
+        "start": 810940,
+        "end": 810957,
         "line": 167,
         "column": 4155,
         "members": [
@@ -1114,8 +1265,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 810139,
-        "end": 810156,
+        "start": 811646,
+        "end": 811663,
         "line": 167,
         "column": 4861,
         "members": [
@@ -1125,8 +1276,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 810922,
-        "end": 810939,
+        "start": 812429,
+        "end": 812446,
         "line": 167,
         "column": 5644,
         "members": [
@@ -1136,8 +1287,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 811216,
-        "end": 811233,
+        "start": 812723,
+        "end": 812740,
         "line": 167,
         "column": 5938,
         "members": [
@@ -1147,8 +1298,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 811938,
-        "end": 811955,
+        "start": 813445,
+        "end": 813462,
         "line": 167,
         "column": 6660,
         "members": [
@@ -1158,8 +1309,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 815345,
-        "end": 815362,
+        "start": 816852,
+        "end": 816869,
         "line": 173,
         "column": 1431,
         "members": [
@@ -1169,8 +1320,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 815441,
-        "end": 815458,
+        "start": 816948,
+        "end": 816965,
         "line": 173,
         "column": 1527,
         "members": [
@@ -1180,8 +1331,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 815636,
-        "end": 815653,
+        "start": 817143,
+        "end": 817160,
         "line": 173,
         "column": 1722,
         "members": [
@@ -1191,8 +1342,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 816248,
-        "end": 816265,
+        "start": 817755,
+        "end": 817772,
         "line": 173,
         "column": 2334,
         "members": [
@@ -1202,8 +1353,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 816695,
-        "end": 816712,
+        "start": 818202,
+        "end": 818219,
         "line": 173,
         "column": 2781,
         "members": [
@@ -1211,10 +1362,32 @@
         ]
       },
       {
+        "api": "globalThis",
+        "access": "read",
+        "start": 819915,
+        "end": 819925,
+        "line": 173,
+        "column": 4494,
+        "members": [
+          "globalThis"
+        ]
+      },
+      {
+        "api": "globalThis",
+        "access": "read",
+        "start": 821836,
+        "end": 821846,
+        "line": 173,
+        "column": 6415,
+        "members": [
+          "globalThis"
+        ]
+      },
+      {
         "api": "TextDecoder",
         "access": "call",
-        "start": 821303,
-        "end": 821320,
+        "start": 822810,
+        "end": 822827,
         "line": 173,
         "column": 7389,
         "members": [
@@ -1224,8 +1397,8 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 829403,
-        "end": 829418,
+        "start": 830910,
+        "end": 830925,
         "line": 173,
         "column": 15489,
         "members": [
@@ -1235,8 +1408,8 @@
       {
         "api": "TextEncoder",
         "access": "read",
-        "start": 857149,
-        "end": 857160,
+        "start": 858656,
+        "end": 858667,
         "line": 174,
         "column": 5256,
         "members": [
@@ -1246,8 +1419,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 857165,
-        "end": 857182,
+        "start": 858672,
+        "end": 858689,
         "line": 174,
         "column": 5272,
         "members": [
@@ -1257,8 +1430,8 @@
       {
         "api": "$environment",
         "access": "read",
-        "start": 862788,
-        "end": 862800,
+        "start": 864295,
+        "end": 864307,
         "line": 174,
         "column": 10895,
         "members": [
@@ -1268,8 +1441,8 @@
       {
         "api": "$environment",
         "access": "read",
-        "start": 862814,
-        "end": 862826,
+        "start": 864321,
+        "end": 864333,
         "line": 174,
         "column": 10921,
         "members": [
@@ -1279,8 +1452,8 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 862835,
-        "end": 862840,
+        "start": 864342,
+        "end": 864347,
         "line": 174,
         "column": 10942,
         "members": [
@@ -1290,8 +1463,8 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 862855,
-        "end": 862860,
+        "start": 864362,
+        "end": 864367,
         "line": 174,
         "column": 10962,
         "members": [
@@ -1301,8 +1474,8 @@
       {
         "api": "$script",
         "access": "read",
-        "start": 862869,
-        "end": 862876,
+        "start": 864376,
+        "end": 864383,
         "line": 174,
         "column": 10976,
         "members": [
@@ -1312,8 +1485,8 @@
       {
         "api": "$script",
         "access": "read",
-        "start": 862893,
-        "end": 862900,
+        "start": 864400,
+        "end": 864407,
         "line": 174,
         "column": 11000,
         "members": [
@@ -1323,8 +1496,8 @@
       {
         "api": "$Plugin",
         "access": "read",
-        "start": 862909,
-        "end": 862916,
+        "start": 864416,
+        "end": 864423,
         "line": 174,
         "column": 11016,
         "members": [
@@ -1334,8 +1507,8 @@
       {
         "api": "$Plugin",
         "access": "read",
-        "start": 862933,
-        "end": 862940,
+        "start": 864440,
+        "end": 864447,
         "line": 174,
         "column": 11040,
         "members": [
@@ -1345,8 +1518,8 @@
       {
         "api": "atob",
         "access": "read",
-        "start": 905487,
-        "end": 905491,
+        "start": 907017,
+        "end": 907021,
         "line": 228,
         "column": 7384,
         "members": [
@@ -1356,8 +1529,8 @@
       {
         "api": "atob",
         "access": "call",
-        "start": 905511,
-        "end": 905540,
+        "start": 907041,
+        "end": 907070,
         "line": 228,
         "column": 7408,
         "members": [
@@ -1367,8 +1540,8 @@
       {
         "api": "btoa",
         "access": "read",
-        "start": 905813,
-        "end": 905817,
+        "start": 907343,
+        "end": 907347,
         "line": 228,
         "column": 7710,
         "members": [
@@ -1378,8 +1551,8 @@
       {
         "api": "btoa",
         "access": "call",
-        "start": 905898,
-        "end": 905905,
+        "start": 907428,
+        "end": 907435,
         "line": 228,
         "column": 7795,
         "members": [
@@ -1389,8 +1562,8 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 1004839,
-        "end": 1004849,
+        "start": 1006369,
+        "end": 1006379,
         "line": 311,
         "column": 29556,
         "members": [
@@ -1400,8 +1573,8 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 1006182,
-        "end": 1006243,
+        "start": 1007712,
+        "end": 1007773,
         "line": 311,
         "column": 30899,
         "members": [
@@ -1411,8 +1584,8 @@
       {
         "api": "$persistentStore",
         "access": "read",
-        "start": 1030630,
-        "end": 1030646,
+        "start": 1032160,
+        "end": 1032176,
         "line": 357,
         "column": 52,
         "members": [
@@ -1422,8 +1595,8 @@
       {
         "api": "$httpClient",
         "access": "read",
-        "start": 1030647,
-        "end": 1030658,
+        "start": 1032177,
+        "end": 1032188,
         "line": 357,
         "column": 69,
         "members": [
@@ -1433,8 +1606,8 @@
       {
         "api": "$notification",
         "access": "read",
-        "start": 1030659,
-        "end": 1030672,
+        "start": 1032189,
+        "end": 1032202,
         "line": 357,
         "column": 81,
         "members": [
@@ -1444,18 +1617,51 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1282144,
-        "end": 1282154,
+        "start": 1283698,
+        "end": 1283708,
         "line": 1606,
         "column": 71,
         "members": [
           "$arguments"
         ]
+      },
+      {
+        "api": "$arguments",
+        "access": "read",
+        "start": 1285953,
+        "end": 1285963,
+        "line": 1610,
+        "column": 144,
+        "members": [
+          "$arguments"
+        ]
+      },
+      {
+        "api": "$options",
+        "access": "read",
+        "start": 1313032,
+        "end": 1313040,
+        "line": 1641,
+        "column": 2506,
+        "members": [
+          "$options"
+        ]
+      },
+      {
+        "api": "$options",
+        "access": "read",
+        "start": 1322411,
+        "end": 1322419,
+        "line": 1641,
+        "column": 11885,
+        "members": [
+          "$options"
+        ]
       }
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 10,
+  "runtimePolicyVersion": 11,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
@@ -1464,7 +1670,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "3838293c25c91aaebc98cd9464b30a3055a7116ba3c78f4cd4c09e37c20c8e87",
+        "analysisSourceSha256": "8daf1eaa880ed7cc114af15ce00e2b8aa3bcda2b243c0f5bac6cf73e35056803",
         "operations": [
           {
             "id": "api:0",
@@ -1617,6 +1823,54 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
+              "api": "globalThis",
+              "start": 961,
+              "end": 971,
+              "line": 1,
+              "column": 962,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis",
+              "start": 983,
+              "end": 993,
+              "line": 1,
+              "column": 984,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
               "api": "window",
               "start": 1006,
               "end": 1012,
@@ -1637,7 +1891,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:7",
+            "id": "api:9",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1661,7 +1915,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:8",
+            "id": "api:10",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1685,7 +1939,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:9",
+            "id": "api:11",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1709,7 +1963,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:10",
+            "id": "api:12",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1733,7 +1987,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:11",
+            "id": "api:13",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1757,7 +2011,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:12",
+            "id": "api:14",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1781,7 +2035,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:13",
+            "id": "api:15",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1805,7 +2059,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:14",
+            "id": "api:16",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1831,7 +2085,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:15",
+            "id": "api:17",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -1855,7 +2109,111 @@
             "diagnostics": []
           },
           {
-            "id": "api:16",
+            "id": "api:18",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis",
+              "start": 209159,
+              "end": 209169,
+              "line": 20,
+              "column": 94772,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:19",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis.crypto",
+              "start": 209175,
+              "end": 209192,
+              "line": 20,
+              "column": 94788,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:20",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis.crypto.getRandomValues",
+              "start": 209194,
+              "end": 209227,
+              "line": 20,
+              "column": 94807,
+              "access": "read",
+              "memberPath": [
+                "crypto",
+                "getRandomValues"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:21",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis.crypto.getRandomValues",
+              "start": 209257,
+              "end": 209294,
+              "line": 20,
+              "column": 94870,
+              "access": "call",
+              "memberPath": [
+                "crypto",
+                "getRandomValues"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:22",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -1879,7 +2237,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:17",
+            "id": "api:23",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -1903,7 +2261,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:18",
+            "id": "api:24",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -1927,7 +2285,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:19",
+            "id": "api:25",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -1951,7 +2309,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:20",
+            "id": "api:26",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -1975,7 +2333,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:21",
+            "id": "api:27",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -1999,7 +2357,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:22",
+            "id": "api:28",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
@@ -2023,7 +2381,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:23",
+            "id": "api:29",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2047,7 +2405,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:24",
+            "id": "api:30",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2073,7 +2431,7 @@
             "diagnostics": []
           },
           {
-            "id": "api:25",
+            "id": "api:31",
             "rule": null,
             "kind": "unmapped",
             "source": {
@@ -2097,13 +2455,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:26",
+            "id": "api:32",
             "rule": "codec.TextDecoder",
             "kind": "codec",
             "source": {
               "api": "TextDecoder",
-              "start": 643767,
-              "end": 643778,
+              "start": 645185,
+              "end": 645196,
               "line": 148,
               "column": 1136,
               "access": "read",
@@ -2121,13 +2479,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:27",
+            "id": "api:33",
             "rule": "codec.TextDecoder",
             "kind": "codec",
             "source": {
               "api": "TextDecoder",
-              "start": 643791,
-              "end": 643806,
+              "start": 645209,
+              "end": 645224,
               "line": 148,
               "column": 1160,
               "access": "call",
@@ -2145,13 +2503,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:28",
+            "id": "api:34",
             "rule": "codec.TextEncoder",
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 643824,
-              "end": 643835,
+              "start": 645242,
+              "end": 645253,
               "line": 148,
               "column": 1193,
               "access": "read",
@@ -2169,13 +2527,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:29",
+            "id": "api:35",
             "rule": "codec.TextEncoder",
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 643848,
-              "end": 643863,
+              "start": 645266,
+              "end": 645281,
               "line": 148,
               "column": 1217,
               "access": "call",
@@ -2193,13 +2551,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:30",
+            "id": "api:36",
             "rule": "codec.btoa",
             "kind": "codec",
             "source": {
               "api": "btoa",
-              "start": 644682,
-              "end": 644686,
+              "start": 646100,
+              "end": 646104,
               "line": 148,
               "column": 2051,
               "access": "read",
@@ -2217,13 +2575,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:31",
+            "id": "api:37",
             "rule": "codec.btoa",
             "kind": "codec",
             "source": {
               "api": "btoa",
-              "start": 644702,
-              "end": 644709,
+              "start": 646120,
+              "end": 646127,
               "line": 148,
               "column": 2071,
               "access": "call",
@@ -2241,13 +2599,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:32",
+            "id": "api:38",
             "rule": "codec.atob",
             "kind": "codec",
             "source": {
               "api": "atob",
-              "start": 646261,
-              "end": 646265,
+              "start": 647679,
+              "end": 647683,
               "line": 148,
               "column": 3630,
               "access": "read",
@@ -2265,13 +2623,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:33",
+            "id": "api:39",
             "rule": "codec.atob",
             "kind": "codec",
             "source": {
               "api": "atob",
-              "start": 646281,
-              "end": 646292,
+              "start": 647699,
+              "end": 647710,
               "line": 148,
               "column": 3650,
               "access": "call",
@@ -2289,161 +2647,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:34",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$task",
-              "start": 647630,
-              "end": 647635,
-              "line": 148,
-              "column": 4999,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:35",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$loon",
-              "start": 647650,
-              "end": 647655,
-              "line": 148,
-              "column": 5019,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:36",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$httpClient",
-              "start": 647690,
-              "end": 647701,
-              "line": 148,
-              "column": 5059,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:37",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$environment",
-              "start": 647768,
-              "end": 647780,
-              "line": 148,
-              "column": 5137,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:38",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$environment.stash-version",
-              "start": 647786,
-              "end": 647815,
-              "line": 148,
-              "column": 5155,
-              "access": "read",
-              "memberPath": [
-                "stash-version"
-              ]
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:39",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$rocket",
-              "start": 647826,
-              "end": 647833,
-              "line": 148,
-              "column": 5195,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
             "id": "api:40",
             "rule": null,
             "kind": "unmapped",
             "source": {
-              "api": "$native",
-              "start": 647848,
-              "end": 647855,
+              "api": "$task",
+              "start": 649048,
+              "end": 649053,
               "line": 148,
-              "column": 5217,
+              "column": 4999,
               "access": "read",
               "memberPath": []
             },
@@ -2463,11 +2675,11 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
-              "api": "$Plugins",
-              "start": 647870,
-              "end": 647878,
+              "api": "$loon",
+              "start": 649068,
+              "end": 649073,
               "line": 148,
-              "column": 5239,
+              "column": 5019,
               "access": "read",
               "memberPath": []
             },
@@ -2484,50 +2696,48 @@
           },
           {
             "id": "api:42",
-            "rule": "timer.setTimeout",
-            "kind": "environment",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
-              "api": "setTimeout",
-              "start": 648807,
-              "end": 648835,
+              "api": "$httpClient",
+              "start": 649108,
+              "end": 649119,
               "line": 148,
-              "column": 6176,
-              "access": "call",
+              "column": 5059,
+              "access": "read",
               "memberPath": []
             },
-            "canonical": "timer.once",
+            "canonical": "runtime-member-dispatch",
             "value": "runtime value",
             "target": {
-              "capability": "runtime",
-              "api": "setTimeout",
-              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
             "id": "api:43",
-            "rule": "storage.read",
-            "kind": "storage",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
-              "api": "$prefs.valueForKey",
-              "start": 648964,
-              "end": 648993,
+              "api": "$environment",
+              "start": 649186,
+              "end": 649198,
               "line": 148,
-              "column": 6333,
-              "access": "call",
-              "memberPath": [
-                "valueForKey"
-              ]
+              "column": 5137,
+              "access": "read",
+              "memberPath": []
             },
-            "canonical": "storage.read",
+            "canonical": "runtime-member-dispatch",
             "value": "runtime value",
             "target": {
-              "capability": "runtime",
-              "api": "$persistentStore.read",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -2537,14 +2747,14 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
-              "api": "$persistentStore.read",
-              "start": 649039,
-              "end": 649071,
+              "api": "$environment.stash-version",
+              "start": 649204,
+              "end": 649233,
               "line": 148,
-              "column": 6408,
-              "access": "call",
+              "column": 5155,
+              "access": "read",
               "memberPath": [
-                "read"
+                "stash-version"
               ]
             },
             "canonical": "runtime-member-dispatch",
@@ -2563,16 +2773,13 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
-              "api": "$Plugins.SubStoreCache.get",
-              "start": 649107,
-              "end": 649144,
+              "api": "$rocket",
+              "start": 649244,
+              "end": 649251,
               "line": 148,
-              "column": 6476,
-              "access": "call",
-              "memberPath": [
-                "SubStoreCache",
-                "get"
-              ]
+              "column": 5195,
+              "access": "read",
+              "memberPath": []
             },
             "canonical": "runtime-member-dispatch",
             "value": "runtime value",
@@ -2587,26 +2794,24 @@
           },
           {
             "id": "api:46",
-            "rule": "storage.write",
-            "kind": "storage",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
-              "api": "$prefs.setValueForKey",
-              "start": 650482,
-              "end": 650519,
+              "api": "$native",
+              "start": 649266,
+              "end": 649273,
               "line": 148,
-              "column": 7851,
-              "access": "call",
-              "memberPath": [
-                "setValueForKey"
-              ]
+              "column": 5217,
+              "access": "read",
+              "memberPath": []
             },
-            "canonical": "storage.write",
+            "canonical": "runtime-member-dispatch",
             "value": "runtime value",
             "target": {
-              "capability": "runtime",
-              "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
@@ -2616,15 +2821,13 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
-              "api": "$persistentStore.write",
-              "start": 650534,
-              "end": 650572,
+              "api": "$Plugins",
+              "start": 649288,
+              "end": 649296,
               "line": 148,
-              "column": 7903,
-              "access": "call",
-              "memberPath": [
-                "write"
-              ]
+              "column": 5239,
+              "access": "read",
+              "memberPath": []
             },
             "canonical": "runtime-member-dispatch",
             "value": "runtime value",
@@ -2642,16 +2845,13 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
-              "api": "$Plugins.SubStoreCache.set",
-              "start": 650577,
-              "end": 650619,
+              "api": "$loon",
+              "start": 649315,
+              "end": 649320,
               "line": 148,
-              "column": 7946,
-              "access": "call",
-              "memberPath": [
-                "SubStoreCache",
-                "set"
-              ]
+              "column": 5266,
+              "access": "read",
+              "memberPath": []
             },
             "canonical": "runtime-member-dispatch",
             "value": "runtime value",
@@ -2669,15 +2869,13 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
-              "api": "$persistentStore.write",
-              "start": 650987,
-              "end": 651014,
+              "api": "$loon",
+              "start": 649332,
+              "end": 649337,
               "line": 148,
-              "column": 8356,
-              "access": "call",
-              "memberPath": [
-                "write"
-              ]
+              "column": 5283,
+              "access": "read",
+              "memberPath": []
             },
             "canonical": "runtime-member-dispatch",
             "value": "runtime value",
@@ -2692,93 +2890,64 @@
           },
           {
             "id": "api:50",
-            "rule": "storage.write",
-            "kind": "storage",
+            "rule": null,
+            "kind": "unmapped",
             "source": {
-              "api": "$prefs.setValueForKey",
-              "start": 651028,
-              "end": 651054,
+              "api": "$loon.isSubsCheckPro",
+              "start": 649346,
+              "end": 649366,
               "line": 148,
-              "column": 8397,
-              "access": "call",
+              "column": 5297,
+              "access": "read",
               "memberPath": [
-                "setValueForKey"
+                "isSubsCheckPro"
               ]
             },
-            "canonical": "storage.write",
+            "canonical": "runtime-member-dispatch",
             "value": "runtime value",
             "target": {
-              "capability": "runtime",
-              "api": "$persistentStore.write",
-              "lowering": "target store layout; missing and deletion semantics remain separate",
-              "proof": "API runtime contract tests; no author-program static proof"
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
             "id": "api:51",
-            "rule": null,
-            "kind": "unmapped",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
             "source": {
-              "api": "$Plugins.SubStoreCache.set",
-              "start": 651089,
-              "end": 651120,
+              "api": "setTimeout",
+              "start": 650296,
+              "end": 650324,
               "line": 148,
-              "column": 8458,
+              "column": 6247,
               "access": "call",
-              "memberPath": [
-                "SubStoreCache",
-                "set"
-              ]
+              "memberPath": []
             },
-            "canonical": "runtime-member-dispatch",
+            "canonical": "timer.once",
             "value": "runtime value",
             "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
             "id": "api:52",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$persistentStore.read",
-              "start": 651251,
-              "end": 651275,
-              "line": 148,
-              "column": 8620,
-              "access": "call",
-              "memberPath": [
-                "read"
-              ]
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:53",
             "rule": "storage.read",
             "kind": "storage",
             "source": {
               "api": "$prefs.valueForKey",
-              "start": 651289,
-              "end": 651310,
+              "start": 650453,
+              "end": 650482,
               "line": 148,
-              "column": 8658,
+              "column": 6404,
               "access": "call",
               "memberPath": [
                 "valueForKey"
@@ -2796,15 +2965,41 @@
             "diagnostics": []
           },
           {
+            "id": "api:53",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 650528,
+              "end": 650560,
+              "line": 148,
+              "column": 6479,
+              "access": "call",
+              "memberPath": [
+                "read"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
             "id": "api:54",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.SubStoreCache.get",
-              "start": 651350,
-              "end": 651379,
+              "start": 650596,
+              "end": 650633,
               "line": 148,
-              "column": 8719,
+              "column": 6547,
               "access": "call",
               "memberPath": [
                 "SubStoreCache",
@@ -2824,14 +3019,40 @@
           },
           {
             "id": "api:55",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$prefs.setValueForKey",
+              "start": 651971,
+              "end": 652008,
+              "line": 148,
+              "column": 7922,
+              "access": "call",
+              "memberPath": [
+                "setValueForKey"
+              ]
+            },
+            "canonical": "storage.write",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:56",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore.write",
-              "start": 651499,
-              "end": 651529,
+              "start": 652023,
+              "end": 652061,
               "line": 148,
-              "column": 8868,
+              "column": 7974,
               "access": "call",
               "memberPath": [
                 "write"
@@ -2849,15 +3070,226 @@
             "diagnostics": []
           },
           {
-            "id": "api:56",
+            "id": "api:57",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$Plugins.SubStoreCache.set",
+              "start": 652066,
+              "end": 652108,
+              "line": 148,
+              "column": 8017,
+              "access": "call",
+              "memberPath": [
+                "SubStoreCache",
+                "set"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:58",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 652476,
+              "end": 652503,
+              "line": 148,
+              "column": 8427,
+              "access": "call",
+              "memberPath": [
+                "write"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:59",
+            "rule": "storage.write",
+            "kind": "storage",
+            "source": {
+              "api": "$prefs.setValueForKey",
+              "start": 652517,
+              "end": 652543,
+              "line": 148,
+              "column": 8468,
+              "access": "call",
+              "memberPath": [
+                "setValueForKey"
+              ]
+            },
+            "canonical": "storage.write",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$persistentStore.write",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:60",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$Plugins.SubStoreCache.set",
+              "start": 652578,
+              "end": 652609,
+              "line": 148,
+              "column": 8529,
+              "access": "call",
+              "memberPath": [
+                "SubStoreCache",
+                "set"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:61",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore.read",
+              "start": 652740,
+              "end": 652764,
+              "line": 148,
+              "column": 8691,
+              "access": "call",
+              "memberPath": [
+                "read"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:62",
+            "rule": "storage.read",
+            "kind": "storage",
+            "source": {
+              "api": "$prefs.valueForKey",
+              "start": 652778,
+              "end": 652799,
+              "line": 148,
+              "column": 8729,
+              "access": "call",
+              "memberPath": [
+                "valueForKey"
+              ]
+            },
+            "canonical": "storage.read",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$persistentStore.read",
+              "lowering": "target store layout; missing and deletion semantics remain separate",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:63",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$Plugins.SubStoreCache.get",
+              "start": 652839,
+              "end": 652868,
+              "line": 148,
+              "column": 8790,
+              "access": "call",
+              "memberPath": [
+                "SubStoreCache",
+                "get"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:64",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore.write",
+              "start": 652988,
+              "end": 653018,
+              "line": 148,
+              "column": 8939,
+              "access": "call",
+              "memberPath": [
+                "write"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:65",
             "rule": "storage.remove",
             "kind": "storage",
             "source": {
               "api": "$prefs.removeValueForKey",
-              "start": 651543,
-              "end": 651570,
+              "start": 653032,
+              "end": 653059,
               "line": 148,
-              "column": 8912,
+              "column": 8983,
               "access": "call",
               "memberPath": [
                 "removeValueForKey"
@@ -2875,15 +3307,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:57",
+            "id": "api:66",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.SubStoreCache.remove",
-              "start": 651608,
-              "end": 651640,
+              "start": 653097,
+              "end": 653129,
               "line": 148,
-              "column": 8977,
+              "column": 9048,
               "access": "call",
               "memberPath": [
                 "SubStoreCache",
@@ -2902,15 +3334,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:58",
+            "id": "api:67",
             "rule": "notify",
             "kind": "notification",
             "source": {
               "api": "$notify",
-              "start": 651804,
-              "end": 651843,
+              "start": 653293,
+              "end": 653332,
               "line": 148,
-              "column": 9173,
+              "column": 9244,
               "access": "call",
               "memberPath": []
             },
@@ -2926,15 +3358,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:59",
+            "id": "api:68",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$notification.post",
-              "start": 651854,
-              "end": 651959,
+              "start": 653343,
+              "end": 653448,
               "line": 148,
-              "column": 9223,
+              "column": 9294,
               "access": "call",
               "memberPath": [
                 "post"
@@ -2952,13 +3384,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:60",
+            "id": "api:69",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$notification.post",
-              "start": 652059,
-              "end": 652101,
+              "start": 653548,
+              "end": 653590,
               "line": 149,
               "column": 150,
               "access": "call",
@@ -2978,13 +3410,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:61",
+            "id": "api:70",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$notification.post",
-              "start": 652102,
-              "end": 652146,
+              "start": 653591,
+              "end": 653635,
               "line": 149,
               "column": 193,
               "access": "call",
@@ -3004,13 +3436,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:62",
+            "id": "api:71",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.Notify",
-              "start": 653077,
-              "end": 653120,
+              "start": 654566,
+              "end": 654609,
               "line": 160,
               "column": 221,
               "access": "call",
@@ -3030,13 +3462,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:63",
+            "id": "api:72",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 653359,
-              "end": 653374,
+              "start": 654848,
+              "end": 654863,
               "line": 161,
               "column": 250,
               "access": "call",
@@ -3054,13 +3486,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:64",
+            "id": "api:73",
             "rule": "complete",
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 653406,
-              "end": 653414,
+              "start": 654895,
+              "end": 654903,
               "line": 161,
               "column": 297,
               "access": "call",
@@ -3071,20 +3503,20 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:65",
+            "id": "api:74",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$context",
-              "start": 653426,
-              "end": 653434,
+              "start": 654915,
+              "end": 654923,
               "line": 161,
               "column": 317,
               "access": "read",
@@ -3102,13 +3534,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:66",
+            "id": "api:75",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$context.headers",
-              "start": 653441,
-              "end": 653457,
+              "start": 654930,
+              "end": 654946,
               "line": 161,
               "column": 332,
               "access": "write",
@@ -3128,13 +3560,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:67",
+            "id": "api:76",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$context.statusCode",
-              "start": 653468,
-              "end": 653487,
+              "start": 654957,
+              "end": 654976,
               "line": 161,
               "column": 359,
               "access": "write",
@@ -3154,13 +3586,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:68",
+            "id": "api:77",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$context.body",
-              "start": 653501,
-              "end": 653514,
+              "start": 654990,
+              "end": 655003,
               "line": 161,
               "column": 392,
               "access": "write",
@@ -3180,15 +3612,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:69",
+            "id": "api:78",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$environment.surge-build",
-              "start": 654987,
-              "end": 655014,
+              "start": 656494,
+              "end": 656521,
               "line": 161,
-              "column": 1878,
+              "column": 1896,
               "access": "read",
               "memberPath": [
                 "surge-build"
@@ -3206,15 +3638,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:70",
+            "id": "api:79",
             "rule": "http.request",
             "kind": "http",
             "source": {
               "api": "$task.fetch",
-              "start": 655131,
-              "end": 655228,
+              "start": 656638,
+              "end": 656735,
               "line": 161,
-              "column": 2022,
+              "column": 2040,
               "access": "call",
               "memberPath": [
                 "fetch"
@@ -3232,15 +3664,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:71",
+            "id": "api:80",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 656157,
-              "end": 656174,
+              "start": 657664,
+              "end": 657681,
               "line": 161,
-              "column": 3048,
+              "column": 3066,
               "access": "call",
               "memberPath": []
             },
@@ -3256,15 +3688,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:72",
+            "id": "api:81",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$httpClient.<runtime-key>",
-              "start": 657378,
-              "end": 657538,
+              "start": 658885,
+              "end": 659045,
               "line": 161,
-              "column": 4269,
+              "column": 4287,
               "access": "call",
               "memberPath": [
                 "<runtime-key>"
@@ -3282,15 +3714,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:73",
+            "id": "api:82",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.Requests",
-              "start": 657626,
-              "end": 657809,
+              "start": 659133,
+              "end": 659316,
               "line": 161,
-              "column": 4517,
+              "column": 4535,
               "access": "call",
               "memberPath": [
                 "Requests"
@@ -3308,15 +3740,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:74",
+            "id": "api:83",
             "rule": "timer.setTimeout",
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 658216,
-              "end": 658359,
+              "start": 659723,
+              "end": 659866,
               "line": 161,
-              "column": 5107,
+              "column": 5125,
               "access": "call",
               "memberPath": []
             },
@@ -3332,15 +3764,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:75",
+            "id": "api:84",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 661651,
-              "end": 661661,
+              "start": 663158,
+              "end": 663168,
               "line": 161,
-              "column": 8542,
+              "column": 8560,
               "access": "call",
               "memberPath": []
             },
@@ -3356,15 +3788,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:76",
+            "id": "api:85",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 661710,
-              "end": 661720,
+              "start": 663217,
+              "end": 663227,
               "line": 161,
-              "column": 8601,
+              "column": 8619,
               "access": "call",
               "memberPath": []
             },
@@ -3380,15 +3812,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:77",
+            "id": "api:86",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$argument",
-              "start": 661887,
-              "end": 661896,
+              "start": 663394,
+              "end": 663403,
               "line": 161,
-              "column": 8778,
+              "column": 8796,
               "access": "read",
               "memberPath": []
             },
@@ -3404,15 +3836,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:78",
+            "id": "api:87",
             "rule": null,
             "kind": "unmapped",
             "source": {
               "api": "$argument",
-              "start": 661908,
-              "end": 661917,
+              "start": 663415,
+              "end": 663424,
               "line": 161,
-              "column": 8799,
+              "column": 8817,
               "access": "read",
               "memberPath": []
             },
@@ -3428,15 +3860,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:79",
+            "id": "api:88",
             "rule": "standard.URL",
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 663040,
-              "end": 663050,
+              "start": 664547,
+              "end": 664557,
               "line": 161,
-              "column": 9931,
+              "column": 9949,
               "access": "call",
               "memberPath": []
             },
@@ -3452,13 +3884,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:80",
+            "id": "api:89",
             "rule": "request.context",
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 665085,
-              "end": 665093,
+              "start": 666592,
+              "end": 666600,
               "line": 162,
               "column": 1904,
               "access": "read",
@@ -3476,13 +3908,13 @@
             "diagnostics": []
           },
           {
-            "id": "api:81",
+            "id": "api:90",
             "rule": "complete",
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 665652,
-              "end": 665660,
+              "start": 667159,
+              "end": 667167,
               "line": 162,
               "column": 2471,
               "access": "call",
@@ -3493,20 +3925,20 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:82",
+            "id": "api:91",
             "rule": "complete",
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 665672,
-              "end": 665691,
+              "start": 667179,
+              "end": 667198,
               "line": 162,
               "column": 2491,
               "access": "call",
@@ -3517,20 +3949,20 @@
             "target": {
               "capability": "runtime",
               "api": "$done",
-              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
             "diagnostics": []
           },
           {
-            "id": "api:83",
+            "id": "api:92",
             "rule": "codec.TextEncoder",
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 675101,
-              "end": 675118,
+              "start": 676608,
+              "end": 676625,
               "line": 162,
               "column": 11920,
               "access": "call",
@@ -3548,13 +3980,113 @@
             "diagnostics": []
           },
           {
-            "id": "api:84",
+            "id": "api:93",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis",
+              "start": 677287,
+              "end": 677297,
+              "line": 162,
+              "column": 12599,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:94",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis.crypto",
+              "start": 677308,
+              "end": 677325,
+              "line": 162,
+              "column": 12620,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:95",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis",
+              "start": 710780,
+              "end": 710790,
+              "line": 162,
+              "column": 46092,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:96",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis.crypto",
+              "start": 710801,
+              "end": 710818,
+              "line": 162,
+              "column": 46113,
+              "access": "read",
+              "memberPath": [
+                "crypto"
+              ]
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:97",
             "rule": "codec.TextDecoder",
             "kind": "codec",
             "source": {
               "api": "TextDecoder",
-              "start": 802996,
-              "end": 803013,
+              "start": 804503,
+              "end": 804520,
               "line": 162,
               "column": 139815,
               "access": "call",
@@ -3572,327 +4104,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:85",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 805164,
-              "end": 805181,
-              "line": 166,
-              "column": 25,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:86",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 805235,
-              "end": 805252,
-              "line": 166,
-              "column": 96,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:87",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 806308,
-              "end": 806325,
-              "line": 167,
-              "column": 1030,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:88",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 806999,
-              "end": 807016,
-              "line": 167,
-              "column": 1721,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:89",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 807522,
-              "end": 807539,
-              "line": 167,
-              "column": 2244,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:90",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 807702,
-              "end": 807719,
-              "line": 167,
-              "column": 2424,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:91",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 807775,
-              "end": 807792,
-              "line": 167,
-              "column": 2497,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:92",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 807963,
-              "end": 807980,
-              "line": 167,
-              "column": 2685,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:93",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 808036,
-              "end": 808053,
-              "line": 167,
-              "column": 2758,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:94",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 808394,
-              "end": 808411,
-              "line": 167,
-              "column": 3116,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:95",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 808835,
-              "end": 808852,
-              "line": 167,
-              "column": 3557,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:96",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 809433,
-              "end": 809450,
-              "line": 167,
-              "column": 4155,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:97",
-            "rule": "codec.TextEncoder",
-            "kind": "codec",
-            "source": {
-              "api": "TextEncoder",
-              "start": 810139,
-              "end": 810156,
-              "line": 167,
-              "column": 4861,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.TextEncoder",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "TextEncoder",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
             "id": "api:98",
             "rule": "codec.TextEncoder",
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 810922,
-              "end": 810939,
-              "line": 167,
-              "column": 5644,
+              "start": 806671,
+              "end": 806688,
+              "line": 166,
+              "column": 25,
               "access": "call",
               "memberPath": []
             },
@@ -3913,10 +4133,10 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 811216,
-              "end": 811233,
-              "line": 167,
-              "column": 5938,
+              "start": 806742,
+              "end": 806759,
+              "line": 166,
+              "column": 96,
               "access": "call",
               "memberPath": []
             },
@@ -3937,10 +4157,10 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 811938,
-              "end": 811955,
+              "start": 807815,
+              "end": 807832,
               "line": 167,
-              "column": 6660,
+              "column": 1030,
               "access": "call",
               "memberPath": []
             },
@@ -3961,10 +4181,10 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 815345,
-              "end": 815362,
-              "line": 173,
-              "column": 1431,
+              "start": 808506,
+              "end": 808523,
+              "line": 167,
+              "column": 1721,
               "access": "call",
               "memberPath": []
             },
@@ -3985,10 +4205,10 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 815441,
-              "end": 815458,
-              "line": 173,
-              "column": 1527,
+              "start": 809029,
+              "end": 809046,
+              "line": 167,
+              "column": 2244,
               "access": "call",
               "memberPath": []
             },
@@ -4009,10 +4229,10 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 815636,
-              "end": 815653,
-              "line": 173,
-              "column": 1722,
+              "start": 809209,
+              "end": 809226,
+              "line": 167,
+              "column": 2424,
               "access": "call",
               "memberPath": []
             },
@@ -4033,10 +4253,10 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 816248,
-              "end": 816265,
-              "line": 173,
-              "column": 2334,
+              "start": 809282,
+              "end": 809299,
+              "line": 167,
+              "column": 2497,
               "access": "call",
               "memberPath": []
             },
@@ -4057,10 +4277,10 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 816695,
-              "end": 816712,
-              "line": 173,
-              "column": 2781,
+              "start": 809470,
+              "end": 809487,
+              "line": 167,
+              "column": 2685,
               "access": "call",
               "memberPath": []
             },
@@ -4077,22 +4297,22 @@
           },
           {
             "id": "api:106",
-            "rule": "codec.TextDecoder",
+            "rule": "codec.TextEncoder",
             "kind": "codec",
             "source": {
-              "api": "TextDecoder",
-              "start": 821303,
-              "end": 821320,
-              "line": 173,
-              "column": 7389,
+              "api": "TextEncoder",
+              "start": 809543,
+              "end": 809560,
+              "line": 167,
+              "column": 2758,
               "access": "call",
               "memberPath": []
             },
-            "canonical": "codec.TextDecoder",
+            "canonical": "codec.TextEncoder",
             "value": "runtime value",
             "target": {
               "capability": "runtime",
-              "api": "TextDecoder",
+              "api": "TextEncoder",
               "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
@@ -4101,23 +4321,23 @@
           },
           {
             "id": "api:107",
-            "rule": "timer.setTimeout",
-            "kind": "environment",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
             "source": {
-              "api": "setTimeout",
-              "start": 829403,
-              "end": 829418,
-              "line": 173,
-              "column": 15489,
+              "api": "TextEncoder",
+              "start": 809901,
+              "end": 809918,
+              "line": 167,
+              "column": 3116,
               "access": "call",
               "memberPath": []
             },
-            "canonical": "timer.once",
+            "canonical": "codec.TextEncoder",
             "value": "runtime value",
             "target": {
               "capability": "runtime",
-              "api": "setTimeout",
-              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -4129,11 +4349,11 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 857149,
-              "end": 857160,
-              "line": 174,
-              "column": 5256,
-              "access": "read",
+              "start": 810342,
+              "end": 810359,
+              "line": 167,
+              "column": 3557,
+              "access": "call",
               "memberPath": []
             },
             "canonical": "codec.TextEncoder",
@@ -4153,8 +4373,368 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 857165,
-              "end": 857182,
+              "start": 810940,
+              "end": 810957,
+              "line": 167,
+              "column": 4155,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:110",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 811646,
+              "end": 811663,
+              "line": 167,
+              "column": 4861,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:111",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 812429,
+              "end": 812446,
+              "line": 167,
+              "column": 5644,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:112",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 812723,
+              "end": 812740,
+              "line": 167,
+              "column": 5938,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:113",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 813445,
+              "end": 813462,
+              "line": 167,
+              "column": 6660,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:114",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 816852,
+              "end": 816869,
+              "line": 173,
+              "column": 1431,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:115",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 816948,
+              "end": 816965,
+              "line": 173,
+              "column": 1527,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:116",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 817143,
+              "end": 817160,
+              "line": 173,
+              "column": 1722,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:117",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 817755,
+              "end": 817772,
+              "line": 173,
+              "column": 2334,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:118",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 818202,
+              "end": 818219,
+              "line": 173,
+              "column": 2781,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:119",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis",
+              "start": 819915,
+              "end": 819925,
+              "line": 173,
+              "column": 4494,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:120",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "globalThis",
+              "start": 821836,
+              "end": 821846,
+              "line": 173,
+              "column": 6415,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:121",
+            "rule": "codec.TextDecoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextDecoder",
+              "start": 822810,
+              "end": 822827,
+              "line": 173,
+              "column": 7389,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.TextDecoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextDecoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:122",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 830910,
+              "end": 830925,
+              "line": 173,
+              "column": 15489,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:123",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 858656,
+              "end": 858667,
+              "line": 174,
+              "column": 5256,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.TextEncoder",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "TextEncoder",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:124",
+            "rule": "codec.TextEncoder",
+            "kind": "codec",
+            "source": {
+              "api": "TextEncoder",
+              "start": 858672,
+              "end": 858689,
               "line": 174,
               "column": 5272,
               "access": "call",
@@ -4172,375 +4752,15 @@
             "diagnostics": []
           },
           {
-            "id": "api:110",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$environment",
-              "start": 862788,
-              "end": 862800,
-              "line": 174,
-              "column": 10895,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:111",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$environment",
-              "start": 862814,
-              "end": 862826,
-              "line": 174,
-              "column": 10921,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:112",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$loon",
-              "start": 862835,
-              "end": 862840,
-              "line": 174,
-              "column": 10942,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:113",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$loon",
-              "start": 862855,
-              "end": 862860,
-              "line": 174,
-              "column": 10962,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:114",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$script",
-              "start": 862869,
-              "end": 862876,
-              "line": 174,
-              "column": 10976,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:115",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$script",
-              "start": 862893,
-              "end": 862900,
-              "line": 174,
-              "column": 11000,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:116",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$Plugin",
-              "start": 862909,
-              "end": 862916,
-              "line": 174,
-              "column": 11016,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:117",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$Plugin",
-              "start": 862933,
-              "end": 862940,
-              "line": 174,
-              "column": 11040,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:118",
-            "rule": "codec.atob",
-            "kind": "codec",
-            "source": {
-              "api": "atob",
-              "start": 905487,
-              "end": 905491,
-              "line": 228,
-              "column": 7384,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "codec.atob",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "atob",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:119",
-            "rule": "codec.atob",
-            "kind": "codec",
-            "source": {
-              "api": "atob",
-              "start": 905511,
-              "end": 905540,
-              "line": 228,
-              "column": 7408,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.atob",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "atob",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:120",
-            "rule": "codec.btoa",
-            "kind": "codec",
-            "source": {
-              "api": "btoa",
-              "start": 905813,
-              "end": 905817,
-              "line": 228,
-              "column": 7710,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "codec.btoa",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "btoa",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:121",
-            "rule": "codec.btoa",
-            "kind": "codec",
-            "source": {
-              "api": "btoa",
-              "start": 905898,
-              "end": 905905,
-              "line": 228,
-              "column": 7795,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "codec.btoa",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "btoa",
-              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:122",
-            "rule": "standard.URL",
-            "kind": "codec",
-            "source": {
-              "api": "URL",
-              "start": 1004839,
-              "end": 1004849,
-              "line": 311,
-              "column": 29556,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "standard.URL",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "URL",
-              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:123",
-            "rule": "timer.setTimeout",
-            "kind": "environment",
-            "source": {
-              "api": "setTimeout",
-              "start": 1006182,
-              "end": 1006243,
-              "line": 311,
-              "column": 30899,
-              "access": "call",
-              "memberPath": []
-            },
-            "canonical": "timer.once",
-            "value": "runtime value",
-            "target": {
-              "capability": "runtime",
-              "api": "setTimeout",
-              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
-              "proof": "API runtime contract tests; no author-program static proof"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
-            "id": "api:124",
-            "rule": null,
-            "kind": "unmapped",
-            "source": {
-              "api": "$persistentStore",
-              "start": 1030630,
-              "end": 1030646,
-              "line": 357,
-              "column": 52,
-              "access": "read",
-              "memberPath": []
-            },
-            "canonical": "runtime-member-dispatch",
-            "value": "runtime value",
-            "target": {
-              "capability": "unclassified",
-              "api": "native engine / runtime capability",
-              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
-              "proof": "Capability boundary; no cross-host provider equivalence claim"
-            },
-            "decision": "runtime",
-            "diagnostics": []
-          },
-          {
             "id": "api:125",
             "rule": null,
             "kind": "unmapped",
             "source": {
-              "api": "$httpClient",
-              "start": 1030647,
-              "end": 1030658,
-              "line": 357,
-              "column": 69,
+              "api": "$environment",
+              "start": 864295,
+              "end": 864307,
+              "line": 174,
+              "column": 10895,
               "access": "read",
               "memberPath": []
             },
@@ -4560,11 +4780,11 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
-              "api": "$notification",
-              "start": 1030659,
-              "end": 1030672,
-              "line": 357,
-              "column": 81,
+              "api": "$environment",
+              "start": 864321,
+              "end": 864333,
+              "line": 174,
+              "column": 10921,
               "access": "read",
               "memberPath": []
             },
@@ -4584,11 +4804,443 @@
             "rule": null,
             "kind": "unmapped",
             "source": {
+              "api": "$loon",
+              "start": 864342,
+              "end": 864347,
+              "line": 174,
+              "column": 10942,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:128",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$loon",
+              "start": 864362,
+              "end": 864367,
+              "line": 174,
+              "column": 10962,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:129",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$script",
+              "start": 864376,
+              "end": 864383,
+              "line": 174,
+              "column": 10976,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:130",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$script",
+              "start": 864400,
+              "end": 864407,
+              "line": 174,
+              "column": 11000,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:131",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$Plugin",
+              "start": 864416,
+              "end": 864423,
+              "line": 174,
+              "column": 11016,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:132",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$Plugin",
+              "start": 864440,
+              "end": 864447,
+              "line": 174,
+              "column": 11040,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:133",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 907017,
+              "end": 907021,
+              "line": 228,
+              "column": 7384,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "atob",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:134",
+            "rule": "codec.atob",
+            "kind": "codec",
+            "source": {
+              "api": "atob",
+              "start": 907041,
+              "end": 907070,
+              "line": 228,
+              "column": 7408,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.atob",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "atob",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:135",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 907343,
+              "end": 907347,
+              "line": 228,
+              "column": 7710,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "btoa",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:136",
+            "rule": "codec.btoa",
+            "kind": "codec",
+            "source": {
+              "api": "btoa",
+              "start": 907428,
+              "end": 907435,
+              "line": 228,
+              "column": 7795,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "codec.btoa",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "btoa",
+              "lowering": "native decoding first, pinned Exodus legacy decoder fallback; scoped UTF-8/Base64",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:137",
+            "rule": "standard.URL",
+            "kind": "codec",
+            "source": {
+              "api": "URL",
+              "start": 1006369,
+              "end": 1006379,
+              "line": 311,
+              "column": 29556,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "standard.URL",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "URL",
+              "lowering": "native URL/URLSearchParams pair first; otherwise lazy pinned whatwg-url 14.2.0 with linked query state and IDNA",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:138",
+            "rule": "timer.setTimeout",
+            "kind": "environment",
+            "source": {
+              "api": "setTimeout",
+              "start": 1007712,
+              "end": 1007773,
+              "line": 311,
+              "column": 30899,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "timer.once",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "setTimeout",
+              "lowering": "actual native setTimeout; Loon setInterval is documented as one-shot",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:139",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$persistentStore",
+              "start": 1032160,
+              "end": 1032176,
+              "line": 357,
+              "column": 52,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:140",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$httpClient",
+              "start": 1032177,
+              "end": 1032188,
+              "line": 357,
+              "column": 69,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:141",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$notification",
+              "start": 1032189,
+              "end": 1032202,
+              "line": 357,
+              "column": 81,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:142",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
               "api": "$arguments",
-              "start": 1282144,
-              "end": 1282154,
+              "start": 1283698,
+              "end": 1283708,
               "line": 1606,
               "column": 71,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:143",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$arguments",
+              "start": 1285953,
+              "end": 1285963,
+              "line": 1610,
+              "column": 144,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:144",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$options",
+              "start": 1313032,
+              "end": 1313040,
+              "line": 1641,
+              "column": 2506,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:145",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$options",
+              "start": 1322411,
+              "end": 1322419,
+              "line": 1641,
+              "column": 11885,
               "access": "read",
               "memberPath": []
             },

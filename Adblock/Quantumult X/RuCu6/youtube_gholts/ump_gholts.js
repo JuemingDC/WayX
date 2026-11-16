@@ -1166,7 +1166,7 @@
         }), aes: undefined, global: globalThis, url: undefined };
     if ((__wayxHost.response === undefined ? 'request' : 'response') !== "response")
         throw new Error('Unregistered HTTP source/target declaration');
-    const __wayxConfig = { "apiPlan": { "source": { "responseStatus": "status", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "statusCode", "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" }, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"] }, "argumentSchema": { "kind": "object", "enumValues": {}, "fields": { "autoHd": "boolean", "blockAi": "boolean", "blockGames": "boolean", "blockStore": "boolean", "blockVerticalLive": "boolean", "jumpAhead": "boolean", "onTheGo": "boolean" } } };
+    const __wayxConfig = { "apiPlan": { "source": { "responseStatus": "status", "responseTrailers": "h2_trailers", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "statusCode", "responseTrailers": null, "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" }, "qxHttp": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"] }, "argumentSchema": { "kind": "object", "enumValues": {}, "fields": { "autoHd": "boolean", "blockAi": "boolean", "blockGames": "boolean", "blockStore": "boolean", "blockVerticalLive": "boolean", "jumpAhead": "boolean", "onTheGo": "boolean" } } };
     return (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
@@ -1239,6 +1239,20 @@
             return fail('invalid HTTP status');
         };
         const statusLine = value => { const code = status(value); return typeof value === 'string' ? value : 'HTTP/1.1 ' + code + ' ' + ({ 200: 'OK', 201: 'Created', 204: 'No Content', 301: 'Moved Permanently', 302: 'Found', 304: 'Not Modified', 400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found', 500: 'Internal Server Error' }[code] || 'Status'); };
+        function trailers(value) {
+            if (Array.isArray(value))
+                return value.map(row => {
+                    if (!row || typeof row !== 'object')
+                        return fail('trailer array requires field/value strings');
+                    const field = row.field, entry = row.value;
+                    if (typeof field !== 'string' || typeof entry !== 'string')
+                        return fail('trailer array requires field/value strings');
+                    return { field, value: entry };
+                });
+            if (!value || typeof value !== 'object')
+                return fail('trailers require a dictionary or field/value array');
+            return Object.assign({}, headers(value));
+        }
         const requestParts = value => typeof value === 'string' ? /^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value) : null;
         const originalRequest = requestParts(host.request && host.request.url);
         const rawPath = parts => parts[3] ? (parts[3][0] === '?' ? '/' : '') + parts[3] : '/';
@@ -1252,8 +1266,17 @@
                 if (!own(result, 'path'))
                     result.path = rawPath(originalRequest);
             }
-            if (value.headers !== undefined)
-                result.headers = headers(value.headers);
+            const nativeHeaders = value.headers;
+            if (nativeHeaders !== undefined)
+                result.headers = headers(nativeHeaders);
+            if (!requestRole && null && true) {
+                const field = null, present = own(result, field), value = result[field];
+                delete result[field];
+                if (present && value !== undefined) {
+                    const fields = trailers(value);
+                    result["h2_trailers"] = headers(Array.isArray(fields) ? Object.fromEntries(fields.map(row => [row.field, row.value])) : fields);
+                }
+            }
             if (own(value, "statusCode")) {
                 result["status"] = status(value["statusCode"]);
                 delete result["statusCode"];
@@ -1305,7 +1328,7 @@
             }
             ;
             for (const key of Object.keys(out))
-                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...([]), ...([])].includes(key)) {
+                if (!['url', 'headers', 'body', 'bodyBytes', 'status', 'abort', ...([]), ...([]), ...([])].includes(key)) {
                     delete out[key];
                 }
             delete out.abort;
@@ -1322,7 +1345,7 @@
                 return finish({});
             if (value === response || value === request) {
                 const out = {};
-                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...([]), "status"])
+                for (const k of ['url', 'headers', 'body', 'bodyBytes', 'h2_trailers', ...(["h2_trailers"]), ...([]), "status"])
                     if (own(value, k))
                         out[k] = value[k];
                 value = out;
@@ -1867,8 +1890,8 @@
                             return {};
                         }
                     }
-                    function writeConfig(config, key = CONFIG_KEY) {
-                        return $persistentStore.write(JSON.stringify(config), key);
+                    function writeConfig(config) {
+                        return $persistentStore.write(JSON.stringify(config), CONFIG_KEY);
                     }
                     function concatBytes(chunks) {
                         const result = new Uint8Array(chunks.reduce((n, b) => n + b.length, 0));
@@ -2013,9 +2036,7 @@
                         const config = readConfig();
                         if (!Object.hasOwn(config, platform))
                             return;
-                        const current = config[platform];
-                        const snapshot = expected;
-                        if (JSON.stringify(current) === JSON.stringify(snapshot)) {
+                        if (JSON.stringify(config[platform]) === JSON.stringify(expected)) {
                             delete config[platform];
                             return writeConfig(config);
                         }
@@ -2173,39 +2194,36 @@
                             return prefix ? sameBytes(bytes.subarray(0, target.length), target) : sameBytes(bytes, target);
                         return wireFields(bytes).some((field) => field.no === path[0] && field.wire === 2 && aiPathMatches(field.data, path.slice(1), target, prefix));
                     }
-                    function rewriteAiFields(bytes, no, transform) {
-                        let changed = false;
-                        const chunks = wireFields(bytes).flatMap((field) => {
-                            if (field.no !== no || field.wire !== 2)
-                                return [field.raw];
-                            const data = transform(field.data);
-                            if (data && sameBytes(data, field.data))
-                                return [field.raw];
-                            changed = true;
-                            return data ? [encodeField([no, "", "bytes"], data)] : [];
-                        });
-                        return changed ? concatBytes(chunks) : bytes;
+                    const AI_CARD = [8, 2, 169495254, 138681778, 1];
+                    function dropAiFields(bytes, no, path, target = AI_PANEL, prefix = false) {
+                        return rewriteFields(bytes, no, (data) => (aiPathMatches(data, path, target, prefix) ? undefined : data));
                     }
                     function removeAiActionBar(bytes) {
-                        return rewriteAiFields(bytes, 1, (button) => aiPathMatches(button, [10, 461054335, 4, 169495254, 138681778, 1])
+                        return rewriteFields(bytes, 1, (button) => aiPathMatches(button, [10, 461054335, 4, 169495254, 138681778, 1])
                             ? undefined
-                            : rewriteBinaryPath(button, [10, 37098], (menu) => rewriteAiFields(menu, 3, (item) => aiPathMatches(item, [489973921, 997, 3, 3, 169495254, 138681778, 1]) ? undefined : item)));
+                            : rewriteBinaryPath(button, [10, 37098], (menu) => dropAiFields(menu, 3, [489973921, 997, 3, 3, 169495254, 138681778, 1])));
                     }
                     function removeAiQuickActions(bytes) {
-                        return rewriteAiFields(bytes, 10, (button) => aiPathMatches(button, [15, 461054335, 4, 169495254, 138681778, 1])
-                            ? undefined
-                            : rewriteBinaryPath(button, [6], (menu) => rewriteAiFields(menu, 3, (item) => aiPathMatches(item, [4, 16, 461054335, 4, 169495254, 138681778, 1]) ? undefined : item)));
+                        return rewriteFields(bytes, 10, (button) => {
+                            if (aiPathMatches(button, [15, 461054335, 4, 169495254, 138681778, 1]))
+                                return;
+                            const primary = rewriteBinaryPath(button, [15, 37098], (menu) => dropAiFields(menu, 3, [461054335, 4, 169495254, 138681778, 1]));
+                            return rewriteBinaryPath(primary, [6], (menu) => dropAiFields(menu, 3, [4, 16, 461054335, 4, 169495254, 138681778, 1]));
+                        });
+                    }
+                    function carouselParts(bytes) {
+                        const fields = wireFields(bytes);
+                        const part = (no) => fields.filter((field) => field.no === no && field.wire === 2);
+                        return { fields, headers: part(1), cards: part(2) };
                     }
                     function removeAiCarousel(bytes) {
                         return rewriteBinaryPath(bytes, [1], (carousel) => {
-                            const fields = wireFields(carousel);
-                            const headers = fields.filter((field) => field.no === 1 && field.wire === 2);
-                            const cards = fields.filter((field) => field.no === 2 && field.wire === 2);
+                            const { fields, headers, cards } = carouselParts(carousel);
                             if (headers.length !== cards.length)
                                 return carousel;
                             const removed = new Set();
                             cards.forEach((card, index) => {
-                                if (aiPathMatches(card.data, [8, 2, 169495254, 138681778, 1])) {
+                                if (aiPathMatches(card.data, AI_CARD)) {
                                     removed.add(card);
                                     removed.add(headers[index]);
                                 }
@@ -2221,12 +2239,8 @@
                                 const bodies = wireFields(field.data).filter((field) => field.no === 1 && field.wire === 2);
                                 if (bodies.length !== 1)
                                     return false;
-                                const fields = wireFields(bodies[0].data);
-                                const headers = fields.filter((field) => field.no === 1 && field.wire === 2);
-                                const cards = fields.filter((field) => field.no === 2 && field.wire === 2);
-                                return (cards.length > 0 &&
-                                    cards.length === headers.length &&
-                                    cards.every((card) => aiPathMatches(card.data, [8, 2, 169495254, 138681778, 1])));
+                                const { headers, cards } = carouselParts(bodies[0].data);
+                                return cards.length > 0 && cards.length === headers.length && cards.every((card) => aiPathMatches(card.data, AI_CARD));
                             });
                         }
                         catch {
@@ -2235,14 +2249,15 @@
                     }
                     function removeAiElement(bytes) {
                         return rewriteBinaryPath(bytes, [153515154, 172660663, 1, 168777401, 5], (content) => {
-                            let result = rewriteAiFields(content, 386137609, removeAiQuickActions);
-                            result = rewriteBinaryPath(result, [413471385, 1], (data) => rewriteAiFields(data, 2185, removeAiActionBar));
-                            return rewriteAiFields(result, 408379376, removeAiCarousel);
+                            let result = rewriteFields(content, 386137609, removeAiQuickActions);
+                            result = rewriteBinaryPath(result, [413471385, 1], (data) => rewriteFields(data, 2185, removeAiActionBar));
+                            result = rewriteBinaryPath(result, [389155117, 17], removeAiActionBar);
+                            return rewriteFields(result, 408379376, removeAiCarousel);
                         });
                     }
                     function removeAiSummary(bytes) {
-                        const result = rewriteAiFields(bytes, 45, (key) => (aiPathMatches(key, [], AI_SUMMARY, true) ? undefined : key));
-                        return rewriteBinaryPath(result, [1, 19, 1, 1, 4, 424915055, 1], (playback) => rewriteAiFields(playback, 31, (command) => aiPathMatches(command, [1, 204158123, 194114827, 1], AI_SUMMARY, true) ? undefined : command));
+                        const result = dropAiFields(bytes, 45, [], AI_SUMMARY, true);
+                        return rewriteBinaryPath(result, [1, 19, 1, 1, 4, 424915055, 1], (playback) => dropAiFields(playback, 31, [1, 204158123, 194114827, 1], AI_SUMMARY, true));
                     }
                     function removeAi(object) {
                         let changed = false;
@@ -2280,7 +2295,7 @@
                                 changed = rewriteUnknownField(content.videoLockup, 18, removeAiSummary) || changed;
                             if (object.videoContent?.videoLockup)
                                 changed =
-                                    rewriteUnknownField(object, 6, (bindings) => rewriteBinaryPath(bindings, [188490103], (collection) => rewriteAiFields(collection, 1, (binding) => aiPathMatches(binding, [1], AI_SUMMARY, true) ? undefined : binding))) || changed;
+                                    rewriteUnknownField(object, 6, (bindings) => rewriteBinaryPath(bindings, [188490103], (collection) => dropAiFields(collection, 1, [1], AI_SUMMARY, true))) || changed;
                         }
                         catch (error) {
                             console.log("YouTube AI controls: " + error);
@@ -2300,14 +2315,6 @@
                         }
                         return first;
                     }
-                    function nativeField(no, value) {
-                        return encodeField([no, "", typeof value === "number" ? "uint" : typeof value === "string" ? "string" : "bytes"], value);
-                    }
-                    function nativePath(path, value) {
-                        for (let i = path.length - 1; i >= 0; i--)
-                            value = nativeField(path[i], value);
-                        return value;
-                    }
                     function binaryAt(bytes, path) {
                         let current = bytes;
                         for (const no of path) {
@@ -2316,6 +2323,14 @@
                                 return;
                         }
                         return current;
+                    }
+                    function nativeField(no, value) {
+                        return encodeField([no, "", typeof value === "number" ? "uint" : typeof value === "string" ? "string" : "bytes"], value);
+                    }
+                    function nativePath(path, value) {
+                        for (let i = path.length - 1; i >= 0; i--)
+                            value = nativeField(path[i], value);
+                        return value;
                     }
                     const ON_THE_GO_ID = "on-the-go";
                     const ON_THE_GO_MENU_ID = "/youtube/app/player_overflow_menu/menu_item_on_the_go";
@@ -2455,13 +2470,13 @@
                         const overlay = message.playerOverlays?.renderer;
                         if (!overlay?.overflowMenu || !Array.isArray(message.engagementPanels))
                             return false;
-                        if (message.engagementPanels.some((p) => panelIdentifier(p) === ON_THE_GO_ID))
-                            return false;
+                        let panel = message.engagementPanels.find((p) => panelIdentifier(p) === ON_THE_GO_ID);
                         const menu = binaryAt(overlay.overflowMenu, [66439850]);
                         if (!menu)
                             return false;
                         const fields = wireFields(menu);
                         let source, speed;
+                        let replacement;
                         let insertion = fields.length;
                         for (const [index, item] of fields.entries()) {
                             if (item.no !== 1 || item.wire !== 2)
@@ -2471,8 +2486,12 @@
                             if (!model || !state)
                                 continue;
                             const id = utf8.decode(state);
-                            if (id === ON_THE_GO_MENU_ID)
-                                return false;
+                            if (id === ON_THE_GO_MENU_ID) {
+                                if (!containsMarker(model, PREMIUM_UPSELL))
+                                    return false;
+                                replacement = index;
+                                source = item.data;
+                            }
                             if (id.endsWith("/menu_item_additional_settings"))
                                 insertion = index;
                             source ??= item.data;
@@ -2484,14 +2503,16 @@
                                             speed = command.data;
                             }
                         }
-                        if (!source)
+                        if (!source || (panel && replacement === undefined))
                             return false;
-                        const resources = prepareOnTheGoResources(message);
-                        if (!resources)
-                            return false;
-                        const panel = makeOnTheGoPanel(message, source, resources.template, speed);
-                        if (!panel)
-                            return false;
+                        const resources = panel ? undefined : prepareOnTheGoResources(message);
+                        if (!panel) {
+                            if (!resources)
+                                return false;
+                            panel = makeOnTheGoPanel(message, source, resources.template, speed);
+                            if (!panel)
+                                return false;
+                        }
                         let entry = rewriteBinaryPath(source, MENU_MODEL_PATH, (model) => concatBytes([
                             ...wireFields(model)
                                 .filter((f) => [1, 2, 13, 17].includes(f.no))
@@ -2507,10 +2528,12 @@
                         entry = rewriteBinaryPath(entry, [...MENU_CONTEXT_PATH, 6, 188490103, 1, 1], () => textEncoder.encode(ON_THE_GO_MENU_ID));
                         entry = rewriteBinaryPath(entry, [153515154, 3, 396644439, 1], () => textEncoder.encode("menu_item_on_the_go"));
                         const chunks = fields.map((field) => field.raw);
-                        chunks.splice(insertion, 0, nativeField(1, entry));
+                        chunks.splice(replacement ?? insertion, replacement === undefined ? 0 : 1, nativeField(1, entry));
                         const output = rewriteBinaryPath(overlay.overflowMenu, [66439850], () => concatBytes(chunks));
-                        setField(message, "frameworkUpdates", resources.framework);
-                        setField(message, "engagementPanels", [...message.engagementPanels, panel]);
+                        if (resources) {
+                            setField(message, "frameworkUpdates", resources.framework);
+                            setField(message, "engagementPanels", [...message.engagementPanels, panel]);
+                        }
                         return setField(overlay, "overflowMenu", output);
                     }
                     function onTheGoResourceId(update) {
@@ -2624,7 +2647,12 @@
                     const STORE_TAB = textEncoder.encode("store");
                     const LIVE_BADGE = textEncoder.encode("youtube_outline_experimental/live_24pt");
                     const IMMERSIVE_LIVE = textEncoder.encode("immersive_live");
+                    const PREMIUM_UPSELL = textEncoder.encode("PApremium_upsell");
                     const PREMIUM_BROWSE_ID = textEncoder.encode("SPunlimited");
+                    function isAdLayout(eml, blockStore) {
+                        const layout = eml?.split("|")[0];
+                        return !!layout && (AD_LAYOUT.test(layout) || (blockStore && SHOPPING_LAYOUT.test(layout)));
+                    }
                     function containsMarker(bytes, marker = AD_TRACKING) {
                         if (!marker.length)
                             return true;
@@ -2663,7 +2691,7 @@
                             for (const no of [4, 169495254, 462702848, 1, 139608561, 50, 7, 3]) {
                                 if (!bytes)
                                     return false;
-                                bytes = wireFields(bytes).find((field) => field.no === no && field.wire === 2)?.data;
+                                bytes = bytesField(bytes, no);
                             }
                             return !!bytes && sameBytes(bytes, IMMERSIVE_LIVE);
                         }
@@ -2699,8 +2727,7 @@
                         }
                     }
                     function isBlockedObject(object, blockGames, blockVerticalLive, blockStore) {
-                        const layout = object.layoutRender?.eml?.split("|")[0];
-                        if ((layout && (AD_LAYOUT.test(layout) || (blockStore && SHOPPING_LAYOUT.test(layout)))) ||
+                        if (isAdLayout(object.layoutRender?.eml, blockStore) ||
                             (blockStore && object.shoppingShelf) ||
                             object.sponsoredVideo ||
                             object.sponsoredDisplay ||
@@ -2749,8 +2776,7 @@
                             }
                             let blocked = classify &&
                                 (isBlockedObject(object, blockGames, blockVerticalLive, blockStore) || (blockAi && isAiOnlyCarousel(object)));
-                            const layout = object.renderInfo?.layoutRender?.eml?.split("|")[0];
-                            let empty = !!layout && (AD_LAYOUT.test(layout) || (blockStore && SHOPPING_LAYOUT.test(layout)));
+                            let empty = isAdLayout(object.renderInfo?.layoutRender?.eml, blockStore);
                             if (classify && (blocked || empty))
                                 return BLOCKED;
                             if (blockAi)
@@ -2847,7 +2873,6 @@
                         }
                     }
                     function unlockSpeedMenu(bytes) {
-                        const upsell = textEncoder.encode("PApremium_upsell");
                         return rewriteBinaryPath(bytes, [
                             66439850, 1, 153515154, 172660663, 1, 168777401, 5, 407694004, 4, 4, 170382688, 1, 169495254, 443434441, 1, 1,
                             441573002, 4, 153515154, 172660663, 1, 168777401, 5, 413471385, 1, 1602,
@@ -2867,7 +2892,7 @@
                             }
                             return rewriteBinaryPath(expanded, [10, 1674], (preset) => {
                                 const fields = wireFields(preset);
-                                const keep = fields.filter((field) => field.no !== 3 || field.wire !== 2 || !containsMarker(field.data, upsell));
+                                const keep = fields.filter((field) => field.no !== 3 || field.wire !== 2 || !containsMarker(field.data, PREMIUM_UPSELL));
                                 return keep.length === fields.length ? preset : concatBytes(keep.map((field) => field.raw));
                             });
                         });
@@ -3135,20 +3160,23 @@
                         markChanged(state, "");
                         return true;
                     }
-                    function rewriteBinaryPath(bytes, path, transform) {
-                        if (!path.length)
-                            return transform(bytes);
+                    function rewriteFields(bytes, no, transform) {
                         let changed = false;
-                        const chunks = wireFields(bytes).map((field) => {
-                            if (field.no !== path[0] || field.wire !== 2)
-                                return field.raw;
-                            const data = rewriteBinaryPath(field.data, path.slice(1), transform);
-                            if (sameBytes(data, field.data))
-                                return field.raw;
+                        const chunks = wireFields(bytes).flatMap((field) => {
+                            if (field.no !== no || field.wire !== 2)
+                                return [field.raw];
+                            const data = transform(field.data);
+                            if (data && sameBytes(data, field.data))
+                                return [field.raw];
                             changed = true;
-                            return encodeField([field.no, "", "bytes"], data);
+                            return data ? [encodeField([no, "", "bytes"], data)] : [];
                         });
                         return changed ? concatBytes(chunks) : bytes;
+                    }
+                    function rewriteBinaryPath(bytes, path, transform) {
+                        return path.length
+                            ? rewriteFields(bytes, path[0], (data) => rewriteBinaryPath(data, path.slice(1), transform))
+                            : transform(bytes);
                     }
                     class UmpReader {
                         constructor(buffer) {
