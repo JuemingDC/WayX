@@ -26,7 +26,7 @@ for(const full of [false,true]) {
   const operation = result.plan.operationIR.operations.find(op=>op.rule==='response.trailers')!;
   assert.equal(operation.target.api,'$response.trailers');
   assert.equal(operation.target.capability,'runtime');
-  assert.equal(result.plan.contract.runtimePolicyVersion,11);
+  assert.equal(result.plan.contract.runtimePolicyVersion,scriptRuntimePolicyVersion);
   // Missing fields stay missing. Changing the body does not write back trailers.
   assert.deepEqual(run('if("h2_trailers" in $response)throw Error("invented");$done({body:"changed"});',{headers:{}},{},full).output,{body:'changed'});
   assert.deepEqual(run('$done({});',{trailers:native},{},full).output,{});
@@ -52,9 +52,9 @@ for(const full of [false,true]) {
   assert.throws(()=>run('$done({trailers:[{field:"bad",value:5}]});',{}, {},full),/field\/value strings/);
   // Read-only alias access and computed result keys use the same runtime contract.
   assert.deepEqual(run('const key=["h2","trailers"].join("_");const r={};r[key]=$response[key];globalThis.$done(r);',{trailers:native},{},full).output,{trailers:{'grpc-status':'7','grpc-message':'permission%20denied','x-trace':'keep'}});
-  // No HTTP/2 capability is invented for callback transports or request fields.
+  // Request trailers remain outside the newly supported callback response API.
   const request = run('$request.h2_trailers;$done({});',{}, {phase:'request'},full).plan.operationIR.operations.find(op=>op.rule==='request.trailers')!;
   assert.equal(request.target.capability,'unavailable');
 }
-assert.equal(scriptRuntimePolicyVersion,11);
+assert.equal(scriptRuntimePolicyVersion,12);
 console.log('Surge trailers: full/selected adapters, read/write/delete, absence/clear/pass-through, whole contexts, native arrays, aliases, invalid types, phases and source capability catalog passed');

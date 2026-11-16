@@ -95,7 +95,7 @@ ScriptHub 固定基线为 b943361f11be5795b3eb10f9cc4e5497642922fc，复用 faca
 | 整个 `$response` 传给 `$done` | 保留已映射的 trailers | 不丢失读取、修改后的字段 |
 | Surge full-header-mode 的 Header/Trailer field/value 数组 | 来源 Loon 读取时转为字典 | 重复键最后一项生效，沿用大小写无关 Header 策略；不承诺保留数组重复字段 |
 | 直接返回原生 `trailers` 数组 | 保留数组顺序与重复 | 校验 field/value 为字符串，原数据不被修改 |
-| 请求/合成响应/QX/HTTP-client callback trailers | 不扩展 | 本次官方更新只覆盖 HTTP response 脚本，不能推广 |
+| 请求/合成响应/QX trailers | 不扩展 | HTTP response 读写能力不能推广到这些场景 |
 
 非法 trailer 字段过滤、32 项上限及 HTTP/2 写入限制由 Surge 原生执行。既不伪造 HTTP 版本，也不添加旧版客户端模拟。gRPC 的 grpc-status/grpc-message 仅在作者代码明确修改时变化；修改 body 或 `$done({})` 不会自动清空 trailers。
 
@@ -104,3 +104,13 @@ ScriptHub 固定基线为 b943361f11be5795b3eb10f9cc4e5497642922fc，复用 faca
 验证覆盖完整 API 内核与裁剪产物、动态别名/计算键、字典读改删、缺失/省略/清空、整个 response 完成、数组结果、错误类型及声明边界；未进行真实客户端测试。
 
 依据：[Surge HTTP Response](https://manual.nssurge.com/scripting/http-response.html)、[官方 TestFlight 更新](https://t.me/s/SurgeChangelog)、[Loon API](https://nsloon.app/docs/Script/script_api/)。
+
+## Surge HTTP Client 回调 trailers（2026-11-16，chance）
+
+官方 TestFlight [公告 /460](https://t.me/SurgeTestFlightFeed/460) 新增 `$httpClient` 回调响应的 `trailers`，对应此前功能请求的第二项。runtimePolicyVersion=12。通用 API 手册尚未列出该字段时，以官方更新公告作为新增依据，不推断最低支持 build。
+
+Loon callback 的 `response.h2_trailers` 从实际 Surge `response.trailers` 提供，保持 `(error, response, data)` 签名，支持七种 HTTP 方法。该回调对应脚本主动发起的请求，与拦截规则的 request/response/task 阶段及 `requires-body` 无关；不把响应脚本的缓冲条件套到 HTTP Client 上。
+
+无字段时不创造空对象；明确空字典保持存在；采用既有大小写无关字典和原生数组投影，不改变宿主原对象。HTTP 错误、缺失响应、文本/二进制 data 保持原路径。QX Promise 响应不增加未公开字段。请求 trailers 仍未新增支持，暂缓的 `$config` 控制接口也不改变。
+
+新增契约测试覆盖完整/裁剪运行时、七方法、多阶段、requires-body=false、字节视图、缺失/空/数组、getter、动态别名和错误。生成脚本及清单由 Actions 发布；未进行客户端实测。

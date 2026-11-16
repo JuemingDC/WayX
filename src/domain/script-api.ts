@@ -9,7 +9,8 @@ export type ScriptClient = "qx" | "loon" | "surge";
 // Modified: 2026-11-11 (chance). Generate lexical body bridges and dependency-selected API adapters.
 // Modified: 2026-11-11 (chance). Keep lazy URL/URLSearchParams lookup inside author control flow.
 // Modified: 2026-11-16 (chance). Map response trailers through the official Surge 6 API.
-export const scriptRuntimePolicyVersion = 11;
+// Modified: 2026-11-16 (chance). New Surge HTTP client callback trailers map independently of intercept declarations.
+export const scriptRuntimePolicyVersion = 12;
 // Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
 // from adblock conversion, inventories and remaining-work priorities.
 export const excludedAdblockScriptApis = Object.freeze([
@@ -46,6 +47,7 @@ export interface ScriptHostLayout {
     undefinedDeletes: boolean;
   };
   http: {
+    responseTrailers: string | null;
     style: "promise" | "callback";
     root: string;
     optionsRoot: string | null;
@@ -86,6 +88,7 @@ export const scriptHostLayouts: Record<ScriptClient, ScriptHostLayout> = {
       undefinedDeletes: false,
     },
     http: {
+      responseTrailers: null,
       style: "promise",
       root: "$task.fetch",
       optionsRoot: "opts",
@@ -122,6 +125,7 @@ export const scriptHostLayouts: Record<ScriptClient, ScriptHostLayout> = {
       undefinedDeletes: true,
     },
     http: {
+      responseTrailers: "h2_trailers",
       style: "callback",
       root: "$httpClient",
       optionsRoot: null,
@@ -160,6 +164,7 @@ export const scriptHostLayouts: Record<ScriptClient, ScriptHostLayout> = {
       undefinedDeletes: false,
     },
     http: {
+      responseTrailers: "trailers",
       style: "callback",
       root: "$httpClient",
       optionsRoot: null,
@@ -362,7 +367,7 @@ const definitions: Omit<ScriptApiDefinition, "proof">[] = [
     canonical: "http.request -> success(status,body)|failure",
     value: "Promise or callback",
     lowering:
-      "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+      "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
   },
   {
     id: "notify",

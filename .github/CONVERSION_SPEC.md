@@ -416,7 +416,7 @@ Modified: 2026-11-02 (chance). 用户要求 API 之间长期可维护的通用�
 
 ## 2.24 API 兼容政策和边界
 
-Modified: 2026-11-16 (chance). runtimePolicyVersion=11。Surge 官方测试版新增响应 trailers API，手册最低版本为 iOS 6.0.0+/Mac 6.12.0+。Loon `$response.h2_trailers` 从目标实际 `$response.trailers` 提供，响应完成值 `h2_trailers` 转为 `trailers`；仅限 `http-response` 且 `requires-body=true`。字段缺失不伪造 `{}`；返回时省略字段保留上游 trailers，显式 `{}` 清空，传整个源 response 时保留该字段。目标字典采用既有 Header 大小写无关策略；目标 full-header-mode 数组投影到 Loon 字典时重复键最后一项生效，不宣称保留重复字段，直接返回的原生 field/value 数组保留条目顺序和重复。请求 trailers、request/echo 合成响应 trailers、QX trailers 与 `$httpClient` 回调不据此新增能力。无需读 body 的响应脚本仍不暴露或写回 trailers。HTTP/2 客户端写入、非法 trailer 过滤、32 字段上限由 Surge 原生负责，不伪造协议、不自行模拟旧版客户端。官方依据：https://manual.nssurge.com/scripting/http-response.html 、https://nsloon.app/docs/Script/script_api/ 。
+Modified: 2026-11-16 (chance). runtimePolicyVersion=11。Surge 官方测试版新增响应 trailers API，手册最低版本为 iOS 6.0.0+/Mac 6.12.0+。Loon `$response.h2_trailers` 从目标实际 `$response.trailers` 提供，响应完成值 `h2_trailers` 转为 `trailers`；仅限 `http-response` 且 `requires-body=true`。字段缺失不伪造 `{}`；返回时省略字段保留上游 trailers，显式 `{}` 清空，传整个源 response 时保留该字段。目标字典采用既有 Header 大小写无关策略；目标 full-header-mode 数组投影到 Loon 字典时重复键最后一项生效，不宣称保留重复字段，直接返回的原生 field/value 数组保留条目顺序和重复。请求 trailers、request/echo 合成响应 trailers、QX trailers 不据此新增能力；HTTP-client 回调 trailers 后续按 runtimePolicyVersion=12 支持。无需读 body 的响应脚本仍不暴露或写回 trailers。HTTP/2 客户端写入、非法 trailer 过滤、32 字段上限由 Surge 原生负责，不伪造协议、不自行模拟旧版客户端。官方依据：https://manual.nssurge.com/scripting/http-response.html 、https://nsloon.app/docs/Script/script_api/ 。
 
 Modified: 2026-11-10 (chance). runtimePolicyVersion=7。QX 来源的 `$request.scheme/path` 从实际请求 URL 提供，path 包括原始查询参数；单独的 `$done({path})` 转 Surge 时输出同原协议、域名、端口的完整 `url`，保留转义和查询字节。QX 请求完成值中的 `url` 原样保留，包括修改域名、协议、端口；不得因官方某个示例只展示 path 就省略 url 或强制改为 path。QX→Surge 传递整个 `$request` 时，已修改的 url 优先于从旧 URL 派生的 path，防止撤销跨域修改；只有 url 未变时才应用 path 修改。实现实例依据：NSNanoCat/util 的 `lib/done.mjs` 在 QX 分支明确保留 url；现存 QX YouTube 请求脚本使用 `$done({url: redirectUrl})` 将 googlevideo initplayback 转到 `https://init-stream.maasea.workers.dev/`。这是开源实现证据，不冒充官方完整 API 签名或客户端实测。sourcePath 元信息仍不伪造。参考：https://github.com/NSNanoCat/util/blob/main/lib/done.mjs 、https://github.com/crossutility/Quantumult-X/blob/master/sample-rewrite-request-header.js 、https://manual.nssurge.com/scripting/http-request.html 。
 
@@ -426,7 +426,7 @@ Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无
 
 ## 2.25 备份、清单与验证
 
-Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与维护边界维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 映射真实 QX removeAllValues；Surge 忽略全量清空和通知延时，保留通知内容与支持的媒体字段。runtimePolicyVersion=11、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
+Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与维护边界维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 映射真实 QX removeAllValues；Surge 忽略全量清空和通知延时，保留通知内容与支持的媒体字段。runtimePolicyVersion=12、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
 
 测试由 API 契约、标准向量、模拟原生网络及合成备份事务组成；覆盖动态输入、Env 接收者、Header 操作、七方法/失败/并发、字节、存储和通知，并以独立 zlib 向量验证压缩和损坏输入；原生 QX clear-all 保留，Surge 无清空存储 API 时不以已见键集合模拟。不得用源脚本的具体语法分支堆叠测试放行清单。Rule/Rewrite/Module 的已有转换职责不受影响。
 
@@ -506,3 +506,6 @@ JS 入口只从真实注释中提取 QX 安装声明，不执行业务脚本、�
 五类 Issue 标题固定，重复失败只覆盖该类正文，不追加逐条评论；恢复关闭，再次出现复用原 Issue。拉取类正文每行一个编号，无 URL、错误栈或额外说明；其他类别按问题汇总说明。迁移时先写分类摘要，再关闭旧逐条或重复自动 Issue，历史详情保留在已关闭的 Issue 和 Action 报告。
 
 Modified: 2026-11-13 (chance). Issue 历史按每页 100 条读取，在 gh 输出阶段投影为编号、标题、状态及开放 Issue 的正文；关闭记录正文不传回 Node，不再聚合全部历史正文。Node 捕获使用明确上限，避免 ENOBUFS 使发布门禁失败。
+
+
+Modified: 2026-11-16 (chance). runtimePolicyVersion=12。官方 TestFlight 公告 https://t.me/SurgeTestFlightFeed/460 明确 `$httpClient` 回调响应新增 `trailers`。Loon→Surge 的 HTTP callback 从目标实际 `response.trailers` 映射为来源 `response.h2_trailers`，沿用字典大小写无关与数组投影语义，不修改宿主原响应。不依赖被拦截流量的 phase、requires-body 或 binary-body-mode；七种 HTTP 方法均在原生 callback 完成时映射，保留 error/response/data 签名、错误路径和正文准确字节视图。旧客户端或无 trailers 时保持字段缺失，不伪造空字典。此更新不扩展请求 trailers，也不为 QX Promise 响应新增未公开字段；响应脚本的读写仍保留其 requires-body/HTTP2 边界。官网通用 API 手册尚未同步新增字段说明时，以该官方公告为本次新增证据，不猜测最低 build。此前暂缓的 `$config` 控制 API 不变。

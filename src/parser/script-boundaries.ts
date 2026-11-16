@@ -1,9 +1,10 @@
 import { scriptRuntimePolicyVersion } from "../domain/script-api.ts";
+// Modified: 2026-11-16 (chance). Reflect response and callback trailer support in current reports.
 // Modified: 2026-11-02 (chance). Runtime capabilities replace static author-
 // program proof domains. Compatible output is not a device-execution certificate.
 import { excludedAdblockScriptApis } from "../domain/script-api.ts";
 export const scriptCapabilityBoundaries = {
-  revision: "2026-11-02",
+  revision: "2026-11-16",
   runtimePolicyVersion: scriptRuntimePolicyVersion,
   // Modified: 2026-11-02 (chance). User scope exclusions are not deferred APIs.
   excluded: {
@@ -27,14 +28,14 @@ export const scriptCapabilityBoundaries = {
     domain:
       "Case-insensitive lowercase Header dictionary Proxy, get/set/delete/has/define/descriptor, Symbol-safe; native dictionaries are copied",
     outside:
-      "This is an explicit ScriptHub-compatible normalization policy; original key casing and duplicate-case keys are not preserved. Full-header arrays are not supported",
+      "This is an explicit ScriptHub-compatible normalization policy; original key casing and duplicate-case keys are not preserved. Native Surge Header/Trailer arrays project to source dictionaries; duplicate fields/order are not preserved",
   },
   http: {
     status: "runtime",
     domain:
       "Seven dynamic methods, concurrent requests, Promise rejection and callbacks, source defaults, units, policy names, exact byte views and Loon body-base64 decoding; preserve native QX decoded text and honor explicit foreign response charset with actual TextDecoder; QX-undocumented parameters omitted without deleting argument construction",
     outside:
-      "No fabricated timeout/cancellation on QX. Unsupported response charset rejects with UNSUPPORTED_RESPONSE_CHARSET; native detailed errors, cookie state, ALPN, h2_trailers and source-version differences can remain observable",
+      "No fabricated timeout/cancellation on QX. Unsupported response charset rejects with UNSUPPORTED_RESPONSE_CHARSET; native detailed errors, cookie state, ALPN, request trailers and source-version differences can remain observable; new Surge callback response trailers map to Loon h2_trailers",
   },
   storage: {
     status: "runtime",
@@ -102,11 +103,11 @@ export const scriptCapabilityBoundaries = {
     status: "explicit-invocation-boundaries",
     storage:
       "Loon remove maps to QX removeAllValues; Surge clear-all is intentionally ignored without deleting keys or reporting success",
-    http: "QX omits undocumented options. User policy omits Surge ALPN and h2_trailers/node/policy completion fields without errors",
+    http: "QX omits undocumented options. Surge response-context and HTTP-client callback trailers map to source fields. ALPN, request/synthetic trailers and node/policy completion fields remain omitted",
     headers:
       "Only Loon/QX dictionary source contracts are adapted; Surge full-header arrays are not a new source conversion direction",
     notification:
-      "Surge posts content immediately, ignoring delay and click actions; remote images use media-url, PNG/JPEG/GIF/WebP inline images use media-base64 and media-base64-mime; unknown media is omitted. QX extra options are omitted",
+      "Surge posts content immediately, ignoring delay; open-url/clipboard actions are mapped; remote images use media-url, PNG/JPEG/GIF/WebP inline images use media-base64 and media-base64-mime; unknown media is omitted. QX extra options are omitted",
     identity:
       "Real source device/version/sourcePath cannot be reconstructed; no fabricated identity",
     policy:

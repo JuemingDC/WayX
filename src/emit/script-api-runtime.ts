@@ -26,6 +26,20 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(!value||typeof value!=='object')return fail('trailers require a dictionary or field/value array');
     return Object.assign({},headers(value));
   }
+  // Modified: 2026-11-16 (chance). Reuse trailer dictionary projection for
+  // intercept and HTTP client responses; callback availability is independent.
+  const headerView=value=>headers(config.to==='surge'&&Array.isArray(value)?Object.fromEntries(trailers(value).map(row=>[row.field,row.value])):value);
+  function trailerView(result,sourceField,targetField,available){
+    if(targetField&&sourceField!==targetField){
+      const present=own(result,targetField),value=result[targetField];
+      delete result[targetField];
+      if(available&&sourceField&&present&&value!==undefined){
+        const fields=trailers(value);
+        result[sourceField]=headers(Array.isArray(fields)?Object.fromEntries(fields.map(row=>[row.field,row.value])):fields);
+      }
+    }
+    return result;
+  }
   const requestParts=value=>typeof value==='string'?/^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value):null;
   const originalRequest=requestParts(host.request&&host.request.url);
   const rawPath=parts=>parts[3]?(parts[3][0]==='?'?'/':'')+parts[3]:'/';
@@ -38,15 +52,8 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     }
     // Surge full-header-mode supplies arrays for headers and trailers alike.
     const nativeHeaders=value.headers;
-    if(nativeHeaders!==undefined)result.headers=headers(config.to==='surge'&&Array.isArray(nativeHeaders)?Object.fromEntries(trailers(nativeHeaders).map(row=>[row.field,row.value])):nativeHeaders);
-    if(!requestRole&&target.responseTrailers&&source.responseTrailers!==target.responseTrailers){
-      const field=target.responseTrailers,present=own(result,field),value=result[field];
-      delete result[field];
-      if(source.responseTrailers&&config.phase==='response'&&config.responseBody&&present&&value!==undefined){
-        const fields=trailers(value);
-        result[source.responseTrailers]=headers(Array.isArray(fields)?Object.fromEntries(fields.map(row=>[row.field,row.value])):fields);
-      }
-    }
+    if(nativeHeaders!==undefined)result.headers=headerView(nativeHeaders);
+    if(!requestRole)trailerView(result,source.responseTrailers,target.responseTrailers,config.phase==='response'&&config.responseBody);
     if(own(value,target.responseStatus)){result[source.responseStatus]=status(value[target.responseStatus]);if(source.responseStatus!==target.responseStatus)delete result[target.responseStatus];}
     // Modified: 2026-11-05 (chance). Target-provided BufferSource determines binary conversion.
     if(config.binary||binary(value.bodyBytes)||binary(value.body)){
@@ -170,7 +177,7 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     const plan=transport(input,'callback',method);
     if(target.http.style==='callback'){
       const fn=host.http&&host.http[method];if(typeof fn!=='function')return fail('native HTTP method unavailable');
-      return fn.call(host.http,plan.req,(error,r,data)=>{if(error)return callback(error,r,data);if(!r)return callback('HTTP transport returned no response',r,data);const result=Object.assign({},r,{headers:headers(r.headers||{})});result.status=status(r[target.responseStatus]);return callback(null,result,data);});
+      return fn.call(host.http,plan.req,(error,r,data)=>{if(error)return callback(error,r,data);if(!r)return callback('HTTP transport returned no response',r,data);const result=Object.assign({},r,{headers:headerView(r.headers||{})});trailerView(result,source.http.responseTrailers,target.http.responseTrailers,true);result.status=status(r[target.responseStatus]);return callback(null,result,data);});
     }
     return host.task.fetch(plan.req).then(r=>{if(!r)return callback('HTTP transport returned no response',undefined,undefined);return callback(null,{status:status(r.statusCode),headers:headers(r.headers||{})},input&&input['binary-mode']&&own(r,'bodyBytes')?bytes(r.bodyBytes):r.body);},e=>callback(e&&e.error||e,undefined,undefined));
   };
