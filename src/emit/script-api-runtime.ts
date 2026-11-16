@@ -19,6 +19,13 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   const statusLine=value=>{const code=status(value);return typeof value==='string'?value:'HTTP/1.1 '+code+' '+({200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error'}[code]||'Status');};
   // Modified: 2026-11-10 (chance). QX request context and completion use path;
   // retain raw URL bytes instead of resolving a path as a new authority.
+  // Modified: 2026-11-16 (chance). Trailer results use official Surge header
+  // shapes; source Loon views project native arrays to a case-insensitive dictionary.
+  function trailers(value){
+    if(Array.isArray(value))return value.map(row=>{if(!row||typeof row!=='object')return fail('trailer array requires field/value strings');const field=row.field,entry=row.value;if(typeof field!=='string'||typeof entry!=='string')return fail('trailer array requires field/value strings');return {field,value:entry};});
+    if(!value||typeof value!=='object')return fail('trailers require a dictionary or field/value array');
+    return Object.assign({},headers(value));
+  }
   const requestParts=value=>typeof value==='string'?/^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value):null;
   const originalRequest=requestParts(host.request&&host.request.url);
   const rawPath=parts=>parts[3]?(parts[3][0]==='?'?'/':'')+parts[3]:'/';
@@ -29,7 +36,17 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
       if(!own(result,'scheme'))result.scheme=originalRequest[1].toLowerCase();
       if(!own(result,'path'))result.path=rawPath(originalRequest);
     }
-    if(value.headers!==undefined)result.headers=headers(value.headers);
+    // Surge full-header-mode supplies arrays for headers and trailers alike.
+    const nativeHeaders=value.headers;
+    if(nativeHeaders!==undefined)result.headers=headers(config.to==='surge'&&Array.isArray(nativeHeaders)?Object.fromEntries(trailers(nativeHeaders).map(row=>[row.field,row.value])):nativeHeaders);
+    if(!requestRole&&target.responseTrailers&&source.responseTrailers!==target.responseTrailers){
+      const field=target.responseTrailers,present=own(result,field),value=result[field];
+      delete result[field];
+      if(source.responseTrailers&&config.phase==='response'&&config.responseBody&&present&&value!==undefined){
+        const fields=trailers(value);
+        result[source.responseTrailers]=headers(Array.isArray(fields)?Object.fromEntries(fields.map(row=>[row.field,row.value])):fields);
+      }
+    }
     if(own(value,target.responseStatus)){result[source.responseStatus]=status(value[target.responseStatus]);if(source.responseStatus!==target.responseStatus)delete result[target.responseStatus];}
     // Modified: 2026-11-05 (chance). Target-provided BufferSource determines binary conversion.
     if(config.binary||binary(value.bodyBytes)||binary(value.body)){
@@ -60,8 +77,17 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(own(out,'headers')){if(!out.headers||typeof out.headers!=='object'||Array.isArray(out.headers))fail('completion headers require a dictionary');out.headers=Object.assign({},headers(out.headers));}
     if(own(out,'bodyBytes')){out.body=bytes(out.bodyBytes);delete out.bodyBytes;}
     if(binary(out.body)){if(target.binaryField==='bodyBytes'){out.bodyBytes=buffer(out.body);delete out.body;}else out.body=bytes(out.body);}
-    if(config.to==='surge')for(const key of ['h2_trailers','node','policy'])delete out[key];
-    for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort',...(config.to==='qx'&&config.phase==='request'&&!synthetic?['path']:[]),...(config.to==='loon'?['h2_trailers']:[])].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
+    // Modified: 2026-11-16 (chance). Only buffered HTTP response scripts can
+    // return trailers. Native Surge retains omitted trailers and enforces HTTP/2.
+    if(config.to==='surge'){
+      if(own(out,'h2_trailers')&&config.from==='loon'&&config.phase==='response'&&config.responseBody&&!synthetic)out.trailers=out.h2_trailers;
+      for(const key of ['h2_trailers','node','policy'])delete out[key];
+      if(own(out,'trailers')){
+        if(config.phase==='response'&&config.responseBody&&!synthetic&&out.trailers!==undefined)out.trailers=trailers(out.trailers);
+        else delete out.trailers;
+      }
+    }
+    for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort',...(config.to==='qx'&&config.phase==='request'&&!synthetic?['path']:[]),...(config.to==='loon'?['h2_trailers']:[]),...(config.to==='surge'?['trailers']:[])].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
     if(target.completion.synthetic==='flat')delete out.abort;
     if(target.completion.synthetic==='flat'&&!synthetic&&config.phase==='response'&&own(out,'headers')&&!own(out,'body')&&!own(out,'bodyBytes')&&config.responseBody)fail('QX response-body requires body with changed headers');
     return out;
@@ -71,7 +97,7 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(['task','network','generic'].includes(config.phase))return finish(value??{});
     if(value===undefined||value===null)return finish({});
     if(value===response||value===request){
-      const out={};for(const k of ['url','headers','body','bodyBytes','h2_trailers',...(config.from==='qx'&&config.phase==='request'?['path']:[]),source.responseStatus])if(own(value,k))out[k]=value[k];
+      const out={};for(const k of ['url','headers','body','bodyBytes','h2_trailers',...(source.responseTrailers?[source.responseTrailers]:[]),...(config.from==='qx'&&config.phase==='request'?['path']:[]),source.responseStatus])if(own(value,k))out[k]=value[k];
       value=out;
     }
     if(typeof value==='string')value={body:value};

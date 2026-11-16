@@ -859,7 +859,7 @@ for (const to of ["qx", "surge"] as const) {
       { $response: {} },
     );
   if (to === "qx") assert.deepEqual(flat(action().out), { body: "value" });
-  else assert.deepEqual(flat(action().out), { body: "value" });
+  else assert.deepEqual(flat(action().out), { body: "value", trailers: {"grpc-status":"0"} });
 }
 // Excluded services are never read by the host capture or rewritten body.
 const scoped = pair("if(false)$dns.query(options,callback);$done({});", {
@@ -875,7 +875,7 @@ Object.defineProperty(bare, "$dns", {
 });
 vm.runInNewContext(scoped.code!, bare);
 console.log(
-  "SDK omission contracts passed: real QX clear-all, ignored Surge clear-all/delay/ALPN/trailers, inline notification media and excluded service isolation",
+  "SDK omission contracts passed: real QX clear-all, ignored Surge clear-all/delay/ALPN and mapped response trailers, inline notification media and excluded service isolation",
 );
 // Foreign-realm ArrayBuffers use the same completion and transport byte fields.
 const foreignBuffer = vm.runInNewContext("new Uint8Array([9,1,2,8]).buffer");

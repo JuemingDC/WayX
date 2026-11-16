@@ -416,6 +416,8 @@ Modified: 2026-11-02 (chance). 用户要求 API 之间长期可维护的通用�
 
 ## 2.24 API 兼容政策和边界
 
+Modified: 2026-11-16 (chance). runtimePolicyVersion=11。Surge 官方测试版新增响应 trailers API，手册最低版本为 iOS 6.0.0+/Mac 6.12.0+。Loon `$response.h2_trailers` 从目标实际 `$response.trailers` 提供，响应完成值 `h2_trailers` 转为 `trailers`；仅限 `http-response` 且 `requires-body=true`。字段缺失不伪造 `{}`；返回时省略字段保留上游 trailers，显式 `{}` 清空，传整个源 response 时保留该字段。目标字典采用既有 Header 大小写无关策略；目标 full-header-mode 数组投影到 Loon 字典时重复键最后一项生效，不宣称保留重复字段，直接返回的原生 field/value 数组保留条目顺序和重复。请求 trailers、request/echo 合成响应 trailers、QX trailers 与 `$httpClient` 回调不据此新增能力。无需读 body 的响应脚本仍不暴露或写回 trailers。HTTP/2 客户端写入、非法 trailer 过滤、32 字段上限由 Surge 原生负责，不伪造协议、不自行模拟旧版客户端。官方依据：https://manual.nssurge.com/scripting/http-response.html 、https://nsloon.app/docs/Script/script_api/ 。
+
 Modified: 2026-11-10 (chance). runtimePolicyVersion=7。QX 来源的 `$request.scheme/path` 从实际请求 URL 提供，path 包括原始查询参数；单独的 `$done({path})` 转 Surge 时输出同原协议、域名、端口的完整 `url`，保留转义和查询字节。QX 请求完成值中的 `url` 原样保留，包括修改域名、协议、端口；不得因官方某个示例只展示 path 就省略 url 或强制改为 path。QX→Surge 传递整个 `$request` 时，已修改的 url 优先于从旧 URL 派生的 path，防止撤销跨域修改；只有 url 未变时才应用 path 修改。实现实例依据：NSNanoCat/util 的 `lib/done.mjs` 在 QX 分支明确保留 url；现存 QX YouTube 请求脚本使用 `$done({url: redirectUrl})` 将 googlevideo initplayback 转到 `https://init-stream.maasea.workers.dev/`。这是开源实现证据，不冒充官方完整 API 签名或客户端实测。sourcePath 元信息仍不伪造。参考：https://github.com/NSNanoCat/util/blob/main/lib/done.mjs 、https://github.com/crossutility/Quantumult-X/blob/master/sample-rewrite-request-header.js 、https://manual.nssurge.com/scripting/http-request.html 。
 
 Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无关兼容政策；它不保持键大小写与重复大小写字段，不得继续以这些源码写法静态阻断全部转换。Header 操作在独立字典上进行，完整 Header 数组和 Proxy descriptor 不变量限制明确报告。HTTP 在运行时派发动态方法/参数，保留 Promise/callback、并发和错误；QX 未说明参数省略，原实参构造、副作用和异常保留，不伪造 QX 超时/取消。存储动态 String 键值使用目标原生 API，删除使用 remove 或 null，不试写空字符串；缺失值、空值及详细错误仍可能保持目标原生差异。原生 QX fetch 的已解码文本保持，外端字节按显式 charset 使用真实 TextDecoder 解码，不可用时以 UNSUPPORTED_RESPONSE_CHARSET 拒绝。Loon body-base64 解码为目标真实二进制 body，HTTP node 映射目标 policy，不写配置。动态完成结果校验成功后才锁定提交，校验失败可由作者捕获后重试；按状态/字节/response 布局适配；QX 不支持参数省略，其它不可用字段报错。QX echo 与 response-body Header 规则需要正确声明，不能从具体业务正文推断改写触发语义。
@@ -424,7 +426,7 @@ Modified: 2026-11-02 (chance). 接受 ScriptHub 的 Header 小写、大小写无
 
 ## 2.25 备份、清单与验证
 
-Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与维护边界维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 映射真实 QX removeAllValues；Surge 忽略全量清空和通知延时，保留通知内容与支持的媒体字段。runtimePolicyVersion=10、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
+Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与固定共用 URL 保持；仅 Actions 同事务拉取、更新原件、共用脚本、引用和外部 API 清单。Resource/Backup/script-api/<URL SHA>.json 绑定原件及清单摘要，记录原源码 UTF-16 API 位置与运行时适配，不记录逐业务值的伪证明。API 能力与维护边界维护在 docs/script-api/03-API能力与实施路线.md；AES/URL/旧编码公共 provider 已启用；原生无对应接口的行为仍明确列边界，不能以部分键清理模拟全量清空存储、以定时器模拟完成后的原生通知、或转发未说明的 Surge ALPN。Loon remove 映射真实 QX removeAllValues；Surge 忽略全量清空和通知延时，保留通知内容与支持的媒体字段。runtimePolicyVersion=11、validationMode=api-runtime-compatibility 必须明确出现在报告；保留旧版本的完整性迁移校验，不用旧 static policy 生成新文件。
 
 测试由 API 契约、标准向量、模拟原生网络及合成备份事务组成；覆盖动态输入、Env 接收者、Header 操作、七方法/失败/并发、字节、存储和通知，并以独立 zlib 向量验证压缩和损坏输入；原生 QX clear-all 保留，Surge 无清空存储 API 时不以已见键集合模拟。不得用源脚本的具体语法分支堆叠测试放行清单。Rule/Rewrite/Module 的已有转换职责不受影响。
 
@@ -434,7 +436,7 @@ Modified: 2026-11-02 (chance). 原插件/脚本继续逐字节备份，源名与
 
 Modified: 2026-11-02 (chance). 旧生成脚本清理在所有声明重绑定后、同一备份发布事务中执行。仅管理 API/Adblock 生成目录、生成器共享文件名规则及 legacy 目录；未标记为生成的作者/手工脚本不因无引用而删除。根据最终产物、冻结源声明、保留的手工脚本和脚本间相对/完整/编码 URL 建立引用闭包，保留传递依赖与仍作为来源 URL 的文件；无根引用的旧生成文件和孤立循环才移除。同步清理 adapters/bindings 的悬空记录，原始 Resource/Backup 字节不删除，status.json 记录 scriptCleanup。正在使用的 Rewrite mock/helper 和 Module 方向适配文件不按年代或目录整批删除。
 
-Modified: 2026-11-02 (chance). 用户新授权覆盖此前 Surge 严格阻断策略：全量清空存储操作忽略、返回 undefined；HTTP ALPN 与完成值 h2_trailers/node/policy 省略。通知忽略延时，保留有实例支持的链接与剪贴板动作，立即提交内容，远程媒体及可识别内嵌图片映射官方 media-url 或 media-base64/media-base64-mime。Header 匹配保持大小写无关。源版本/构建/路径字段不恢复、不阻断转换，以规范和兼容性报告说明；保留实际可得信息及兼容 presence，不通过源码猜测删除业务分支。这些明确接受的降级不等于严格语义一致；普通业务异常、网络错误和加密错误不得吞掉。
+Modified: 2026-11-02 (chance). 用户新授权覆盖此前 Surge 严格阻断策略：全量清空存储操作忽略、返回 undefined；HTTP ALPN 与完成值 node/policy 省略；h2_trailers 按 2026-11-16 响应 API 规则转换，request/synthetic 等不支持的场景仍省略。通知忽略延时，保留有实例支持的链接与剪贴板动作，立即提交内容，远程媒体及可识别内嵌图片映射官方 media-url 或 media-base64/media-base64-mime。Header 匹配保持大小写无关。源版本/构建/路径字段不恢复、不阻断转换，以规范和兼容性报告说明；保留实际可得信息及兼容 presence，不通过源码猜测删除业务分支。这些明确接受的降级不等于严格语义一致；普通业务异常、网络错误和加密错误不得吞掉。
 
 Modified: 2026-11-03 (chance). 当前实现只维护运行时 API 契约，不保留旧 author-composition 实验、静态证明参数或未使用的选项目录；历史设计查阅 Git。原始归档及仍被引用的旧适配文件保留完整性验证，只有现有 Actions 引用闭包清理确认无用后才删除。
 

@@ -41,9 +41,20 @@ export function collectScriptApiReferences(
 ) {
   const refs: ScriptApiReference[] = [];
   const walk = (n: ts.Node) => {
+    // Modified: 2026-11-16 (chance). Intrinsic globalThis and API properties
+    // assigned through it are host references, not lexical declarations.
+    // Real local variables, parameters and declarations keep their own bindings.
+    const symbol = ts.isIdentifier(n) ? checker.getSymbolAtLocation(n) : undefined;
+    const local = symbol?.declarations?.some(declaration =>
+      ts.isVariableDeclaration(declaration) || ts.isBindingElement(declaration) ||
+      ts.isParameter(declaration) || ts.isFunctionDeclaration(declaration) ||
+      ts.isFunctionExpression(declaration) || ts.isClassDeclaration(declaration) ||
+      ts.isClassExpression(declaration) || ts.isImportClause(declaration) ||
+      ts.isImportSpecifier(declaration) || ts.isNamespaceImport(declaration),
+    );
     if (
       ts.isIdentifier(n) &&
-      !checker.getSymbolAtLocation(n) &&
+      !local &&
       (/^\$[a-zA-Z]/.test(n.text) ||
         [
           "globalThis",
@@ -117,13 +128,16 @@ export function parseScriptApiIR(
 ): ScriptApiIR & { analysisSourceSha256: string } {
   const operations = collectScriptApiReferences(tree, checker).map(
     (r, index): ScriptApiOperation => {
+      // Global-qualified references use the same API catalog entry; preserve
+      // the original spelling and source coordinates in the inventory below.
+      const api = r.api.replace(/^(?:globalThis|window|global)\./, "");
       const rule = scriptApiDefinitions
         .filter(
           (d) =>
             !d.selector &&
             d.source[from] &&
-            (r.api === d.source[from] ||
-              r.api.startsWith(d.source[from] + ".")),
+            (api === d.source[from] ||
+              api.startsWith(d.source[from] + ".")),
         )
         .sort(
           (a, b) =>

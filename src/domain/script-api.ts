@@ -8,7 +8,8 @@ export type ScriptClient = "qx" | "loon" | "surge";
 // Modified: 2026-11-10 (chance). Restore binary HTTP payloads and example-backed notification options.
 // Modified: 2026-11-11 (chance). Generate lexical body bridges and dependency-selected API adapters.
 // Modified: 2026-11-11 (chance). Keep lazy URL/URLSearchParams lookup inside author control flow.
-export const scriptRuntimePolicyVersion = 10;
+// Modified: 2026-11-16 (chance). Map response trailers through the official Surge 6 API.
+export const scriptRuntimePolicyVersion = 11;
 // Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
 // from adblock conversion, inventories and remaining-work priorities.
 export const excludedAdblockScriptApis = Object.freeze([
@@ -34,6 +35,7 @@ export const scriptHttpMethods = [
 ] as const;
 export interface ScriptHostLayout {
   responseStatus: string;
+  responseTrailers: string | null;
   scriptStartTime: "date" | "epoch-seconds" | "absent";
   binaryField: "body" | "bodyBytes";
   store: {
@@ -73,6 +75,7 @@ export interface ScriptHostLayout {
 export const scriptHostLayouts: Record<ScriptClient, ScriptHostLayout> = {
   qx: {
     responseStatus: "statusCode",
+    responseTrailers: null,
     scriptStartTime: "absent",
     binaryField: "bodyBytes",
     store: {
@@ -108,6 +111,7 @@ export const scriptHostLayouts: Record<ScriptClient, ScriptHostLayout> = {
   },
   loon: {
     responseStatus: "status",
+    responseTrailers: "h2_trailers",
     scriptStartTime: "date",
     binaryField: "body",
     store: {
@@ -145,6 +149,7 @@ export const scriptHostLayouts: Record<ScriptClient, ScriptHostLayout> = {
   },
   surge: {
     responseStatus: "status",
+    responseTrailers: "trailers",
     scriptStartTime: "epoch-seconds",
     binaryField: "body",
     store: {
@@ -295,7 +300,7 @@ const definitions: Omit<ScriptApiDefinition, "proof">[] = [
     canonical: "complete(pass|modify|respond)",
     value: "phase-specific result",
     lowering:
-      "canonical status Number and byte view; target status line/Number and synthetic flat/response layout",
+      "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
   },
   {
     id: "storage.remove-by-write",
@@ -442,15 +447,28 @@ const definitions: Omit<ScriptApiDefinition, "proof">[] = [
     lowering:
       "actual native setTimeout; Loon setInterval is documented as one-shot",
   })),
-  ...(["request", "response"] as const).map((role) => ({
-    id: role + ".trailers",
-    kind: "context" as const,
-    source: { loon: "$" + role + ".h2_trailers" },
-    canonical: role + ".trailers",
-    value: "HTTP/2 trailer dictionary",
-    lowering:
-      "preserve native source fields when present; QX completion ignores undocumented fields; Surge completion has no trailer result field",
-  })),
+  // Modified: 2026-11-16 (chance). Surge iOS 6.0.0+/Mac 6.12.0+ only
+  // exposes response trailers for requires-body HTTP response declarations.
+  {
+    id: "request.trailers",
+    kind: "context",
+    source: {loon: "$request.h2_trailers"},
+    target: {loon: "$request.h2_trailers"},
+    canonical: "request.trailers",
+    value: "HTTP/2 request trailer dictionary",
+    availability: {loon: "runtime", qx: "unavailable", surge: "unavailable"},
+    lowering: "preserve actual native Loon request trailers; Surge response-trailer API does not supply request trailers; unsupported completion is omitted",
+  },
+  {
+    id: "response.trailers",
+    kind: "context",
+    source: {loon: "$response.h2_trailers", surge: "$response.trailers"},
+    target: {loon: "$response.h2_trailers", surge: "$response.trailers"},
+    canonical: "response.trailers",
+    value: "response trailer dictionary; Surge full-header-mode array projects to source dictionary",
+    availability: {loon: "runtime", qx: "unavailable", surge: "runtime"},
+    lowering: "Surge iOS 6.0.0+/Mac 6.12.0+: map actual response trailers to Loon h2_trailers and completion back to trailers for requires-body=true; absent stays absent, {} clears, omission preserves; modified trailers reach HTTP/2 clients only",
+  },
   {
     id: "script.name",
     kind: "environment",

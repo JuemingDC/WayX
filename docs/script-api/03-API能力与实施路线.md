@@ -43,7 +43,7 @@ DNS、GeoIP、ASN、配置控制、任务和 Module 工具不参与新增 API �
 
 ## Surge 默认忽略策略
 
-Modified: 2026-11-02 (chance). 用户明确授权以继续执行为优先：Surge 全量清空存储操作忽略，返回 undefined，不删除部分键、不报告清空成功。HTTP ALPN 和完成结果 h2_trailers/node/policy 字段省略，正常请求和完成继续执行。
+Modified: 2026-11-02 (chance). 用户明确授权以继续执行为优先：Surge 全量清空存储操作忽略，返回 undefined，不删除部分键、不报告清空成功。HTTP ALPN 和完成结果 node/policy 字段省略；响应 h2_trailers 按下述 Surge 新接口转换，request/synthetic 等无对应能力的场景仍省略，正常请求和完成继续执行。
 
 Modified: 2026-11-10 (chance). 通知保留 openUrl/clipboard 与 QX open-url/update-pasteboard，分别映射 Surge 官方 action/url/text；两种动作同时给出时优先剪贴板。QX 目标保留两字段。通知仅忽略 delay，立即提交。远程图片映射 media-url；PNG/JPEG/GIF/WebP Data URI 或裸 Base64 经签名识别映射 media-base64/media-base64-mime，无法识别的媒体省略。实参构造照常执行；不读取未知选项 getter，不捕获作者业务代码或网络错误来假放行。
 
@@ -70,7 +70,7 @@ ScriptHub 固定基线为 b943361f11be5795b3eb10f9cc4e5497642922fc，复用 faca
 - QX 请求二进制体使用 `bodyBytes: ArrayBuffer`；Loon 字节视图和 Base64 请求在转 QX 时切换字段，保留 byteOffset/byteLength。QX→Surge 将 bodyBytes 转为 Uint8Array body。文本 body 优先，避免同时提交两种正文。
 - 通知按来源字段读取并映射；Loon 字符串链接保留，远程媒体按目标字段提交；QX 不新增无证据的内嵌图片选项。
 - 证据：[NSNanoCat fetch](https://github.com/NSNanoCat/util/blob/49e40678c71f5075f451bf9aea6a91fd5c75ca5f/polyfill/fetch.mjs)、[NSNanoCat notification](https://github.com/NSNanoCat/util/blob/3cfb2cac62f0331344a44ea7e3d0b18ce7c82058/lib/notification.mjs)、[Loon Script API](https://nsloon.app/docs/Script/script_api/)、[Surge API](https://manual.nssurge.com/scripting/api.html)。GitHub 实现是兼容依据，不等于本项目已经客户端实测。
-- 已复查存储、HTTP 选项/响应、完成值和环境信息：QX timeout 的实例使用 Promise.race，不能据此证明原生参数支持；Surge 无原生全量清空接口，ALPN/额外完成字段及缺失环境信息仍不伪造。
+- 已复查存储、HTTP 选项/响应、完成值和环境信息：QX timeout 的实例使用 Promise.race，不能据此证明原生参数支持；Surge 无原生全量清空接口，ALPN/未支持完成字段及缺失环境信息仍不伪造。
 
 ## 按实际 API 生成（2026-11-11，chance）
 
@@ -81,3 +81,26 @@ ScriptHub 固定基线为 b943361f11be5795b3eb10f9cc4e5497642922fc，复用 faca
 目标客户端和固定布局在生成阶段确定；已不再使用的 host 字段、配置字段、编解码、压缩、AES、URL provider 不打包。复杂动态脚本可能仍需要较完整的兼容层。QX 原生脚本仍直拷；精简不会恢复暂停来源，也不会修改 Rule。
 
 验证包含完整 API 内核与精简产物的差分执行，并复用现有 API、provider、原生 QX 和发布集成测试。大小减少不作为语义一致的证明；未进行客户端实测。
+
+## Surge 响应 trailers（2026-11-16，chance）
+
+官方测试版 Surge 6.100.0 (4028) 公布了响应 trailers 读写；手册标注最低版本为 iOS 6.0.0、Mac 6.12.0。runtimePolicyVersion=11，自动生成仍由 Actions 完成。
+
+| 来源/操作 | Surge 转换 | 条件与边界 |
+| --- | --- | --- |
+| `$response.h2_trailers` | 读取实际 `$response.trailers` | `http-response` 且 `requires-body=true`；不存在时不创建空字典 |
+| `$done({h2_trailers: value})` | `$done({trailers: value})` | 仅响应脚本；修改后的 trailers 仅发送给 HTTP/2 客户端 |
+| 省略 trailers 完成字段 | 继续省略 | 由 Surge 保留服务端原 trailers |
+| 显式空字典 `{}` | `trailers: {}` | 清空 trailer section |
+| 整个 `$response` 传给 `$done` | 保留已映射的 trailers | 不丢失读取、修改后的字段 |
+| Surge full-header-mode 的 Header/Trailer field/value 数组 | 来源 Loon 读取时转为字典 | 重复键最后一项生效，沿用大小写无关 Header 策略；不承诺保留数组重复字段 |
+| 直接返回原生 `trailers` 数组 | 保留数组顺序与重复 | 校验 field/value 为字符串，原数据不被修改 |
+| 请求/合成响应/QX/HTTP-client callback trailers | 不扩展 | 本次官方更新只覆盖 HTTP response 脚本，不能推广 |
+
+非法 trailer 字段过滤、32 项上限及 HTTP/2 写入限制由 Surge 原生执行。既不伪造 HTTP 版本，也不添加旧版客户端模拟。gRPC 的 grpc-status/grpc-message 仅在作者代码明确修改时变化；修改 body 或 `$done({})` 不会自动清空 trailers。
+
+全局 API 发现同时修正 TypeScript 内建 globalThis 符号的识别，避免 `globalThis.$done(...)` 绕过适配层；局部同名变量保持普通 JavaScript 行为。
+
+验证覆盖完整 API 内核与裁剪产物、动态别名/计算键、字典读改删、缺失/省略/清空、整个 response 完成、数组结果、错误类型及声明边界；未进行真实客户端测试。
+
+依据：[Surge HTTP Response](https://manual.nssurge.com/scripting/http-response.html)、[官方 TestFlight 更新](https://t.me/s/SurgeChangelog)、[Loon API](https://nsloon.app/docs/Script/script_api/)。
