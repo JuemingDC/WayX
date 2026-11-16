@@ -1308,7 +1308,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }) };
     if ((__wayxHost.response === undefined ? 'request' : 'response') !== "request")
         throw new Error('Unregistered HTTP source/target declaration');
-    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "statusCode", "responseTrailers": null, "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" } } };
+    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "statusCode", "responseTrailers": null, "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "responseTrailers": null, "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" } } };
     return (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
@@ -1380,6 +1380,32 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             return fail('invalid HTTP status');
         };
         const statusLine = value => { const code = status(value); return typeof value === 'string' ? value : 'HTTP/1.1 ' + code + ' ' + ({ 200: 'OK', 201: 'Created', 204: 'No Content', 301: 'Moved Permanently', 302: 'Found', 304: 'Not Modified', 400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found', 500: 'Internal Server Error' }[code] || 'Status'); };
+        function trailers(value) {
+            if (Array.isArray(value))
+                return value.map(row => {
+                    if (!row || typeof row !== 'object')
+                        return fail('trailer array requires field/value strings');
+                    const field = row.field, entry = row.value;
+                    if (typeof field !== 'string' || typeof entry !== 'string')
+                        return fail('trailer array requires field/value strings');
+                    return { field, value: entry };
+                });
+            if (!value || typeof value !== 'object')
+                return fail('trailers require a dictionary or field/value array');
+            return Object.assign({}, headers(value));
+        }
+        const headerView = value => headers(value);
+        function trailerView(result, sourceField, targetField, available) {
+            if (targetField && sourceField !== targetField) {
+                const present = own(result, targetField), value = result[targetField];
+                delete result[targetField];
+                if (available && sourceField && present && value !== undefined) {
+                    const fields = trailers(value);
+                    result[sourceField] = headers(Array.isArray(fields) ? Object.fromEntries(fields.map(row => [row.field, row.value])) : fields);
+                }
+            }
+            return result;
+        }
         const requestParts = value => typeof value === 'string' ? /^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value) : null;
         const originalRequest = requestParts(host.request && host.request.url);
         const rawPath = parts => parts[3] ? (parts[3][0] === '?' ? '/' : '') + parts[3] : '/';
@@ -1395,12 +1421,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             const nativeHeaders = value.headers;
             if (nativeHeaders !== undefined)
-                result.headers = headers(nativeHeaders);
-            if (!requestRole && null && true) {
-                const field = null, present = own(result, field), value = result[field];
-                delete result[field];
-                ;
-            }
+                result.headers = headerView(nativeHeaders);
+            if (!requestRole)
+                trailerView(result, "h2_trailers", null, false);
             if (own(value, "statusCode")) {
                 result["status"] = status(value["statusCode"]);
                 delete result["statusCode"];

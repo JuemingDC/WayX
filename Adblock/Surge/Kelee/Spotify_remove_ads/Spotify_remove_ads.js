@@ -3,7 +3,7 @@
     const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, argument: typeof $argument === 'undefined' ? undefined : $argument, global: globalThis };
     if ((__wayxHost.response === undefined ? 'request' : 'response') !== "response")
         throw new Error('Unregistered HTTP source/target declaration');
-    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "status", "responseTrailers": "trailers", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } }, "argumentSchema": { "kind": "object", "enumValues": {}, "fields": { "tab": "boolean", "useractivity": "boolean" } } };
+    const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "status", "responseTrailers": "trailers", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "responseTrailers": "trailers", "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" } }, "argumentSchema": { "kind": "object", "enumValues": {}, "fields": { "tab": "boolean", "useractivity": "boolean" } } };
     return (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
@@ -87,6 +87,18 @@
                 return fail('trailers require a dictionary or field/value array');
             return Object.assign({}, headers(value));
         }
+        const headerView = value => headers(Array.isArray(value) ? Object.fromEntries(trailers(value).map(row => [row.field, row.value])) : value);
+        function trailerView(result, sourceField, targetField, available) {
+            if (targetField && sourceField !== targetField) {
+                const present = own(result, targetField), value = result[targetField];
+                delete result[targetField];
+                if (available && sourceField && present && value !== undefined) {
+                    const fields = trailers(value);
+                    result[sourceField] = headers(Array.isArray(fields) ? Object.fromEntries(fields.map(row => [row.field, row.value])) : fields);
+                }
+            }
+            return result;
+        }
         const requestParts = value => typeof value === 'string' ? /^(https?):\/\/([^/?#]+)([^#]*)/i.exec(value) : null;
         const originalRequest = requestParts(host.request && host.request.url);
         const rawPath = parts => parts[3] ? (parts[3][0] === '?' ? '/' : '') + parts[3] : '/';
@@ -102,15 +114,9 @@
             }
             const nativeHeaders = value.headers;
             if (nativeHeaders !== undefined)
-                result.headers = headers(Array.isArray(nativeHeaders) ? Object.fromEntries(trailers(nativeHeaders).map(row => [row.field, row.value])) : nativeHeaders);
-            if (!requestRole && "trailers" && true) {
-                const field = "trailers", present = own(result, field), value = result[field];
-                delete result[field];
-                if (present && value !== undefined) {
-                    const fields = trailers(value);
-                    result["h2_trailers"] = headers(Array.isArray(fields) ? Object.fromEntries(fields.map(row => [row.field, row.value])) : fields);
-                }
-            }
+                result.headers = headerView(nativeHeaders);
+            if (!requestRole)
+                trailerView(result, "h2_trailers", "trailers", true);
             if (own(value, "status")) {
                 result["status"] = status(value["status"]);
                 ;

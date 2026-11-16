@@ -1088,7 +1088,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 11,
+  "runtimePolicyVersion": 12,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
@@ -1189,7 +1189,7 @@
             "target": {
               "capability": "runtime",
               "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -1417,7 +1417,7 @@
             "target": {
               "capability": "runtime",
               "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -1443,7 +1443,7 @@
             "target": {
               "capability": "runtime",
               "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -2557,7 +2557,7 @@
             "target": {
               "capability": "runtime",
               "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -3521,7 +3521,7 @@
             "target": {
               "capability": "runtime",
               "api": "$httpClient",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -3749,7 +3749,7 @@
             "target": {
               "capability": "runtime",
               "api": "$httpClient",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -3775,7 +3775,7 @@
             "target": {
               "capability": "runtime",
               "api": "$httpClient",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -4889,7 +4889,7 @@
             "target": {
               "capability": "runtime",
               "api": "$httpClient",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -5855,7 +5855,7 @@
             "target": {
               "capability": "runtime",
               "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -6083,7 +6083,7 @@
             "target": {
               "capability": "runtime",
               "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -6109,7 +6109,7 @@
             "target": {
               "capability": "runtime",
               "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -7223,7 +7223,7 @@
             "target": {
               "capability": "runtime",
               "api": "$task.fetch",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -8187,7 +8187,7 @@
             "target": {
               "capability": "runtime",
               "api": "$httpClient",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -8415,7 +8415,7 @@
             "target": {
               "capability": "runtime",
               "api": "$httpClient",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -8441,7 +8441,7 @@
             "target": {
               "capability": "runtime",
               "api": "$httpClient",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -9555,7 +9555,7 @@
             "target": {
               "capability": "runtime",
               "api": "$httpClient",
-              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted",
+              "lowering": "seven methods; source defaults, option names, timeout units and error representation from layouts; QX undocumented options omitted; Surge callback response.trailers maps to Loon response.h2_trailers without intercept requires-body gating",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",

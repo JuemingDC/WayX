@@ -1,11 +1,11 @@
 # Name: media_cn
-# Updated: 2026-11-16 01:15:21 UTC
+# Updated: 2026-11-16 14:53:53 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-collaborate-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-documents-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-cn.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1506
+# Rules: 1518
 # Managed by: WayX Rule Aggregator
 
 host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,direct
@@ -114,6 +114,7 @@ host-suffix,alitui.weibo.com,direct
 host-suffix,aliwx.com.cn,direct
 host-suffix,analytics.tiktok.com,direct
 host-suffix,ark.letv.com,direct
+host-suffix,arknights.com.cn,direct
 host-suffix,atm.youku.com,direct
 host-suffix,badjs.weixinbridge.com,direct
 host-suffix,baltamatica.org.cn,direct
@@ -144,6 +145,7 @@ host-suffix,hikunpeng.com.cn,direct
 host-suffix,hisilicon.com.cn,direct
 host-suffix,hoopchina.com.cn,direct
 host-suffix,hunyuan.tencent.com,direct
+host-suffix,hypergryph.com.cn,direct
 host-suffix,ifacelog.iqiyi.com,direct
 host-suffix,ign.com.cn,direct
 host-suffix,ja.gamersky.com,direct
@@ -367,6 +369,7 @@ host-suffix,apipost.cn,direct
 host-suffix,apipost.net,direct
 host-suffix,appeeres.com,direct
 host-suffix,arcaea.cn,direct
+host-suffix,arknights.com,direct
 host-suffix,askdiandian.com,direct
 host-suffix,asklink.com,direct
 host-suffix,asktug.com,direct
@@ -756,6 +759,7 @@ host-suffix,heiyanimg.com,direct
 host-suffix,hero.com,direct
 host-suffix,heroesports.com,direct
 host-suffix,herogame.com,direct
+host-suffix,hgto.cc,direct
 host-suffix,hi-butterfly.cn,direct
 host-suffix,hiascend.cn,direct
 host-suffix,hiascend.com,direct
@@ -797,7 +801,12 @@ host-suffix,huoshanzhibo.net,direct
 host-suffix,hupu.com,direct
 host-suffix,hupucdn.com,direct
 host-suffix,huya.com,direct
+host-suffix,hycdn.cn,direct
+host-suffix,hycdn.com,direct
 host-suffix,hypercachenode.com,direct
+host-suffix,hypergryph.cn,direct
+host-suffix,hypergryph.com,direct
+host-suffix,hypergryph.net,direct
 host-suffix,hzdtv.tv,direct
 host-suffix,hzman.net,direct
 host-suffix,i3839.com,direct
@@ -1073,6 +1082,7 @@ host-suffix,nzsiteres.com,direct
 host-suffix,obriccloud.com,direct
 host-suffix,obricclouddw.com,direct
 host-suffix,oceancloudapi.com,direct
+host-suffix,octavedge.com,direct
 host-suffix,oend.net,direct
 host-suffix,okjike.com,direct
 host-suffix,okjk.co,direct
@@ -1216,6 +1226,8 @@ host-suffix,sinajs.cn,direct
 host-suffix,sinajs.com,direct
 host-suffix,singworld.net,direct
 host-suffix,skillhub.cn,direct
+host-suffix,skland.com,direct
+host-suffix,skland.net,direct
 host-suffix,skydweller.cn,direct
 host-suffix,sl916.com,direct
 host-suffix,sleeplesshorizon.cn,direct
