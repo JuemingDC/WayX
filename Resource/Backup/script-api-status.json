@@ -109,7 +109,7 @@
       "notification": "Surge posts content immediately, ignoring delay; open-url/clipboard actions are mapped; remote images use media-url, PNG/JPEG/GIF/WebP inline images use media-base64 and media-base64-mime; unknown media is omitted. QX extra options are omitted",
       "identity": "Real source device/version/sourcePath cannot be reconstructed; no fabricated identity",
       "policy": "Native/absent boundaries are descriptive, never author-source whitelist gates or success suppression",
-      "documentation": "docs/script-api/03-API能力与实施路线.md"
+      "documentation": ".github/CONVERSION_SPEC.md#5-script-api"
     },
     "verification": "API contract vectors and mock transports, syntax and backup integrity. Generated compatibility means API adapter composition succeeded, not every author business path or device runtime was verified"
   },
