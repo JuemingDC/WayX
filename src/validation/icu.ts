@@ -55,20 +55,27 @@ function icu() {
     } catch {}
   throw Error("Cannot resolve native ICU regex entry points");
 }
+// Modified: 2026-11-16 (chance). Validate source literals with the client regex
+// dialect too; atomic groups must not be rejected by JavaScript's RegExp.
+export function validateIcuPattern(pattern: string, label: string): void {
+  const api = icu(),
+    bytes = Buffer.from(pattern, "utf16le"),
+    status = [0];
+  const compiled = api.open(bytes, bytes.length / 2, 0, null, status);
+  if (compiled) api.close(compiled);
+  if (status[0] > 0 || !compiled)
+    throw Error(label + ": " + api.errorName(status[0]) + ": " + pattern);
+}
 export function validateIcuPatterns(
   patterns: { pattern: string; label: string }[],
 ): void {
-  const api = icu(),
-    failures: string[] = [];
+  const failures: string[] = [];
   for (const item of patterns) {
-    const bytes = Buffer.from(item.pattern, "utf16le"),
-      status = [0],
-      compiled = api.open(bytes, bytes.length / 2, 0, null, status);
-    if (compiled) api.close(compiled);
-    if (status[0] > 0)
-      failures.push(
-        item.label + ": " + api.errorName(status[0]) + ": " + item.pattern,
-      );
+    try {
+      validateIcuPattern(item.pattern, item.label);
+    } catch (error) {
+      failures.push((error as Error).message);
+    }
   }
   if (failures.length)
     throw Error("ICU target regex audit failed:\n" + failures.join("\n"));

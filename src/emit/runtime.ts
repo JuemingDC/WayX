@@ -10,6 +10,8 @@ import {
   stringTemplateParts,
   conditionRuntimeSource,
 } from "../domain/core.ts";
+// Modified: 2026-11-16 (chance). JS helpers retain JavaScript regex validation;
+// native ICU source support must not publish a helper that throws Invalid group.
 import {
   validateRewriteV2Ast,
   simpleUrlRewriteCondition,
@@ -340,7 +342,7 @@ export function renderSurgeRequestMockScript(
   ast: any,
   { materialized = null, stamp = "", category = "", sourceLine = "" }: any = {},
 ): any {
-  validateRewriteV2Ast(ast);
+  validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   if (ast.phase !== "request" || ast.actions.length !== 1) {
     throw new Error(
       "Surge request mock helper requires one request-phase action",
@@ -455,7 +457,7 @@ function oneAction(
   name: any,
   { conditionMode = "simple-url" }: any = {},
 ): any {
-  validateRewriteV2Ast(ast);
+  validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   if (ast.actions.length !== 1 || ast.actions[0].name !== name) {
     throw new Error("Expected one " + name + " action");
   }
@@ -535,7 +537,7 @@ export function renderQxRedirectScript(ast: any, options: any = {}): any {
   const fullCondition: any = options.conditionMode === "full";
   const pair: any = fullCondition
     ? ((): any => {
-        validateRewriteV2Ast(ast);
+        validateRewriteV2Ast(ast, { regexEngine: "javascript" });
         if (ast.actions.length !== 1 || ast.actions[0].name !== "redirect")
           throw new Error("Expected one redirect action");
         return { action: ast.actions[0] };
@@ -629,7 +631,7 @@ export function renderQxRedirectScript(ast: any, options: any = {}): any {
   };
 }
 export function renderQxRejectScript(ast: any, options: any = {}): any {
-  validateRewriteV2Ast(ast);
+  validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   if (ast.actions.length !== 1)
     throw new Error("reject script requires exactly one action");
   const externalExact: any = options.conditionMode === "external-exact";
@@ -761,7 +763,7 @@ export function headerOpsForMock(ast: any, mockAction: any): any {
   return ops;
 }
 export function renderQxInlineMockScript(ast: any, options: any = {}): any {
-  validateRewriteV2Ast(ast);
+  validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   const externalExact: any = options.conditionMode === "external-exact";
   const condition: any = externalExact
     ? { pattern: null, notes: [] }
@@ -814,7 +816,7 @@ export function renderQxInlineMockScript(ast: any, options: any = {}): any {
   };
 }
 export function renderQxHeaderScript(ast: any, options: any = {}): any {
-  validateRewriteV2Ast(ast);
+  validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   if (ast.actions.some((action: any): any => action.name.endsWith(".add")))
     throw new Error(
       "QX header.add cannot be represented losslessly: the official header object form does not prove duplicate-header preservation",
@@ -1361,7 +1363,7 @@ function renderRewriteScript(
     sharedRuntime = false,
   }: any = {},
 ): any {
-  validateRewriteV2Ast(ast);
+  validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   if (!["qx", "surge"].includes(target))
     throw new Error("invalid rewrite helper target");
   const plan: any = statements(ast, target, {
@@ -1506,7 +1508,7 @@ function renderRewriteScript(
   };
 }
 export function renderMixedRewriteScript(ast: any, options: any = {}): any {
-  validateRewriteV2Ast(ast);
+  validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   if (!Array.isArray(ast?.actions) || ast.actions.length < 2) {
     throw new Error("complex helper requires a multi-action Rewrite pipeline");
   }
@@ -1516,7 +1518,7 @@ export function renderSingleRewriteMutationScript(
   ast: any,
   options: any = {},
 ): any {
-  validateRewriteV2Ast(ast);
+  validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   if (!Array.isArray(ast?.actions) || ast.actions.length !== 1) {
     throw new Error(
       "single Rewrite mutation helper requires exactly one action",
@@ -1543,7 +1545,7 @@ export function renderSingleJsonMutationScript(
   ast: any,
   options: any = {},
 ): any {
-  validateRewriteV2Ast(ast);
+  validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   if (
     !Array.isArray(ast?.actions) ||
     ast.actions.length !== 1 ||

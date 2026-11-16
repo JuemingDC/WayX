@@ -112,7 +112,8 @@ export const scriptCapabilityBoundaries = {
       "Real source device/version/sourcePath cannot be reconstructed; no fabricated identity",
     policy:
       "Native/absent boundaries are descriptive, never author-source whitelist gates or success suppression",
-    documentation: "docs/script-api/03-API能力与实施路线.md",
+    // Modified: 2026-11-16 (chance). Capability reports point to the sole maintained specification.
+    documentation: ".github/CONVERSION_SPEC.md#5-script-api",
   },
   verification:
     "API contract vectors and mock transports, syntax and backup integrity. Generated compatibility means API adapter composition succeeded, not every author business path or device runtime was verified",

@@ -112,8 +112,12 @@ for(const section of ['Rewrite','Script'])for(const phase of ['request','respons
 const filesLine='response if ${url} ~= /api/i then response.header.set("X-Kept","yes") | response.json.jq_file("ok.jq") | response.json.jq_file("missing.jq") | response.json.add("after",true)';
 const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+filesLine),{fetchText:async url=>{if(url.endsWith('missing.jq'))throw Error('missing file');return '.before = true';}});
 const filesOutput=convertPlugin(entry,'[Rewrite]\n'+filesLine,{...options,jqFiles:files});
+// Modified: 2026-11-16 (chance). A failed file withholds its whole JSON/JQ
+// pipeline under the 2026-11-15 policy; the independent Header action survives.
 for(const target of ['qx','surge']) {
-  assert.match(filesOutput[target],/REVIEW REQUIRED.*missing file/);assert.match(filesOutput[target],/\.before/);assert.match(filesOutput[target],/setpath\(\["after"\]; true\)/);
+  assert.match(filesOutput[target],/REVIEW REQUIRED.*missing file/);
+  const active=filesOutput[target].split('\n').filter(line=>!line.trim().startsWith('#')).join('\n');
+  assert.doesNotMatch(active,/\.before|setpath\(\["after"\]; true\)/);
 }
 assert.match(filesOutput.surge,/header-add X-Kept yes/);
 // Script-containing pipelines discover every original Script and JQ dependency.

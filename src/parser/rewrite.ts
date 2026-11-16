@@ -15,6 +15,7 @@ import {
   compileSourceRegex,
   stringTemplateParts,
 } from "../domain/core.ts";
+import { validateIcuPattern } from "../validation/icu.ts";
 import {
   renderQxHeaderScript,
   renderQxInlineMockScript,
@@ -1110,12 +1111,23 @@ function validateCondition(node: any, phase: any): any {
       "header equality requires String, null, or String variable",
     );
 }
-export function validateRewriteV2Ast(ast: any): any {
+export function validateRewriteV2Ast(
+  ast: any,
+  { regexEngine = "icu" }: { regexEngine?: "icu" | "javascript" } = {},
+): any {
   if (!ast || ast.type !== "rewrite")
     throw new TypeError("Expected Rewrite v2 AST root");
   const validateRegexes: any = (node: any): any => {
     if (!node || typeof node !== "object") return;
-    if (node.type === "regex") compileSourceRegex(node);
+    // Modified: 2026-11-16 (chance). Source regex validation uses ICU without
+    // rewriting atomic groups; JS execution remains a separate helper boundary.
+    if (node.type === "regex" && regexEngine === "javascript")
+      compileSourceRegex(node);
+    else if (node.type === "regex")
+      validateIcuPattern(
+        (node.flags ? "(?" + node.flags + ")" : "") + node.pattern,
+        "Invalid source regex",
+      );
     const names: any =
       node.type === "variable"
         ? [node.name]
