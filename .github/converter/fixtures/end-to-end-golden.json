@@ -1,6 +1,6 @@
 {
-  "version": 18,
-  "modified": "2026-11-15 (chance): Group repeated fixed URL JSON declarations into source IR before target planning; PinDuoDuo emits one homepage jq rule in both clients.",
+  "version": 19,
+  "modified": "2026-11-17 (chance): Validate JingDong QX Cookies fragment payload independently, then update only its QX digest and byte count for official argument transport.",
   "stamp": "2026-09-29 12:00:00 +08:00",
   "cases": {
     "HTTPDNS": {
@@ -55,9 +55,9 @@
       ]
     },
     "JingDong": {
-      "qxSha256": "ac59c0abfa19b034085cb012f99af486b92bb5a37bbe0a21030b8a139ee12ca9",
+      "qxSha256": "8597f0ad203795cbd6ea31340e2192108cd87a220da1f9346d524efe97091de5",
       "surgeSha256": "09099d831d103ba43a154b6ba38464e4a2baf334fcbdefd070faede3d88fdb5a",
-      "qxBytes": 1999,
+      "qxBytes": 2267,
       "surgeBytes": 2344,
       "sourceScriptCount": 3,
       "generatedScriptCount": 0,

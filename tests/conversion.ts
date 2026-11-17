@@ -1165,7 +1165,14 @@ for (const testCase of cases) {
     assert.match(out.surge, /#!REQUIREMENT "'\{\{\{Capture\}\}\}'=='true'"/);
     assert.ok(qxActive.some(line => /Scripts\/jingdong\.js$/.test(line)), 'JingDong native script declaration missing');
     assert.ok(qxActive.some(line=>/Scripts\/manmanbuy_ck\.js$/.test(line)),'JingDong Capture=false must be forced active in QX by user policy');
-    assert.ok(qxActive.some(line => /Scripts\/jd_price\.js$/.test(line)), 'JingDong argument-bearing response script must remain active in QX');
+    // Modified: 2026-11-17 (chance). QX carries the declared Cookies default in
+    // the script fragment; validate the original script identity and actual value.
+    const priceLine=qxActive.find(line=>/Scripts\/jd_price\.js#_wayx_argument=/.test(line));
+    assert.ok(priceLine, 'JingDong argument-bearing response script must remain active in QX');
+    const priceUrl=new URL(priceLine.trim().split(/\s+/).at(-1));
+    assert.equal(priceUrl.origin+priceUrl.pathname,'https://rucu6.pages.dev/Scripts/jd_price.js');
+    const encoded=priceUrl.hash.slice(1).split('&').find(part=>part.startsWith('_wayx_argument='));
+    assert.deepEqual(JSON.parse(decodeURIComponent(encoded.slice('_wayx_argument='.length))),{value:{Cookies:''}});
     assert.doesNotMatch(out.qx, /SCRIPT V2 REVIEW REQUIRED/);
     assert.doesNotMatch(out.qx, /Source enable forced to enabled for Quantumult X/);
     assert.doesNotMatch(out.qx, /Source Script argument ignored for Quantumult X/);
@@ -1906,7 +1913,12 @@ if(selectedCase==='conversion-policy.mjs') {
     const source='[Argument]\nregion=input,"CN"\n[Script]\n'+bad+'\n'+good;
     const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
     for(const text of [out.qx,out.surge])assert.match(text,/(?:ISSUE|REVIEW) REQUIRED/);
-    assert.match(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/good\.js$/m);
+    // Modified: 2026-11-17 (chance). A valid adjacent PluginObject now has an
+    // official QX fragment; assert both active declaration and recovered default.
+    const goodLine=out.qx.split('\n').find(line=>/^[^#\n]*script-response-header https:\/\/example\.test\/good\.js#_wayx_argument=/.test(line));
+    assert.ok(goodLine);
+    const fragment=new URL(goodLine.trim().split(/\s+/).at(-1)).hash;
+    assert.deepEqual(JSON.parse(decodeURIComponent(fragment.slice('#_wayx_argument='.length))),{value:{region:'CN'}});
     assert.match(out.surge,/^Good = type=http-response[^\n]*script-path=https:\/\/example\.test\/good\.js/m);
     assert.doesNotMatch(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/bad\.js/m);
     assert.doesNotMatch(out.surge,/^[^#\n]*script-path=https:\/\/example\.test\/bad\.js/m);

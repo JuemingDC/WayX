@@ -585,6 +585,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
+| 2026-11-17 | Argument transport end-to-end regression | JingDong jd_price.js fragment decodes to {value:{Cookies:""}}; validate original URL and typed value before changing only its QX golden digest/size |
 | 2026-11-17 | Early-failure and migration regression fixes | Prepare logs before tests; offline retention preserves migrated AD identity; response-phase QX argument tests include native response context |
 | 2026-11-17 | QX arguments, runtime policy 13 | Official URL fragment → environment.variables/sourcePath → Loon $argument; fixed strings and typed PluginObject defaults; original fragments retained |
 | 2026-11-17 | Official callback contract clarification | Chunked HTTP/1.1 + HTTP/2; iOS 6.0.0 / Mac 6.12.0; dictionary/array/absence contract; headers-only gRPC example; request trailers remain unsupported |
