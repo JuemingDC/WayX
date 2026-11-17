@@ -43,6 +43,7 @@
 | 2026-11-16 | Regex dialect | [ICU syntax](https://unicode-org.github.io/icu/userguide/strings/regexp.html); user-supplied QX author confirmation (2026-10-26) and Surge support confirmation (2026-11-01) for inline modes |
 | 2026-11-16 | JQ | [jqlang 1.8 manual](https://jqlang.org/manual/v1.8/); official jq 1.8.2 binary + pinned SHA-256 in Actions; no inferred client engine version/file API |
 | 2026-11-17 | Callback trailers | [Official API reference](https://manual.nssurge.com/scripting/api.html#httpclient) and [TestFlight post /460](https://t.me/SurgeTestFlightFeed/460); documented minimum iOS 6.0.0 / Mac 6.12.0; no inferred build number |
+| 2026-11-17 | Mock response trailers | [Official HTTP request script result](https://manual.nssurge.com/scripting/http-request.html); iOS 6.0.0+ / Mac 6.12.0+; HTTP/2 clients only |
 | 2026-11-10 | Compatibility examples | [NSNanoCat fetch](https://github.com/NSNanoCat/util/blob/49e40678c71f5075f451bf9aea6a91fd5c75ca5f/polyfill/fetch.mjs), [notification](https://github.com/NSNanoCat/util/blob/3cfb2cac62f0331344a44ea7e3d0b18ce7c82058/lib/notification.mjs), [done](https://github.com/NSNanoCat/util/blob/main/lib/done.mjs); implementation evidence ≠ official contract or device test |
 
 ## 2. Parsing, Conditions and Regex
@@ -385,7 +386,9 @@ http-response-jq ^https:\/\/api\.example\/v1 'setpath(["data","enabled"]; false)
 | 2026-11-16 | Callback absence / empty | Absent stays absent; explicit `{}` stays present | Preserve native response ownership, getters, callback errors and exact data bytes |
 | 2026-11-16 | Native field/value array → Loon | Case-insensitive dictionary | Last duplicate wins; no array-duplicate preservation claim |
 | 2026-11-16 | Direct native trailer array result | Preserve order/duplicates | Validate String field/value; do not mutate input |
-| 2026-11-16 | Request/synthetic/QX trailers | No new mapping | Response/callback feature does not establish request/echo/Promise trailer API |
+| 2026-11-17 | Request/synthetic/QX source trailers | No new mapping | Native Surge mock output support does not establish source request/echo/Promise trailer equivalence |
+| 2026-11-17 | Reserved native Surge mock emitter | `prepareSurgeMockResponse({body, trailers})` → native response payload | Target-only helper; not imported by active conversion/runtime; future verified mapping wraps payload in `$done({response: payload})` from http-request |
+| 2026-11-17 | Mock trailer payload | String-valued dictionary or ordered `{field, value}` array; absent/undefined → omitted; `{}`/`[]` → retained | Copy trailer containers; preserve duplicate array fields, spelling/order and body byte view; no h2_trailers alias, gRPC status synthesis, body-buffer requirement or HTTP/1 fallback |
 | 2026-11-16 | Filtering / limits | Native Surge enforcement | Invalid field filtering, 32-field response-script limit, HTTP/2 writes; no protocol fabrication/old-client emulation |
 | 2026-11-16 | gRPC status/message | Preserve unless author explicitly edits | Body changes or `$done({})` do not clear trailers |
 | 2026-11-17 | Callback API version | Official API reference: iOS 6.0.0+ / Mac 6.12.0+ | Explicitly documented callback minimum; no guessed build or old-client emulation |
@@ -585,6 +588,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
+| 2026-11-17 | Reserved Surge mock-response emitter | `prepareSurgeMockResponse({status:200, trailers:{"grpc-status":"0"}})` → native payload; dictionary/array validation and isolated tests; source mappings remain inactive; runtime policy unchanged |
 | 2026-11-17 | Repeated JQ regression | Same-URL increments form one native expression; execute with x=0 and require x=2; whitespace is not an execution-count contract |
 | 2026-11-17 | Argument transport end-to-end regression | JingDong jd_price.js fragment decodes to {value:{Cookies:""}}; validate original URL and typed value before changing only its QX golden digest/size |
 | 2026-11-17 | Early-failure and migration regression fixes | Initialize logs without layout mutation before tests; restore working layout only after regressions; offline retention preserves migrated AD identity; response-phase QX argument tests include native response context |
