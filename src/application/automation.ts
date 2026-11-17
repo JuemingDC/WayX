@@ -136,10 +136,13 @@ export async function executeChecks(
   console.log(`${stage}: passed=${results.length - failed}, failed=${failed}`);
   if (failed) throw Error(`${stage}: ${failed} check(s) require review`);
 }
-export async function prepare() {
+// Modified: 2026-11-17 (chance). Early diagnostics setup must not restore
+// working paths before regression tests inspect the published resource layout.
+export async function prepare({ logsOnly = false }: { logsOnly?: boolean } = {}) {
+  await fs.mkdir(runtime, { recursive: true });
+  if (logsOnly) return;
   // Modified: 2026-11-05 (chance). Restore converter working paths before acquisition; only the final client layout is published.
   await prepareWorkingLayout(process.cwd());
-  await fs.mkdir(runtime, { recursive: true });
   await fs.rm(runtime + "/validation-results.json", { force: true });
   const branches = run(["git", "ls-remote", "--heads", "origin"], true)
     .split("\n")

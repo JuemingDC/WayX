@@ -42,7 +42,7 @@ try {
       );
       break;
     case "prepare":
-      await automation.prepare();
+      await automation.prepare({ logsOnly: args.includes("--logs-only") });
       break;
     case "setup-jq":
       await automation.setupJq();
