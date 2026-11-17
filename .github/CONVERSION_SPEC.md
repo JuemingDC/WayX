@@ -6,7 +6,7 @@
 | Maintainer | chance |
 | Authority | Single conversion and maintenance specification |
 | Format | English headings, dated tables, mapping examples |
-| Runtime policy | 12 |
+| Runtime policy | 13 |
 | Validation mode | api-runtime-compatibility |
 
 ## 1. Scope and Maintenance
@@ -207,9 +207,9 @@ http-response-jq ^https:\/\/api\.example\/v1 'setpath(["data","enabled"]; false)
 | 2026-10-25 | Narrow author-script owner | Same phase, identical single unflagged URL matcher, supported Body/JSON/text request mock, no conflicting legacy/native-JQ/parameters; matching dispatcher precedes author script |
 | 2026-11-05 | Trigger fields | Preserve phase, body/binary independently, explicit timeout/enable/debug/argument and supported task trigger |
 | 2026-10-25 | QX script enable | Force representable active author declarations enabled, including false/default-off/dynamic; keep commented source inactive |
-| 2026-10-25 | QX unsupported options | Omit enable/timeout/debug/argument rewrite fields and unsupported binary options; preserve source argument evaluation and supported trigger |
+| 2026-11-17 | QX declaration options | No invented enable/timeout/debug/argument fields; remote Loon Script arguments use official URL-fragment transport; bodyBytes remains supported |
 | 2026-11-05 | Surge performance options | Use target native defaults; no copied Loon 10/20/300-second defaults, no forced max-size=-1; preserve explicit supported settings |
-| 2026-10-25 | Target-unsupported legal argument | Omit argument, retain task/URL/options; invalid source bindings still fail |
+| 2026-11-17 | QX argument transport | Remote HTTP(S) scripts: fixed String/Raw String and legacy literal String → reserved `_wayx_argument` fragment envelope; PluginObject → typed declared defaults; retain existing fragments/query; missing defaults, dynamic Strings, local-only paths and reserved-key collision → omission diagnostic; invalid bindings still fail |
 | 2026-10-25 | Surge arguments | Supported String / PluginObject encoding and placeholder transport; unproven dynamic transport → review |
 | 2026-11-01 | QX script-request/response-header | Surge corresponding HTTP phase + requires-body=false |
 | 2026-11-01 | QX script-request/response-body | Surge corresponding HTTP phase + requires-body=true |
@@ -342,7 +342,7 @@ http-response-jq ^https:\/\/api\.example\/v1 'setpath(["data","enabled"]; false)
 | 2026-11-10 | QX `$done({path})` | Source behavior retained | Full url with original scheme/host/port; preserve query/escaping |
 | 2026-11-10 | QX `$done({url})` | Preserve full URL | Preserve changes to scheme/host/port; modified url wins over stale derived path |
 | 2026-11-02 | QX undocumented options | Omit at invocation; retain argument construction side effects/errors | No invented support; unknown completion fields follow explicit contract validation |
-| 2026-11-02 | `$argument` | Omitted unsupported transport | Supported encoded String/PluginObject; no invented saved settings/default storage namespace |
+| 2026-11-17 | Loon `$argument` | Read `_wayx_argument` from native `$environment.variables`; documented sourcePath fragment fallback; decode envelope to original String or typed object | Surge transport unchanged; no fabricated QX native `$argument`; no source-client saved settings synchronization |
 
 ### 5.3 Storage, Notifications and Standard Providers
 
@@ -419,6 +419,25 @@ $httpClient.post(options, (error, response, data) => {
 // const fields = response.trailers || response.headers;
 // HTTP 200 alone does not establish gRPC success.
 // Conversion preserves an absent trailer section; it adds no fallback itself.
+```
+
+### 5.5 Quantumult X Script Arguments
+
+| Date | Contract | Mapping / evidence |
+| --- | --- | --- |
+| 2026-11-17 | Official transport | [Official sample-task.js](https://github.com/crossutility/Quantumult-X/blob/master/sample-task.js): remote rewrite/task script URL fragments; variables since v1.5.6 build 918; older documented sourcePath remains readable |
+| 2026-11-17 | Types | Empty String stays String; legacy JSON-looking argument stays String; PluginObject number/boolean defaults become actual JSON number/boolean; missing defaults not invented |
+| 2026-11-17 | Scope | Same remote script URL may carry different declaration payloads; backup rebinding preserves fragments; source archives unchanged; native QX scripts are not wrapped |
+| 2026-11-17 | Runtime policy 13 | Full and selected API kernels retain the environment dependency when source code uses $argument; no added provider bundle |
+| 2026-11-17 | Boundaries | Fragment values are configuration, not secrets; source-client UI values are not synchronized; no native network timeout/cancellation inferred from timer examples |
+
+```text
+# 2026-11-17 | Loon fixed argument -> QX remote operand
+script("https://example.test/a.js", "mode=clean")
+https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
+# QX host variables -> Loon facade:
+# {"_wayx_argument":"{\"value\":\"mode=clean\"}"} -> $argument === "mode=clean"
+# Declared defaults flag=false, count=2 -> $argument === {flag:false,count:2}
 ```
 
 ## 6. Acquisition, Metadata and Resource Lifecycle
@@ -500,7 +519,7 @@ $httpClient.post(options, (error, response, data) => {
 | 2026-10-30 | Runtime | Locked npm ci + supported Node; erasable TypeScript; no Python/MJS forwarding entrypoints |
 | 2026-11-13 | `npm run typecheck` | Compiler only; strict unused-local/parameter checks |
 | 2026-11-13 | `node tests/<affected-suite>.ts` | Relevant isolated regression; no redundant full local replay |
-| 2026-10-30 | `npm test` | Developer/PR full isolated suite; not repeated by scheduled production sync |
+| 2026-11-17 | `npm test` | Developer/PR and implementation/spec push contract suites before acquisition; scheduled/manual production sync does not repeat developer suites |
 | 2026-10-30 | `node src/cli.ts prepare` | Expected head, working layout, logs, main/test branch budget |
 | 2026-10-30 | `catalog`, `rules`, `sync` | Discover → acquire/aggregate/convert once per run |
 | 2026-10-30 | `verify` | One final type/script/actual-output/ICU audit; no canonical regeneration |
@@ -516,7 +535,7 @@ $httpClient.post(options, (error, response, data) => {
 | 2026-11-01 | Workflow | `.github/workflows/converter-check.yml`, WayX Automation; main, optional test only |
 | 2026-10-31 | Schedule | `30 21 * * *` UTC → next day 05:30 Asia/Shanghai |
 | 2026-11-01 | Triggers | Implementation/config/test/spec pushes, PR, manual, daily; generated commits do not retrigger |
-| 2026-11-01 | Order | Catalog → routing/sync → backup/API/rebind/cleanup → final audit → monitor/reports/Issues → gates → publish |
+| 2026-11-17 | Order | PR/push contract tests → catalog → routing/sync → backup/API/rebind/cleanup → final audit → monitor/reports/Issues → gates → publish |
 | 2026-11-01 | Same-repo test PR | Exact PR head + authorized existing test publication; external PR read-only artifacts/candidates |
 | 2026-10-25 | Per-plugin transaction | Source/targets/helpers rollback together; failure retains valid old baseline, first failure deferred; other plugins continue |
 | 2026-10-25 | Hard gates | Rollback failure, missing/incomplete evidence, required monitor/Issue failure, unexpected remote head or dirty managed state blocks publication |
@@ -566,6 +585,7 @@ $httpClient.post(options, (error, response, data) => {
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
+| 2026-11-17 | QX arguments, runtime policy 13 | Official URL fragment → environment.variables/sourcePath → Loon $argument; fixed strings and typed PluginObject defaults; original fragments retained |
 | 2026-11-17 | Official callback contract clarification | Chunked HTTP/1.1 + HTTP/2; iOS 6.0.0 / Mac 6.12.0; dictionary/array/absence contract; headers-only gRPC example; request trailers remain unsupported |
 | 2026-11-16 | Single English specification | Duplicate conversion/maintenance docs → this file; dated rule tables + examples; history in Git |
 | 2026-11-16 | JSON/JQ dependency-failure regression | Missing file → withhold entire JSON/JQ pipeline; independent Header mutation survives |

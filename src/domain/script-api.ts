@@ -10,7 +10,8 @@ export type ScriptClient = "qx" | "loon" | "surge";
 // Modified: 2026-11-11 (chance). Keep lazy URL/URLSearchParams lookup inside author control flow.
 // Modified: 2026-11-16 (chance). Map response trailers through the official Surge 6 API.
 // Modified: 2026-11-16 (chance). New Surge HTTP client callback trailers map independently of intercept declarations.
-export const scriptRuntimePolicyVersion = 12;
+// Modified: 2026-11-17 (chance). QX fragments carry source arguments without inventing a native $argument API.
+export const scriptRuntimePolicyVersion = 13;
 // Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
 // from adblock conversion, inventories and remaining-work priorities.
 export const excludedAdblockScriptApis = Object.freeze([
@@ -389,7 +390,7 @@ const definitions: Omit<ScriptApiDefinition, "proof">[] = [
     canonical: "script.argument",
     value: "declared typed object or String",
     lowering:
-      "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+      "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
   },
   ...(["TextEncoder", "TextDecoder", "atob", "btoa"] as const).map((api) => ({
     id: "codec." + api,

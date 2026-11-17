@@ -217,6 +217,25 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     return Object.keys(mapped).length?post(title,subtitle,body,mapped):post(title,subtitle,body);
   }
   let argument=config.from==='qx'||target.argument==='absent'?undefined:host.argument;
+  // Modified: 2026-11-17 (chance). QX variables expose declaration fragments;
+  // sourcePath fallback uses the documented complete URL on older builds.
+  if(config.from==='loon'&&config.to==='qx'){
+    const env=host.environment||{},variables=env.variables;
+    let payload=variables&&own(variables,'_wayx_argument')?variables._wayx_argument:undefined;
+    if(payload===undefined&&typeof env.sourcePath==='string'){
+      const fragment=env.sourcePath.indexOf('#');
+      if(fragment>=0)for(const part of env.sourcePath.slice(fragment+1).split('&')){
+        const eq=part.indexOf('=');
+        if(eq>=0&&part.slice(0,eq)==='_wayx_argument'){payload=decodeURIComponent(part.slice(eq+1));break;}
+      }
+    }
+    if(payload!==undefined){
+      const text=String(payload);
+      const envelope=JSON.parse(text.startsWith('{')?text:decodeURIComponent(text));
+      if(!envelope||typeof envelope!=='object'||!own(envelope,'value'))fail('invalid Quantumult X argument payload');
+      argument=envelope.value;
+    }
+  }
   if(config.argumentSchema&&config.argumentSchema.kind==='object'&&typeof argument==='string')argument=JSON.parse(argument);
   const script=config.from==='qx'?undefined:Object.assign({},host.script,{name:config.name||host.script&&host.script.name});
   if(script&&script.startTime!==undefined){const t=script.startTime;script.startTime=t instanceof Date?t:new Date(t*1000);}

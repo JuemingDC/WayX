@@ -56,5 +56,5 @@ for(const full of [false,true]) {
   const request = run('$request.h2_trailers;$done({});',{}, {phase:'request'},full).plan.operationIR.operations.find(op=>op.rule==='request.trailers')!;
   assert.equal(request.target.capability,'unavailable');
 }
-assert.equal(scriptRuntimePolicyVersion,12);
+assert.equal(scriptRuntimePolicyVersion,13);
 console.log('Surge trailers: full/selected adapters, read/write/delete, absence/clear/pass-through, whole contexts, native arrays, aliases, invalid types, phases and source capability catalog passed');

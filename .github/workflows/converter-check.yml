@@ -75,8 +75,9 @@ jobs:
       - name: Install verified jq 1.8.2
         run: node src/cli.ts setup-jq
 
+      # Modified: 2026-11-17 (chance). Code pushes also verify contracts before production acquisition; schedules remain unchanged.
       - name: Run semantic regression suites for proposed code changes
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'push'
         run: npm test
 
       - name: Prepare runtime logs and enforce branch budget

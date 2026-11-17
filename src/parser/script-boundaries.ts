@@ -4,7 +4,7 @@ import { scriptRuntimePolicyVersion } from "../domain/script-api.ts";
 // program proof domains. Compatible output is not a device-execution certificate.
 import { excludedAdblockScriptApis } from "../domain/script-api.ts";
 export const scriptCapabilityBoundaries = {
-  revision: "2026-11-16",
+  revision: "2026-11-17",
   runtimePolicyVersion: scriptRuntimePolicyVersion,
   // Modified: 2026-11-02 (chance). User scope exclusions are not deferred APIs.
   excluded: {
@@ -103,7 +103,7 @@ export const scriptCapabilityBoundaries = {
     status: "explicit-invocation-boundaries",
     storage:
       "Loon remove maps to QX removeAllValues; Surge clear-all is intentionally ignored without deleting keys or reporting success",
-    http: "QX omits undocumented options. Surge response-context and HTTP-client callback trailers map to source fields. ALPN, request/synthetic trailers and node/policy completion fields remain omitted",
+    http: "Loon arguments use official QX remote-script fragment variables; unsupported dynamic arguments retain diagnostics. QX omits undocumented options. Surge response-context and HTTP-client callback trailers map to source fields. ALPN, request/synthetic trailers and node/policy completion fields remain omitted",
     headers:
       "Only Loon/QX dictionary source contracts are adapted; Surge full-header arrays are not a new source conversion direction",
     notification:

@@ -1373,6 +1373,63 @@ function argumentDefault(id: any, table: any): any {
   const entry: any = table?.byId?.get(String(id));
   return entry?.hasDefault ? entry.defaultValue : undefined;
 }
+// Modified: 2026-11-17 (chance). Carry Loon arguments through QX's official
+// remote-script fragment transport; preserve original fragments and typed defaults.
+export function qxScriptArgumentUrl(scriptUrl: any, argument: any, table: any, notes: any, legacy: any = false): any {
+  if (argument === null || argument === undefined || argument === "") return scriptUrl;
+  let value: any;
+  const refs: any = legacy ? parseLegacyLoonPluginObjectRefs(argument)
+    : argument.type === "plugin-object" ? argument.items.map((item: any) => item.name) : null;
+  if (refs) {
+    if (refs.some((id: any) => !table?.byId?.get(id)?.hasDefault)) {
+      notes.push("Source Script argument ignored: PluginObject has no declared default for Quantumult X fragment transport.");
+      return scriptUrl;
+    }
+    const fields: any = [];
+    for (const id of refs) {
+      const entry: any = table.byId.get(id), raw: any = entry.defaultValue;
+      let decoded: any = raw;
+      if (entry.valueType === "number") {
+        if (!String(raw).trim() || !Number.isFinite(Number(raw))) {
+          notes.push("Source Script argument ignored: invalid numeric PluginObject default.");
+          return scriptUrl;
+        }
+        decoded = Number(raw);
+      } else if (entry.valueType === "boolean") {
+        if (!["true", "false"].includes(String(raw))) {
+          notes.push("Source Script argument ignored: invalid boolean PluginObject default.");
+          return scriptUrl;
+        }
+        decoded = String(raw) === "true";
+      }
+      fields.push([id, decoded]);
+    }
+    value = Object.fromEntries(fields);
+    notes.push("Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.");
+  } else if (legacy) {
+    const raw: any = String(argument);
+    value = /^["']/.test(raw) ? decodeQuoted(raw) : raw;
+  } else {
+    if (!["string", "raw-string"].includes(argument.type) ||
+        (argument.type === "string" && stringTemplateParts(argument).some((part: any) => part[0] === "v"))) {
+      notes.push("Source Script argument ignored: dynamic String transport has no verified Quantumult X binding.");
+      return scriptUrl;
+    }
+    value = argument.value;
+  }
+  if (!/^https?:\/\//i.test(scriptUrl)) {
+    notes.push("Source Script argument ignored: official Quantumult X fragment transport requires a remote HTTP(S) script.");
+    return scriptUrl;
+  }
+  const url = new URL(scriptUrl);
+  if (url.hash.slice(1).split("&").some((part) => part.split("=")[0] === "_wayx_argument")) {
+    notes.push("Source Script argument ignored: reserved Quantumult X fragment key collision.");
+    return scriptUrl;
+  }
+  const payload = encodeURIComponent(JSON.stringify({value}));
+  notes.push("Source Script argument transported through Quantumult X URL fragment _wayx_argument.");
+  return scriptUrl + (scriptUrl.includes("#") ? (scriptUrl.endsWith("#") ? "" : "&") : "#") + "_wayx_argument=" + payload;
+}
 function noteQxForcedEnable(ast: any, notes: any): any {
   const enable: any = scriptOption(ast, "enable");
   if (enable?.type === "variable" || enable?.value === false)
@@ -1461,11 +1518,7 @@ function qxNonHttpScriptV2Plan(
   { scriptUrl, argumentTable = null }: any = {},
 ): any {
   const notes: any = [];
-  if (ast.script.argument) {
-    notes.push(
-      "Source Script argument ignored for Quantumult X task by user conversion policy; task and original script URL retained.",
-    );
-  }
+  scriptUrl = qxScriptArgumentUrl(scriptUrl, ast.script.argument, argumentTable, notes);
   const timeout: any = scriptOption(ast, "timeout");
   if (timeout)
     notes.push("Source Script timeout ignored for Quantumult X task syntax.");
@@ -1579,11 +1632,7 @@ export function qxScriptV2Plan(
   if (!condition.ok) return condition;
   const notes: any = [...(condition.notes || [])];
   noteQxForcedEnable(ast, notes);
-  if (ast.script.argument) {
-    notes.push(
-      "Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.",
-    );
-  }
+  scriptUrl = qxScriptArgumentUrl(scriptUrl, ast.script.argument, argumentTable, notes);
   if (timeout) {
     notes.push("Source Script timeout ignored for Quantumult X.");
   }
@@ -1854,7 +1903,7 @@ export const scriptV2BridgeNeeds: any = scriptV2DeclarationGaps;
 export function planQxScript(ir: any, ctx: any = {}): any {
   if (!ir || ir.type !== "script-semantic-ir")
     throw new TypeError("Expected Script Semantic IR");
-  const scriptUrl: any = ctx.scriptUrl || ir.script.path;
+  let scriptUrl: any = ctx.scriptUrl || ir.script.path;
   if (ir.sourceSyntax === "v2") {
     return qxScriptV2Plan(ir, {
       scriptUrl,
@@ -1886,11 +1935,7 @@ export function planQxScript(ir: any, ctx: any = {}): any {
   const debugEnabled: any =
     Boolean(sc.debug) && !["false", "0"].includes(debugFixed);
   const notes: any = [];
-  if (sc.argument) {
-    notes.push(
-      "Source Script argument ignored for Quantumult X, matching KOP-XIAO resource-parser conversion behavior.",
-    );
-  }
+  scriptUrl = qxScriptArgumentUrl(scriptUrl, sc.argument, ctx.argumentTable, notes, true);
   if (enableDynamic) {
     notes.push(
       "Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.",

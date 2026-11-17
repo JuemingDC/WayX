@@ -77,7 +77,7 @@ const qxLegacy=planQxScript(legacyIr,{
   sourceText:'const x=$response.body; $done({body:x});',
 });
 assert.equal(qxLegacy.ok,true);
-assert.match(qxLegacy.line,/ url script-response-body https:\/\/example\.com\/resp\.js$/);
+assert.match(qxLegacy.line,/ url script-response-body https:\/\/example\.com\/resp\.js#_wayx_argument=/);
 assert.match(qxLegacy.notes.join('\n'),/timeout ignored/i);
 assert.match(qxLegacy.notes.join('\n'),/binary-body-mode=true ignored/i);
 
@@ -90,8 +90,8 @@ const qxLegacyCompatible=planQxScript(qxLegacyCompatibleIr,{
 });
 assert.equal(qxLegacyCompatible.ok,true);
 assert.equal(qxLegacyCompatible.section,'rewrite');
-assert.match(qxLegacyCompatible.line,/ url script-response-body https:\/\/example\.com\/resp\.js$/);
-assert.match(qxLegacyCompatible.notes.join('\n'),/argument ignored/);
+assert.match(qxLegacyCompatible.line,/ url script-response-body https:\/\/example\.com\/resp\.js#_wayx_argument=/);
+assert.match(qxLegacyCompatible.notes.join('\n'),/argument transported/);
 
 const requestV2Source='request if ${url} ~= /request/ then script("https://example.com/request.js") with requires_body=true, tag="Req"';
 const requestV2Ir=scriptV2AstToSemanticIr(parseScriptV2(requestV2Source),{source:requestV2Source});
@@ -467,7 +467,7 @@ if(selectedCase==='script-ir-target-planners.mjs') {
   const ctx={argumentTable:buildSurgeArgumentTable(['region=input']),argumentIds:new Set(['region'])};
   for(const trigger of ['cron "0 8 * * *"','network-changed','generic'])for(const argument of ['"region=CN"','{${region}}']) {
     const ir=parseScriptDeclaration(trigger+' then script("https://example.test/original.js",'+argument+')');
-    const qx=planQxScript(ir,ctx);assert.equal(qx.ok,true);assert.equal(qx.omitted,undefined);assert.match(qx.line,/original\.js/);assert.doesNotMatch(qx.line,/argument=/);assert.match(qx.notes.join('\n'),/argument ignored/);
+    const qx=planQxScript(ir,ctx);assert.equal(qx.ok,true);assert.equal(qx.omitted,undefined);assert.match(qx.line,/original\.js/);if(argument.startsWith('{')) {assert.doesNotMatch(qx.line,/#_wayx_argument=/);assert.match(qx.notes.join('\n'),/argument ignored/);} else assert.match(qx.line,/#_wayx_argument=/);
     const surge=planSurgeScript(ir,ctx);assert.equal(surge.ok,true);
     if(argument.startsWith('{')) {assert.doesNotMatch(surge.line,/argument=/);assert.match(surge.notes.join('\n'),/argument omitted/);}else assert.match(surge.line,/argument=/);
   }
