@@ -222,6 +222,7 @@
         ;
         ;
         ;
+        ;
         const overlay = {
             $request: request, $response: response, $done: done,
             $task: undefined

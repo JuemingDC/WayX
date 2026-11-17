@@ -2674,6 +2674,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
         let argument = undefined;
         ;
+        ;
         const script = undefined;
         if (script && script.startTime !== undefined) {
             const t = script.startTime;

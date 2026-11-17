@@ -1484,6 +1484,7 @@
         prefs.removeAllValues = () => undefined;
         ;
         ;
+        ;
         const overlay = {
             $done: done,
             $task: { fetch: taskFetch }

@@ -430,6 +430,7 @@
         ;
         ;
         let argument = host.argument;
+        ;
         if (config.argumentSchema && true && typeof argument === 'string')
             argument = JSON.parse(argument);
         const overlay = {

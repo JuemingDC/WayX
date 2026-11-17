@@ -1473,6 +1473,7 @@
         }
         let argument = host.argument;
         ;
+        ;
         const script = Object.assign({}, host.script, { name: "wechat" });
         if (script && script.startTime !== undefined) {
             const t = script.startTime;

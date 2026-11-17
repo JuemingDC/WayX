@@ -2610,6 +2610,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
         let argument = host.argument;
         ;
+        ;
         const script = Object.assign({}, host.script, { name: "network-in-out-query.js" });
         if (script && script.startTime !== undefined) {
             const t = script.startTime;

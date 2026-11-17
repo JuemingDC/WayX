@@ -1377,6 +1377,7 @@
         prefs.removeAllValues = () => undefined;
         ;
         ;
+        ;
         const overlay = {
             $request: request, $response: response, $done: done
         };

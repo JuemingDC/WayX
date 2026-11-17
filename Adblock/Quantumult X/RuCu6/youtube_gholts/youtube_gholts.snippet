@@ -20,15 +20,21 @@
 # youtube_init
 (?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/youtube_gholts/request_gholts.js
 # youtube_auto-hd
-(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/videoplayback(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/youtube_gholts/request_gholts.js
+# [WayX] Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.
+# [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
+(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/videoplayback(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/youtube_gholts/request_gholts.js#_wayx_argument=%7B%22value%22%3A%7B%22autoHd%22%3Afalse%7D%7D
 # youtube_log-event
 (?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event(?:\?.*)?$ url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/youtube_gholts/request_gholts.js
 # youtube_response
-(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:navigation\/resolve_url|browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/youtube_gholts/response_gholts.js
+# [WayX] Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.
+# [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
+(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:navigation\/resolve_url|browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/youtube_gholts/response_gholts.js#_wayx_argument=%7B%22value%22%3A%7B%22autoHd%22%3Afalse%2C%22blockAi%22%3Afalse%2C%22blockGames%22%3Afalse%2C%22blockShorts%22%3Afalse%2C%22blockStore%22%3Afalse%2C%22blockUpload%22%3Afalse%2C%22blockVerticalLive%22%3Afalse%2C%22jumpAhead%22%3Afalse%2C%22onTheGo%22%3Afalse%7D%7D
 # youtube_key
 (?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(?:config|log_event)(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/youtube_gholts/key_gholts.js
 # youtube_ump
-(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/youtube_gholts/ump_gholts.js
+# [WayX] Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.
+# [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
+(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/RuCu6/youtube_gholts/ump_gholts.js#_wayx_argument=%7B%22value%22%3A%7B%22autoHd%22%3Afalse%2C%22blockAi%22%3Afalse%2C%22blockGames%22%3Afalse%2C%22blockStore%22%3Afalse%2C%22blockVerticalLive%22%3Afalse%2C%22jumpAhead%22%3Afalse%2C%22onTheGo%22%3Afalse%7D%7D
 
 # [mitm]
 hostname = rr*.googlevideo.com, s.youtube.com, www.youtube.com, youtubei.googleapis.com

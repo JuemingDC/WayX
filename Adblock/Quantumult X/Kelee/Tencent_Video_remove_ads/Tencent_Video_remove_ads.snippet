@@ -34,8 +34,9 @@ ip-cidr, 47.110.187.87/32, reject
 ^http:\/\/apd-\w+\.v\.smtcdns\.com\/(defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\/\w+ url reject
 (?i)^https?:\/\/vv\.video\.qq\.com\/(diff|get)vmind url reject-dict
 # 移除广告
+# [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
 # Disabled: upstream resource unavailable
-# (?i)^https?:\/\/vv\.video\.qq\.com\/getvinfo url script-request-body https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js
+# (?i)^https?:\/\/vv\.video\.qq\.com\/getvinfo url script-request-body https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js#_wayx_argument=%7B%22value%22%3A%22%26sppreviewtype%3D%5C%5Cd(.*)%26spsrt%3D%5C%5Cd-%3E%26sppreviewtype%3D0%241%26spsrt%3D0%22%7D
 
 # [mitm]
 hostname = vv.video.qq.com

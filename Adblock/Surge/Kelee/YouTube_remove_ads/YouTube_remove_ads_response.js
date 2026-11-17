@@ -1472,6 +1472,7 @@
             return Object.keys(mapped).length ? post(title, subtitle, body, mapped) : post(title, subtitle, body);
         }
         let argument = host.argument;
+        ;
         if (config.argumentSchema && true && typeof argument === 'string')
             argument = JSON.parse(argument);
         const script = Object.assign({}, host.script, { name: "YouTube\u53BB\u5E7F\u544A" });

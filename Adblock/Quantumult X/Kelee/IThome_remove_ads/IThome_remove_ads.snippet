@@ -18,7 +18,9 @@
 # [rewrite_local]
 (?i)^https?:\/\/dat\.ruanmei\.com\/ithome\/money\/acd\.json$ url reject
 # IT之家去广告
-(?i)^https:\/\/napi\.ithome\.com\/api\/(news\/indexv2\/iphone\/\d+|topmenu\/getfeeds\?) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/IThome_remove_ads/IThome_remove_ads.js
+# [WayX] Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.
+# [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
+(?i)^https:\/\/napi\.ithome\.com\/api\/(news\/indexv2\/iphone\/\d+|topmenu\/getfeeds\?) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/IThome_remove_ads/IThome_remove_ads.js#_wayx_argument=%7B%22value%22%3A%7B%22removeAllBanners%22%3Afalse%2C%22removePinnedArticles%22%3Afalse%7D%7D
 
 # [mitm]
 hostname = napi.ithome.com, api.zuihuimai.com, dat.ruanmei.com

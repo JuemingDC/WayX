@@ -243,6 +243,7 @@
         ;
         ;
         ;
+        ;
         const overlay = {
             $request: request, $response: response, $done: done,
             $persistentStore: store

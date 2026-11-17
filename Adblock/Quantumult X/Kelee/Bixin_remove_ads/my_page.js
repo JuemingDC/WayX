@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only; ScriptHub derivative. */
 (function () {
-    const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, global: globalThis, codecs: (function (legacy, native = {}) {
+    const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, environment: typeof $environment === 'undefined' ? undefined : $environment, global: globalThis, codecs: (function (legacy, native = {}) {
             let legacyProvider;
             const text = value => { if (typeof value === 'symbol')
                 throw new TypeError('Cannot convert a Symbol to a string'); return String(value); };
@@ -400,6 +400,27 @@
         }
         ;
         ;
+        let argument = undefined;
+        const env = host.environment || {}, variables = env.variables;
+        let payload = variables && own(variables, '_wayx_argument') ? variables._wayx_argument : undefined;
+        if (payload === undefined && typeof env.sourcePath === 'string') {
+            const fragment = env.sourcePath.indexOf('#');
+            if (fragment >= 0)
+                for (const part of env.sourcePath.slice(fragment + 1).split('&')) {
+                    const eq = part.indexOf('=');
+                    if (eq >= 0 && part.slice(0, eq) === '_wayx_argument') {
+                        payload = decodeURIComponent(part.slice(eq + 1));
+                        break;
+                    }
+                }
+        }
+        if (payload !== undefined) {
+            const text = String(payload);
+            const envelope = JSON.parse(text.startsWith('{') ? text : decodeURIComponent(text));
+            if (!envelope || typeof envelope !== 'object' || !own(envelope, 'value'))
+                fail('invalid Quantumult X argument payload');
+            argument = envelope.value;
+        }
         ;
         const overlay = {
             $response: response, $done: done

@@ -1515,6 +1515,7 @@
         prefs.removeAllValues = () => undefined;
         ;
         ;
+        ;
         const environment = Object.assign({}, host.environment);
         const overlay = {
             $request: request, $response: response, $done: done,

@@ -547,6 +547,7 @@
         }
         let argument = host.argument;
         ;
+        ;
         const script = Object.assign({}, host.script, { name: "jd_price" });
         if (script && script.startTime !== undefined) {
             const t = script.startTime;

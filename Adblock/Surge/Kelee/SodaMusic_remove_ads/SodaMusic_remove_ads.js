@@ -222,6 +222,7 @@
         ;
         ;
         ;
+        ;
         const overlay = {
             $response: response, $done: done
         };

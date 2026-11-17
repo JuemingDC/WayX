@@ -481,6 +481,7 @@
         ;
         ;
         ;
+        ;
         const environment = Object.assign({}, host.environment);
         const overlay = {
             $done: done,

@@ -1113,7 +1113,7 @@
             } throw new Error("Unreachable"); }; B2(d1, FA); return s2(_3); })();
             ;
             return __wayxProvider;
-        }), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), task: typeof $task === 'undefined' ? undefined : $task, prefs: typeof $prefs === 'undefined' ? undefined : $prefs, notifyQx: typeof $notify === 'undefined' ? undefined : $notify, script: typeof $script === 'undefined' ? undefined : $script, environment: typeof $environment === 'undefined' ? undefined : $environment, compression: undefined, aes: undefined, global: globalThis, url: undefined };
+        }), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), task: typeof $task === 'undefined' ? undefined : $task, prefs: typeof $prefs === 'undefined' ? undefined : $prefs, notifyQx: typeof $notify === 'undefined' ? undefined : $notify, environment: typeof $environment === 'undefined' ? undefined : $environment, script: typeof $script === 'undefined' ? undefined : $script, compression: undefined, aes: undefined, global: globalThis, url: undefined };
     if ((__wayxHost.response === undefined ? 'request' : 'response') !== "response")
         throw new Error('Unregistered HTTP source/target declaration');
     const __wayxConfig = { "apiPlan": { "source": { "responseStatus": "status", "responseTrailers": "h2_trailers", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "responseTrailers": "h2_trailers", "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "statusCode", "responseTrailers": null, "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "responseTrailers": null, "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" }, "qxHttp": { "responseTrailers": null, "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"] }, "argumentSchema": { "kind": "object", "enumValues": { "per_filter_video_thread": ["true", "false"] }, "fields": { "per_filter_video_thread": "string" } } };
@@ -1505,6 +1505,26 @@
             return Object.keys(mapped).length ? post(title, subtitle, body, mapped) : post(title, subtitle, body);
         }
         let argument = undefined;
+        const env = host.environment || {}, variables = env.variables;
+        let payload = variables && own(variables, '_wayx_argument') ? variables._wayx_argument : undefined;
+        if (payload === undefined && typeof env.sourcePath === 'string') {
+            const fragment = env.sourcePath.indexOf('#');
+            if (fragment >= 0)
+                for (const part of env.sourcePath.slice(fragment + 1).split('&')) {
+                    const eq = part.indexOf('=');
+                    if (eq >= 0 && part.slice(0, eq) === '_wayx_argument') {
+                        payload = decodeURIComponent(part.slice(eq + 1));
+                        break;
+                    }
+                }
+        }
+        if (payload !== undefined) {
+            const text = String(payload);
+            const envelope = JSON.parse(text.startsWith('{') ? text : decodeURIComponent(text));
+            if (!envelope || typeof envelope !== 'object' || !own(envelope, 'value'))
+                fail('invalid Quantumult X argument payload');
+            argument = envelope.value;
+        }
         if (config.argumentSchema && true && typeof argument === 'string')
             argument = JSON.parse(argument);
         const script = Object.assign({}, host.script, { name: "ProtoBuf\u5904\u7406" });

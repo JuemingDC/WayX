@@ -19,13 +19,19 @@
 
 # [rewrite_local]
 # YouTube去广告
-(?i)^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/YouTube_remove_ads/YouTube_remove_ads_response.js
+# [WayX] Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.
+# [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
+(?i)^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch|log_event|config))(\?(.*))?$ url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/YouTube_remove_ads/YouTube_remove_ads_response.js#_wayx_argument=%7B%22value%22%3A%7B%22blockUpload%22%3Afalse%2C%22blockShorts%22%3Afalse%2C%22blockImmersive%22%3Afalse%2C%22captionLang%22%3A%22zh-Hans%22%2C%22debug%22%3Afalse%7D%7D
 
 # 请求初始化
-(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/YouTube_remove_ads/YouTube_remove_ads_request.js
+# [WayX] Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.
+# [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
+(?i)^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.* url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/YouTube_remove_ads/YouTube_remove_ads_request.js#_wayx_argument=%7B%22value%22%3A%7B%22captionLang%22%3A%22zh-Hans%22%7D%7D
 
 # 请求日志事件
-(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/YouTube_remove_ads/YouTube_remove_ads_request.js
+# [WayX] Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.
+# [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
+(?i)^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/log_event url script-request-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/YouTube_remove_ads/YouTube_remove_ads_request.js#_wayx_argument=%7B%22value%22%3A%7B%22blockUpload%22%3Afalse%2C%22blockShorts%22%3Afalse%2C%22blockImmersive%22%3Afalse%2C%22captionLang%22%3A%22zh-Hans%22%2C%22debug%22%3Afalse%7D%7D
 
 # [mitm]
 hostname = *.googlevideo.com, youtubei.googleapis.com

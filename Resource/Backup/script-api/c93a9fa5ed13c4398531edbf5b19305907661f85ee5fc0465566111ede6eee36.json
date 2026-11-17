@@ -698,7 +698,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 12,
+  "runtimePolicyVersion": 13,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "response": {
@@ -753,7 +753,7 @@
             "target": {
               "capability": "runtime",
               "api": "native engine / runtime capability",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -777,7 +777,7 @@
             "target": {
               "capability": "runtime",
               "api": "native engine / runtime capability",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -801,7 +801,7 @@
             "target": {
               "capability": "runtime",
               "api": "native engine / runtime capability",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -825,7 +825,7 @@
             "target": {
               "capability": "runtime",
               "api": "native engine / runtime capability",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -849,7 +849,7 @@
             "target": {
               "capability": "runtime",
               "api": "native engine / runtime capability",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -2253,7 +2253,7 @@
             "target": {
               "capability": "runtime",
               "api": "$argument",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -2277,7 +2277,7 @@
             "target": {
               "capability": "runtime",
               "api": "$argument",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -2301,7 +2301,7 @@
             "target": {
               "capability": "runtime",
               "api": "$argument",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -2325,7 +2325,7 @@
             "target": {
               "capability": "runtime",
               "api": "$argument",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",
@@ -2349,7 +2349,7 @@
             "target": {
               "capability": "runtime",
               "api": "$argument",
-              "lowering": "actual source schema + target payload; QX argument is absent and author JavaScript handles it",
+              "lowering": "actual source schema + target payload; Loon arguments use official QX fragment variables with a reserved typed envelope",
               "proof": "API runtime contract tests; no author-program static proof"
             },
             "decision": "runtime",

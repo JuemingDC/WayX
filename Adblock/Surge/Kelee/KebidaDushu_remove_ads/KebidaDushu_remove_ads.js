@@ -547,6 +547,7 @@
         }
         let argument = host.argument;
         ;
+        ;
         const script = Object.assign({}, host.script, { name: "\u5E06\u4E66\u53BB\u5E7F\u544A" });
         if (script && script.startTime !== undefined) {
             const t = script.startTime;

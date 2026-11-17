@@ -241,6 +241,7 @@
         ;
         let argument = host.argument;
         ;
+        ;
         const overlay = {
             $request: request, $done: done,
             $persistentStore: store,

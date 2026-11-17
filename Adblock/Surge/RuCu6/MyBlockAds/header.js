@@ -219,6 +219,7 @@
         ;
         ;
         ;
+        ;
         const overlay = {
             $request: request, $done: done
         };

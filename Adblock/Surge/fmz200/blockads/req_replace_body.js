@@ -261,6 +261,7 @@
         prefs.removeAllValues = () => undefined;
         ;
         ;
+        ;
         const overlay = {
             $done: done
         };

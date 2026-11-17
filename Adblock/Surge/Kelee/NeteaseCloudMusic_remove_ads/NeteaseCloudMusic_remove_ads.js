@@ -1495,6 +1495,7 @@
         }
         let argument = host.argument;
         ;
+        ;
         const script = Object.assign({}, host.script, { name: "NeteaseCloudMusic_remove_ads.js" });
         if (script && script.startTime !== undefined) {
             const t = script.startTime;

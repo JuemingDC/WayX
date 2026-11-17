@@ -215,7 +215,7 @@
                 out += alphabet[(word >>> 18) & 63] + alphabet[(word >>> 12) & 63] + (i + 1 < s.length ? alphabet[(word >>> 6) & 63] : '=') + (i + 2 < s.length ? alphabet[word & 63] : '=');
             } return out; }
             return { TextEncoder, TextDecoder, atob, btoa };
-        })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), task: typeof $task === 'undefined' ? undefined : $task, prefs: typeof $prefs === 'undefined' ? undefined : $prefs, notifyQx: typeof $notify === 'undefined' ? undefined : $notify, script: typeof $script === 'undefined' ? undefined : $script, environment: typeof $environment === 'undefined' ? undefined : $environment, compression: (function () {
+        })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), task: typeof $task === 'undefined' ? undefined : $task, prefs: typeof $prefs === 'undefined' ? undefined : $prefs, notifyQx: typeof $notify === 'undefined' ? undefined : $notify, environment: typeof $environment === 'undefined' ? undefined : $environment, script: typeof $script === 'undefined' ? undefined : $script, compression: (function () {
             const module = { exports: {} };
             const exports = module.exports;
             !function (t, e) { "object" == typeof exports && "undefined" != typeof module ? e(exports) : "function" == typeof define && define.amd ? define(["exports"], e) : e((t = "undefined" != typeof globalThis ? globalThis : t || self).pako = {}); }(this, (function (t) {
@@ -1555,6 +1555,26 @@
             return Object.keys(mapped).length ? post(title, subtitle, body, mapped) : post(title, subtitle, body);
         }
         let argument = undefined;
+        const env = host.environment || {}, variables = env.variables;
+        let payload = variables && own(variables, '_wayx_argument') ? variables._wayx_argument : undefined;
+        if (payload === undefined && typeof env.sourcePath === 'string') {
+            const fragment = env.sourcePath.indexOf('#');
+            if (fragment >= 0)
+                for (const part of env.sourcePath.slice(fragment + 1).split('&')) {
+                    const eq = part.indexOf('=');
+                    if (eq >= 0 && part.slice(0, eq) === '_wayx_argument') {
+                        payload = decodeURIComponent(part.slice(eq + 1));
+                        break;
+                    }
+                }
+        }
+        if (payload !== undefined) {
+            const text = String(payload);
+            const envelope = JSON.parse(text.startsWith('{') ? text : decodeURIComponent(text));
+            if (!envelope || typeof envelope !== 'object' || !own(envelope, 'value'))
+                fail('invalid Quantumult X argument payload');
+            argument = envelope.value;
+        }
         if (config.argumentSchema && true && typeof argument === 'string')
             argument = JSON.parse(argument);
         const script = Object.assign({}, host.script, { name: "youtube_ump" });

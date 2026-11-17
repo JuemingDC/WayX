@@ -1470,6 +1470,7 @@
         }
         let argument = host.argument;
         ;
+        ;
         const script = Object.assign({}, host.script, { name: "YouTube_remove_ads_request.js" });
         if (script && script.startTime !== undefined) {
             const t = script.startTime;

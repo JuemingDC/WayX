@@ -1553,6 +1553,7 @@
         }
         let argument = undefined;
         ;
+        ;
         const script = undefined;
         if (script && script.startTime !== undefined) {
             const t = script.startTime;
