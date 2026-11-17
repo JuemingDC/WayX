@@ -30,7 +30,8 @@ for (const value of ["", "a=1&b=2 # 中文 %25", '{"still":"a string"}', expecte
     assert.equal(plan.status,"adapted");
     for (const env of [{variables:{_wayx_argument:payload}},{variables:{_wayx_argument:encodeURIComponent(payload)}},{sourcePath:operand}]) {
       let output: any;
-      vm.runInNewContext(plan.code!,{$environment:env,$done:(v: any)=>{output=v;},$task:{fetch(){}},console,Uint8Array,ArrayBuffer,TextEncoder,TextDecoder,URL,URLSearchParams});
+      // Modified: 2026-11-17 (chance). Supply the actual host response presence for response-phase binding.
+      vm.runInNewContext(plan.code!,{$response:phase==="response"?{headers:{},body:""}:undefined,$environment:env,$done:(v: any)=>{output=v;},$task:{fetch(){}},console,Uint8Array,ArrayBuffer,TextEncoder,TextDecoder,URL,URLSearchParams});
       assert.deepEqual(JSON.parse(output.body),value);
     }
   }

@@ -46,8 +46,12 @@ try {
  assert.deepEqual(await validateSourceBackups(root),[]);
  await prepareWorkingLayout(root);
  assert.deepEqual(await validateSourceBackups(root),[]);
+ // Modified: 2026-11-17 (chance). Layout assigns a stable AD identity; compare
+ // offline retention with the migrated baseline, preserving the ID exactly once.
+ const migrated=await fs.readFile(path.join(root,"Adblock/Quantumult X/raw.snippet"),"utf8");
+ assert.equal(migrated,"# WayX ID: AD0001\n"+saved);
  const offline={fetchBytes:async()=>{throw Error("404");},cachedBytes:async()=>null};
- const retry=await refreshSourceBackups(root,{resources:offline,log:()=>{}});assert.equal(retry.backedUpScripts,1);assert.equal(retry.failures.length,1);assert.equal(await fs.readFile(path.join(root,"Adblock/Quantumult X/raw.snippet"),"utf8"),saved);
+ const retry=await refreshSourceBackups(root,{resources:offline,log:()=>{}});assert.equal(retry.backedUpScripts,1);assert.equal(retry.failures.length,1);assert.equal(await fs.readFile(path.join(root,"Adblock/Quantumult X/raw.snippet"),"utf8"),migrated);
  assert.equal(backupObject(url,Buffer.from('new'),"script").path,record.path);
  assert.notEqual(backupObject(url+'2',bytes,"script").path,record.path);
  await fs.writeFile(path.join(root,record.path),'corrupt');assert.ok((await validateSourceBackups(root)).some(f=>f.code==='backup-integrity'));
