@@ -889,7 +889,14 @@ try {
   const repeated='#!name=Resources\n[Rule]\nDOMAIN,a.example,REJECT\n# keep comment\nDOMAIN,a.example,REJECT\n[Rewrite]\nresponse if ${url} ~= /api/ then response.json.jq(`.x += 1`)\nresponse if ${url} ~= /api/ then response.json.jq(`.x += 1`)\n';
   const repeatOut=convertPlugin(entry,repeated,options);
   assert.equal((repeatOut.qx.match(/^host, a.example, reject$/gm)||[]).length,1);
-  assert.equal((repeatOut.qx.match(/\.x \+= 1/g)||[]).length,2);assert.match(repeatOut.qx,/# keep comment/);
+  // Modified: 2026-11-17 (chance). Verify repeated JQ action execution,
+  // independent of whitespace compaction and source-level URL grouping.
+  const repeatedJq=[...repeatOut.qx.matchAll(/^api url jsonjq-response-body '(.+)'$/gm)];
+  assert.equal(repeatedJq.length,1);
+  const evaluated=runIsolatedCase('jq',['-c',repeatedJq[0][1]],{input:'{"x":0}',encoding:'utf8'});
+  assert.equal(evaluated.status,0,evaluated.stderr);
+  assert.deepEqual(JSON.parse(evaluated.stdout),{x:2});
+  assert.match(repeatOut.qx,/# keep comment/);
   // Modified: 2026-11-05 (chance). QX URL flags are preserved under the restored source policy.
   assert.equal(targetRegexCapability('qx','url').inlineFlags,'verified');
   assert.equal(compileRegexForTarget({type:'regex',pattern:'api',flags:'i'},{target:'qx',requireEquivalent:true}).ok,true);
