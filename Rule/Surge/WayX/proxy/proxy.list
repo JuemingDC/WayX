@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-17 14:49:56 UTC
+# Updated: 2026-11-18 00:55:00 UTC
 # Converted by: chance
-# Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
+# Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: general
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34253
+# Rules: 34251
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -2416,7 +2416,6 @@ DOMAIN-SUFFIX,ebc.net.tw
 DOMAIN-SUFFIX,ecert.gov.hk
 DOMAIN-SUFFIX,ecfa.org.tw
 DOMAIN-SUFFIX,ecgapp.com.cn
-DOMAIN-SUFFIX,edge.bamgrid.com
 DOMAIN-SUFFIX,edns.ip-api.com
 DOMAIN-SUFFIX,egmontbooks.co.uk
 DOMAIN-SUFFIX,eligens.com.br
@@ -2472,7 +2471,6 @@ DOMAIN-SUFFIX,etnetchina.com.cn
 DOMAIN-SUFFIX,etools.ncol.com
 DOMAIN-SUFFIX,etpress.com.hk
 DOMAIN-SUFFIX,ettrade.com.hk
-DOMAIN-SUFFIX,eu1.adobesign.com
 DOMAIN-SUFFIX,ewisdom.us.kg
 DOMAIN-SUFFIX,eximbank.com.tw
 DOMAIN-SUFFIX,falundafa.org.tw
@@ -13308,6 +13306,7 @@ DOMAIN-SUFFIX,elephanttube.com
 DOMAIN-SUFFIX,elephanttubenew.com
 DOMAIN-SUFFIX,elevenlabs.com
 DOMAIN-SUFFIX,elevenlabs.io
+DOMAIN-SUFFIX,elevenlabsusercontent.com
 DOMAIN-SUFFIX,elgaronline.com
 DOMAIN-SUFFIX,elgoog.im
 DOMAIN-SUFFIX,elifesciences.org
@@ -25985,7 +25984,6 @@ DOMAIN-SUFFIX,reckittbenckiser.net
 DOMAIN-SUFFIX,reckittbenckiser.tv
 DOMAIN-SUFFIX,reckittprofessional.com
 DOMAIN-SUFFIX,recode.net
-DOMAIN-SUFFIX,recognizeapp.com
 DOMAIN-SUFFIX,recoiljs.org
 DOMAIN-SUFFIX,recombee.com
 DOMAIN-SUFFIX,reconinstruments.com

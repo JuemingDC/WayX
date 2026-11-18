@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-17 14:49:56 UTC
+# Updated: 2026-11-18 00:55:00 UTC
 # Converted by: chance
-# Source Authors: Loyalsoldier, MetaCubeX, Nexitally, Sukka, V2Fly
+# Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: general
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list ; https://ruleset.skk.moe/List/non_ip/global.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34253
+# Rules: 34251
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -2416,7 +2416,6 @@ host-suffix,ebc.net.tw,ssid
 host-suffix,ecert.gov.hk,ssid
 host-suffix,ecfa.org.tw,ssid
 host-suffix,ecgapp.com.cn,ssid
-host-suffix,edge.bamgrid.com,ssid
 host-suffix,edns.ip-api.com,ssid
 host-suffix,egmontbooks.co.uk,ssid
 host-suffix,eligens.com.br,ssid
@@ -2472,7 +2471,6 @@ host-suffix,etnetchina.com.cn,ssid
 host-suffix,etools.ncol.com,ssid
 host-suffix,etpress.com.hk,ssid
 host-suffix,ettrade.com.hk,ssid
-host-suffix,eu1.adobesign.com,ssid
 host-suffix,ewisdom.us.kg,ssid
 host-suffix,eximbank.com.tw,ssid
 host-suffix,falundafa.org.tw,ssid
@@ -13308,6 +13306,7 @@ host-suffix,elephanttube.com,ssid
 host-suffix,elephanttubenew.com,ssid
 host-suffix,elevenlabs.com,ssid
 host-suffix,elevenlabs.io,ssid
+host-suffix,elevenlabsusercontent.com,ssid
 host-suffix,elgaronline.com,ssid
 host-suffix,elgoog.im,ssid
 host-suffix,elifesciences.org,ssid
@@ -25985,7 +25984,6 @@ host-suffix,reckittbenckiser.net,ssid
 host-suffix,reckittbenckiser.tv,ssid
 host-suffix,reckittprofessional.com,ssid
 host-suffix,recode.net,ssid
-host-suffix,recognizeapp.com,ssid
 host-suffix,recoiljs.org,ssid
 host-suffix,recombee.com,ssid
 host-suffix,reconinstruments.com,ssid

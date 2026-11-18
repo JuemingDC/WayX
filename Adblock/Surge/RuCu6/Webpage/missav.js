@@ -1901,20 +1901,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     run() { let e = l.createInstance(); x(this.middleware)(e).catch(r => e.onerror(r)).finally(() => e.end()); }
                 };
                 var S = (t, e) => e().then(() => { t.state.type = "response"; });
-                var v = async (t, e) => { t.state.message = new DOMParser().parseFromString(t.response.body, "text/html"), await e(), t.response.body = `<!DOCTYPE HTML>${t.state.message.documentElement.outerHTML}`; };
+                var O = async (t, e) => { t.state.message = new DOMParser().parseFromString(t.response.body, "text/html"), await e(), t.response.body = `<!DOCTYPE HTML>${t.state.message.documentElement.outerHTML}`; };
                 var A = (t, e) => { if (!(t.response.headers["content-type"] || t.response.headers["Content-Type"] || "").includes("text/html"))
                     throw new Error("Content-Type must be text/html"); return e(); }, H = (t, e) => { let { message: r, nodeFilters: s, injectScript: o, injectStyle: n } = t.state; if (s && s.forEach(({ selector: i, predicate: a }) => { M(j(r, i).filter(a)); }), o) {
                     let i = r.createElement("script");
-                    i.textContent = o, O(r.head, i);
+                    i.textContent = o, v(r.head, i);
                 } if (n) {
                     let i = r.createElement("style");
-                    i.textContent = n, O(r.head, i);
+                    i.textContent = n, v(r.head, i);
                 } return e(); };
                 function j(t, e) { return Array.from(t.querySelectorAll(e)); }
-                function O(t, ...e) { return e.map(r => t.appendChild(r)); }
+                function v(t, ...e) { return e.map(r => t.appendChild(r)); }
                 function M(t) { return t.map(e => e.parentElement?.removeChild(e)); }
                 var $ = (t, e) => { let r = t.state; return r.injectScript = "\"use strict\";(()=>{document.addEventListener(\"ready\",()=>{if(window.open=()=>{},window.player?.pause){let e=window.player.pause;window.player.pause=()=>{document.hasFocus()&&e()}}});})();\n", r.injectStyle = ".lg\\:block,.lg\\:hidden,a[href*=\"//bit.ly/\"],div[x-init*=\"#genki-counter'\"]{display:none!important}div:has(a[href*=\"go.myavlive.com\"]){display:none!important}[x-show$=\"video_details'\"]>div>ul{display:none!important}div[style*=\"width: 300px; height: 250px;\"]{display:none!important}.relative>div[x-init*=\"campaignId=under_player\"]{display:none!important}div[x-show^=recommendItems]~div[class]:has(>div>div.mx-auto>div.flex>a[rel^=sponsored]){display:none!important}div>a[href^=\"https://missav\"][href$=\"/vip\"]{display:none!important}div>a[href*=\"myavlive.com\"]{display:none!important}div.space-y-6.mb-6{display:none!important}\n", r.nodeFilters = [{ selector: "script", predicate: s => { let o = s.src || "", n = s.innerText || ""; return o.includes("tsyndicate.com") || n.includes("TSOutstreamVideo") || n.includes("htmlAds"); } }], e(); };
-                new g().use(S).use(A).use(v).use($).use(H).run();
+                new g().use(S).use(A).use(O).use($).use(H).run();
             }).call(this);
         }
     });

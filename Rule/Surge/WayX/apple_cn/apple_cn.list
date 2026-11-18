@@ -1,11 +1,11 @@
 # Name: apple_cn
-# Updated: 2026-11-17 14:49:56 UTC
+# Updated: 2026-11-18 00:55:00 UTC
 # Converted by: chance
-# Source Authors: DustinWin, MetaCubeX, Nexitally, QuixoticHeart, Sukka, V2Fly
+# Source Authors: DustinWin, MetaCubeX, QuixoticHeart, Sukka, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1969
+# Rules: 1968
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,api.smoot.apple.cn
@@ -586,7 +586,6 @@ DOMAIN-SUFFIX,mr-apple.com.tw
 DOMAIN-SUFFIX,playgrounds-cdn.apple.com
 DOMAIN-SUFFIX,podcast.apple.com
 DOMAIN-SUFFIX,podcasts.apple.com
-DOMAIN-SUFFIX,push.apple.com
 DOMAIN-SUFFIX,quicktime.com.au
 DOMAIN-SUFFIX,researchkit.com.cn
 DOMAIN-SUFFIX,swiftui.com.cn

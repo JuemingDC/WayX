@@ -1,11 +1,11 @@
 # Name: apple
-# Updated: 2026-11-17 14:49:56 UTC
+# Updated: 2026-11-18 00:55:00 UTC
 # Converted by: chance
-# Source Authors: ACL4SSR, DustinWin, MetaCubeX, Nexitally, QuixoticHeart, Sukka, Tartarus2014, V2Fly
+# Source Authors: ACL4SSR, DustinWin, MetaCubeX, QuixoticHeart, Sukka, Tartarus2014, V2Fly
 # Category: app
-# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list ; https://ruleset.skk.moe/List/non_ip/stream.conf
+# Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-tvplus.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple-update.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-proxy.list ; https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Rule/Apple/TestFlight.lsr ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 2008
+# Rules: 2007
 # Managed by: WayX Rule Aggregator
 
 host,api.smoot.apple.cn,direct
@@ -625,7 +625,6 @@ host-suffix,mr-apple.com.tw,direct
 host-suffix,playgrounds-cdn.apple.com,direct
 host-suffix,podcast.apple.com,direct
 host-suffix,podcasts.apple.com,direct
-host-suffix,push.apple.com,direct
 host-suffix,quicktime.com.au,direct
 host-suffix,researchkit.com.cn,direct
 host-suffix,swiftui.com.cn,direct

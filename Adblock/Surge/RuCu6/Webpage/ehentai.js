@@ -1826,8 +1826,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     })(__wayxConfig, __wayxHost, function (__wayxScope) {
         with (__wayxScope) {
             return (function () {
-                var x = t => async (e, r) => { let o = s => async () => { let n = s === t.length ? r : t[s]; if (n)
-                    return await n(e, o(s + 1)); }; return o(0)(); };
+                var x = t => async (e, r) => { let s = o => async () => { let n = o === t.length ? r : t[o]; if (n)
+                    return await n(e, s(o + 1)); }; return s(0)(); };
                 function h(t) { return t instanceof Uint8Array; }
                 function R(t) { return typeof t != "object" || t === null ? String(t) : t instanceof Error ? `${t.toString()} ${JSON.stringify({ stack: t.stack })}` : Array.isArray(t) ? JSON.stringify(t) : typeof t.toString == "function" && t.toString !== Object.prototype.toString ? t.toString() : JSON.stringify(t); }
                 var w = (n => (n[n.DEBUG = 1] = "DEBUG", n[n.INFO = 2] = "INFO", n[n.WARN = 3] = "WARN", n[n.ERROR = 4] = "ERROR", n[n.OFF = 5] = "OFF", n))(w || {}), p = class {
@@ -1840,7 +1840,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     static error(...e) { this.level > 4 || this.log("[ERROR]", ...e); }
                 };
                 var f = class extends Error {
-                    constructor(r, o = `Process exited with code ${r}`) { super(o); this.code = r; }
+                    constructor(r, s = `Process exited with code ${r}`) { super(s); this.code = r; }
                     code;
                     name = "Exit";
                     toString() { return `[${this.name}] ${this.message}`; }
@@ -1871,7 +1871,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         return;
                     } p.error(e, this.toString()); }
                     end() { let e = this.state.type; e === "response" ? this.done(this.response) : e === "fakeResponse" ? this.done({ response: this.response }) : e === "request" ? this.done(this.request) : e === "abort" ? this.abort() : this.exit(); }
-                    toString() { let { method: e, url: r } = this.request, { status: o, body: s } = this.response; return JSON.stringify({ method: e, url: r, status: o, body: s }); }
+                    toString() { let { method: e, url: r } = this.request, { status: s, body: o } = this.response; return JSON.stringify({ method: e, url: r, status: s, body: o }); }
                 }, y = class extends l {
                     createRequest(e) { return Object.create(e, { bodyBytes: { get() { return this.body; }, set(r) { this.body = r; } } }); }
                     createResponse(e) { return Object.create(e, { bodyBytes: { get() { return this.body; }, set(r) { this.body = r; } } }); }
@@ -1884,15 +1884,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         } }
                     getVal(e) { return $persistentStore.read(e); }
                     setVal(e, r) { $persistentStore.write(r, e); }
-                    fetch(e) { let { method: r, body: o, timeout: s = 5, ...n } = e; return new Promise((i, a) => { $httpClient[r.toLowerCase()]({ ...n, body: o, "binary-mode": h(o), timeout: s }, (u, d, c) => { if (u)
+                    fetch(e) { let { method: r, body: s, timeout: o = 5, ...n } = e; return new Promise((i, a) => { $httpClient[r.toLowerCase()]({ ...n, body: s, "binary-mode": h(s), timeout: o }, (u, d, c) => { if (u)
                         return a(u); i(this.createResponse({ ...d, body: c })); }); }); }
-                    notify(e = "", r = "", o = "", s = {}) { let { openUrl: n, clipboard: i, mediaUrl: a, dismiss: u, sound: d = !0 } = s, c = { url: n, text: i, "media-url": a, "auto-dismiss": u, sound: d }; n ? c.action = "open-url" : i && (c.action = "clipboard"), $notification.post(e, r, o, c); }
+                    notify(e = "", r = "", s = "", o = {}) { let { openUrl: n, clipboard: i, mediaUrl: a, dismiss: u, sound: d = !0 } = o, c = { url: n, text: i, "media-url": a, "auto-dismiss": u, sound: d }; n ? c.action = "open-url" : i && (c.action = "clipboard"), $notification.post(e, r, s, c); }
                     done(e) { $done({ ...e }); }
                     abort() { $done({ abort: !0 }); }
                 }, b = class extends y {
                     setupArgument(e) { super.setupArgument(e), typeof $argument == "object" && Object.assign(this.argument, $argument); }
                     fetch(e) { return e.timeout = (e.timeout ?? 5) * 1e3, e.alpn = "h2", super.fetch(e); }
-                    notify(e = "", r = "", o = "", s = {}) { let { openUrl: n, mediaUrl: i, clipboard: a, delay: u } = s, d = { openUrl: n, mediaUrl: i, clipboard: a }; $notification.post(e, r, o, d, u); }
+                    notify(e = "", r = "", s = "", o = {}) { let { openUrl: n, mediaUrl: i, clipboard: a, delay: u } = o, d = { openUrl: n, mediaUrl: i, clipboard: a }; $notification.post(e, r, s, d, u); }
                     abort() { $done(); }
                 };
                 var g = class {
@@ -1900,21 +1900,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     use(e) { return this.middleware.push(e), this; }
                     run() { let e = l.createInstance(); x(this.middleware)(e).catch(r => e.onerror(r)).finally(() => e.end()); }
                 };
-                var v = (t, e) => e().then(() => { t.state.type = "response"; });
-                var O = async (t, e) => { t.state.message = new DOMParser().parseFromString(t.response.body, "text/html"), await e(), t.response.body = `<!DOCTYPE HTML>${t.state.message.documentElement.outerHTML}`; };
+                var O = (t, e) => e().then(() => { t.state.type = "response"; });
+                var S = async (t, e) => { t.state.message = new DOMParser().parseFromString(t.response.body, "text/html"), await e(), t.response.body = `<!DOCTYPE HTML>${t.state.message.documentElement.outerHTML}`; };
                 var A = (t, e) => { if (!(t.response.headers["content-type"] || t.response.headers["Content-Type"] || "").includes("text/html"))
-                    throw new Error("Content-Type must be text/html"); return e(); }, $ = (t, e) => { let { message: r, nodeFilters: o, injectScript: s, injectStyle: n } = t.state; if (o && o.forEach(({ selector: i, predicate: a }) => { j(U(r, i).filter(a)); }), s) {
+                    throw new Error("Content-Type must be text/html"); return e(); }, $ = (t, e) => { let { message: r, nodeFilters: s, injectScript: o, injectStyle: n } = t.state; if (s && s.forEach(({ selector: i, predicate: a }) => { j(U(r, i).filter(a)); }), o) {
                     let i = r.createElement("script");
-                    i.textContent = s, S(r.head, i);
+                    i.textContent = o, v(r.head, i);
                 } if (n) {
                     let i = r.createElement("style");
-                    i.textContent = n, S(r.head, i);
+                    i.textContent = n, v(r.head, i);
                 } return e(); };
                 function U(t, e) { return Array.from(t.querySelectorAll(e)); }
-                function S(t, ...e) { return e.map(r => t.appendChild(r)); }
+                function v(t, ...e) { return e.map(r => t.appendChild(r)); }
                 function j(t) { return t.map(e => e.parentElement?.removeChild(e)); }
                 var H = (t, e) => (t.state.injectScript = "\"use strict\";(()=>{window.onload=function(){let c=[\"\\u5CE1\\u8C37\\u8F6E\\u6905\\u4EBA\"],o=[],t=document.querySelectorAll(\".c1\");for(let n=0;n<t.length;n++){let e=t[n],s=Number(e.querySelector(\".c5 > span\")?.innerText),l=e.querySelector(\".c3 > a\")?.innerText,r=e.querySelector(\".c6\")?.innerText;s<0&&(e.style.display=\"none\"),c.includes(l)&&(e.style.display=\"none\"),o.some(i=>r.includes(i))&&(e.style.display=\"none\")}};})();\n", e());
-                new g().use(v).use(A).use(O).use(H).use($).run();
+                new g().use(O).use(A).use(S).use(H).use($).run();
             }).call(this);
         }
     });
