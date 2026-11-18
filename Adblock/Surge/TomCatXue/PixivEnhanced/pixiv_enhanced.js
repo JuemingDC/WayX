@@ -1310,7 +1310,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     const __wayxContexts = { "request": { "surge": { "apiPlan": { "source": { "responseStatus": "status", "responseTrailers": "h2_trailers", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "responseTrailers": "h2_trailers", "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "status", "responseTrailers": "trailers", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "responseTrailers": "trailers", "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" }, "qxHttp": { "responseTrailers": null, "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"] }, "phase": "request", "responseBody": false } }, "response": { "surge": { "apiPlan": { "source": { "responseStatus": "status", "responseTrailers": "h2_trailers", "scriptStartTime": "date", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": true }, "http": { "responseTrailers": "h2_trailers", "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "node", "timeoutMs": 1, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": true } }, "notification": { "root": "$notification.post", "open": "openUrl", "media": "mediaUrl", "action": null, "openAction": null, "stringLink": true, "delay": true }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "typed" }, "target": { "responseStatus": "status", "responseTrailers": "trailers", "scriptStartTime": "epoch-seconds", "binaryField": "body", "store": { "style": "store", "read": "read", "write": "write", "remove": null, "undefinedDeletes": false }, "http": { "responseTrailers": "trailers", "style": "callback", "root": "$httpClient", "optionsRoot": null, "redirect": "auto-redirect", "cookie": "auto-cookie", "tls": "insecure", "policy": "policy", "timeoutMs": 1000, "directPolicy": "DIRECT", "defaults": { "redirect": true, "cookie": true, "tls": false } }, "notification": { "root": "$notification.post", "open": "url", "media": "media-url", "action": "action", "openAction": "open-url", "stringLink": false, "delay": false }, "completion": { "statusEncoding": "number", "synthetic": "response" }, "argument": "string" }, "qxHttp": { "responseTrailers": null, "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "methods": ["get", "post", "put", "delete", "head", "options", "patch"] }, "phase": "response", "responseBody": true } } }, __wayxConfig = __wayxContexts[__wayxHost.response === undefined ? 'request' : 'response']?.[__wayxTarget];
     if (!__wayxConfig)
         throw new Error('Unregistered HTTP source/target declaration');
-    return (function (config, host, run) {
+    const __wayxExecute = () => (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
         const source = config.apiPlan.source;
@@ -4686,4 +4686,40 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }).call(this);
         }
     });
+    if (["request", "response"].includes(__wayxHost.response === undefined ? 'request' : 'response'))
+        return (function (nativeDone, run) {
+            let attempted = false, nativeFailed = false, nativeError;
+            const done = value => {
+                if (attempted)
+                    return;
+                attempted = true;
+                try {
+                    return nativeDone(value);
+                }
+                catch (error) {
+                    nativeFailed = true;
+                    nativeError = error;
+                    throw error;
+                }
+            };
+            const recover = error => {
+                if (nativeFailed && error === nativeError)
+                    throw error;
+                try {
+                    if (typeof console !== 'undefined' && typeof console.log === 'function')
+                        console.log('[WayX] HTTP script failed; ' + (attempted ? 'completion already submitted' : 'passing through unchanged'), error);
+                }
+                catch { }
+                if (!attempted)
+                    return done({});
+            };
+            try {
+                const result = run(done);
+                return result && typeof result.then === 'function' ? Promise.resolve(result).catch(recover) : result;
+            }
+            catch (error) {
+                return recover(error);
+            }
+        })(__wayxHost.done, __wayxGuardDone => { __wayxHost.done = __wayxGuardDone; return __wayxExecute(); });
+    return __wayxExecute();
 })();

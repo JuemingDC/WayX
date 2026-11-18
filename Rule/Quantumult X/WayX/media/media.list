@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-11-18 03:00:14 UTC
+# Updated: 2026-11-18 08:49:21 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7267
+# Rules: 7266
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,ssid
@@ -7096,7 +7096,6 @@ host-suffix,yandexgo.com,ssid
 host-suffix,yandexlyceum.ru,ssid
 host-suffix,yandexmetrica.com,ssid
 host-suffix,yandexwebcache.net,ssid
-host-suffix,yandexwebcache.org,ssid
 host-suffix,yango-ads.com,ssid
 host-suffix,yango-b2b.com,ssid
 host-suffix,yango-team.com,ssid

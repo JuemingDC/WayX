@@ -18,7 +18,7 @@
             return __wayxHost.done({});
         __wayxHost.argument = undefined;
     }
-    return (function (config, host, run) {
+    const __wayxExecute = () => (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
         const target = config.apiPlan.target;
@@ -1099,4 +1099,40 @@
             }).call(this);
         }).call(this, Object.prototype.hasOwnProperty.call(__wayxScope, "$request") ? __wayxScope["$request"] : (typeof $request === 'undefined' ? undefined : $request), Object.prototype.hasOwnProperty.call(__wayxScope, "$response") ? __wayxScope["$response"] : (typeof $response === 'undefined' ? undefined : $response), Object.prototype.hasOwnProperty.call(__wayxScope, "$done") ? __wayxScope["$done"] : (typeof $done === 'undefined' ? undefined : $done));
     });
+    if (["response"].includes(__wayxHost.response === undefined ? 'request' : 'response'))
+        return (function (nativeDone, run) {
+            let attempted = false, nativeFailed = false, nativeError;
+            const done = value => {
+                if (attempted)
+                    return;
+                attempted = true;
+                try {
+                    return nativeDone(value);
+                }
+                catch (error) {
+                    nativeFailed = true;
+                    nativeError = error;
+                    throw error;
+                }
+            };
+            const recover = error => {
+                if (nativeFailed && error === nativeError)
+                    throw error;
+                try {
+                    if (typeof console !== 'undefined' && typeof console.log === 'function')
+                        console.log('[WayX] HTTP script failed; ' + (attempted ? 'completion already submitted' : 'passing through unchanged'), error);
+                }
+                catch { }
+                if (!attempted)
+                    return done({});
+            };
+            try {
+                const result = run(done);
+                return result && typeof result.then === 'function' ? Promise.resolve(result).catch(recover) : result;
+            }
+            catch (error) {
+                return recover(error);
+            }
+        })(__wayxHost.done, __wayxGuardDone => { __wayxHost.done = __wayxGuardDone; return __wayxExecute(); });
+    return __wayxExecute();
 })();

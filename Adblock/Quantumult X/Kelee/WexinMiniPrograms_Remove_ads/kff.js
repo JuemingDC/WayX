@@ -28,7 +28,40 @@
             delete result.bodyBytes;
         }
     } return result; };
-    return (function ($request, $response, $done) {
+    return (function (nativeDone, run) {
+        let attempted = false, nativeFailed = false, nativeError;
+        const done = value => {
+            if (attempted)
+                return;
+            attempted = true;
+            try {
+                return nativeDone(value);
+            }
+            catch (error) {
+                nativeFailed = true;
+                nativeError = error;
+                throw error;
+            }
+        };
+        const recover = error => {
+            if (nativeFailed && error === nativeError)
+                throw error;
+            try {
+                if (typeof console !== 'undefined' && typeof console.log === 'function')
+                    console.log('[WayX] HTTP script failed; ' + (attempted ? 'completion already submitted' : 'passing through unchanged'), error);
+            }
+            catch { }
+            if (!attempted)
+                return done({});
+        };
+        try {
+            const result = run(done);
+            return result && typeof result.then === 'function' ? Promise.resolve(result).catch(recover) : result;
+        }
+        catch (error) {
+            return recover(error);
+        }
+    })(__wayxDone, __wayxGuardDone => (function ($request, $response, $done) {
         return (function () {
             let obj = JSON.parse($response.body);
             obj.data.config = JSON.stringify(JSON.parse(obj.data.config).filter(item => !item.id.includes("13502ede-f5fd-4d5c-90f5-f2454a30fda0")));
@@ -51,6 +84,6 @@
             delete result.body;
         }
         __wayxCompleted = true;
-        return __wayxDone(result);
-    });
+        return __wayxGuardDone(result);
+    }));
 })();

@@ -191,7 +191,7 @@
     if ((__wayxHost.response === undefined ? 'request' : 'response') !== "response")
         throw new Error('Unregistered HTTP source/target declaration');
     const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "statusCode", "responseTrailers": null, "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "responseTrailers": null, "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" } } };
-    return (function (config, host, run) {
+    const __wayxExecute = () => (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
         const target = config.apiPlan.target;
@@ -509,4 +509,40 @@
             }).call(this);
         }).call(this, Object.prototype.hasOwnProperty.call(__wayxScope, "atob") ? __wayxScope["atob"] : (typeof atob === 'undefined' ? undefined : atob), Object.prototype.hasOwnProperty.call(__wayxScope, "$response") ? __wayxScope["$response"] : (typeof $response === 'undefined' ? undefined : $response), Object.prototype.hasOwnProperty.call(__wayxScope, "$done") ? __wayxScope["$done"] : (typeof $done === 'undefined' ? undefined : $done));
     });
+    if (["response"].includes(__wayxHost.response === undefined ? 'request' : 'response'))
+        return (function (nativeDone, run) {
+            let attempted = false, nativeFailed = false, nativeError;
+            const done = value => {
+                if (attempted)
+                    return;
+                attempted = true;
+                try {
+                    return nativeDone(value);
+                }
+                catch (error) {
+                    nativeFailed = true;
+                    nativeError = error;
+                    throw error;
+                }
+            };
+            const recover = error => {
+                if (nativeFailed && error === nativeError)
+                    throw error;
+                try {
+                    if (typeof console !== 'undefined' && typeof console.log === 'function')
+                        console.log('[WayX] HTTP script failed; ' + (attempted ? 'completion already submitted' : 'passing through unchanged'), error);
+                }
+                catch { }
+                if (!attempted)
+                    return done({});
+            };
+            try {
+                const result = run(done);
+                return result && typeof result.then === 'function' ? Promise.resolve(result).catch(recover) : result;
+            }
+            catch (error) {
+                return recover(error);
+            }
+        })(__wayxHost.done, __wayxGuardDone => { __wayxHost.done = __wayxGuardDone; return __wayxExecute(); });
+    return __wayxExecute();
 })();

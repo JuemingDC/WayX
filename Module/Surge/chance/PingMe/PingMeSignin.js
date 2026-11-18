@@ -1131,7 +1131,7 @@
             return __wayxHost.done({});
         __wayxHost.argument = undefined;
     }
-    return (function (config, host, run) {
+    const __wayxExecute = () => (function (config, host, run) {
         const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
         const fail = message => { throw new TypeError('WayX API: ' + message); };
         const source = config.apiPlan.source;
@@ -2156,4 +2156,5 @@
             }).call(this);
         }
     });
+    return __wayxExecute();
 })();
