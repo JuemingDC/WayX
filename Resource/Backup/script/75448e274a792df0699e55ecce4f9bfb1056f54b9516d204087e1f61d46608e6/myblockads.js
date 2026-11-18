@@ -1,4 +1,4 @@
-// 2026-10-21 20:00
+// 2026-11-18 10:32
 // 网页元素 #===id, .===class, .div > p:has(> a[target="_blank"])
 
 const url = $request.url;
@@ -33,11 +33,18 @@ if (isHtml) {
     </head>`;
     body = body.replace(/<\/head>/, cssBlock);
   } else if (/^https:\/\/javdb\.com\//.test(url)) {
-    // JavDB：去除顶部域名, 底部下载提醒, 播放页广告
+    // JavDB：去除顶部域名, 底部下载提醒, 播放页广告, 年龄验证弹窗, 底部官方App横幅
+    // 年龄验证弹窗：服务器按请求有无 over18 cookie 决定是否下发该节点（无痕/清 cookie 必现），整块删除；以弹窗内独有的 /over18?respond=1 确认链接锚定块尾，CSS 再兜底
+    body = body.replace(
+      /<div\b[^>]*\bover18-modal\b[^>]*>[\s\S]*?\/over18\?respond=1[\s\S]*?<\/footer>\s*<\/div>\s*<\/div>/,
+      ""
+    );
     const cssBlock = `
       <style>
+        .app-banner,
         .app-desktop-banner, 
         .moj-content,
+        .over18-modal,
         .sda-content,
         .sub-header { 
           display: none !important; 
@@ -45,6 +52,24 @@ if (isHtml) {
       </style>
     </head>`;
     body = body.replace(/<\/head>/, cssBlock);
+  } else if (/^https:\/\/(?:baihubi\.com|baihuse\.com|paipancon\.com|wumaob\.com|wumaobi\.com|wumaobi\.org)\//.test(url)) {
+    // 无毛逼（发布页前 6 个备用域名同站同模板）：广告全靠注入脚本（弹窗/底部动态/信息流创意均为运行时生成，HTML 里无静态广告节点），逐个摘除加载器与检测脚本
+    body = body
+      // 弹窗网络加载器（内联注入 unfortunateheart 轮换域名脚本）
+      .replace(/<script[^>]*>(?:(?!<\/script>)[\s\S])*?unfortunateheart\.com(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
+      // Popunder 引擎（webpack 打包，options 内含 wellgroomed-imagination 轮换域名，点击弹窗、频控 3 次/小时）
+      .replace(/<script[^>]*>(?:(?!<\/script>)[\s\S])*?wellgroomed-imagination\.com(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
+      // WASM 广告 SDK（decodeURI 混淆 + wasm 载荷，版本 1.1.90-st；标签带 data-cfasync 属性）
+      .replace(/<script[^>]*>!function\(\)\{"use strict";for\(var t=decodeURI\("[\s\S]*?<\/script>/g, "")
+      // 静态广告脚本标签（轮换域名 in.js）
+      .replace(/<script[^>]*src="\/\/[^"/]+\/in\.js"[^>]*><\/script>/g, "")
+      // 反屏蔽检测（fetch 谷歌广告域名探活，命中后 5% 概率往 #body 前插「检测到广告屏蔽器」提示块）
+      .replace(/<script[^>]*>(?:(?!<\/script>)[\s\S])*?hasAdBlock(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
+      // 站内推广 moechat：删展示脚本与广告位本体（首次点击弹出、每天一次）
+      .replace(/<script[^>]*>(?:(?!<\/script>)[\s\S])*?moechatClickTime(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
+      .replace(/<div\b[^>]*\bid=moechat_ads\b[^>]*>[\s\S]*?<\/div>/g, "");
+    // 详情页「加入vip高清无广告」开通按钮：连同居中容器整块摘除（纯展示元素，不影响播放）
+    body = body.replace(/<div class=text-center><a href=\/user\/buy><button[^>]*>[^<]*高清无广告[^<]*<\/button><\/a><\/div>/g, "");
   } else if (/^https:\/\/www\.(?:hgeme|xn--wcv59z)\.com\//.test(url)) {
     // 观影：移除机场推荐横幅广告
     let injectCode = `

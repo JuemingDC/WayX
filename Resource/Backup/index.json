@@ -3172,14 +3172,14 @@
     "Resource/Backup/plugin/f814374e65233b8cd066124933b5a9b31cd2f406db7ac708775ed75a07732ee4/webpage.lpx": {
       "url": "https://rucu6.pages.dev/Plugins/webpage.lpx",
       "path": "Resource/Backup/plugin/f814374e65233b8cd066124933b5a9b31cd2f406db7ac708775ed75a07732ee4/webpage.lpx",
-      "sha256": "b51b1d8debf9324d4dcf681460b20271b98c9ad6ee7b39559cf18cad995084d1",
-      "size": 6574,
+      "sha256": "b340b08659ea8a7fd2e7bdce4f5bafd055c2b22d951db62d5d81d1b86398c2c5",
+      "size": 6938,
       "kind": "plugin",
       "provenance": "run-response",
       "acquiredUrl": "https://rucu6.pages.dev/Plugins/webpage.lpx",
       "author": "chance",
       "category": "Upstream plugin backup",
-      "updatedAt": "2026-11-02T07:24:03.325Z"
+      "updatedAt": "2026-11-18T03:01:37.727Z"
     },
     "Resource/Backup/plugin/dc8d390bf255c74fd093fe6eabd020466e0b665d4ef716863cac5dac75b700d6/youtube_maasea.lpx": {
       "url": "https://rucu6.pages.dev/Plugins/youtube_maasea.lpx",
@@ -5298,12 +5298,12 @@
     "Resource/Backup/script/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6/myblockads.js": {
       "url": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
       "path": "Resource/Backup/script/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6/myblockads.js",
-      "sha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d",
-      "size": 8785,
+      "sha256": "df863997edf0e9211dbfb6713a1add0123ddcfb21dd683bccca9bb02b0f496eb",
+      "size": 11242,
       "kind": "script",
       "author": "chance",
       "category": "Upstream script backup",
-      "updatedAt": "2026-11-01T13:23:29.437Z"
+      "updatedAt": "2026-11-18T03:01:38.377Z"
     },
     "Resource/Backup/script/0ff77e6a08bcc0a1faa6cdde63dec8da3c3c46cf097b6f1e9df778b111f37ec3/ehentai.js": {
       "url": "https://rucu6.pages.dev/Scripts/webpage/ehentai.js",
@@ -5328,12 +5328,12 @@
     "Resource/Backup/script/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160/missav.js": {
       "url": "https://rucu6.pages.dev/Scripts/webpage/missav.js",
       "path": "Resource/Backup/script/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160/missav.js",
-      "sha256": "c4acd7b5899574122a3dfc3954c65777534f16af1ad41984bcac4d4848c55c81",
-      "size": 5741,
+      "sha256": "dbcb056bea0a9d8028c6c09d50ca777a089d2844b0038ace0b43a83ca7f3b0e3",
+      "size": 5901,
       "kind": "script",
       "author": "chance",
       "category": "Upstream script backup",
-      "updatedAt": "2026-11-18T00:55:55.511Z"
+      "updatedAt": "2026-11-18T03:01:38.377Z"
     },
     "Resource/Backup/script/a8d59ed8d2ba67d07ab534966aa75f8c25a234e06e52a28e3dd497804082b745/pornhub.js": {
       "url": "https://rucu6.pages.dev/Scripts/webpage/pornhub.js",
@@ -28927,6 +28927,290 @@
       "runtimePolicyVersion": 13,
       "logicalPath": "Script/Adblock/kelee.one-b1634469cda4/qx/Umetrip_remove_ads.js"
     },
+    "Adblock/Quantumult X/RuCu6/Webpage/myblockads.js": {
+      "path": "Adblock/Quantumult X/RuCu6/Webpage/myblockads.js",
+      "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
+      "sourceSha256": "df863997edf0e9211dbfb6713a1add0123ddcfb21dd683bccca9bb02b0f496eb",
+      "sha256": "8f99ad00980b81b2e9ebe3789f24df1959ddd9de43cde5127eda11a3f0793172",
+      "from": "loon",
+      "targetClient": "qx",
+      "directionPolicyVersion": 2,
+      "targets": [
+        "qx"
+      ],
+      "conversionTargets": [
+        "qx"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "phase": "response",
+            "responseBody": true,
+            "binary": false,
+            "binaryKnown": true,
+            "name": "myblockads.js",
+            "from": "loon",
+            "to": "qx",
+            "apiPlan": {
+              "version": 1,
+              "qxHttp": {
+                "responseTrailers": null,
+                "style": "promise",
+                "root": "$task.fetch",
+                "optionsRoot": "opts",
+                "redirect": "redirection",
+                "cookie": "auto-cookie",
+                "tls": "skip-cert-verify",
+                "policy": "policy",
+                "timeoutMs": null,
+                "directPolicy": "direct",
+                "defaults": {
+                  "redirect": true,
+                  "cookie": false,
+                  "tls": false
+                }
+              },
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "status",
+                "responseTrailers": "h2_trailers",
+                "scriptStartTime": "date",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": true
+                },
+                "http": {
+                  "responseTrailers": "h2_trailers",
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "node",
+                  "timeoutMs": 1,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": true
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "openUrl",
+                  "media": "mediaUrl",
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": true,
+                  "delay": true
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "typed"
+              },
+              "target": {
+                "responseStatus": "statusCode",
+                "responseTrailers": null,
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "responseTrailers": null,
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": "open-url",
+                  "media": "media-url",
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              }
+            },
+            "runtimePolicyVersion": 13,
+            "omittedParameters": [
+              "undocumented-qx-parameters"
+            ]
+          },
+          "surge": {
+            "phase": "response",
+            "responseBody": true,
+            "binary": false,
+            "binaryKnown": true,
+            "name": "myblockads.js",
+            "from": "loon",
+            "to": "surge",
+            "apiPlan": {
+              "version": 1,
+              "qxHttp": {
+                "responseTrailers": null,
+                "style": "promise",
+                "root": "$task.fetch",
+                "optionsRoot": "opts",
+                "redirect": "redirection",
+                "cookie": "auto-cookie",
+                "tls": "skip-cert-verify",
+                "policy": "policy",
+                "timeoutMs": null,
+                "directPolicy": "direct",
+                "defaults": {
+                  "redirect": true,
+                  "cookie": false,
+                  "tls": false
+                }
+              },
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "status",
+                "responseTrailers": "h2_trailers",
+                "scriptStartTime": "date",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": true
+                },
+                "http": {
+                  "responseTrailers": "h2_trailers",
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "node",
+                  "timeoutMs": 1,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": true
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "openUrl",
+                  "media": "mediaUrl",
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": true,
+                  "delay": true
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "typed"
+              },
+              "target": {
+                "responseStatus": "status",
+                "responseTrailers": "trailers",
+                "scriptStartTime": "epoch-seconds",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "responseTrailers": "trailers",
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "policy",
+                  "timeoutMs": 1000,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "url",
+                  "media": "media-url",
+                  "action": "action",
+                  "openAction": "open-url",
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "string"
+              }
+            },
+            "runtimePolicyVersion": 13,
+            "omittedParameters": []
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "runtimePolicyVersion": 13,
+      "logicalPath": "Script/Adblock/rucu6.pages.dev-75448e274a79/qx/myblockads.js"
+    },
     "Adblock/Quantumult X/RuCu6/Webpage/pornhub.js": {
       "path": "Adblock/Quantumult X/RuCu6/Webpage/pornhub.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/pornhub.js",
@@ -29214,8 +29498,8 @@
     "Adblock/Quantumult X/RuCu6/Webpage/missav.js": {
       "path": "Adblock/Quantumult X/RuCu6/Webpage/missav.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/missav.js",
-      "sourceSha256": "c4acd7b5899574122a3dfc3954c65777534f16af1ad41984bcac4d4848c55c81",
-      "sha256": "435d64e767ac5aa4fce8709527b58b08927f8b27fbe6d3cd68ca047030e1a8aa",
+      "sourceSha256": "dbcb056bea0a9d8028c6c09d50ca777a089d2844b0038ace0b43a83ca7f3b0e3",
+      "sha256": "bac2d67fb770e2c0d8d19eb3c46e349266c393bc83a73310605b02f727c42c8c",
       "from": "loon",
       "targetClient": "qx",
       "directionPolicyVersion": 2,
@@ -29503,290 +29787,6 @@
       ],
       "runtimePolicyVersion": 13,
       "logicalPath": "Script/Adblock/rucu6.pages.dev-a7046a06dbbc/qx/missav.js"
-    },
-    "Adblock/Quantumult X/RuCu6/Webpage/myblockads.js": {
-      "path": "Adblock/Quantumult X/RuCu6/Webpage/myblockads.js",
-      "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
-      "sourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d",
-      "sha256": "0cdaef0391c6a3152a1d8bea9a4176f6286c67a08a2b0c4444a602cbb7819d79",
-      "from": "loon",
-      "targetClient": "qx",
-      "directionPolicyVersion": 2,
-      "targets": [
-        "qx"
-      ],
-      "conversionTargets": [
-        "qx"
-      ],
-      "contexts": {
-        "response": {
-          "qx": {
-            "phase": "response",
-            "responseBody": true,
-            "binary": false,
-            "binaryKnown": true,
-            "name": "myblockads.js",
-            "from": "loon",
-            "to": "qx",
-            "apiPlan": {
-              "version": 1,
-              "qxHttp": {
-                "responseTrailers": null,
-                "style": "promise",
-                "root": "$task.fetch",
-                "optionsRoot": "opts",
-                "redirect": "redirection",
-                "cookie": "auto-cookie",
-                "tls": "skip-cert-verify",
-                "policy": "policy",
-                "timeoutMs": null,
-                "directPolicy": "direct",
-                "defaults": {
-                  "redirect": true,
-                  "cookie": false,
-                  "tls": false
-                }
-              },
-              "methods": [
-                "get",
-                "post",
-                "put",
-                "delete",
-                "head",
-                "options",
-                "patch"
-              ],
-              "source": {
-                "responseStatus": "status",
-                "responseTrailers": "h2_trailers",
-                "scriptStartTime": "date",
-                "binaryField": "body",
-                "store": {
-                  "style": "store",
-                  "read": "read",
-                  "write": "write",
-                  "remove": null,
-                  "undefinedDeletes": true
-                },
-                "http": {
-                  "responseTrailers": "h2_trailers",
-                  "style": "callback",
-                  "root": "$httpClient",
-                  "optionsRoot": null,
-                  "redirect": "auto-redirect",
-                  "cookie": "auto-cookie",
-                  "tls": "insecure",
-                  "policy": "node",
-                  "timeoutMs": 1,
-                  "directPolicy": "DIRECT",
-                  "defaults": {
-                    "redirect": true,
-                    "cookie": true,
-                    "tls": true
-                  }
-                },
-                "notification": {
-                  "root": "$notification.post",
-                  "open": "openUrl",
-                  "media": "mediaUrl",
-                  "action": null,
-                  "openAction": null,
-                  "stringLink": true,
-                  "delay": true
-                },
-                "completion": {
-                  "statusEncoding": "number",
-                  "synthetic": "response"
-                },
-                "argument": "typed"
-              },
-              "target": {
-                "responseStatus": "statusCode",
-                "responseTrailers": null,
-                "scriptStartTime": "absent",
-                "binaryField": "bodyBytes",
-                "store": {
-                  "style": "prefs",
-                  "read": "valueForKey",
-                  "write": "setValueForKey",
-                  "remove": "removeValueForKey",
-                  "undefinedDeletes": false
-                },
-                "http": {
-                  "responseTrailers": null,
-                  "style": "promise",
-                  "root": "$task.fetch",
-                  "optionsRoot": "opts",
-                  "redirect": "redirection",
-                  "cookie": "auto-cookie",
-                  "tls": "skip-cert-verify",
-                  "policy": "policy",
-                  "timeoutMs": null,
-                  "directPolicy": "direct",
-                  "defaults": {
-                    "redirect": true,
-                    "cookie": false,
-                    "tls": false
-                  }
-                },
-                "notification": {
-                  "root": "$notify",
-                  "open": "open-url",
-                  "media": "media-url",
-                  "action": null,
-                  "openAction": null,
-                  "stringLink": false,
-                  "delay": false
-                },
-                "completion": {
-                  "statusEncoding": "line",
-                  "synthetic": "flat"
-                },
-                "argument": "absent"
-              }
-            },
-            "runtimePolicyVersion": 13,
-            "omittedParameters": [
-              "undocumented-qx-parameters"
-            ]
-          },
-          "surge": {
-            "phase": "response",
-            "responseBody": true,
-            "binary": false,
-            "binaryKnown": true,
-            "name": "myblockads.js",
-            "from": "loon",
-            "to": "surge",
-            "apiPlan": {
-              "version": 1,
-              "qxHttp": {
-                "responseTrailers": null,
-                "style": "promise",
-                "root": "$task.fetch",
-                "optionsRoot": "opts",
-                "redirect": "redirection",
-                "cookie": "auto-cookie",
-                "tls": "skip-cert-verify",
-                "policy": "policy",
-                "timeoutMs": null,
-                "directPolicy": "direct",
-                "defaults": {
-                  "redirect": true,
-                  "cookie": false,
-                  "tls": false
-                }
-              },
-              "methods": [
-                "get",
-                "post",
-                "put",
-                "delete",
-                "head",
-                "options",
-                "patch"
-              ],
-              "source": {
-                "responseStatus": "status",
-                "responseTrailers": "h2_trailers",
-                "scriptStartTime": "date",
-                "binaryField": "body",
-                "store": {
-                  "style": "store",
-                  "read": "read",
-                  "write": "write",
-                  "remove": null,
-                  "undefinedDeletes": true
-                },
-                "http": {
-                  "responseTrailers": "h2_trailers",
-                  "style": "callback",
-                  "root": "$httpClient",
-                  "optionsRoot": null,
-                  "redirect": "auto-redirect",
-                  "cookie": "auto-cookie",
-                  "tls": "insecure",
-                  "policy": "node",
-                  "timeoutMs": 1,
-                  "directPolicy": "DIRECT",
-                  "defaults": {
-                    "redirect": true,
-                    "cookie": true,
-                    "tls": true
-                  }
-                },
-                "notification": {
-                  "root": "$notification.post",
-                  "open": "openUrl",
-                  "media": "mediaUrl",
-                  "action": null,
-                  "openAction": null,
-                  "stringLink": true,
-                  "delay": true
-                },
-                "completion": {
-                  "statusEncoding": "number",
-                  "synthetic": "response"
-                },
-                "argument": "typed"
-              },
-              "target": {
-                "responseStatus": "status",
-                "responseTrailers": "trailers",
-                "scriptStartTime": "epoch-seconds",
-                "binaryField": "body",
-                "store": {
-                  "style": "store",
-                  "read": "read",
-                  "write": "write",
-                  "remove": null,
-                  "undefinedDeletes": false
-                },
-                "http": {
-                  "responseTrailers": "trailers",
-                  "style": "callback",
-                  "root": "$httpClient",
-                  "optionsRoot": null,
-                  "redirect": "auto-redirect",
-                  "cookie": "auto-cookie",
-                  "tls": "insecure",
-                  "policy": "policy",
-                  "timeoutMs": 1000,
-                  "directPolicy": "DIRECT",
-                  "defaults": {
-                    "redirect": true,
-                    "cookie": true,
-                    "tls": false
-                  }
-                },
-                "notification": {
-                  "root": "$notification.post",
-                  "open": "url",
-                  "media": "media-url",
-                  "action": "action",
-                  "openAction": "open-url",
-                  "stringLink": false,
-                  "delay": false
-                },
-                "completion": {
-                  "statusEncoding": "number",
-                  "synthetic": "response"
-                },
-                "argument": "string"
-              }
-            },
-            "runtimePolicyVersion": 13,
-            "omittedParameters": []
-          }
-        }
-      },
-      "features": [
-        "$done",
-        "$request.url",
-        "$response.body"
-      ],
-      "runtimePolicyVersion": 13,
-      "logicalPath": "Script/Adblock/rucu6.pages.dev-75448e274a79/qx/myblockads.js"
     },
     "Adblock/Quantumult X/RuCu6/Webpage/hanime.js": {
       "path": "Adblock/Quantumult X/RuCu6/Webpage/hanime.js",
@@ -59453,6 +59453,290 @@
       "runtimePolicyVersion": 13,
       "logicalPath": "Script/Adblock/kelee.one-b1634469cda4/surge/Umetrip_remove_ads.js"
     },
+    "Adblock/Surge/RuCu6/Webpage/myblockads.js": {
+      "path": "Adblock/Surge/RuCu6/Webpage/myblockads.js",
+      "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
+      "sourceSha256": "df863997edf0e9211dbfb6713a1add0123ddcfb21dd683bccca9bb02b0f496eb",
+      "sha256": "84d469accf926c4a3365260a0b0c8f2dd882842cc425944a93649775cf4dfd4d",
+      "from": "loon",
+      "targetClient": "surge",
+      "directionPolicyVersion": 2,
+      "targets": [
+        "surge"
+      ],
+      "conversionTargets": [
+        "surge"
+      ],
+      "contexts": {
+        "response": {
+          "qx": {
+            "phase": "response",
+            "responseBody": true,
+            "binary": false,
+            "binaryKnown": true,
+            "name": "myblockads.js",
+            "from": "loon",
+            "to": "qx",
+            "apiPlan": {
+              "version": 1,
+              "qxHttp": {
+                "responseTrailers": null,
+                "style": "promise",
+                "root": "$task.fetch",
+                "optionsRoot": "opts",
+                "redirect": "redirection",
+                "cookie": "auto-cookie",
+                "tls": "skip-cert-verify",
+                "policy": "policy",
+                "timeoutMs": null,
+                "directPolicy": "direct",
+                "defaults": {
+                  "redirect": true,
+                  "cookie": false,
+                  "tls": false
+                }
+              },
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "status",
+                "responseTrailers": "h2_trailers",
+                "scriptStartTime": "date",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": true
+                },
+                "http": {
+                  "responseTrailers": "h2_trailers",
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "node",
+                  "timeoutMs": 1,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": true
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "openUrl",
+                  "media": "mediaUrl",
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": true,
+                  "delay": true
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "typed"
+              },
+              "target": {
+                "responseStatus": "statusCode",
+                "responseTrailers": null,
+                "scriptStartTime": "absent",
+                "binaryField": "bodyBytes",
+                "store": {
+                  "style": "prefs",
+                  "read": "valueForKey",
+                  "write": "setValueForKey",
+                  "remove": "removeValueForKey",
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "responseTrailers": null,
+                  "style": "promise",
+                  "root": "$task.fetch",
+                  "optionsRoot": "opts",
+                  "redirect": "redirection",
+                  "cookie": "auto-cookie",
+                  "tls": "skip-cert-verify",
+                  "policy": "policy",
+                  "timeoutMs": null,
+                  "directPolicy": "direct",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": false,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notify",
+                  "open": "open-url",
+                  "media": "media-url",
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "line",
+                  "synthetic": "flat"
+                },
+                "argument": "absent"
+              }
+            },
+            "runtimePolicyVersion": 13,
+            "omittedParameters": [
+              "undocumented-qx-parameters"
+            ]
+          },
+          "surge": {
+            "phase": "response",
+            "responseBody": true,
+            "binary": false,
+            "binaryKnown": true,
+            "name": "myblockads.js",
+            "from": "loon",
+            "to": "surge",
+            "apiPlan": {
+              "version": 1,
+              "qxHttp": {
+                "responseTrailers": null,
+                "style": "promise",
+                "root": "$task.fetch",
+                "optionsRoot": "opts",
+                "redirect": "redirection",
+                "cookie": "auto-cookie",
+                "tls": "skip-cert-verify",
+                "policy": "policy",
+                "timeoutMs": null,
+                "directPolicy": "direct",
+                "defaults": {
+                  "redirect": true,
+                  "cookie": false,
+                  "tls": false
+                }
+              },
+              "methods": [
+                "get",
+                "post",
+                "put",
+                "delete",
+                "head",
+                "options",
+                "patch"
+              ],
+              "source": {
+                "responseStatus": "status",
+                "responseTrailers": "h2_trailers",
+                "scriptStartTime": "date",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": true
+                },
+                "http": {
+                  "responseTrailers": "h2_trailers",
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "node",
+                  "timeoutMs": 1,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": true
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "openUrl",
+                  "media": "mediaUrl",
+                  "action": null,
+                  "openAction": null,
+                  "stringLink": true,
+                  "delay": true
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "typed"
+              },
+              "target": {
+                "responseStatus": "status",
+                "responseTrailers": "trailers",
+                "scriptStartTime": "epoch-seconds",
+                "binaryField": "body",
+                "store": {
+                  "style": "store",
+                  "read": "read",
+                  "write": "write",
+                  "remove": null,
+                  "undefinedDeletes": false
+                },
+                "http": {
+                  "responseTrailers": "trailers",
+                  "style": "callback",
+                  "root": "$httpClient",
+                  "optionsRoot": null,
+                  "redirect": "auto-redirect",
+                  "cookie": "auto-cookie",
+                  "tls": "insecure",
+                  "policy": "policy",
+                  "timeoutMs": 1000,
+                  "directPolicy": "DIRECT",
+                  "defaults": {
+                    "redirect": true,
+                    "cookie": true,
+                    "tls": false
+                  }
+                },
+                "notification": {
+                  "root": "$notification.post",
+                  "open": "url",
+                  "media": "media-url",
+                  "action": "action",
+                  "openAction": "open-url",
+                  "stringLink": false,
+                  "delay": false
+                },
+                "completion": {
+                  "statusEncoding": "number",
+                  "synthetic": "response"
+                },
+                "argument": "string"
+              }
+            },
+            "runtimePolicyVersion": 13,
+            "omittedParameters": []
+          }
+        }
+      },
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "runtimePolicyVersion": 13,
+      "logicalPath": "Script/Adblock/rucu6.pages.dev-75448e274a79/surge/myblockads.js"
+    },
     "Adblock/Surge/RuCu6/Webpage/pornhub.js": {
       "path": "Adblock/Surge/RuCu6/Webpage/pornhub.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/pornhub.js",
@@ -59740,8 +60024,8 @@
     "Adblock/Surge/RuCu6/Webpage/missav.js": {
       "path": "Adblock/Surge/RuCu6/Webpage/missav.js",
       "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/missav.js",
-      "sourceSha256": "c4acd7b5899574122a3dfc3954c65777534f16af1ad41984bcac4d4848c55c81",
-      "sha256": "037239235b773bd082731cd3893e6510d4cfffe660c26f50dc43ef1297189e19",
+      "sourceSha256": "dbcb056bea0a9d8028c6c09d50ca777a089d2844b0038ace0b43a83ca7f3b0e3",
+      "sha256": "58d1fddf712128f815e65a42b8a177e68498b3e2227e28bd052bf418768ae559",
       "from": "loon",
       "targetClient": "surge",
       "directionPolicyVersion": 2,
@@ -60029,290 +60313,6 @@
       ],
       "runtimePolicyVersion": 13,
       "logicalPath": "Script/Adblock/rucu6.pages.dev-a7046a06dbbc/surge/missav.js"
-    },
-    "Adblock/Surge/RuCu6/Webpage/myblockads.js": {
-      "path": "Adblock/Surge/RuCu6/Webpage/myblockads.js",
-      "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
-      "sourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d",
-      "sha256": "cab8c0a74c77f7d4b497d98a8696264ec0d070eb6876faecc1c52ea69a5f376f",
-      "from": "loon",
-      "targetClient": "surge",
-      "directionPolicyVersion": 2,
-      "targets": [
-        "surge"
-      ],
-      "conversionTargets": [
-        "surge"
-      ],
-      "contexts": {
-        "response": {
-          "qx": {
-            "phase": "response",
-            "responseBody": true,
-            "binary": false,
-            "binaryKnown": true,
-            "name": "myblockads.js",
-            "from": "loon",
-            "to": "qx",
-            "apiPlan": {
-              "version": 1,
-              "qxHttp": {
-                "responseTrailers": null,
-                "style": "promise",
-                "root": "$task.fetch",
-                "optionsRoot": "opts",
-                "redirect": "redirection",
-                "cookie": "auto-cookie",
-                "tls": "skip-cert-verify",
-                "policy": "policy",
-                "timeoutMs": null,
-                "directPolicy": "direct",
-                "defaults": {
-                  "redirect": true,
-                  "cookie": false,
-                  "tls": false
-                }
-              },
-              "methods": [
-                "get",
-                "post",
-                "put",
-                "delete",
-                "head",
-                "options",
-                "patch"
-              ],
-              "source": {
-                "responseStatus": "status",
-                "responseTrailers": "h2_trailers",
-                "scriptStartTime": "date",
-                "binaryField": "body",
-                "store": {
-                  "style": "store",
-                  "read": "read",
-                  "write": "write",
-                  "remove": null,
-                  "undefinedDeletes": true
-                },
-                "http": {
-                  "responseTrailers": "h2_trailers",
-                  "style": "callback",
-                  "root": "$httpClient",
-                  "optionsRoot": null,
-                  "redirect": "auto-redirect",
-                  "cookie": "auto-cookie",
-                  "tls": "insecure",
-                  "policy": "node",
-                  "timeoutMs": 1,
-                  "directPolicy": "DIRECT",
-                  "defaults": {
-                    "redirect": true,
-                    "cookie": true,
-                    "tls": true
-                  }
-                },
-                "notification": {
-                  "root": "$notification.post",
-                  "open": "openUrl",
-                  "media": "mediaUrl",
-                  "action": null,
-                  "openAction": null,
-                  "stringLink": true,
-                  "delay": true
-                },
-                "completion": {
-                  "statusEncoding": "number",
-                  "synthetic": "response"
-                },
-                "argument": "typed"
-              },
-              "target": {
-                "responseStatus": "statusCode",
-                "responseTrailers": null,
-                "scriptStartTime": "absent",
-                "binaryField": "bodyBytes",
-                "store": {
-                  "style": "prefs",
-                  "read": "valueForKey",
-                  "write": "setValueForKey",
-                  "remove": "removeValueForKey",
-                  "undefinedDeletes": false
-                },
-                "http": {
-                  "responseTrailers": null,
-                  "style": "promise",
-                  "root": "$task.fetch",
-                  "optionsRoot": "opts",
-                  "redirect": "redirection",
-                  "cookie": "auto-cookie",
-                  "tls": "skip-cert-verify",
-                  "policy": "policy",
-                  "timeoutMs": null,
-                  "directPolicy": "direct",
-                  "defaults": {
-                    "redirect": true,
-                    "cookie": false,
-                    "tls": false
-                  }
-                },
-                "notification": {
-                  "root": "$notify",
-                  "open": "open-url",
-                  "media": "media-url",
-                  "action": null,
-                  "openAction": null,
-                  "stringLink": false,
-                  "delay": false
-                },
-                "completion": {
-                  "statusEncoding": "line",
-                  "synthetic": "flat"
-                },
-                "argument": "absent"
-              }
-            },
-            "runtimePolicyVersion": 13,
-            "omittedParameters": [
-              "undocumented-qx-parameters"
-            ]
-          },
-          "surge": {
-            "phase": "response",
-            "responseBody": true,
-            "binary": false,
-            "binaryKnown": true,
-            "name": "myblockads.js",
-            "from": "loon",
-            "to": "surge",
-            "apiPlan": {
-              "version": 1,
-              "qxHttp": {
-                "responseTrailers": null,
-                "style": "promise",
-                "root": "$task.fetch",
-                "optionsRoot": "opts",
-                "redirect": "redirection",
-                "cookie": "auto-cookie",
-                "tls": "skip-cert-verify",
-                "policy": "policy",
-                "timeoutMs": null,
-                "directPolicy": "direct",
-                "defaults": {
-                  "redirect": true,
-                  "cookie": false,
-                  "tls": false
-                }
-              },
-              "methods": [
-                "get",
-                "post",
-                "put",
-                "delete",
-                "head",
-                "options",
-                "patch"
-              ],
-              "source": {
-                "responseStatus": "status",
-                "responseTrailers": "h2_trailers",
-                "scriptStartTime": "date",
-                "binaryField": "body",
-                "store": {
-                  "style": "store",
-                  "read": "read",
-                  "write": "write",
-                  "remove": null,
-                  "undefinedDeletes": true
-                },
-                "http": {
-                  "responseTrailers": "h2_trailers",
-                  "style": "callback",
-                  "root": "$httpClient",
-                  "optionsRoot": null,
-                  "redirect": "auto-redirect",
-                  "cookie": "auto-cookie",
-                  "tls": "insecure",
-                  "policy": "node",
-                  "timeoutMs": 1,
-                  "directPolicy": "DIRECT",
-                  "defaults": {
-                    "redirect": true,
-                    "cookie": true,
-                    "tls": true
-                  }
-                },
-                "notification": {
-                  "root": "$notification.post",
-                  "open": "openUrl",
-                  "media": "mediaUrl",
-                  "action": null,
-                  "openAction": null,
-                  "stringLink": true,
-                  "delay": true
-                },
-                "completion": {
-                  "statusEncoding": "number",
-                  "synthetic": "response"
-                },
-                "argument": "typed"
-              },
-              "target": {
-                "responseStatus": "status",
-                "responseTrailers": "trailers",
-                "scriptStartTime": "epoch-seconds",
-                "binaryField": "body",
-                "store": {
-                  "style": "store",
-                  "read": "read",
-                  "write": "write",
-                  "remove": null,
-                  "undefinedDeletes": false
-                },
-                "http": {
-                  "responseTrailers": "trailers",
-                  "style": "callback",
-                  "root": "$httpClient",
-                  "optionsRoot": null,
-                  "redirect": "auto-redirect",
-                  "cookie": "auto-cookie",
-                  "tls": "insecure",
-                  "policy": "policy",
-                  "timeoutMs": 1000,
-                  "directPolicy": "DIRECT",
-                  "defaults": {
-                    "redirect": true,
-                    "cookie": true,
-                    "tls": false
-                  }
-                },
-                "notification": {
-                  "root": "$notification.post",
-                  "open": "url",
-                  "media": "media-url",
-                  "action": "action",
-                  "openAction": "open-url",
-                  "stringLink": false,
-                  "delay": false
-                },
-                "completion": {
-                  "statusEncoding": "number",
-                  "synthetic": "response"
-                },
-                "argument": "string"
-              }
-            },
-            "runtimePolicyVersion": 13,
-            "omittedParameters": []
-          }
-        }
-      },
-      "features": [
-        "$done",
-        "$request.url",
-        "$response.body"
-      ],
-      "runtimePolicyVersion": 13,
-      "logicalPath": "Script/Adblock/rucu6.pages.dev-75448e274a79/surge/myblockads.js"
     },
     "Adblock/Surge/RuCu6/Webpage/hanime.js": {
       "path": "Adblock/Surge/RuCu6/Webpage/hanime.js",
@@ -112716,8 +112716,8 @@
     },
     "https://rucu6.pages.dev/Scripts/webpage/myblockads.js": {
       "path": "Resource/Backup/script-api/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6.json",
-      "sha256": "0ecf12e275bccfadbdef2ab01ef5337d7b5880df598e4a4f842e3cae4c68bd32",
-      "sourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d"
+      "sha256": "9874db52dbbe55cd9d6d01340380f4ebb6bfd532737c1353fcbe6b6ca56bfd02",
+      "sourceSha256": "df863997edf0e9211dbfb6713a1add0123ddcfb21dd683bccca9bb02b0f496eb"
     },
     "https://rucu6.pages.dev/Scripts/webpage/52ywy.js": {
       "path": "Resource/Backup/script-api/24bc13763e144e10fa2864b8c0239419987b1d1adbe8cd3ed6abbf7624ca0b19.json",
@@ -112741,8 +112741,8 @@
     },
     "https://rucu6.pages.dev/Scripts/webpage/missav.js": {
       "path": "Resource/Backup/script-api/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160.json",
-      "sha256": "b53d4df79a644609284b8aa40bbf31eb288c7fb3c470e7b2b008de0040574198",
-      "sourceSha256": "c4acd7b5899574122a3dfc3954c65777534f16af1ad41984bcac4d4848c55c81"
+      "sha256": "9a7c7c9cbdf85c08fbc13dca959699795e067cfaccf3126d58daeb8fdef0370c",
+      "sourceSha256": "dbcb056bea0a9d8028c6c09d50ca777a089d2844b0038ace0b43a83ca7f3b0e3"
     },
     "https://rucu6.pages.dev/Scripts/webpage/pornhub.js": {
       "path": "Resource/Backup/script-api/a8d59ed8d2ba67d07ab534966aa75f8c25a234e06e52a28e3dd497804082b745.json",

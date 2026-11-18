@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
-  "sourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d",
+  "sourceSha256": "df863997edf0e9211dbfb6713a1add0123ddcfb21dd683bccca9bb02b0f496eb",
   "sourceClients": [
     "loon"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d",
+    "sha256": "df863997edf0e9211dbfb6713a1add0123ddcfb21dd683bccca9bb02b0f496eb",
     "operations": [
       {
         "api": "$request.url",
@@ -48,9 +48,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 7264,
-        "end": 7279,
-        "line": 188,
+        "start": 9075,
+        "end": 9090,
+        "line": 213,
         "column": 3,
         "members": [
           "$done"
@@ -59,9 +59,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 7292,
-        "end": 7301,
-        "line": 190,
+        "start": 9103,
+        "end": 9112,
+        "line": 215,
         "column": 3,
         "members": [
           "$done"
@@ -79,7 +79,7 @@
         "sourceClient": "loon",
         "targetClient": "qx",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d",
+        "analysisSourceSha256": "df863997edf0e9211dbfb6713a1add0123ddcfb21dd683bccca9bb02b0f496eb",
         "operations": [
           {
             "id": "api:0",
@@ -165,9 +165,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 7264,
-              "end": 7279,
-              "line": 188,
+              "start": 9075,
+              "end": 9090,
+              "line": 213,
               "column": 3,
               "access": "call",
               "memberPath": []
@@ -189,9 +189,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 7292,
-              "end": 7301,
-              "line": 190,
+              "start": 9103,
+              "end": 9112,
+              "line": 215,
               "column": 3,
               "access": "call",
               "memberPath": []
@@ -215,7 +215,7 @@
         "sourceClient": "loon",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d",
+        "analysisSourceSha256": "df863997edf0e9211dbfb6713a1add0123ddcfb21dd683bccca9bb02b0f496eb",
         "operations": [
           {
             "id": "api:0",
@@ -301,9 +301,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 7264,
-              "end": 7279,
-              "line": 188,
+              "start": 9075,
+              "end": 9090,
+              "line": 213,
               "column": 3,
               "access": "call",
               "memberPath": []
@@ -325,9 +325,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 7292,
-              "end": 7301,
-              "line": 190,
+              "start": 9103,
+              "end": 9112,
+              "line": 215,
               "column": 3,
               "access": "call",
               "memberPath": []

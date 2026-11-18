@@ -60,10 +60,13 @@
                     body = body.replace(/<\/head>/, cssBlock);
                 }
                 else if (/^https:\/\/javdb\.com\//.test(url)) {
+                    body = body.replace(/<div\b[^>]*\bover18-modal\b[^>]*>[\s\S]*?\/over18\?respond=1[\s\S]*?<\/footer>\s*<\/div>\s*<\/div>/, "");
                     const cssBlock = `
       <style>
+        .app-banner,
         .app-desktop-banner, 
         .moj-content,
+        .over18-modal,
         .sda-content,
         .sub-header { 
           display: none !important; 
@@ -71,6 +74,17 @@
       </style>
     </head>`;
                     body = body.replace(/<\/head>/, cssBlock);
+                }
+                else if (/^https:\/\/(?:baihubi\.com|baihuse\.com|paipancon\.com|wumaob\.com|wumaobi\.com|wumaobi\.org)\//.test(url)) {
+                    body = body
+                        .replace(/<script[^>]*>(?:(?!<\/script>)[\s\S])*?unfortunateheart\.com(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
+                        .replace(/<script[^>]*>(?:(?!<\/script>)[\s\S])*?wellgroomed-imagination\.com(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
+                        .replace(/<script[^>]*>!function\(\)\{"use strict";for\(var t=decodeURI\("[\s\S]*?<\/script>/g, "")
+                        .replace(/<script[^>]*src="\/\/[^"/]+\/in\.js"[^>]*><\/script>/g, "")
+                        .replace(/<script[^>]*>(?:(?!<\/script>)[\s\S])*?hasAdBlock(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
+                        .replace(/<script[^>]*>(?:(?!<\/script>)[\s\S])*?moechatClickTime(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
+                        .replace(/<div\b[^>]*\bid=moechat_ads\b[^>]*>[\s\S]*?<\/div>/g, "");
+                    body = body.replace(/<div class=text-center><a href=\/user\/buy><button[^>]*>[^<]*高清无广告[^<]*<\/button><\/a><\/div>/g, "");
                 }
                 else if (/^https:\/\/www\.(?:hgeme|xn--wcv59z)\.com\//.test(url)) {
                     let injectCode = `

@@ -1262,8 +1262,8 @@
     },
     "https://rucu6.pages.dev/Scripts/webpage/myblockads.js": {
       "path": "Resource/Backup/script-api/75448e274a792df0699e55ecce4f9bfb1056f54b9516d204087e1f61d46608e6.json",
-      "sha256": "0ecf12e275bccfadbdef2ab01ef5337d7b5880df598e4a4f842e3cae4c68bd32",
-      "sourceSha256": "8fc43666281fba985e5c5fb5f79bf65e0df75d637206de216386b0ef20fdf95d"
+      "sha256": "9874db52dbbe55cd9d6d01340380f4ebb6bfd532737c1353fcbe6b6ca56bfd02",
+      "sourceSha256": "df863997edf0e9211dbfb6713a1add0123ddcfb21dd683bccca9bb02b0f496eb"
     },
     "https://rucu6.pages.dev/Scripts/webpage/52ywy.js": {
       "path": "Resource/Backup/script-api/24bc13763e144e10fa2864b8c0239419987b1d1adbe8cd3ed6abbf7624ca0b19.json",
@@ -1287,8 +1287,8 @@
     },
     "https://rucu6.pages.dev/Scripts/webpage/missav.js": {
       "path": "Resource/Backup/script-api/a7046a06dbbcd6c256d12fb312ba8d1dbefe59159914473541c874869071d160.json",
-      "sha256": "b53d4df79a644609284b8aa40bbf31eb288c7fb3c470e7b2b008de0040574198",
-      "sourceSha256": "c4acd7b5899574122a3dfc3954c65777534f16af1ad41984bcac4d4848c55c81"
+      "sha256": "9a7c7c9cbdf85c08fbc13dca959699795e067cfaccf3126d58daeb8fdef0370c",
+      "sourceSha256": "dbcb056bea0a9d8028c6c09d50ca777a089d2844b0038ace0b43a83ca7f3b0e3"
     },
     "https://rucu6.pages.dev/Scripts/webpage/pornhub.js": {
       "path": "Resource/Backup/script-api/a8d59ed8d2ba67d07ab534966aa75f8c25a234e06e52a28e3dd497804082b745.json",
@@ -2599,7 +2599,7 @@
       }
     ]
   },
-  "adapted": 1251,
+  "adapted": 1253,
   "blocked": 0,
   "excluded": 0,
   "universal": 421,
@@ -9929,6 +9929,46 @@
         "undocumented-qx-parameters"
       ],
       "path": "Adblock/Quantumult X/RuCu6/Webpage/myblockads.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Quantumult X/RuCu6/Webpage/Webpage.snippet",
+      "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
+      "from": [
+        "loon"
+      ],
+      "to": "qx",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Adblock/Quantumult X/RuCu6/Webpage/myblockads.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Surge/RuCu6/Webpage/Webpage.sgmodule",
+      "sourceUrl": "https://rucu6.pages.dev/Scripts/webpage/myblockads.js",
+      "from": [
+        "loon"
+      ],
+      "to": "surge",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$request.url",
+        "$response.body"
+      ],
+      "problems": [],
+      "omittedParameters": [
+        "undocumented-qx-parameters"
+      ],
+      "path": "Adblock/Surge/RuCu6/Webpage/myblockads.js",
       "retained": false
     },
     {
