@@ -417,66 +417,6 @@
       "allow_empty": true
     },
     {
-      "id": "nexitally-extra_cn_3",
-      "author": "Nexitally",
-      "format": "ruleset",
-      "category": "cn",
-      "policy": "DIRECT",
-      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_CN_3.list",
-      "license": "No license declared; attribution retained",
-      "mirrors": [
-        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/Extra_CN_3.list"
-      ]
-    },
-    {
-      "id": "nexitally-extra_proxies",
-      "author": "Nexitally",
-      "format": "ruleset",
-      "category": "proxy",
-      "policy": "PROXY",
-      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Proxies.list",
-      "license": "No license declared; attribution retained",
-      "mirrors": [
-        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/Extra_Proxies.list"
-      ]
-    },
-    {
-      "id": "nexitally-extra_ai",
-      "author": "Nexitally",
-      "format": "ruleset",
-      "category": "ai",
-      "policy": "ai",
-      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_AI.list",
-      "license": "No license declared; attribution retained",
-      "mirrors": [
-        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/Extra_AI.list"
-      ]
-    },
-    {
-      "id": "nexitally-extra_crypto",
-      "author": "Nexitally",
-      "format": "ruleset",
-      "category": "media",
-      "policy": "PROXY",
-      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/Extra_Crypto.list",
-      "license": "No license declared; attribution retained",
-      "mirrors": [
-        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/Extra_Crypto.list"
-      ]
-    },
-    {
-      "id": "nexitally-applepush",
-      "author": "Nexitally",
-      "format": "ruleset",
-      "category": "apple",
-      "policy": "DIRECT",
-      "url": "https://rawstatic.com/nexitallyy/ProxyRules/main/ApplePush.list",
-      "license": "No license declared; attribution retained",
-      "mirrors": [
-        "https://raw.githubusercontent.com/nexitallyy/ProxyRules/main/ApplePush.list"
-      ]
-    },
-    {
       "id": "tartarus-testflight",
       "author": "Tartarus2014",
       "format": "ruleset",

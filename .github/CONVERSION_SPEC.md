@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Revised | 2026-11-17 |
+| Revised | 2026-11-18 |
 | Maintainer | chance |
 | Authority | Single conversion and maintenance specification |
 | Format | English headings, dated tables, mapping examples |
@@ -265,6 +265,7 @@ http-response-jq ^https:\/\/api\.example\/v1 'setpath(["data","enabled"]; false)
 | 2026-10-25 | Policy precedence | Explicit row action > registered DIRECT/PROXY action > category/application default |
 | 2026-10-25 | Geosite | `category@attribute` and `category@!attribute`; preserve actual source attributes; no invented geography/policy inference |
 | 2026-10-25 | V2Fly + MetaCubeX | Joint primary inputs, independently acquired/verified; same exact rule → merge provenance |
+| 2026-11-18 | Disabled Rule upstream | Remove all five Nexitally descriptors and mirrors from rules.json; Actions rebuilds outputs/state from remaining sources; no acquisition or cached-input fallback for the removed IDs |
 | 2026-10-25 | Source registry | `.github/sources/rules.json`; V2Fly official data + SHA-256; no duplicate same-upstream SagerNet download; exclude direct blackmatrix7 only |
 | 2026-10-25 | Coverage | Explicit independent services with additional source rules only; no automatic recursive child expansion |
 | 2026-10-25 | Service selectors | Google Play/FCM/Trust Services/Scholar; Disney ESPN/Hulu/Star+; Apple Update/Intelligence; Microsoft Azure/Bing/PKI/OneDrive; domestic collaboration/storage and overseas storage/password services |
@@ -588,6 +589,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
+| 2026-11-18 | Remove Nexitally Rule inputs | Extra_CN_3 / Extra_Proxies / Extra_AI / Extra_Crypto / ApplePush → no registered source or mirror; existing Actions owns output regeneration |
 | 2026-11-17 | Reserved Surge mock-response emitter | `prepareSurgeMockResponse({status:200, trailers:{"grpc-status":"0"}})` → native payload; dictionary/array validation and isolated tests; source mappings remain inactive; runtime policy unchanged |
 | 2026-11-17 | Repeated JQ regression | Same-URL increments form one native expression; execute with x=0 and require x=2; whitespace is not an execution-count contract |
 | 2026-11-17 | Argument transport end-to-end regression | JingDong jd_price.js fragment decodes to {value:{Cookies:""}}; validate original URL and typed value before changing only its QX golden digest/size |
