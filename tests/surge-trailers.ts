@@ -48,13 +48,14 @@ for(const full of [false,true]) {
   assert.deepEqual(run('$done({h2_trailers:$response.h2_trailers});',getterResponse,{},full).output,{trailers:{'grpc-status':'7','grpc-message':'permission%20denied','x-trace':'keep'}});
   assert.equal(reads,1,'capture native trailer getters once');
   assert.deepEqual(run('const globalThis={};globalThis.$done=value=>value;$done({h2_trailers:{"grpc-status":"0"}});',{}, {},full).output,{trailers:{'grpc-status':'0'}});
-  assert.throws(()=>run('$done({h2_trailers:5});',{}, {},full),/trailers require/);
-  assert.throws(()=>run('$done({trailers:[{field:"bad",value:5}]});',{}, {},full),/field\/value strings/);
+  // Modified: 2026-11-18 (chance). Author validation remains catchable before the outer HTTP fallback.
+  assert.deepEqual(run('try{$done({h2_trailers:5});}catch(e){$done({body:e.message});}',{}, {},full).output,{body:'WayX API: trailers require a dictionary or field/value array'});
+  assert.deepEqual(run('try{$done({trailers:[{field:"bad",value:5}]});}catch(e){$done({body:e.message});}',{}, {},full).output,{body:'WayX API: trailer array requires field/value strings'});
   // Read-only alias access and computed result keys use the same runtime contract.
   assert.deepEqual(run('const key=["h2","trailers"].join("_");const r={};r[key]=$response[key];globalThis.$done(r);',{trailers:native},{},full).output,{trailers:{'grpc-status':'7','grpc-message':'permission%20denied','x-trace':'keep'}});
   // Request trailers remain outside the newly supported callback response API.
   const request = run('$request.h2_trailers;$done({});',{}, {phase:'request'},full).plan.operationIR.operations.find(op=>op.rule==='request.trailers')!;
   assert.equal(request.target.capability,'unavailable');
 }
-assert.equal(scriptRuntimePolicyVersion,13);
+assert.equal(scriptRuntimePolicyVersion,14);
 console.log('Surge trailers: full/selected adapters, read/write/delete, absence/clear/pass-through, whole contexts, native arrays, aliases, invalid types, phases and source capability catalog passed');

@@ -27,7 +27,8 @@ for(const full of [false,true]) {
     assert.equal(native.trailers['Grpc-Status'],'7','callback view must not mutate the host response');
     assert.equal(result.requests[0].method,method);
     assert.equal(result.plan.contract.apiPlan.target.http.responseTrailers,'trailers');
-    assert.equal(result.plan.contract.runtimePolicyVersion,13);
+    // Modified: 2026-11-18 (chance). HTTP callbacks retain the policy 14 program boundary.
+    assert.equal(result.plan.contract.runtimePolicyVersion,14);
   }
   const inspect = '$httpClient.get(input,(e,r,b)=>{seen.push({present:Object.prototype.hasOwnProperty.call(r,"h2_trailers"),value:r.h2_trailers});$done({});});';
   assert.deepEqual(execute(inspect,full,'request',{status:200,headers:{}}).seen,[{present:false}]);

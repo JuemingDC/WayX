@@ -270,13 +270,11 @@ for (const to of ["qx", "surge"]) {
   assert.equal(call.length, to === "qx" ? 4 : 3);
   assert.equal(r.out.body, "2");
 }
-assert.throws(
-  () =>
-    execute('throw Error("business failure");', "qx", "surge", {
-      $response: {},
-    }),
-  /business failure/,
-);
+// Modified: 2026-11-18 (chance). Escaped HTTP business errors now pass through;
+// validation errors remain observable inside the author's own try/catch.
+assert.deepEqual(flat(execute('throw Error("business failure");', "qx", "surge", {
+  $response: {}, console: {log() {}},
+}).out), {});
 // Mutable and dynamically constructed completion results are API inputs.
 const changed = execute(
   '$response.body="changed";const response=$response;const done=globalThis.$done;done(response);',
@@ -585,14 +583,13 @@ for (const to of ["qx", "surge"] as const) {
     r.p.operationIR?.operations.some((o: any) => o.rule === "compression.gzip"),
   );
 }
-assert.throws(
-  () =>
+assert.match(
     execute(
-      '$httpClient.post({url:input,body:bytes,"body-base64":true},()=>{});',
+      'try{$httpClient.post({url:input,body:bytes,"body-base64":true},()=>{});}catch(e){$done({body:e.message});}',
       "loon",
       "surge",
       { input: "https://test/", bytes: new Uint8Array([1]), $response: {} },
-    ),
+    ).out.body,
   /String body/,
 );
 
@@ -985,15 +982,14 @@ const nativePath = execute(
 );
 assert.equal(nativePath.out.path, "/native?x=1");
 for (const path of [42, "https://other.test/", "/bad\r\nHeader:value"]) {
-  assert.throws(
-    () =>
+  assert.match(
       execute(
-        "$done({path:input});",
+        'try{$done({path:input});}catch(e){$done({body:e.message});}',
         "qx",
         "surge",
         { $request: { url: "https://example.test/old" }, input: path },
         "request",
-      ),
+      ).out.body,
     /QX request path/,
   );
 }

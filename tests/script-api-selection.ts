@@ -4,6 +4,8 @@ import assert from "node:assert/strict";
 import vm from "node:vm";
 import { planScriptApiConversion as pair } from "../src/parser/script-api.ts";
 import { scriptApiRuntime } from "../src/emit/script-api-runtime.ts";
+// Modified: 2026-11-18 (chance). Full/selected oracle includes the same outer HTTP boundary.
+import { scriptErrorBoundary } from "../src/emit/script-error-boundary.ts";
 import { scriptCodecs } from "../src/emit/script-codecs.ts";
 const directions = [
   ["loon", "qx"],
@@ -93,7 +95,7 @@ async function observe(
       name: "source-name",
       ...p.contract,
     };
-    program = `(function(){const host={global:globalThis,request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,http:$httpClient,task:$task,store:$persistentStore,prefs:$prefs,notify:$notification,notifyQx:$notify,codecs:(${scriptCodecs})()};return (${scriptApiRuntime})(${JSON.stringify(config)},host,function(scope){with(scope){return(function(){${source}\n}).call(this);}});})();`;
+    program = `(function(){const host={global:globalThis,request:typeof $request==='undefined'?undefined:$request,response:typeof $response==='undefined'?undefined:$response,done:$done,http:$httpClient,task:$task,store:$persistentStore,prefs:$prefs,notify:$notification,notifyQx:$notify,codecs:(${scriptCodecs})()};return (${scriptErrorBoundary})(host.done,done=>{host.done=done;return (${scriptApiRuntime})(${JSON.stringify(config)},host,function(scope){with(scope){return(function(){${source}\n}).call(this);}});});})();`;
   }
   try {
     vm.runInNewContext(program, globals, { timeout: 3000 });
@@ -175,7 +177,7 @@ assert.doesNotMatch(
   body.code,
   /\bProxy\b|\bwith\s*\(|apiPlan|function notify|function transport|class TextDecoder/,
 );
-assert.ok(Buffer.byteLength(body.code) < 2500);
+assert.ok(Buffer.byteLength(body.code) < 2500 + Buffer.byteLength(scriptErrorBoundary));
 const store = await observe(
   '$persistentStore.read("key");$done({});',
   "loon",

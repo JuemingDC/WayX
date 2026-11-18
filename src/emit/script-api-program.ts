@@ -15,6 +15,9 @@ import {
 // scope. Lexical declarations and Env objects remain ordinary JavaScript.
 import ts from "typescript";
 import { scriptApiRuntime } from "./script-api-runtime.ts";
+// Modified: 2026-11-18 (chance). One boundary covers both selected adapters
+// and dynamic scopes; native inputs and non-HTTP triggers retain their errors.
+import { scriptErrorBoundary } from "./script-error-boundary.ts";
 import { pakoRuntime } from "../vendor/pako/runtime.ts";
 import { scriptCodecs } from "./script-codecs.ts";
 import { aesProvider } from "../vendor/providers/aes.ts";
@@ -115,6 +118,25 @@ export function emitScriptApiProgram(
   const bodyOnly = emitBodyScript(source, usage, configs, fixedTarget, fresh);
   if (bodyOnly) return bodyOnly;
   const runtime = selectScriptApiRuntime(scriptApiRuntime, usage, configs);
+  const recoveryRoles = Object.fromEntries(
+    Object.entries(selected).map(([role, targets]: [string, any]) => [
+      role,
+      Object.keys(targets).filter(
+        (client) =>
+          targets[client].from !== targets[client].to &&
+          ["request", "response", "echo"].includes(targets[client].phase),
+      ),
+    ]),
+  );
+  const recovery = fixedTarget
+    ? Object.entries(recoveryRoles)
+        .filter(([, clients]) => clients.includes(fixedTarget))
+        .map(([role]) => role)
+    : null;
+  const hasRecovery = Object.values(recoveryRoles).some(
+    (clients) => clients.length,
+  );
+  if (hasRecovery) runtime.hostFields.add("done");
   const capture: Record<string, string> = {
     global: "globalThis",
     request: "typeof $request==='undefined'?undefined:$request",
@@ -200,11 +222,15 @@ export function emitScriptApiProgram(
   const invocation = lexical
     ? `function(${scope}){return(function(${roots.join(",")}){return(function(){\n${source}\n}).call(this);}).call(this,${roots.map((root) => `Object.prototype.hasOwnProperty.call(${scope},${JSON.stringify(root)})?${scope}[${JSON.stringify(root)}]:(typeof ${root}==='undefined'?undefined:${root})`).join(",")});}`
     : `function(${scope}){with(${scope}){return(function(){\n${source}\n}).call(this);}}`;
+  const execute = fresh("__wayxExecute"),
+    guardDone = fresh("__wayxGuardDone");
   return `/* SPDX-License-Identifier: GPL-3.0-only; ScriptHub derivative. */\n/* Adapter: GPL-3.0-only; derived from ScriptHub b943361f11be5795b3eb10f9cc4e5497642922fc. See vendor/script-hub/NOTICE.md. */\n(function(){
 ${single ? "" : `const ${target}=${fixedTarget ? JSON.stringify(fixedTarget) : "typeof $loon==='string'?'loon':typeof $task!=='undefined'&&typeof $task.fetch==='function'?'qx':typeof $environment!=='undefined'&&$environment['surge-version']?'surge':null"};`}
 const ${host}={${captures}};
 ${configuration}
 ${headerGuard ? `if(${fixedTarget ? JSON.stringify(fixedTarget) : target}==='surge'&&typeof ${host}.argument==='string'&&${host}.argument.startsWith(${JSON.stringify(headerArgumentPrefix)})){const p=JSON.parse(decodeURIComponent(${host}.argument.slice(${headerArgumentPrefix.length})));if(!(${headerPredicateRuntime})(p,${host}.request))return ${host}.done({});${host}.argument=undefined;}` : ""}
-return (${runtime.code})(${config},${host},${invocation});
+const ${execute}=()=>(${runtime.code})(${config},${host},${invocation});
+${hasRecovery ? `if(${fixedTarget ? JSON.stringify(recovery) + `.includes(${host}.response===undefined?'request':'response')` : `(${JSON.stringify(recoveryRoles)}[${host}.response===undefined?'request':'response']||[]).includes(${target})`})return (${scriptErrorBoundary})(${host}.done,${guardDone}=>{${host}.done=${guardDone};return ${execute}();});` : ""}
+return ${execute}();
 })();\n`;
 }

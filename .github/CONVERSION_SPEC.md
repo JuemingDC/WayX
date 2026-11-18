@@ -6,7 +6,7 @@
 | Maintainer | chance |
 | Authority | Single conversion and maintenance specification |
 | Format | English headings, dated tables, mapping examples |
-| Runtime policy | 13 |
+| Runtime policy | 14 |
 | Validation mode | api-runtime-compatibility |
 
 ## 1. Scope and Maintenance
@@ -317,7 +317,11 @@ http-response-jq ^https:\/\/api\.example\/v1 'setpath(["data","enabled"]; false)
 | 2026-11-02 | API bindings | Source-named facade for direct globals and globalThis/window/global; local shadowing preserved; copy host dictionaries |
 | 2026-11-16 | globalThis discovery | Recognize TypeScript intrinsic globalThis; computed aliases retain required facade; local same-name bindings stay ordinary JS |
 | 2026-11-02 | Inventory | Descriptive source references + target capability runtime/native-only/unavailable/unclassified; no author-name/value/dataflow whitelist |
-| 2026-11-02 | Failure policy | No empty APIs/timers, full-text done replacement, resolve(null) network suppression or catch-and-pass-through |
+| 2026-11-18 | Failure policy | No empty APIs/timers, full-text done replacement or resolve(null) network suppression; only the explicitly scoped HTTP error boundary below may pass through |
+| 2026-11-18 | Converted HTTP error boundary, policy 14 | Loon → QX/Surge and QX → Surge: escaped synchronous errors or rejected Promises returned by the author entrypoint → console log + one native `$done({})` when no completion has been attempted; body-only/selected/dynamic adapters share one boundary |
+| 2026-11-18 | Completion ownership | Validate before submission; author try/catch may recover; successful or failed native submission → no retry; errors after completion → log only; native submission errors remain observable |
+| 2026-11-18 | Recovery exclusions | Source-native execution, task/network/generic triggers, invalid syntax and unregistered phases retain failure behavior; no global Promise/timer hooks; detached async rejections and later native callbacks are outside the boundary; no rollback of network/storage side effects |
+| 2026-11-18 | Compatibility scope | Preserve query order/regex and author Host/header values; no query matcher widening, Host removal or numeric header coercion |
 | 2026-11-05 | Identity | Actual target runtime/timers/defaults; no fake Loon device/version, single-shot interval or unlimited body |
 | 2026-11-11 | Selection | Lexical executable API references + dependency closure; ignore comments/string API words; no business URL/value-based pruning |
 | 2026-11-11 | Simple body bridge | Direct request URL/body and response-body reads + static body completion → minimal lexical adapter; preserve scope, exact bytes, one commit |
@@ -589,6 +593,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
+| 2026-11-18 | HTTP exception compatibility, runtime policy 14 | Escaped synchronous error / returned rejected Promise → log + `$done({})` once before submission; author catches/native submission errors/non-HTTP triggers preserved; replace blanket no-passthrough rule |
 | 2026-11-18 | Remove Nexitally Rule inputs | Extra_CN_3 / Extra_Proxies / Extra_AI / Extra_Crypto / ApplePush → no registered source or mirror; existing Actions owns output regeneration |
 | 2026-11-17 | Reserved Surge mock-response emitter | `prepareSurgeMockResponse({status:200, trailers:{"grpc-status":"0"}})` → native payload; dictionary/array validation and isolated tests; source mappings remain inactive; runtime policy unchanged |
 | 2026-11-17 | Repeated JQ regression | Same-URL increments form one native expression; execute with x=0 and require x=2; whitespace is not an execution-count contract |
