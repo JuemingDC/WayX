@@ -1,11 +1,11 @@
 # Name: cn
-# Updated: 2026-11-18 08:49:21 UTC
+# Updated: 2026-11-19 02:42:45 UTC
 # Converted by: chance
 # Source Authors: DH-Teams, Loyalsoldier, MetaCubeX, QuixoticHeart, Sukka, V2Fly, gaoyifan
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_All_Surge.list ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/direct.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/apple-cn.list ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt ; https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt ; https://ruleset.skk.moe/List/ip/domestic.conf ; https://ruleset.skk.moe/List/non_ip/domestic.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 128089
+# Rules: 128116
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,direct
@@ -863,6 +863,7 @@ host-suffix,360sou.com.cn,direct
 host-suffix,37.com.cn,direct
 host-suffix,58.com.cn,direct
 host-suffix,58cdn.com.cn,direct
+host-suffix,58wos.com.cn,direct
 host-suffix,71.am.com,direct
 host-suffix,800best.com.cn,direct
 host-suffix,95588.com.cn,direct
@@ -1543,9 +1544,11 @@ host-suffix,oss-cn-shanghai.aliyuncs.com,direct
 host-suffix,oss-cn-shenzhen.aliyuncs.com,direct
 host-suffix,oss-cn-wulanchabu.aliyuncs.com,direct
 host-suffix,oss-cn-zhangjiakou.aliyuncs.com,direct
+host-suffix,oss-enet.aliyuncs.com,direct
 host-suffix,p-bstarstatic.akamaized.net,direct
 host-suffix,p-log.ykimg.com,direct
 host-suffix,p.bstarstatic.com,direct
+host-suffix,pafoundation.org.cn,direct
 host-suffix,pangolin-hl.snssdk.com,direct
 host-suffix,pangolin-lf.snssdk.com,direct
 host-suffix,pangolin-lq.snssdk.com,direct
@@ -1562,6 +1565,7 @@ host-suffix,people.com.cn,direct
 host-suffix,pep.com.cn,direct
 host-suffix,petrochina.com.cn,direct
 host-suffix,pgdt.gtimg.cn,direct
+host-suffix,ph.com.cn,direct
 host-suffix,phfund.com.cn,direct
 host-suffix,phoenixmiles.com.cn,direct
 host-suffix,pic.tripcdn.com,direct
@@ -3835,6 +3839,7 @@ host-suffix,1718china.com,direct
 host-suffix,1718world.com,direct
 host-suffix,171tax.com,direct
 host-suffix,171win.net,direct
+host-suffix,172.com,direct
 host-suffix,17207.com,direct
 host-suffix,17293879b10261.beer,direct
 host-suffix,172haoka.vip,direct
@@ -62853,6 +62858,7 @@ host-suffix,lefang365.com,direct
 host-suffix,lefanglj.com,direct
 host-suffix,lefeng.com,direct
 host-suffix,leffercode.com,direct
+host-suffix,lefile.cn,direct
 host-suffix,leftfm.com,direct
 host-suffix,leftlady.com,direct
 host-suffix,leftshadow.com,direct
@@ -63015,6 +63021,8 @@ host-suffix,lenovoconnect.com,direct
 host-suffix,lenovocust.cn,direct
 host-suffix,lenovoeservice.com,direct
 host-suffix,lenovofile.com,direct
+host-suffix,lenovofoundation.cn,direct
+host-suffix,lenovofuturecenter.com,direct
 host-suffix,lenovogame.com,direct
 host-suffix,lenovohci.com,direct
 host-suffix,lenovohuishang.com,direct
@@ -65397,6 +65405,7 @@ host-suffix,lujiaming.com,direct
 host-suffix,lujiandairy.com,direct
 host-suffix,lujianxin.com,direct
 host-suffix,lujiazuiforum.org,direct
+host-suffix,lujincaifu.com,direct
 host-suffix,lujingtao.com,direct
 host-suffix,lujiya.com,direct
 host-suffix,lujun9972.win,direct
@@ -75326,6 +75335,7 @@ host-suffix,pinfun.com,direct
 host-suffix,ping-an.net,direct
 host-suffix,ping-jia.net,direct
 host-suffix,ping99.com,direct
+host-suffix,pingan.cn,direct
 host-suffix,pingan.com,direct
 host-suffix,pingancdn.com,direct
 host-suffix,pinganfang.com,direct
@@ -78129,6 +78139,7 @@ host-suffix,qpjylm.com,direct
 host-suffix,qpkaifa.com,direct
 host-suffix,qplus.com,direct
 host-suffix,qplusstatic.com,direct
+host-suffix,qpmcn.com,direct
 host-suffix,qpmwg68cre9pci.com,direct
 host-suffix,qpoc.com,direct
 host-suffix,qpstar.com,direct
@@ -108485,6 +108496,7 @@ host-suffix,yqbank.com,direct
 host-suffix,yqbdt.com,direct
 host-suffix,yqbimg.com,direct
 host-suffix,yqbimg.net,direct
+host-suffix,yqbmall.com,direct
 host-suffix,yqchjd.com,direct
 host-suffix,yqcn.com,direct
 host-suffix,yqcymj.com,direct
@@ -111388,6 +111400,7 @@ host-suffix,zhaoketang.com,direct
 host-suffix,zhaokuaizhao.com,direct
 host-suffix,zhaolaobanla.com,direct
 host-suffix,zhaoliangji.com,direct
+host-suffix,zhaoliangjipc.com,direct
 host-suffix,zhaoliming.net,direct
 host-suffix,zhaomi.cn,direct
 host-suffix,zhaoming.biz,direct
@@ -115739,7 +115752,6 @@ ip-cidr,103.142.238.0/23,direct
 ip-cidr,103.142.28.0/23,direct
 ip-cidr,103.142.58.0/23,direct
 ip-cidr,103.142.82.0/23,direct
-ip-cidr,103.142.82.0/24,direct
 ip-cidr,103.142.96.0/23,direct
 ip-cidr,103.143.124.0/23,direct
 ip-cidr,103.143.132.0/22,direct
@@ -117744,7 +117756,6 @@ ip-cidr,112.192.0.0/14,direct
 ip-cidr,112.224.0.0/11,direct
 ip-cidr,112.64.0.0/14,direct
 ip-cidr,112.73.222.0/24,direct
-ip-cidr,112.73.96.0/19,direct
 ip-cidr,112.74.0.0/15,direct
 ip-cidr,112.74.0.0/16,direct
 ip-cidr,112.80.0.0/12,direct
@@ -119236,6 +119247,10 @@ ip-cidr,132.237.134.0/24,direct
 ip-cidr,133.226.32.0/20,direct
 ip-cidr,134.175.0.0/16,direct
 ip-cidr,134.49.240.0/22,direct
+ip-cidr,135.84.80.0/22,direct
+ip-cidr,136.143.176.0/23,direct
+ip-cidr,136.143.186.0/23,direct
+ip-cidr,136.143.188.0/22,direct
 ip-cidr,137.59.59.0/24,direct
 ip-cidr,137.59.88.0/22,direct
 ip-cidr,138.252.118.0/23,direct
@@ -119505,7 +119520,7 @@ ip-cidr,150.242.92.0/22,direct
 ip-cidr,150.242.96.0/22,direct
 ip-cidr,150.248.0.0/16,direct
 ip-cidr,150.255.0.0/16,direct
-ip-cidr,151.158.122.0/23,direct
+ip-cidr,151.158.123.0/24,direct
 ip-cidr,151.158.78.0/23,direct
 ip-cidr,151.158.80.0/23,direct
 ip-cidr,151.243.189.0/24,direct
@@ -119723,7 +119738,11 @@ ip-cidr,165.101.244.0/23,direct
 ip-cidr,165.101.4.0/23,direct
 ip-cidr,165.101.66.0/23,direct
 ip-cidr,165.101.70.0/24,direct
+ip-cidr,165.173.128.0/23,direct
+ip-cidr,165.173.174.0/23,direct
 ip-cidr,165.173.176.0/24,direct
+ip-cidr,165.173.179.0/24,direct
+ip-cidr,165.173.180.0/22,direct
 ip-cidr,166.111.0.0/16,direct
 ip-cidr,167.139.0.0/16,direct
 ip-cidr,167.189.0.0/16,direct
@@ -119981,6 +120000,7 @@ ip-cidr,192.232.34.0/23,direct
 ip-cidr,192.232.44.0/22,direct
 ip-cidr,192.232.97.0/24,direct
 ip-cidr,192.51.172.0/23,direct
+ip-cidr,192.51.173.0/24,direct
 ip-cidr,192.55.46.0/23,direct
 ip-cidr,192.55.68.0/22,direct
 ip-cidr,193.112.0.0/16,direct
@@ -120000,6 +120020,7 @@ ip-cidr,198.208.63.0/24,direct
 ip-cidr,198.208.67.0/24,direct
 ip-cidr,199.182.239.0/24,direct
 ip-cidr,199.244.144.0/24,direct
+ip-cidr,199.67.64.0/23,direct
 ip-cidr,2.56.255.0/24,direct
 ip-cidr,2.58.242.0/24,direct
 ip-cidr,2.59.151.0/24,direct
@@ -121677,6 +121698,7 @@ ip-cidr,203.99.26.0/23,direct
 ip-cidr,203.99.30.0/23,direct
 ip-cidr,203.99.8.0/23,direct
 ip-cidr,203.99.80.0/20,direct
+ip-cidr,204.141.42.0/23,direct
 ip-cidr,204.235.241.0/24,direct
 ip-cidr,204.77.130.0/24,direct
 ip-cidr,205.198.19.0/24,direct
@@ -122907,6 +122929,7 @@ ip-cidr,43.240.204.0/22,direct
 ip-cidr,43.240.220.0/22,direct
 ip-cidr,43.240.240.0/20,direct
 ip-cidr,43.240.56.0/21,direct
+ip-cidr,43.240.60.0/22,direct
 ip-cidr,43.240.68.0/22,direct
 ip-cidr,43.240.72.0/21,direct
 ip-cidr,43.240.72.0/22,direct
@@ -123055,7 +123078,6 @@ ip-cidr,43.251.232.0/22,direct
 ip-cidr,43.251.244.0/22,direct
 ip-cidr,43.251.36.0/22,direct
 ip-cidr,43.251.4.0/22,direct
-ip-cidr,43.251.8.0/22,direct
 ip-cidr,43.252.48.0/22,direct
 ip-cidr,43.252.48.0/24,direct
 ip-cidr,43.252.56.0/22,direct
@@ -123763,6 +123785,7 @@ ip-cidr,8.164.0.0/14,direct
 ip-cidr,8.168.0.0/14,direct
 ip-cidr,8.176.0.0/17,direct
 ip-cidr,8.176.128.0/19,direct
+ip-cidr,8.39.54.0/23,direct
 ip-cidr,81.173.18.0/23,direct
 ip-cidr,81.173.20.0/22,direct
 ip-cidr,81.173.28.0/24,direct
@@ -126392,7 +126415,9 @@ ip6-cidr,2406:840:e0ce::/48,direct
 ip6-cidr,2406:840:e0d0::/44,direct
 ip6-cidr,2406:840:e0e4::/48,direct
 ip6-cidr,2406:840:e0e6::/47,direct
-ip6-cidr,2406:840:e0e8::/45,direct
+ip6-cidr,2406:840:e0e9::/48,direct
+ip6-cidr,2406:840:e0ea::/47,direct
+ip6-cidr,2406:840:e0ec::/46,direct
 ip6-cidr,2406:840:e0f0::/44,direct
 ip6-cidr,2406:840:e100::/45,direct
 ip6-cidr,2406:840:e108::/46,direct
@@ -126722,7 +126747,6 @@ ip6-cidr,2406:840:fee0::/45,direct
 ip6-cidr,2406:840:fee8::/46,direct
 ip6-cidr,2406:840:feec::/48,direct
 ip6-cidr,2406:840:feee::/47,direct
-ip6-cidr,2406:840:feff::/48,direct
 ip6-cidr,2406:840:ff20::/43,direct
 ip6-cidr,2406:840:ff40::/42,direct
 ip6-cidr,2406:840:ff80::/41,direct
@@ -127816,6 +127840,7 @@ ip6-cidr,2605:9d80:9033::/48,direct
 ip6-cidr,2605:9d80:9042::/48,direct
 ip6-cidr,2605:9d80:9071::/48,direct
 ip6-cidr,2605:9d80:9092::/48,direct
+ip6-cidr,2620:57:4004::/47,direct
 ip6-cidr,2a03:f900::/29,direct
 ip6-cidr,2a04:3e00:1001::/48,direct
 ip6-cidr,2a04:3e00:1002::/47,direct
@@ -128016,6 +128041,7 @@ ip6-cidr,2a0f:6280:7400::/39,direct
 ip6-cidr,2a0f:9400:6110::/48,direct
 ip6-cidr,2a10:fa86::/34,direct
 ip6-cidr,2a12:cb41:1300::/44,direct
+ip6-cidr,2a12:cb41:13f0::/44,direct
 ip6-cidr,2a13:1800:1000::/36,direct
 ip6-cidr,2a13:1800:100::/40,direct
 ip6-cidr,2a13:1800:11::/48,direct
@@ -128083,6 +128109,7 @@ ip6-cidr,2a13:1802:d000::/36,direct
 ip6-cidr,2a13:1802:e000::/35,direct
 ip6-cidr,2a13:1803::/32,direct
 ip6-cidr,2a13:1804::/30,direct
+ip6-cidr,2a13:7100::/29,direct
 ip6-cidr,2a13:8b40::/29,direct
 ip6-cidr,2a13:a5c3:f000::/40,direct
 ip6-cidr,2a14:5f00::/30,direct
