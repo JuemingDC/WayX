@@ -7,6 +7,7 @@ import { keleePaused, isKeleeSource } from "../ingest/source-pause.ts";
 // Author: chance
 // Category: Converter / Canonical Output
 import path from "node:path";
+import { isWayxMapLocalPayloadFilename } from "../domain/generated-scripts.ts";
 import fs from "node:fs/promises";
 import crypto from "node:crypto";
 import { createResourceSnapshot } from "../ingest/resources.ts";
@@ -141,7 +142,10 @@ for (const entry of manifest) {
       const relative: any = "Script/" + entry.id + "/" + filename;
       let actual: any = null;
       try {
-        actual = await fs.readFile(path.join(ROOT, relative), "utf8");
+        const file = path.join(ROOT, relative);
+        actual = isWayxMapLocalPayloadFilename(filename)
+          ? await fs.readFile(file)
+          : await fs.readFile(file, "utf8");
       } catch (error: any) {
         if (error.code !== "ENOENT") throw error;
       }

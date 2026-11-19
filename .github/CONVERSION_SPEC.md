@@ -144,6 +144,7 @@ request if ${url} ~= /^https?:\/\/mapi\.dianping\.com\/mapi\/operating\/(?>index
 | 2026-10-25 | Duplicate Header add | No dictionary-based equivalence claim | Preserve field/value arrays and order; unsupported lookup semantics remain review |
 | 2026-10-25 | Body replace | Supported request/response-body form | Native Body Rewrite when behavior fits |
 | 2026-10-25 | Remote mock | Native supported remote response or stable helper | Remote URL never passed as local file |
+| 2026-11-19 | Loon response mock_file | Publish the generated script and reference its WayX Raw URL with script-echo-response | Publish the snapshotted response bytes (decoded when Base64=true), and reference the WayX Raw URL with Map Local file while preserving status and headers |
 | 2026-10-25 | Text request mock | Verified lifecycle + text/Base64=false only | Shared runtime; no guessed binary extension |
 | 2026-11-01 | reject-img native QX → Surge | Native source preserved | Map Local tiny-gif, status 200 |
 | 2026-11-01 | Quoted Surge arguments | Preserve complete parameters and repeated-action boundaries | Official quoted syntax, iOS 5.21.0+/Mac 6.8.0+ |

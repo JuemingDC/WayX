@@ -1327,6 +1327,7 @@ export async function materializeConversionContext(
   const reads: any = {
     fetchText: snapshot.fetchText,
     fetchBytes: snapshot.fetchBytes,
+    cachedBytes: snapshot.cachedBytes,
     declarations,
   };
   try {

@@ -39,7 +39,7 @@ export function surgeTargetPath(entry: any): any {
   return `${SURGE_ADBLOCK_DIR}/${entry.surge}`;
 }
 // Modified: 2026-11-02 (chance). Cleanup shares exactly the generator's ownership rules.
-import { isWayxGeneratedHelperFilename } from "../domain/generated-scripts.ts";
+import { isWayxGeneratedHelperFilename, isWayxMapLocalPayloadFilename } from "../domain/generated-scripts.ts";
 export { isWayxGeneratedHelperFilename } from "../domain/generated-scripts.ts";
 async function staleGeneratedHelpers(
   root: any,
@@ -58,7 +58,8 @@ async function staleGeneratedHelpers(
   return names
     .filter(
       (name: any): any =>
-        isWayxGeneratedHelperFilename(name) && !generatedScripts.has(name),
+        (isWayxGeneratedHelperFilename(name) || isWayxMapLocalPayloadFilename(name)) &&
+        !generatedScripts.has(name),
     )
     .sort();
 }
@@ -115,7 +116,7 @@ export function firstConversionStamp(
 // Modified: 2026-11-08 (chance). Ignore update dates for content comparisons;
 // each artifact changes its own update time only when its content changes.
 function artifactContent(text: any): any {
-  if (text === null || text === undefined) return text;
+  if (text == null || Buffer.isBuffer(text)) return text;
   return String(text).replace(/^(#|\/\/) (?:Updated|Converted):[^\n]*/gm, "$1 Updated:");
 }
 async function managedFileExists(file: any): Promise<any> {
@@ -194,6 +195,17 @@ export async function readManagedTargetState(
     surge,
   };
 }
+async function managedHelperMatches(file: string, content: string | Buffer) {
+  if (!Buffer.isBuffer(content)) {
+    return artifactContent(await readManagedTextIfExists(file)) === artifactContent(content);
+  }
+  try {
+    return (await fs.readFile(file)).equals(content);
+  } catch (error: any) {
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+}
 export async function generatedScriptDiffs(
   root: any,
   entry: any,
@@ -203,11 +215,7 @@ export async function generatedScriptDiffs(
   const diffs: any = [];
   for (const [name, content] of generatedScripts) {
     const file: any = path.join(root, scriptDir, entry.id, name);
-    if (
-      artifactContent(await readManagedTextIfExists(file)) !==
-      artifactContent(content)
-    )
-      diffs.push(name);
+    if (!(await managedHelperMatches(file, content))) diffs.push(name);
   }
   for (const name of await staleGeneratedHelpers(
     root,
@@ -228,11 +236,7 @@ export async function syncGeneratedScripts(
   const changed: any = [];
   for (const [name, content] of generatedScripts) {
     const file: any = path.join(root, scriptDir, entry.id, name);
-    if (
-      artifactContent(await readManagedTextIfExists(file)) ===
-      artifactContent(content)
-    )
-      continue;
+    if (await managedHelperMatches(file, content)) continue;
     await fs.mkdir(path.dirname(file), { recursive: true });
     await fs.writeFile(file, content);
     changed.push(name);
@@ -1495,7 +1499,19 @@ export function outputMismatch(
 ): any {
   const want: any = artifactContent(expected),
     got: any = artifactContent(actual);
-  if (want === got) return null;
+  if (want === got || (Buffer.isBuffer(want) && Buffer.isBuffer(got) && want.equals(got)))
+    return null;
+  if (Buffer.isBuffer(want) || Buffer.isBuffer(got)) {
+    return {
+      code: "output-mismatch",
+      file,
+      plugin,
+      expectedHash: validationArtifactDigest(want),
+      actualHash: validationArtifactDigest(got),
+      expected: want == null ? "(absent)" : "Response body (" + want.length + " bytes)",
+      actual: got == null ? "(absent)" : "Response body (" + got.length + " bytes)",
+    };
+  }
   const a: any = String(want ?? "").split("\n"),
     b: any = String(got ?? "").split("\n");
   let first: any = 0;

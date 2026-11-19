@@ -3273,7 +3273,7 @@ export function surgeInlineMockPlan(ast: any): any {
 }
 export function surgeMockFilePlan(
   ast: any,
-  { pluginSourceUrl = "", materialized = null }: any = {},
+  { pluginSourceUrl = "", materialized = null, publication = null }: any = {},
 ): any {
   validateRewriteV2Ast(ast);
   if (ast.phase !== "response") {
@@ -3342,6 +3342,25 @@ export function surgeMockFilePlan(
     const headerValue: any = headers
       .map((pair: any): any => pair[0] + ":" + pair[1])
       .join("|");
+    if (publication) {
+      if (materialized?.error) return unsupported(materialized.error);
+      const bytes = materialized?.bodyBytes ??
+        (typeof materialized?.bodyBase64 === "string"
+          ? Buffer.from(materialized.bodyBase64, "base64")
+          : typeof materialized?.bodyText === "string"
+            ? Buffer.from(materialized.bodyText, "utf8")
+            : null);
+      if (!bytes) return unsupported("mock_file was not materialized during conversion");
+      if (bytes.length > 15 * 1024 * 1024)
+        return unsupported("mock_file exceeds the Surge Map Local file size limit");
+      const digest = crypto.createHash("sha256").update(bytes).digest("hex").slice(0, 24);
+      // Keep the source extension for Surge's inferred MIME type when a rule removes Content-Type.
+      const suffix = spec.base64 ? "" : new URL(spec.url).pathname.match(/\.[a-z0-9]{1,12}$/i)?.[0] ?? "";
+      const filename = "map_local_" + digest + suffix;
+      data = surgeRewriteRawBase(publication) + "/Script/" + publication.id + "/" + filename;
+      dataType = "file";
+      publication.generatedScripts.set(filename, bytes);
+    }
     return {
       ok: true,
       strategy: "direct",
@@ -5158,6 +5177,7 @@ export function planSurgeRewrite(ir: any, ctx: any = {}): any {
       const mapped: any = surgeMockFilePlan(ast, {
         pluginSourceUrl: ctx.sourceUrl,
         materialized: ctx.mockFiles?.get(source) || null,
+        publication: ctx,
       });
       if (mapped.ok)
         return {

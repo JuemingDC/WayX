@@ -330,7 +330,7 @@ const textByUrl=new Map([
   ['https://example.com/plugins/filters/remove-ads.jq','.ads | del(.banner)\n'],
   ['https://example.com/plugins/filters/legacy-alias.jq','del(.legacyAlias)\n'],
   ['https://example.com/plugins/filters/legacy-rewrite.jq','del(.legacyRewrite)\n'],
-  ['https://example.com/plugins/mock.json','{"ok":true}'],
+  ['https://example.com/plugins/mock.json','{"ok":true}\r\n'],
   ['https://example.com/plugins/request-mixed.json','{"request":true}'],
   ['https://example.com/plugins/legacy.js','const legacy = true;\r\n$done({});\r\n'],
   ['https://example.com/plugins/scripts/v2.js','const v2 = true;\n$done({});\n'],
@@ -375,7 +375,7 @@ assert.match(jqFiles.get(missingJqLine).error,/unexpected text URL/);
 const mockFiles=await materializeMockFiles(entry,parsed,{fetchText,fetchBytes});
 const textMockLine='response if ${url} ~= /mock/ then response.body.mock_file("json", "mock.json", 200)';
 assert.deepEqual(mockFiles.get(textMockLine),{
-  bodyText:'{"ok":true}',
+  bodyText:'{"ok":true}\r\n',
   sourceFile:'https://example.com/plugins/mock.json',
 });
 const binaryMockLine='response if ${url} ~= /image/ then response.body.mock_file("png", "image.bin", 200)';
@@ -440,6 +440,21 @@ const conversionOptions={
   rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main',
 };
 const baseline=convertPlugin(entry,source,conversionOptions);
+validateConvertedPlugin(entry,baseline);
+const liveSurge = baseline.surge.split('\n').filter(line => !line.startsWith('#'));
+for (const [pattern, bytes] of [
+  ['mock', Buffer.from('{"ok":true}\r\n')],
+  ['image', Buffer.from([0,1,2,255])],
+]) {
+  const line = liveSurge.find(line => line.startsWith(pattern + ' data-type=file '));
+  assert.ok(line, pattern);
+  const prefix = conversionOptions.rawBase + '/Script/' + entry.id + '/';
+  const url = line.match(/ data="([^"]+)"/)?.[1];
+  assert.ok(url?.startsWith(prefix), line);
+  assert.deepEqual(baseline.generatedScripts.get(url.slice(prefix.length)), bytes);
+}
+assert.match(baseline.qx, /^mock url script-echo-response https:\/\/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\//m);
+
 assert.match(baseline.qx,/jsonjq-response-body 'del\(\.legacyAlias\)'/);
 assert.match(baseline.qx,/jsonjq-response-body 'del\(\.legacyRewrite\)'/);
 assert.match(baseline.surge,/http-response-jq .*'del\(\.legacyAlias\)'/);

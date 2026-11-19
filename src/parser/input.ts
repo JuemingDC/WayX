@@ -381,6 +381,7 @@ export async function materializeMockFiles(
   {
     fetchText = fetchOriginalText,
     fetchBytes = fetchOriginalBytes,
+    cachedBytes = null,
     declarations = null,
   }: any = {},
 ): Promise<any> {
@@ -428,7 +429,16 @@ export async function materializeMockFiles(
             ),
             sourceFile: plan.url,
           };
-        return { bodyText: await text(plan.url), sourceFile: plan.url };
+        const bodyText = await text(plan.url);
+        const bodyBytes =
+          action.name === "response.body.mock_file" && cachedBytes
+            ? await cachedBytes(plan.url)
+            : null;
+        return {
+          bodyText,
+          sourceFile: plan.url,
+          ...(bodyBytes ? { bodyBytes } : {}),
+        };
       };
       out.set(
         item.line,

@@ -14,6 +14,7 @@ import {
   safePath,
 } from "../publish/transaction.ts";
 import { scriptReferences } from "../parser/backup-references.ts";
+import { isWayxMapLocalPayloadFilename } from "../domain/generated-scripts.ts";
 import { executableScript } from "../domain/executable-script.ts";
 import { ADBLOCK_NUMBERS_FILE, ensureAdblockNumbers, adblockIdentity, applyAdblockNumber } from "./adblock-numbers.ts";
 
@@ -493,15 +494,28 @@ export async function publishLayout(
   // Modified: 2026-11-05 (chance). Validate active published references against the
   // same transaction, including colocated programs outside the legacy Script tree.
   for (const dest of Object.values(state.artifacts)) {
-    for (const ref of scriptReferences(String(changes.get(dest)))) {
-      const file = local(ref.value);
+    const text = String(changes.get(dest));
+    const references = scriptReferences(text).map((ref) => ref.value);
+    if (dest.endsWith(".sgmodule")) {
+      let mapLocal = false;
+      for (const line of text.split("\n")) {
+        if (line.startsWith("[")) mapLocal = line.trim() === "[Map Local]";
+        if (!mapLocal || /^\s*(?:#|;|\/\/)/.test(line)) continue;
+        const match = line.match(/\sdata-type=file\s+data="([^"]+)"/);
+        const file = match ? local(match[1]) : null;
+        if (file?.startsWith("Script/") && isWayxMapLocalPayloadFilename(path.posix.basename(file)))
+          references.push(match![1]);
+      }
+    }
+    for (const url of references) {
+      const file = local(url);
       if (!file) continue;
       if (
         changes.get(file) === null ||
         (!changes.has(file) && !(await readOptional(safePath(root, file))))
       )
         throw Error(
-          "Missing published script reference: " + dest + " -> " + file,
+          "Missing published resource reference: " + dest + " -> " + file,
         );
     }
   }

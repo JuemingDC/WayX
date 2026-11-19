@@ -112,5 +112,5 @@ export interface ScriptSemanticIr {
 export interface ConversionOutput {
   qx: string;
   surge: string;
-  generatedScripts: Map<string, string>;
+  generatedScripts: Map<string, string | Buffer>;
 }

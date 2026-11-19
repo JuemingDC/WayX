@@ -2,7 +2,7 @@
 // final rebinding. Keep active/transitive/manual dependencies and exact archives.
 import path from "node:path";
 import { listFiles, readOptional, safePath } from "../publish/transaction.ts";
-import { isWayxGeneratedHelperFilename } from "../domain/generated-scripts.ts";
+import { isWayxGeneratedHelperFilename, isWayxMapLocalPayloadFilename } from "../domain/generated-scripts.ts";
 const generated = (file: string) =>
   path.posix.normalize(file) === file &&
   !file.includes("\\") &&
@@ -14,7 +14,8 @@ const generated = (file: string) =>
     ) ||
     /^Script\/(?:[\w.-]+\/)*legacy\/[\w.-]+\.(?:js|mjs|cjs)$/.test(file) ||
     (file.startsWith("Script/") &&
-      isWayxGeneratedHelperFilename(path.posix.basename(file))));
+      (isWayxGeneratedHelperFilename(path.posix.basename(file)) ||
+        isWayxMapLocalPayloadFilename(path.posix.basename(file)))));
 export async function pruneGeneratedScripts(
   root: string,
   { index, changes, artifacts = [] }: any,
@@ -117,8 +118,9 @@ export async function pruneGeneratedScripts(
   // Source identities are dependencies of reachable adapters/archives, not
   // roots held alive by obsolete metadata from an orphaned adapter.
   for (let n = 0; n < queue.length; n++) {
-    const file = queue[n],
-      text = await current(file);
+    const file = queue[n];
+    if (isWayxMapLocalPayloadFilename(path.posix.basename(file))) continue;
+    const text = await current(file);
     if (text !== null) refs(text, file);
     const source = index.adapters?.[file]?.sourceUrl || archives.get(file)?.url;
     if (source) refs(source);
