@@ -1,4 +1,4 @@
-// 2026-11-18 10:32
+// 2026-11-20 03:05
 // 网页元素 #===id, .===class, .div > p:has(> a[target="_blank"])
 
 const url = $request.url;
@@ -90,6 +90,10 @@ if (isHtml) {
     body = body
       // Spot A：<aside class="spot-a-wrapper" data-spot-a>…</aside>（内无嵌套 aside，非贪婪到第一个 </aside> 即整块）
       .replace(/<aside\b[^>]*\bdata-spot-a\b[^>]*>[\s\S]*?<\/aside>/g, "")
+      // Spot A（现行版）：站点已去掉 data-spot-a 属性，通栏改为 <aside class="spot-a-wrapper"> 直跳赞助页（如轻舟VPN），按类名整块删
+      .replace(/<aside\b[^>]*\bclass="[^"]*\bspot-a-wrapper\b[^"]*"[^>]*>[\s\S]*?<\/aside>/g, "")
+      // 通栏自带的点击统计小脚本（只给 .spot-a-bar 绑 plausible 上报，通栏删掉后已无目标，顺手摘除）
+      .replace(/<script\b[^>]*>(?:(?!<\/script>)[\s\S])*?\.spot-a-bar\b(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
       // Spot B：<li class="sponsor-grid-slot"><article data-spot-b>…</article><script>…</script></li>（内无嵌套 li）
       .replace(
         /<li\b[^>]*\bclass="[^"]*\bsponsor-grid-slot\b[^"]*"[^>]*>[\s\S]*?<\/li>/g,
@@ -110,6 +114,13 @@ if (isHtml) {
         /<aside\b[^>]*\bclass="[^"]*\bspot-c-slot\b[^"]*"[^>]*>[\s\S]*?<\/aside>/g,
         ""
       )
+      // 年龄验证：页尾 <div class="age-gate" data-age-gate> 整块（内含 dialog/actions 两层 div，以 decline 按钮锚定块尾）；遮罩模糊就在该元素自身，删掉即无弹窗
+      .replace(
+        /<div\b[^>]*\bdata-age-gate\b[^>]*>[\s\S]*?data-age-gate-decline\b[^>]*>[^<]*<\/button>\s*<\/div>\s*<\/div>\s*<\/div>/g,
+        ""
+      )
+      // 年龄验证的控制脚本（读 localStorage、给 body 加 age-gate-visible 锁滚动、焦点陷阱）；头部那段同名脚本只管 dataset 标记与语言切换，不动
+      .replace(/<script\b[^>]*>(?:(?!<\/script>)[\s\S])*?\bdata-age-gate-accept\b(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
       // 通栏删掉后清掉 <main> 上的预留高度类，不然顶部多出 --spot-bar-height(2.25rem) 空白
       // 外部 CSS：main.has-spot-top,main.has-sponsor-banner{padding-top:calc(var(--header-height) + var(--spot-bar-height))}
       // 只改 <main> 标签本身的属性，不碰正文/CSS 里的同名字样

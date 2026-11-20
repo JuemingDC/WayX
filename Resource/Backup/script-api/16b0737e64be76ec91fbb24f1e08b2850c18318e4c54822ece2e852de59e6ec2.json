@@ -1,0 +1,721 @@
+{
+  "version": 1,
+  "sourceUrl": "https://raw.githubusercontent.com/Auto-001/QX---/refs/heads/main/spotify-qx.js",
+  "sourceSha256": "25f7bb8f5600fd67552fc3ab5438bb9104aee85f4b978e1ffa76f5b5e2644083",
+  "sourceClients": [
+    "qx"
+  ],
+  "sourceSyntax": {
+    "view": "decoded archived UTF-8 input",
+    "sha256": "25f7bb8f5600fd67552fc3ab5438bb9104aee85f4b978e1ffa76f5b5e2644083",
+    "operations": [
+      {
+        "api": "$task",
+        "access": "read",
+        "start": 356928,
+        "end": 356933,
+        "line": 15,
+        "column": 44,
+        "members": [
+          "$task"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 356934,
+        "end": 357023,
+        "line": 15,
+        "column": 50,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 357024,
+        "end": 357043,
+        "line": 15,
+        "column": 140,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.status",
+        "access": "read",
+        "start": 357385,
+        "end": 357401,
+        "line": 18,
+        "column": 30,
+        "members": [
+          "$response",
+          "status"
+        ]
+      },
+      {
+        "api": "$response.status",
+        "access": "read",
+        "start": 357402,
+        "end": 357418,
+        "line": 18,
+        "column": 47,
+        "members": [
+          "$response",
+          "status"
+        ]
+      },
+      {
+        "api": "$response.statusCode",
+        "access": "read",
+        "start": 357419,
+        "end": 357439,
+        "line": 18,
+        "column": 64,
+        "members": [
+          "$response",
+          "statusCode"
+        ]
+      },
+      {
+        "api": "$request.url",
+        "access": "read",
+        "start": 357465,
+        "end": 357477,
+        "line": 19,
+        "column": 24,
+        "members": [
+          "$request",
+          "url"
+        ]
+      },
+      {
+        "api": "$request.method",
+        "access": "read",
+        "start": 357497,
+        "end": 357512,
+        "line": 19,
+        "column": 56,
+        "members": [
+          "$request",
+          "method"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 357944,
+        "end": 357953,
+        "line": 25,
+        "column": 134,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 358141,
+        "end": 358150,
+        "line": 26,
+        "column": 186,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$response.bodyBytes",
+        "access": "read",
+        "start": 358225,
+        "end": 358244,
+        "line": 28,
+        "column": 40,
+        "members": [
+          "$response",
+          "bodyBytes"
+        ]
+      },
+      {
+        "api": "$response.bodyBytes",
+        "access": "read",
+        "start": 358245,
+        "end": 358264,
+        "line": 28,
+        "column": 60,
+        "members": [
+          "$response",
+          "bodyBytes"
+        ]
+      },
+      {
+        "api": "$response.body",
+        "access": "read",
+        "start": 358265,
+        "end": 358279,
+        "line": 28,
+        "column": 80,
+        "members": [
+          "$response",
+          "body"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 358413,
+        "end": 358422,
+        "line": 29,
+        "column": 131,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$request",
+        "access": "read",
+        "start": 358449,
+        "end": 358457,
+        "line": 30,
+        "column": 25,
+        "members": [
+          "$request"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 359483,
+        "end": 359492,
+        "line": 39,
+        "column": 136,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 359797,
+        "end": 359806,
+        "line": 42,
+        "column": 130,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 360137,
+        "end": 360146,
+        "line": 45,
+        "column": 220,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 360657,
+        "end": 360666,
+        "line": 50,
+        "column": 41,
+        "members": [
+          "$done"
+        ]
+      }
+    ],
+    "diagnostics": []
+  },
+  "runtimePolicyVersion": 14,
+  "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
+  "plans": {
+    "response": {
+      "surge": {
+        "version": 1,
+        "sourceClient": "qx",
+        "targetClient": "surge",
+        "sourceView": "analysis-input",
+        "analysisSourceSha256": "25f7bb8f5600fd67552fc3ab5438bb9104aee85f4b978e1ffa76f5b5e2644083",
+        "operations": [
+          {
+            "id": "api:0",
+            "rule": null,
+            "kind": "unmapped",
+            "source": {
+              "api": "$task",
+              "start": 356928,
+              "end": 356933,
+              "line": 15,
+              "column": 44,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "runtime-member-dispatch",
+            "value": "runtime value",
+            "target": {
+              "capability": "unclassified",
+              "api": "native engine / runtime capability",
+              "lowering": "Unclassified reference; depends on the actual runtime member and host capability",
+              "proof": "Capability boundary; no cross-host provider equivalence claim"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:1",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 356934,
+              "end": 357023,
+              "line": 15,
+              "column": 50,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:2",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 357024,
+              "end": 357043,
+              "line": 15,
+              "column": 140,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:3",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response.status",
+              "start": 357385,
+              "end": 357401,
+              "line": 18,
+              "column": 30,
+              "access": "read",
+              "memberPath": [
+                "status"
+              ]
+            },
+            "canonical": "response.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:4",
+            "rule": "response.context",
+            "kind": "context",
+            "source": {
+              "api": "$response.status",
+              "start": 357402,
+              "end": 357418,
+              "line": 18,
+              "column": 47,
+              "access": "read",
+              "memberPath": [
+                "status"
+              ]
+            },
+            "canonical": "response.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:5",
+            "rule": "response.status",
+            "kind": "context",
+            "source": {
+              "api": "$response.statusCode",
+              "start": 357419,
+              "end": 357439,
+              "line": 18,
+              "column": 64,
+              "access": "read",
+              "memberPath": [
+                "statusCode"
+              ]
+            },
+            "canonical": "response.status",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.status",
+              "lowering": "source/target responseStatus field from host layout",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "request.url",
+            "kind": "context",
+            "source": {
+              "api": "$request.url",
+              "start": 357465,
+              "end": 357477,
+              "line": 19,
+              "column": 24,
+              "access": "read",
+              "memberPath": [
+                "url"
+              ]
+            },
+            "canonical": "request.url",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request.url",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:7",
+            "rule": "request.method",
+            "kind": "context",
+            "source": {
+              "api": "$request.method",
+              "start": 357497,
+              "end": 357512,
+              "line": 19,
+              "column": 56,
+              "access": "read",
+              "memberPath": [
+                "method"
+              ]
+            },
+            "canonical": "request.method",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request.method",
+              "lowering": "identity; dictionary operations require their own case/duplicate/framing contract",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:8",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 357944,
+              "end": 357953,
+              "line": 25,
+              "column": 134,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:9",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 358141,
+              "end": 358150,
+              "line": 26,
+              "column": 186,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:10",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.bodyBytes",
+              "start": 358225,
+              "end": 358244,
+              "line": 28,
+              "column": 40,
+              "access": "read",
+              "memberPath": [
+                "bodyBytes"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "ArrayBuffer <-> Uint8Array preserving byteOffset/byteLength",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:11",
+            "rule": "response.bytes",
+            "kind": "context",
+            "source": {
+              "api": "$response.bodyBytes",
+              "start": 358245,
+              "end": 358264,
+              "line": 28,
+              "column": 60,
+              "access": "read",
+              "memberPath": [
+                "bodyBytes"
+              ]
+            },
+            "canonical": "response.bytes",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "ArrayBuffer <-> Uint8Array preserving byteOffset/byteLength",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:12",
+            "rule": "response.body",
+            "kind": "context",
+            "source": {
+              "api": "$response.body",
+              "start": 358265,
+              "end": 358279,
+              "line": 28,
+              "column": 80,
+              "access": "read",
+              "memberPath": [
+                "body"
+              ]
+            },
+            "canonical": "response.body",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$response.body",
+              "lowering": "identity; declaration controls whether body is available",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:13",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 358413,
+              "end": 358422,
+              "line": 29,
+              "column": 131,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:14",
+            "rule": "request.context",
+            "kind": "context",
+            "source": {
+              "api": "$request",
+              "start": 358449,
+              "end": 358457,
+              "line": 30,
+              "column": 25,
+              "access": "read",
+              "memberPath": []
+            },
+            "canonical": "request.context",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$request",
+              "lowering": "source-shaped context view; ordinary aliases, functions and object flow remain JavaScript",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:15",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 359483,
+              "end": 359492,
+              "line": 39,
+              "column": 136,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:16",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 359797,
+              "end": 359806,
+              "line": 42,
+              "column": 130,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:17",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 360137,
+              "end": 360146,
+              "line": 45,
+              "column": 220,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:18",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 360657,
+              "end": 360666,
+              "line": 50,
+              "column": 41,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          }
+        ],
+        "diagnostics": []
+      }
+    }
+  },
+  "diagnostics": []
+}

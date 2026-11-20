@@ -137,11 +137,15 @@
                 else if (/^https:\/\/javranking\.cc\/(?:zh-hans|en)\//.test(url)) {
                     body = body
                         .replace(/<aside\b[^>]*\bdata-spot-a\b[^>]*>[\s\S]*?<\/aside>/g, "")
+                        .replace(/<aside\b[^>]*\bclass="[^"]*\bspot-a-wrapper\b[^"]*"[^>]*>[\s\S]*?<\/aside>/g, "")
+                        .replace(/<script\b[^>]*>(?:(?!<\/script>)[\s\S])*?\.spot-a-bar\b(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
                         .replace(/<li\b[^>]*\bclass="[^"]*\bsponsor-grid-slot\b[^"]*"[^>]*>[\s\S]*?<\/li>/g, "")
                         .replace(/<article\b[^>]*\bdata-spot-b\b[^>]*>[\s\S]*?<\/article>/g, "")
                         .replace(/<dialog\b[^>]*\bclass="[^"]*\b(?:spot-dialog|sponsor-dialog)\b[^"]*"[^>]*>[\s\S]*?<\/dialog>/g, "")
                         .replace(/<aside\b[^>]*\bdata-spot-c\b[^>]*>[\s\S]*?<\/aside>/g, "")
                         .replace(/<aside\b[^>]*\bclass="[^"]*\bspot-c-slot\b[^"]*"[^>]*>[\s\S]*?<\/aside>/g, "")
+                        .replace(/<div\b[^>]*\bdata-age-gate\b[^>]*>[\s\S]*?data-age-gate-decline\b[^>]*>[^<]*<\/button>\s*<\/div>\s*<\/div>\s*<\/div>/g, "")
+                        .replace(/<script\b[^>]*>(?:(?!<\/script>)[\s\S])*?\bdata-age-gate-accept\b(?:(?!<\/script>)[\s\S])*?<\/script>/g, "")
                         .replace(/<main\b[^>]*>/g, (tag) => tag
                         .replace(/\s*\bhas-spot-top\b/g, "")
                         .replace(/\s*\bhas-sponsor-banner\b/g, ""));

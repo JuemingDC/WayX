@@ -183,7 +183,7 @@
 ## Adblock
 
 <details>
-<summary><strong>Adblock</strong> · 403 项</summary>
+<summary><strong>Adblock</strong> · 404 项</summary>
 
 按拉取来源分组，点击展开；各来源内部按名称 A–Z 分栏，中文按拼音首字母，数字单列。
 
@@ -1125,7 +1125,7 @@
 </details>
 
 <details>
-<summary><strong>树先生</strong> · 25 项</summary>
+<summary><strong>树先生</strong> · 26 项</summary>
 
 #### B
 
@@ -1195,6 +1195,7 @@
 | :--- | :--- | :---: | :---: |
 | AD0108 | **[识货](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ishowshu/shihuo/shihuo.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fishowshu%2Fshihuo%2Fshihuo.snippet%2C%20tag%3D%E8%AF%86%E8%B4%A7%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fishowshu%2Fshihuo%2Fshihuo.sgmodule) |
 | AD0109 | **[Soul](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ishowshu/soul/soul.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fishowshu%2Fsoul%2Fsoul.snippet%2C%20tag%3DSoul%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fishowshu%2Fsoul%2Fsoul.sgmodule) |
+| AD0403 | **[Spotify](https://github.com/JuemingDC/WayX/blob/main/Adblock/Quantumult%20X/ishowshu/spotify/spotify.snippet)** | [一键导入](https://quantumult.app/x/open-app/add-resource?remote-resource=%7B%22rewrite_remote%22%3A%5B%22https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FQuantumult%2520X%2Fishowshu%2Fspotify%2Fspotify.snippet%2C%20tag%3DSpotify%2C%20update-interval%3D86400%2C%20enabled%3Dtrue%22%5D%7D) | [一键安装](https://surge.app/install-module?url=https%3A%2F%2Fraw.githubusercontent.com%2FJuemingDC%2FWayX%2Fmain%2FAdblock%2FSurge%2Fishowshu%2Fspotify%2Fspotify.sgmodule) |
 
 #### T
 
