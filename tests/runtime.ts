@@ -98,35 +98,41 @@ for(const regex of ['/^old$/i','/.*old/s','/old\\s+/i','/old(?=next)/i','/OLD[\\
   const output=convertPlugin(entry,'[Rewrite]\nresponse if ${url} ~= /api/ then response.header.replace("X-Test",'+regex+',"new")',options);
   assert.match(output.qx,/script-response-header/);validateConvertedPlugin(entry,output);checked++;
 }
-// All families survive one declaration. Every external URL stays original.
+// Mixed JSON/JQ and source Scripts stay intact as diagnostics when they cannot emit one rule.
 for(const section of ['Rewrite','Script'])for(const phase of ['request','response']) {
   const line=phase+' if ${url} ~= /api/i then '+phase+'.header.set("X-Kept","yes") | '+phase+'.json.add("value",1) | script("https://example.test/original.js") with requires_body=true';
   const output=convertPlugin(entry,'#!name=RuntimePolicy\n# Retained comment\n['+section+']\n'+line,options);
   validateConvertedPlugin(entry,output);
   for(const target of ['qx','surge']) {
-    assert.match(output[target],/Retained comment/);assert.match(output[target],/original\.js/);assert.match(output[target],/setpath\(\["value"\]; 1\)/);
-    assert.doesNotMatch(output[target],/ISSUE REQUIRED|REVIEW REQUIRED/);
+    assert.match(output[target],/Retained comment/);
+    assert.match(output[target],/REVIEW REQUIRED.*one equivalent target rule/);
+    assert.ok(output[target].includes('# Source declaration: '+line));
+    assert.equal(output[target].split('\n').filter(line=>line.trim() && !line.trim().startsWith('#')).length,0);
   }
-  assert.match(output.surge,/header-add X-Kept yes/);checked++;
+  assert.equal(output.generatedScripts.size,0);checked++;
 }
 const filesLine='response if ${url} ~= /api/i then response.header.set("X-Kept","yes") | response.json.jq_file("ok.jq") | response.json.jq_file("missing.jq") | response.json.add("after",true)';
 const files=await materializeJqFiles(entry,parseLoonPlugin('[Rewrite]\n'+filesLine),{fetchText:async url=>{if(url.endsWith('missing.jq'))throw Error('missing file');return '.before = true';}});
 const filesOutput=convertPlugin(entry,'[Rewrite]\n'+filesLine,{...options,jqFiles:files});
-// Modified: 2026-11-16 (chance). A failed file withholds its whole JSON/JQ
-// pipeline under the 2026-11-15 policy; the independent Header action survives.
+// A failed jq file withholds the complete declaration, including its Header action.
 for(const target of ['qx','surge']) {
   assert.match(filesOutput[target],/REVIEW REQUIRED.*missing file/);
-  const active=filesOutput[target].split('\n').filter(line=>!line.trim().startsWith('#')).join('\n');
-  assert.doesNotMatch(active,/\.before|setpath\(\["after"\]; true\)/);
+  assert.ok(filesOutput[target].includes('# Source declaration: '+filesLine));
+  assert.equal(filesOutput[target].split('\n').filter(line=>line.trim() && !line.trim().startsWith('#')).length,0);
 }
-assert.match(filesOutput.surge,/header-add X-Kept yes/);
-// Script-containing pipelines discover every original Script and JQ dependency.
+assert.equal(filesOutput.generatedScripts.size,0);
+// Script discovery still finds both paths, while diagnostic-only jq files are not fetched.
 const sources=[];const mixed='[Rewrite]\nresponse if ${url} ~= /api/ then script("https://example.test/one.js") | response.json.jq_file("one.jq") | script("https://example.test/two.js")';
-const context=await materializeConversionContext(entry,mixed,{fetchText:async url=>{sources.push(url);return url.endsWith('.jq')?'.ok = true':'$done({});';}});
-assert.deepEqual(new Set(sources),new Set(['https://example.test/one.js','https://example.test/two.js','https://example.test/plugins/one.jq']));
+const context=await materializeConversionContext(entry,mixed,{fetchText:async url=>{sources.push(url);return '$done({});';}});
+assert.deepEqual(new Set(sources),new Set(['https://example.test/one.js','https://example.test/two.js']));
+assert.equal(context.jqFiles.size,0);
 const mixedOutput=convertPlugin(entry,mixed,{...options,...context});
-for(const target of ['qx','surge']) {assert.match(mixedOutput[target],/one\.js/);assert.match(mixedOutput[target],/two\.js/);assert.match(mixedOutput[target],/\.ok/);}
-console.log('Native/helper runtime passed: '+checked+' independent flag/capture/JSON/header/batch/chain checks, plus Script/JQ discovery and dependency failure isolation');
+for(const target of ['qx','surge']) {
+  assert.match(mixedOutput[target],/REVIEW REQUIRED.*one equivalent target rule/);
+  assert.ok(mixedOutput[target].includes('# Source declaration: '+mixed.split('\n')[1]));
+  assert.equal(mixedOutput[target].split('\n').filter(line=>line.trim() && !line.trim().startsWith('#')).length,0);
+}
+console.log('Native/helper runtime passed: '+checked+' independent flag/capture/JSON/header/batch/chain checks, plus Script discovery and JSON/JQ diagnostics');
 
 // Retain foundational helper checks for conditions, raw strings, duplicates and mocks.
 {
@@ -379,8 +385,18 @@ function executeSelectedJq(output,target,phase,body) {
   const entry={id:'NestedJqPhase',source:'https://example.test/plugin/main.lpx',category:'Test'};const options={stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'};
   for(const phase of ['request','response']) {
     const lines=[phase+' if ${url} ~= /api/i then '+phase+'.json.jq_file("nested.jq") | '+phase+'.header.set("X-Ready","yes")',phase+' if ${url} ~= /api/i then '+phase+'.json.replace("data.deep.flag",false)',phase+' if ${url} ~= /api/i then '+phase+'.json.jq(`del(.data.deep.old)`) | '+phase+'.body.replace(/false/,"true")'];
-    const source='[Rewrite]\n'+lines.join('\n');const files=await materializeJqFiles(entry,parseLoonPlugin(source),{fetchText:async()=>'.data.deep.flag = true | .data.deep.old = 1'});const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,0);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED/);
-    for(const target of ['qx','surge'])assert.deepEqual(executeSelectedJq(output,target,phase,'null'),{body:'{"data":{"deep":{"flag":false}}}'});
+    const source='[Rewrite]\n'+lines.join('\n');const files=await materializeJqFiles(entry,parseLoonPlugin(source),{fetchText:async()=>'.data.deep.flag = true | .data.deep.old = 1'});const output=convertPlugin(entry,source,{...options,jqFiles:files});validateConvertedPlugin(entry,output);assert.equal(output.generatedScripts.size,4);assert.doesNotMatch(output.qx+output.surge,/REVIEW REQUIRED/);
+    for(const target of ['qx','surge']) {
+      const active=output[target].split('\n').filter(line=>line.startsWith('(?i)api ') || line.startsWith('http-'+phase+'-jq ') || line.startsWith('wayx_features_'));
+      const scriptNames=active.map(line=>line.match(/\/(features_[^ ,]+\.js)/)?.[1]).filter(Boolean);
+      assert.equal(active.length,3);
+      assert.equal(scriptNames.length,2);
+      if(target==='qx') assert.match(active[1],/ url jsonjq-/);
+      const [first,last]=scriptNames.map(name=>output.generatedScripts.get(name));
+      assert.deepEqual(execute(first,phase,'null'),{body:'{"data":{"deep":{"flag":true,"old":1}}}',headers:{'X-Ready':'yes'}});
+      assert.deepEqual(executeSelectedJq(output,target,phase,'null'),{body:'{"data":{"deep":{"flag":false}}}'});
+      assert.deepEqual(execute(last,phase,'{"data":{"deep":{"flag":false,"old":1}}}'),{body:'{"data":{"deep":{"flag":true}}}'});
+    }
   }
   const fail='request if ${url} ~= /api/i then request.body.mock("json","{}") | request.json.jq(`.saved = true`) | request.json.jq(`.data.ads = [] | .data = 0 | .data.deep.flag = true`) | request.header.set("X-After","yes") | request.json.jq(`.final.ok = true`)';
   for(const target of ['qx','surge'])assert.deepEqual(JSON.parse(execute(renderRewritePhaseDispatcher([parseRewriteV2(fail)],{target}).script,'request','old').body),{saved:true,final:{ok:true}});
@@ -427,10 +443,11 @@ function executeSelectedJq(output,target,phase,body) {
       const expected=structuredClone(input);if(input.data===null)expected.data={key:9};else if(typeof input.data==='object'&&!Array.isArray(input.data))expected.data.key=9;
       const context={$request:{url:'https://example.test/api',method:'POST',headers:{Path:'data.key'},body:JSON.stringify(input)},$response:{status:200,statusCode:200,headers:{},body:JSON.stringify(input)}};
       let calls=0,result;context.$done=value=>{calls++;result=value;};vm.runInNewContext(script,context,{timeout:1000});assert.equal(calls,1);
-      assert.deepEqual(JSON.parse(result.body),expected,source+' '+target);assert.equal(result.headers,undefined,'independent native Header action is not embedded in the JSON helper');checked++;
+      assert.deepEqual(JSON.parse(result.body),expected,source+' '+target);
+      assert.deepEqual(normalize(result.headers),phase==='request'?{Path:'data.key','X-Done':'yes'}:{'X-Done':'yes'});checked++;
     }
   }
-  console.log('Dynamic replace path setting passed: '+checked+' real helper outputs, including invalid parents and independent Header output');
+  console.log('Dynamic replace path setting passed: '+checked+' real helper outputs, including invalid parents and Header mutations in the same declaration');
 }
 
 
@@ -446,14 +463,15 @@ function executeSelectedJq(output,target,phase,body) {
     const line=phase+' if ${url} ~= /^https:\\/\\/example\\.test\\/api$/ then '+phase+'.json.jq(`'+filter+'`) | '+phase+'.header.set("X-After","yes")';
     assert.ok(fixedJqOperations(parseRewriteV2(line).actions[0]),filter);
     const out=convertPlugin(entry,'[Rewrite]\n'+line,options);validateConvertedPlugin(entry,out);
-    assert.equal(out.generatedScripts.size,0,filter);
+    assert.equal(out.generatedScripts.size,2,filter);
     assert.doesNotMatch(out.qx+out.surge,/^\^ url script-/m,'retain URL prefilter');
     for(const input of inputs) {
       const reference=runIsolatedCase('jq',['-c',filter],{input,encoding:'utf8'});if(reference.error)throw reference.error;
       for(const target of ['qx','surge']) {
-        const {renderRewritePhaseDispatcher}=await import('../src/emit/runtime.ts');
-        const script=renderRewritePhaseDispatcher([parseRewriteV2(line)],{target}).script;
-        assert.match(out[target],target==='qx'?/jsonjq-/:/http-.*-jq/,'canonical output selects native JQ');
+        const scriptName=out[target].match(/\/(features_[^ ,]+\.js)/)?.[1];
+        assert.ok(scriptName,'mixed JQ and Header declaration emits one helper');
+        const script=out.generatedScripts.get(scriptName);
+        assert.doesNotMatch(out[target],target==='qx'?/jsonjq-/:/http-.*-jq/);
         let result,calls=0;
         const state={$request:{url:'https://example.test/api',headers:{},body:input},$response:{status:200,statusCode:200,headers:{},body:input},$done:value=>{result=value;calls++}};
         vm.runInNewContext(script,state,{timeout:1000});assert.equal(calls,1);
