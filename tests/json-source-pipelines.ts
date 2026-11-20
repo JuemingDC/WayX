@@ -31,14 +31,15 @@ for (const phase of ['request', 'response']) for (const section of ['Rewrite', '
     assert.equal(evaluate(expression(active[0]), '{"x":0,"ads":1,"old":2}'), '{"x":2,"added":true,"count":3}');
   }
   assert.equal(out.generatedScripts.size, 0);
-  // Repeated URL conditions are grouped before planning, including separate source declarations.
+  // Repeated URL conditions in separate declarations remain distinct.
   const independent = convertPlugin(entry, `[${section}]\n` + actions.slice(0,2).map(action => declaration(phase,[action])).join('\n'), options);
-  for (const target of ['qx','surge']) assert.equal(rules(independent[target],target,phase).length,1);
-  // Keep the JSON block intact even when an original Script follows it.
+  for (const target of ['qx','surge']) assert.equal(rules(independent[target],target,phase).length,2);
+  // A mixed declaration that requires two target rules stays diagnostic-only.
   const mixed = convertPlugin(entry, `[${section}]\n` + declaration(phase,[...actions,'script("https://example.test/original.js") with requires_body=true,tag="Original"']), options);
   for (const target of ['qx','surge']) {
-    assert.equal(rules(mixed[target],target,phase).length,1,mixed[target]);
-    assert.match(mixed[target], /original\.js/);
+    assert.equal(rules(mixed[target],target,phase).length,0,mixed[target]);
+    assert.match(mixed[target], /REVIEW REQUIRED.*one equivalent target rule/);
+    assert.doesNotMatch(mixed[target], /^[^#\n]*original\.js/m);
   }
   // Dependencies at indices 1 and 3 must stay associated with their own actions.
   const fileActions = [`${phase}.json.add("x",1)`,`${phase}.json.jq_file("one.jq")`,`${phase}.json.delete("ads")`,`${phase}.json.jq_file("two.jq")`];

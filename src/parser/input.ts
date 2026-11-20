@@ -192,15 +192,20 @@ export function groupSourceSectionItems(lines: any = []): any {
       continue;
     }
     // Modified: 2026-11-15 (chance). Retain JSON blocks while projecting mixed Script declarations.
-    const members: any = isScriptV2(trimmed)
+    const projected: string[] = isScriptV2(trimmed)
       ? splitScriptPipelineSources(trimmed, {preserveJsonPipelines: true})
       : [trimmed];
+    // Modified: 2026-11-20 (chance). Keep mixed jq/Script declarations atomic.
+    const atomicJsonPipeline = projected.length > 1 &&
+      projected.some(line => /\bthen\s+(?:request|response)\.json\./.test(line));
+    const members = atomicJsonPipeline ? [trimmed] : projected;
     members.forEach((line: any, index: any): any =>
       items.push({
         comments: index === 0 ? pending : [],
         line,
         sourceIndex,
         ...(members.length > 1 ? { pipelineMember: true } : {}),
+        ...(atomicJsonPipeline ? { atomicJsonPipeline } : {}),
       }),
     );
     pending = [];

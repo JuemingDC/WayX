@@ -59,9 +59,9 @@
 | 2026-10-25 | Unsupported mapping | Comment source declaration + diagnostic; no misleading active rule |
 | 2026-10-25 | Scanner | Protect regex alternation, logical OR, strings/raw strings, jq pipes, variables, arrays, parentheses and Script options |
 | 2026-11-15 | Continuous JSON/JQ actions | One source pipeline → one native jq expression; preserve order and per-expression scope |
-| 2026-11-20 | Same URL JSON/JQ declarations | Group only consecutive entries with identical fixed condition, flags and phase within one section; preserve action order, duplicates, dependency indices and comments |
+| 2026-11-20 | Same URL JSON/JQ declarations | Convert each declaration independently in source order, including adjacent identical matchers; preserve duplicates, dependency indices and comments |
 | 2026-11-15 | Different conditions/phases | Keep separate; no post-emission rule-string merging |
-| 2026-11-15 | Mixed declarations | Continuous JSON/JQ stays together; non-JSON actions retain independent planning boundaries |
+| 2026-11-15 | Mixed declarations | A declaration containing JSON/JQ emits one equivalent native rule or one existing helper; otherwise preserve the complete declaration as a diagnostic. Pipelines without JSON/JQ retain independent planning boundaries |
 | 2026-11-15 | Failed JSON dependency | Diagnose the entire affected JSON pipeline; never publish a shortened pipeline |
 | 2026-10-25 | Independent action failure | Preserve neighboring successful independent actions; no declaration-text deduplication |
 | 2026-10-25 | Independent repeated actions | Preserve multiplicity/order; routing-only exact duplicates may be deduplicated |
@@ -596,22 +596,22 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
-| 2026-11-20 | jq source order, framing headers and HTTP Script V2 | A/B/A → three ordered rules; adjacent identical matchers → one pipeline; reject fixed Content-Length or Transfer-Encoding header mutations, including arrays; QX Script V2 emits HTTPS or local paths |
+| 2026-11-20 | jq source order, framing headers and HTTP Script V2 | A/B/A → three ordered rules; adjacent identical matchers stay separate; reject fixed Content-Length or Transfer-Encoding header mutations, including arrays; QX Script V2 emits HTTPS or local paths |
 | 2026-11-18 | HTTP exception compatibility, runtime policy 14 | Escaped synchronous error / returned rejected Promise → log + `$done({})` once before submission; author catches/native submission errors/non-HTTP triggers preserved; replace blanket no-passthrough rule |
 | 2026-11-18 | Remove Nexitally Rule inputs | Extra_CN_3 / Extra_Proxies / Extra_AI / Extra_Crypto / ApplePush → no registered source or mirror; existing Actions owns output regeneration |
 | 2026-11-17 | Reserved Surge mock-response emitter | `prepareSurgeMockResponse({status:200, trailers:{"grpc-status":"0"}})` → native payload; dictionary/array validation and isolated tests; source mappings remain inactive; runtime policy unchanged |
-| 2026-11-17 | Repeated JQ regression | Same-URL increments form one native expression; execute with x=0 and require x=2; whitespace is not an execution-count contract |
+| 2026-11-17 | Repeated JQ regression | Same-URL increments stay separate; execute both filters in output order with x=0 and require x=2 |
 | 2026-11-17 | Argument transport end-to-end regression | JingDong jd_price.js fragment decodes to {value:{Cookies:""}}; validate original URL and typed value before changing only its QX golden digest/size |
 | 2026-11-17 | Early-failure and migration regression fixes | Initialize logs without layout mutation before tests; restore working layout only after regressions; offline retention preserves migrated AD identity; response-phase QX argument tests include native response context |
 | 2026-11-17 | QX arguments, runtime policy 13 | Official URL fragment → environment.variables/sourcePath → Loon $argument; fixed strings and typed PluginObject defaults; original fragments retained |
 | 2026-11-17 | Official callback contract clarification | Chunked HTTP/1.1 + HTTP/2; iOS 6.0.0 / Mac 6.12.0; dictionary/array/absence contract; headers-only gRPC example; request trailers remain unsupported |
 | 2026-11-16 | Single English specification | Duplicate conversion/maintenance docs → this file; dated rule tables + examples; history in Git |
-| 2026-11-16 | JSON/JQ dependency-failure regression | Missing file → withhold entire JSON/JQ pipeline; independent Header mutation survives |
+| 2026-11-16 | JSON/JQ dependency-failure regression | Missing file → withhold the entire source declaration; independent neighboring declarations survive |
 | 2026-11-16 | Source regex validation, Issue #517 | `(?>indexopsmodules\|loadsplashconfig)` → unchanged ICU-native QX/Surge matcher; invalid ICU still fails |
 | 2026-11-16 | HTTP callback trailers, policy 12 | Loon callback `response.h2_trailers` ← actual Surge callback `response.trailers`; no intercept body-buffer requirement |
 | 2026-11-16 | Response-script trailers, policy 11 | `$response.h2_trailers` ↔ `$response.trailers`; `$done({h2_trailers:{}})` → `$done({trailers:{}})`; buffered response only |
 | 2026-11-16 | Global API resolution | `globalThis.$done(value)` → facade call; locally shadowed globalThis remains local |
-| 2026-11-15 | Source-level JSON/JQ grouping | Identical URL/condition/flags/phase JSON declarations → one ordered source pipeline → one native jq rule |
+| 2026-11-20 | JSON/JQ declaration boundaries | One source declaration → one target rule per client; preserve the complete diagnostic if no single equivalent rule exists |
 | 2026-11-14 | Inline JQ files | `jq_file("program.jq")` → fetched program inline; no Resource/JQ or CLI-file-option assumption |
 | 2026-11-13 | Native QX published JS | Original bytes → exact archive; executable/legal content → published native copy without API runtime |
 | 2026-11-13 | Bounded Issue history | Closed record → number/title/state only; open record additionally body |

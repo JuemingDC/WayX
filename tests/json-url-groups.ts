@@ -1,5 +1,5 @@
 // Modified: 2026-11-15 (chance). Verify the real repeated-URL failure and
-// consecutive grouping, including comments, phases and per-line file indices.
+// source boundaries, comments, phases and per-line file indices.
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import {spawnSync} from "node:child_process";
@@ -26,13 +26,13 @@ for (let iteration = 0; iteration < 2; iteration++) {
   }
   assert.equal(JSON.stringify([...context.declarations]),before,'source grouping must not mutate the reusable acquisition context');
 }
-// A broken dependency in a later source line diagnoses the entire URL group.
+// A broken dependency does not remove another source declaration.
 const brokenSource = '[Rewrite]\nresponse if ${url} ~= /broken/ then response.json.add("before",true)\nresponse if ${url} ~= /broken/ then response.json.jq_file("missing.jq")\n';
 const brokenContext = await materializeConversionRunContext(entry,brokenSource,{root:process.cwd(),fetchText:async () => {throw Error('missing URL group fixture');}});
 const broken = convertPluginWithContext(entry,brokenSource,brokenContext,options);
 for (const target of ['qx','surge']) {
   assert.match(broken[target],/REVIEW REQUIRED.*missing URL group fixture/);
-  assert.doesNotMatch(broken[target],/^[^#\n]*(?:jsonjq-response-body|http-response-jq)/m);
+  assert.match(broken[target],/^[^#\n]*(?:jsonjq-response-body|http-response-jq).*setpath/m);
 }
 // Non-adjacent matching programs must remain A/B/A, including exact repeats.
 const repeated = 'response if ${url} ~= /api/ then response.json.jq(".x += 1")';
@@ -42,8 +42,8 @@ for (const adjacent of [true, false]) {
   const outputs = convertPlugin(entry, source, options);
   for (const target of ['qx', 'surge']) {
     const rows = outputs[target].split('\n').filter(row => /^(?:http-response-jq |[^#].* url jsonjq-response-body )/.test(row));
-    assert.equal(rows.length, adjacent ? 1 : 3, outputs[target]);
-    if (!adjacent) assert.equal(rows[0], rows[2]);
+    assert.equal(rows.length, adjacent ? 2 : 3, outputs[target]);
+    assert.equal(rows[0], rows.at(-1));
     const program = rows.map(row => '(' + row.slice(row.indexOf(" '") + 2, -1) + ')').join(' | ');
     const result = spawnSync('jq', ['-c', program], {input: '{"x":0}', encoding: 'utf8'});
     assert.equal(result.status, 0, result.stderr);
@@ -59,8 +59,8 @@ for (const name of ['Tieba','Taqu','XiaobaiPrint','Zhihu']) {
 
     if(name==='Tieba') {
       const sync = jqRows.filter((line: string) => line.includes('c\\/s\\/sync'));
-      assert.equal(sync.length,1,`${target}: Tieba sync must be one rule`);
-      const program = sync[0].slice(sync[0].indexOf(" '")+2,-1);
+      assert.equal(sync.length,3,`${target}: Tieba sync has three source rules`);
+      const program = sync.map(row => "(" + row.slice(row.indexOf(" '")+2,-1) + ")").join(" | ");
       const result = spawnSync('jq',['-c',program],{input:JSON.stringify({activity_switch:1,wl_config:{keep:1},index_tab_info:[{tab_name:'推荐'},{tab_name:'广告'}],top_level_navi:{推荐:1,侧边栏:2,关注:3,广告:4}}),encoding:'utf8'});
       assert.equal(result.status,0,result.stderr);
       const body = JSON.parse(result.stdout);

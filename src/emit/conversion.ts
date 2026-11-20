@@ -206,10 +206,16 @@ function resolveRewriteJqDependencies(ast: any, line: any, ctx: any): any {
   validateRewriteV2Ast(result);
   return result;
 }
+// Modified: 2026-11-20 (chance). Keep JSON actions within their source declaration.
+function isJsonRewriteAction(action: any): boolean {
+  return /^(?:request|response)\.json\.(?:add|delete|replace|jq|jq_file)$/.test(action.name);
+}
 function rewriteV2Action(line: any, target: any, ctx: any): any {
   if (!isRewriteV2(line)) return null;
   if (isScriptV2(line)) {
     const members: any = splitScriptPipelineSources(line);
+    if (members.some((member: string) => /\bthen\s+(?:request|response)\.json\./.test(member)))
+      return rewriteReview(line, "JSON/JQ and a source Script cannot be represented by one equivalent target rule");
     if (members.length > 1)
       return {
         section: "split",
@@ -275,9 +281,7 @@ function rewriteV2Action(line: any, target: any, ctx: any): any {
       "unsupported Rewrite target planner: " + target,
     );
   const plan: any = (member: any): any => {
-    const selectedLine: any = ast.sourceActionCount
-      ? rewriteV2ToSource(member)
-      : line;
+    const selectedLine: any = member === ast ? line : rewriteV2ToSource(member);
     try {
       const resolved: any = resolveRewriteJqDependencies(member, line, ctx);
       const sourceLine: any = ast.sourceActionCount
@@ -333,19 +337,27 @@ function rewriteV2Action(line: any, target: any, ctx: any): any {
       );
     }
   };
-  // Modified: 2026-11-15 (chance). Lower a source JSON/JQ pipeline as one
-  // declaration in both clients; dependency indices remain source-relative.
-  const isJsonAction = (action: any): boolean =>
-    new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq|jq_file)$").test(action.name);
-  if (!ast.sourceActionCount || ast.actions.every(isJsonAction)) return plan(ast);
+  const hasJson = ast.actions.some(isJsonRewriteAction);
+  if (!ast.sourceActionCount || ast.actions.every(isJsonRewriteAction)) return plan(ast);
+  if (hasJson) {
+    try {
+      const resolved = resolveRewriteJqDependencies(ast, line, ctx);
+      const helper = planRewriteFeatureHelper(resolved, target, {
+        ...ctx,
+        sourceLine: line,
+        argumentRefs: rewriteV2PluginArgumentRefs(resolved, ctx.argumentIds || []).all,
+      });
+      return helper?.ok
+        ? helper
+        : rewriteReview(line, helper?.reason || "JSON/JQ pipeline requires one equivalent target rule");
+    } catch (error: any) {
+      return rewriteReview(line, String(error?.message || error).split("\n")[0]);
+    }
+  }
   const members: any[] = [];
   for (let index = 0; index < ast.actions.length; index++) {
     const action = ast.actions[index];
-    const previous = members.at(-1);
-    if (isJsonAction(action) && previous?.actions.every(isJsonAction)) {
-      previous.actions.push(action);
-      previous.sourceActionIndices.push(ast.sourceActionIndices[index]);
-    } else members.push({
+    members.push({
       ...ast,
       actions: [action],
       sourceActionIndices: [ast.sourceActionIndices[index]],
@@ -400,6 +412,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
   // Keep native JSON/JQ declarations outside helper dispatchers. Original
   // Script/legacy owners also retain their existing phase contracts.
   const blockedV2: any = new Set();
+  const jsonPhases = new Set<string>();
   for (const item of items)
     if (isRewriteV2(item.line) && !isScriptV2(item.line))
       try {
@@ -408,6 +421,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
           item.line,
           ctx,
         );
+        if (ast.actions.some(isJsonRewriteAction)) jsonPhases.add(ast.phase);
         const nativeJson: any =
           (ast.actions.length > 1 ||
             ast.actions[0]?.args.some(
@@ -456,6 +470,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
         ctx,
       );
       validateRewriteV2Ast(ast);
+      if (ast.actions.some(isJsonRewriteAction)) continue;
       const mapped: any = rewriteV2Action(item.line, target, ctx);
       if (mapped.section === "split") continue;
       if (mapped.section !== "comment" && mapped.section !== "drop")
@@ -470,6 +485,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
     }
   }
   for (const phase of ["request", "response"]) {
+    if (jsonPhases.has(phase)) continue;
     const group: any = candidates.filter(
       (x: any): any => x.ast.phase === phase,
     );
@@ -516,22 +532,6 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
         throw new Error(
           "phase dispatcher cannot compose native JQ/echo/URL/binary actions without a verified runtime adapter",
         );
-      const jqGroup: any = group.some((x: any): any =>
-        x.ast.actions.some((a: any): any => a.name.endsWith(".json.jq")),
-      );
-      const jqMatchers: any = jqGroup
-        ? group.map((x: any): any =>
-            simpleUrlRewriteCondition(x.ast, { target }),
-          )
-        : [];
-      if (
-        jqGroup &&
-        (jqMatchers.some((m: any): any => !m.ok) ||
-          new Set(jqMatchers.map((m: any): any => m.pattern)).size !== 1)
-      )
-        throw new Error(
-          "mixed JQ dispatcher requires the same source URL regex for every member",
-        );
       const refs: any = [
         ...new Set(
           group.flatMap(
@@ -560,7 +560,6 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
           jqFiles: ctx.jqFiles,
         },
       );
-      if (jqGroup) plan.pattern = jqMatchers[0].pattern;
       if (bodyOwner) plan.pattern = bodyMatchers[0].pattern;
       const key: any = crypto
         .createHash("sha1")
@@ -674,83 +673,6 @@ function sanitizeName(value: any): any {
       .slice(0, 64) || "script"
   );
 }
-// Modified: 2026-11-20 (chance). Combine only consecutive JSON declarations
-// for the same URL and phase, keeping other rewrites in source order.
-function prepareJsonUrlGroups(plugin: any, ctx: any): any {
-  const groups: any[][] = [];
-  const sections = new Map(plugin.sections);
-  const sectionItems = new Map<string, any[]>();
-  for (const section of ["Rewrite", "Script"]) {
-    const lines = sections.get(section);
-    if (!lines) continue;
-    const items = groupSourceSectionItems(lines);
-    sectionItems.set(section, items);
-    let previousKey: string | undefined;
-    for (const item of items) {
-      const precedingKey = previousKey;
-      previousKey = undefined;
-      if (!item.line || !isRewriteV2(item.line) || isScriptV2(item.line)) continue;
-      try {
-        const ast = preparedRewriteAst(ctx.declarations, item.line);
-        validateRewriteV2Ast(ast);
-        if (!simpleUrlRewriteCondition(ast).ok || !ast.actions.every((action: any): boolean =>
-          new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq|jq_file)$").test(action.name),
-        )) continue;
-        previousKey = JSON.stringify([ast.phase, ast.condition]);
-        if (previousKey !== precedingKey) groups.push([]);
-        groups.at(-1)!.push({item, ast});
-      } catch { /* Preserve the ordinary source diagnostic. */ }
-    }
-  }
-  const replacement = new Map<any, string | null>();
-  const comments = new Map<any, string[]>();
-  for (const group of groups) {
-    if (group.length < 2) continue;
-    let actions: any[] = [];
-    let failure: any = null;
-    for (const member of group) {
-      try {
-        actions.push(...resolveRewriteJqDependencies(member.ast, member.item.line, ctx).actions.filter((action: any): boolean =>
-          action.name !== member.ast.phase + ".json.jq" ||
-          !["string", "raw-string"].includes(action.args[0]?.type) ||
-          String(action.args[0].value).trim() !== "",
-        ));
-      } catch (error) {
-        failure ??= error;
-        actions.push(...member.ast.actions);
-      }
-    }
-    if (!actions.length) continue;
-    const ast = {
-      ...group[0].ast,
-      actions,
-      sourceActionCount: actions.length,
-      sourceActionIndices: actions.map((_: any, index: number): number => index),
-    };
-    const line = rewriteV2ToSource(ast);
-    ast.raw = line;
-    ctx.declarations.set(line, failure ? {error: failure} : {ast});
-    replacement.set(group[0].item, line);
-    comments.set(group[0].item, group.flatMap(member => member.item.comments));
-    for (const member of group.slice(1)) {
-      replacement.set(member.item, null);
-      comments.set(member.item, []);
-    }
-  }
-  if (!replacement.size) return plugin;
-  for (const [section, items] of sectionItems) {
-    if (!items.some(item => replacement.has(item))) continue;
-    const lines: string[] = [];
-    for (const item of items) {
-      lines.push(...(comments.get(item) ?? item.comments));
-      const line = replacement.has(item) ? replacement.get(item) : item.line;
-      if (line) lines.push(line);
-    }
-    sections.set(section, lines);
-  }
-  return {...plugin, sections};
-}
-
 export function convertPlugin(
   entry: any,
   source: any,
@@ -766,7 +688,7 @@ export function convertPlugin(
   }: any = {},
 ): any {
   if (!stamp) throw new Error("convertPlugin requires a conversion stamp");
-  let plugin: any = parsed ?? parseLoonPlugin(source);
+  const plugin: any = parsed ?? parseLoonPlugin(source);
   // Modified: 2026-10-25 (chance). Both targets consume one prepared source IR.
   declarations = new Map(declarations ?? prepareRewriteDeclarations(plugin));
   const sourceHeader: any = plugin.header;
@@ -835,7 +757,6 @@ export function convertPlugin(
     argumentTable: surgeArgumentTable,
     rawBase,
   };
-  plugin = prepareJsonUrlGroups(plugin, qctx);
   if (argumentAnalysis.undeclaredRefs.length) {
     const refs: any = [
       ...new Set(
@@ -1093,7 +1014,7 @@ export function convertPlugin(
   for (const item of groupSourceSectionItems(scriptSectionLines)) {
     const comments: any = cleanSourceComments(item.comments);
     if (!item.line) continue;
-    if (isRewriteV2(item.line) && !isScriptV2(item.line)) {
+    if (isRewriteV2(item.line) && (!isScriptV2(item.line) || item.atomicJsonPipeline)) {
       for (const target of ["qx", "surge"]) {
         const ctx: any = target === "qx" ? qctx : sctx;
         const result: any = rewriteV2Action(

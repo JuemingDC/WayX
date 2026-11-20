@@ -657,10 +657,11 @@ response if \${url} ~= /api/ then response.header.set("X-Test", "ok") | response
 const genericComplexOutput = convert(genericComplexFixture, genericComplexSource, new Map(), STAMP);
 assert.doesNotMatch(genericComplexOutput.qx, /ISSUE REQUIRED|REVIEW REQUIRED/);
 assert.doesNotMatch(genericComplexOutput.surge, /ISSUE REQUIRED|REVIEW REQUIRED/);
-assert.match(genericComplexOutput.qx, /jsonjq-response-body/);
-assert.equal(genericComplexOutput.generatedScripts.size,0);
-assert.match(genericComplexOutput.surge, /http-response-jq/);
-assert.match(genericComplexOutput.surge,/header-add X-Test ok/);
+assert.equal(genericComplexOutput.generatedScripts.size, 2);
+assert.equal(genericComplexOutput.qx.match(/^[^#\n]* url script-response-body /gm)?.length, 1);
+assert.equal(genericComplexOutput.surge.match(/^[^#\n]* = type=http-response/gm)?.length, 1);
+assert.doesNotMatch(genericComplexOutput.qx, /jsonjq-response-body/);
+assert.doesNotMatch(genericComplexOutput.surge, /http-response-jq|header-add X-Test/);
 
 const unknownActionFixture = {
   id:'UnknownActionFixture',
@@ -2008,11 +2009,8 @@ if(selectedCase==='conversion-policy.mjs') {
       assert.deepEqual(discoverSourceScriptUrls(source),['https://example.test/original.js']);
       const out=convertPlugin(entry,source,options);
       for(const target of ['qx','surge']) {
-        assert.doesNotMatch(out[target],/ISSUE REQUIRED|REVIEW REQUIRED/);
-        assert.match(active(out[target]),/original\.js/);
-        assert.match(active(out[target]),/setpath\(\["value"\]; 3\)/);
-        if(target==='surge')assert.match(out[target],/header-add X-Kept yes/);
-        else assert.match(out.qx,/X-Kept: yes/);
+        assert.match(out[target],/REVIEW REQUIRED.*one equivalent target rule/);
+        assert.doesNotMatch(active(out[target]),/original\.js|setpath|X-Kept/);
       }
       validateQX(out.qx,entry);validateSurgeModule(out.surge,entry);
     }
@@ -2025,8 +2023,8 @@ if(selectedCase==='conversion-policy.mjs') {
     // Modified: 2026-11-15 (chance). A missing dependency diagnoses the whole JSON pipeline.
     assert.doesNotMatch(active(out[target]),/\.before|setpath\(\["after"\]; true\)/);
   }
-  assert.match(out.surge,/header-add X-Before yes/);
-  console.log('Independent action output passed: both phases/sections/orders, original Script URL, JSON and Header retention, and per-file failure isolation');
+  assert.doesNotMatch(active(out.surge), /header-add X-Before yes/);
+  console.log('Atomic JSON/JQ output passed: both phases/sections/orders and complete diagnostics for unsupported declarations');
 }
 
 

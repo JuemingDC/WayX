@@ -57,7 +57,7 @@ try {
     for (const target of ["qx", "surge"]) {
       const expressions = out[target].split('\n').filter((line: string) => target === "qx" ? line.includes(`url jsonjq-${phase}-body `) : line.startsWith(`http-${phase}-jq `)).map((line: string) => line.slice(line.indexOf(" '") + 2, -1));
       // Modified: 2026-11-15 (chance). Same-URL file actions are grouped in source IR for both clients.
-      assert.equal(expressions.length, 1, out[target]);
+      assert.equal(expressions.length, 2, out[target]);
       const result = spawnSync("jq", ["-c", expressions.join(" | ")], {input:'{}', encoding:"utf8"});
       assert.equal(result.stdout.trim(), '{"x":3}');
     }
