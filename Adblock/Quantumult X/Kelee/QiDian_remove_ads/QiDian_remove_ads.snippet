@@ -16,8 +16,9 @@
 # [filter_local]
 
 # [rewrite_local]
+(?i)^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body 'setpath(["Data","WolfEye"]; 0) | setpath(["Data","CloudSetting","TeenShowFreq"]; 0)'
 
-(?i)^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body 'setpath(["Data","WolfEye"]; 0) | setpath(["Data","CloudSetting","TeenShowFreq"]; 0) | del(.Data.ActivityPageBackPushNoticeFrequency,.Data.ActivityIcon,.Data.ActivityPopup,.Data.LuckBag)'
+(?i)^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v1\/client\/getconf$ url jsonjq-response-body 'del(.Data.ActivityPageBackPushNoticeFrequency,.Data.ActivityIcon,.Data.ActivityPopup,.Data.LuckBag)'
 
 (?i)^https:\/\/magev6\.if\.qidian\.com\/argus\/api\/v4\/client\/getsplashscreen\? url reject-dict
 

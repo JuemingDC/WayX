@@ -26,7 +26,9 @@ http-response-jq (?i)^https:\/\/api\.zhihu\.com\/questions\/\d+\/feeds\? 'del(.a
 
 http-response-jq (?i)^https:\/\/api\.zhihu\.com\/comment_v\d\/(answers|pins)\/\d+\/root_comment\? 'del(.atmosphere_voting_config)'
 
-http-response-jq (?i)^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ 'del(.third_business,.float_search_word) | (.structured_content.segments|=map(select(.type !="card")))'
+http-response-jq (?i)^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ 'del(.third_business,.float_search_word)'
+
+http-response-jq (?i)^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ '.structured_content.segments |= map(select(.type != "card"))'
 http-response-jq (?i)^https:\/\/api\.zhihu\.com\/topstory\/recommend\? '.data[]?.children |= (if type == "array" then map(select(.id != "ring")) else . end)'
 
 http-response-jq (?i)^https:\/\/api\.zhihu\.com\/(articles|answers|pins)\/v\d\/\d+\? 'del(.third_business,.ring_info,.interaction_bar_plugins)'

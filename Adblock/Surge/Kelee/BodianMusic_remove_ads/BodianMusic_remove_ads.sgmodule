@@ -17,11 +17,15 @@
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'del(.data.groupSign.adStartAppDialog,.data.groupSign.adGuideTest,.data.groupSign.playTips,.data.groupSign.adExitChange,.data.conf.adGuidePopCount,.data.conf.adDownListOpen) | setpath(["data","conf","flowControlConfig","uploadEnable"]; false) | setpath(["data","conf","flowControlConfig","p2pEnable"]; false)'
+http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'del(.data.groupSign.adStartAppDialog,.data.groupSign.adGuideTest,.data.groupSign.playTips,.data.groupSign.adExitChange,.data.conf.adGuidePopCount,.data.conf.adDownListOpen)'
+
+http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? 'setpath(["data","conf","flowControlConfig","uploadEnable"]; false) | setpath(["data","conf","flowControlConfig","p2pEnable"]; false)'
 
 http-response-jq (?i)^https:\/\/ab-bodian\.kuwo\.cn\/abtest\/ui\/info\? 'del(.data.mapTestInfo.CommentADPosition,.data.mapTestInfo.DiscoverADPosition,.data.mapTestInfo.DownloadAd,.data.mapTestInfo.FreeModVoiceReminder,.data.mapTestInfo.GamesTrans,.data.mapTestInfo.bodianmvdialog,.data.mapTestInfo.MvTryShowAds,.data.mapTestInfo.insert)'
 
-http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'del(.data.iosP2PCacheEnable,.data.warmStartDialog,.data.adsNotFinishVipPop4DayInterval) | setpath(["data","showShopEntry"]; false) | setpath(["data","iosP2pEnableSendDataLimit"]; 1)'
+http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'del(.data.iosP2PCacheEnable,.data.warmStartDialog,.data.adsNotFinishVipPop4DayInterval)'
+
+http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? 'setpath(["data","showShopEntry"]; false) | setpath(["data","iosP2pEnableSendDataLimit"]; 1)'
 
 http-response-jq (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/search\/topic\/word\/list\? 'del(.data.hotTopic,.data.searchFind,.data.globalJumpInfo,.data.hotWord)'
 

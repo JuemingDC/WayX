@@ -16,8 +16,9 @@
 # [filter_local]
 
 # [rewrite_local]
+(?i)^https:\/\/tnc\d-(bjlgy|ali[a-z]{2})\d?\.zijieapi\.com\/get_domains\/v\d\/\? url jsonjq-response-body 'setpath(["data","opaque_data_enabled"]; 0) | setpath(["data","ttnet_http_dns_enabled"]; 0) | setpath(["data","ttnet_quic_enabled"]; 0) | setpath(["data","ttnet_tt_http_dns"]; 0)'
 
-(?i)^https:\/\/tnc\d-(bjlgy|ali[a-z]{2})\d?\.zijieapi\.com\/get_domains\/v\d\/\? url jsonjq-response-body 'setpath(["data","opaque_data_enabled"]; 0) | setpath(["data","ttnet_http_dns_enabled"]; 0) | setpath(["data","ttnet_quic_enabled"]; 0) | setpath(["data","ttnet_tt_http_dns"]; 0) | (.data.ttnet_dispatch_actions|=map(select(.action !="dispatch" and .action !="tc")))'
+(?i)^https:\/\/tnc\d-(bjlgy|ali[a-z]{2})\d?\.zijieapi\.com\/get_domains\/v\d\/\? url jsonjq-response-body '.data.ttnet_dispatch_actions |= map(select(.action != "dispatch" and .action != "tc"))'
 
 (?i)^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/commerce\/upsells_config\? url reject-dict
 
@@ -34,7 +35,9 @@
 
 (?i)^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/feed\/song-tab\? url jsonjq-response-body 'del(.items[] | select(.type == "video_track_mix"))'
 
-(?i)^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/card\? url jsonjq-response-body 'del(.preview_guide) | (del(.card_items[]|select(has("priority_display"))))'
+(?i)^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/card\? url jsonjq-response-body 'del(.preview_guide)'
+
+(?i)^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/card\? url jsonjq-response-body 'del(.card_items[] | select(has("priority_display")))'
 
 (?i)^https:\/\/(beta-luna\.douyin|api5-lq\.qishui)\.com\/luna\/media_ads\? url reject-dict
 

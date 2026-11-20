@@ -32,7 +32,9 @@ http-response-jq (?i)^https:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/categoriesNewD
 
 http-response-jq (?i)^https:\/\/maicai\.api\.ddxq\.mobi\/tool\/getConfig\? 'del(.data.ai_enter_config)'
 
-http-response-jq (?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? 'del(.data.top_advert_data,.data.suspension) | (.data.list|=map(select(has("capsule_freedom_zone")|not)))'
+http-response-jq (?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? 'del(.data.top_advert_data,.data.suspension)'
+
+http-response-jq (?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? '.data.list |= map(select(has("capsule_freedom_zone") | not))'
 
 http-response-jq (?i)^https:\/\/maicai\.api\.ddxq\.mobi\/guide-service\/productApi\/productDetail\/info\? 'del(.data.detail.chatEntry)'
 

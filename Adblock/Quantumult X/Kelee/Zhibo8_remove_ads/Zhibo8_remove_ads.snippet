@@ -20,7 +20,9 @@
 
 (?i)^https:\/\/a\.qiumibao\.com\/found\/\? url jsonjq-response-body 'map(select(.is_game != true))'
 
-(?i)^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body 'del(.skin,.advert,.advert_config,.mall,.httpdns,.reward,.pgame,.corner_mark,.liveshop,.theme,.pop,.live_activity_push) | (.all_sections.match_sections.labels|=(if . then (.blacks_disable|=if . then map(select(. !="游戏")) else . end)|(.show|=if . then map(select(. !="游戏")) else . end) else . end))'
+(?i)^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body 'del(.skin,.advert,.advert_config,.mall,.httpdns,.reward,.pgame,.corner_mark,.liveshop,.theme,.pop,.live_activity_push)'
+
+(?i)^https:\/\/a\.qiumibao\.com\/ios\/config\/\? url jsonjq-response-body '.all_sections.match_sections.labels |= (if . then (.blacks_disable |= if . then map(select(. != "游戏")) else . end) | (.show |= if . then map(select(. != "游戏")) else . end) else . end)'
 
 (?i)^https:\/\/rn\.qiumibao\.com\/news\/relation\.php$ url reject-dict
 

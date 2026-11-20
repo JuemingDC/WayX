@@ -18,7 +18,9 @@
 # [rewrite_local]
 (?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.popup\.get\/ url reject-dict
 
-(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\/ url jsonjq-response-body 'del(.data.returnValue.floatingBanner,.data.returnValue.searchShadeList) | (.data.returnValue.topTab|=map(select(.activeImage|not))|.data.returnValue.topTab|=map(del(.backgroundColor)))'
+(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\/ url jsonjq-response-body 'del(.data.returnValue.floatingBanner,.data.returnValue.searchShadeList)'
+
+(?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\/ url jsonjq-response-body '.data.returnValue.topTab |= map(select(.activeImage | not)) | .data.returnValue.topTab |= map(del(.backgroundColor))'
 
 (?i)^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.aristotle\.get\/ url jsonjq-response-body 'def filter_nodes: map(if .data.componentId? and (.data.componentId | type == "string") and (.data.componentId | (contains("tpp_banner") or . == "tpp_guess_like")) then empty else .nodes |= (if . then filter_nodes else . end) end); .data.nodes |= (if . then filter_nodes else . end)'
 

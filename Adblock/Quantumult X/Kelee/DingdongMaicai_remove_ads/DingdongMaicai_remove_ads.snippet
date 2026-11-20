@@ -47,7 +47,9 @@ host, rttrack.ddxq.mobi, reject
 
 (?i)^https:\/\/maicai\.api\.ddxq\.mobi\/guide-service\/userLike\/flowData$ url reject-dict
 
-(?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? url jsonjq-response-body 'del(.data.top_advert_data,.data.suspension) | (.data.list|=map(select(has("capsule_freedom_zone")|not)))'
+(?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? url jsonjq-response-body 'del(.data.top_advert_data,.data.suspension)'
+
+(?i)^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails\? url jsonjq-response-body '.data.list |= map(select(has("capsule_freedom_zone") | not))'
 
 (?i)^https:\/\/maicai\.api\.ddxq\.mobi\/guide-service\/productApi\/productDetail\/info\? url jsonjq-response-body 'del(.data.detail.chatEntry)'
 

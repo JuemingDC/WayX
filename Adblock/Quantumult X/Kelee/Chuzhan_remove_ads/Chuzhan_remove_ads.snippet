@@ -18,7 +18,8 @@
 # [rewrite_local]
 (?i)^https:\/\/app\.huashi6\.com\/app\/index\/ad\/ url reject-dict
 
-(?i)^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'setpath(["data","disableAd"]; true) | setpath(["data","showTopFloatAdvanceTips"]; false) | del(.data.adsConfigIOS,.data.adsConfigAndroid,.data.url.tabMarket)'
+(?i)^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'setpath(["data","disableAd"]; true) | setpath(["data","showTopFloatAdvanceTips"]; false)'
+(?i)^https:\/\/app\.huashi6\.com\/app\/common\/config$ url jsonjq-response-body 'del(.data.adsConfigIOS,.data.adsConfigAndroid,.data.url.tabMarket)'
 
 (?i)^https:\/\/app\.huashi6\.com\/app\/common\/layouts$ url jsonjq-response-body '.data |= {CZ_MINE_MENUS: .CZ_MINE_MENUS}'
 

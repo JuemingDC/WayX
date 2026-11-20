@@ -17,7 +17,8 @@
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/app\.huashi6\.com\/app\/common\/config$ 'setpath(["data","disableAd"]; true) | setpath(["data","showTopFloatAdvanceTips"]; false) | del(.data.adsConfigIOS,.data.adsConfigAndroid,.data.url.tabMarket)'
+http-response-jq (?i)^https:\/\/app\.huashi6\.com\/app\/common\/config$ 'setpath(["data","disableAd"]; true) | setpath(["data","showTopFloatAdvanceTips"]; false)'
+http-response-jq (?i)^https:\/\/app\.huashi6\.com\/app\/common\/config$ 'del(.data.adsConfigIOS,.data.adsConfigAndroid,.data.url.tabMarket)'
 
 http-response-jq (?i)^https:\/\/app\.huashi6\.com\/app\/common\/layouts$ '.data |= {CZ_MINE_MENUS: .CZ_MINE_MENUS}'
 

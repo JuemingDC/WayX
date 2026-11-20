@@ -2195,6 +2195,16 @@
       "sha256": "9798ec6a33232e8dea480d0e380a468f85d2834a37de455fd0be706243775146",
       "sourceSha256": "25f7bb8f5600fd67552fc3ab5438bb9104aee85f4b978e1ffa76f5b5e2644083"
     },
+    "https://github.com/ishowshu/qx/raw/refs/heads/main/script/spotify-browse.js": {
+      "path": "Resource/Backup/script-api/b31fb087432f6c060cad8bc5e6948b718b08de1de950045d063e4fd790ff6628.json",
+      "sha256": "2f9ad5cfb09d85636b4af59ae6b65742c86cbcd3cd0f051dc601eb1a99754faf",
+      "sourceSha256": "14412b0993843e621741bd3cf7184ae9b73c72d4322d4b316e4ff43dcb6eec72"
+    },
+    "https://github.com/ishowshu/qx/raw/refs/heads/main/script/spotify-scroll.js": {
+      "path": "Resource/Backup/script-api/e9ea17be195648d6e44962c7ee896fb4e05231aec7a52ebcfa798cd66530ecd2.json",
+      "sha256": "562a45fa734656e8f0ba29d5b4dacd4fbcb067b88c08ebedf03b73615bdecf0b",
+      "sourceSha256": "9b664cbc70f7da9a0a37bfac2aa130c631a676f02d018e8e1c6f9106e0a2dc5e"
+    },
     "https://github.com/Maasea/sgmodule/raw/refs/heads/master/Script/Youtube/youtube.response.js": {
       "path": "Resource/Backup/script-api/2ac96d103b8f2e91d7cb24bb251254d06ddb79ba2c3b7405616b9ff5a2037317.json",
       "sha256": "2cad0c9bc39de6eda8bf7babb0cace3f69bd96181c218d22b87a668c56c429ce",
@@ -2604,11 +2614,11 @@
       }
     ]
   },
-  "adapted": 1255,
+  "adapted": 1257,
   "blocked": 0,
   "excluded": 0,
-  "universal": 422,
-  "nativeCopied": 737,
+  "universal": 424,
+  "nativeCopied": 739,
   "diagnostics": [
     {
       "artifact": "Adblock/Quantumult X/Kelee/12306_remove_ads/12306_remove_ads.snippet",
@@ -40469,6 +40479,76 @@
       "problems": [],
       "omittedParameters": [],
       "path": "Adblock/Surge/ishowshu/spotify/spotify-qx.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Quantumult X/ishowshu/spotify/spotify.snippet",
+      "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/spotify-browse.js",
+      "from": [
+        "qx"
+      ],
+      "to": "qx",
+      "status": "native-copy",
+      "features": [
+        "$done",
+        "$response.bodyBytes",
+        "$response.headers"
+      ],
+      "problems": [],
+      "path": "Adblock/Quantumult X/ishowshu/spotify/spotify-browse.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu/spotify/spotify.sgmodule",
+      "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/spotify-browse.js",
+      "from": [
+        "qx"
+      ],
+      "to": "surge",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$response.bodyBytes",
+        "$response.headers"
+      ],
+      "problems": [],
+      "omittedParameters": [],
+      "path": "Adblock/Surge/ishowshu/spotify/spotify-browse.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Quantumult X/ishowshu/spotify/spotify.snippet",
+      "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/spotify-scroll.js",
+      "from": [
+        "qx"
+      ],
+      "to": "qx",
+      "status": "native-copy",
+      "features": [
+        "$done",
+        "$response.bodyBytes",
+        "$response.headers"
+      ],
+      "problems": [],
+      "path": "Adblock/Quantumult X/ishowshu/spotify/spotify-scroll.js",
+      "retained": false
+    },
+    {
+      "artifact": "Adblock/Surge/ishowshu/spotify/spotify.sgmodule",
+      "sourceUrl": "https://github.com/ishowshu/qx/raw/refs/heads/main/script/spotify-scroll.js",
+      "from": [
+        "qx"
+      ],
+      "to": "surge",
+      "status": "universal",
+      "features": [
+        "$done",
+        "$response.bodyBytes",
+        "$response.headers"
+      ],
+      "problems": [],
+      "omittedParameters": [],
+      "path": "Adblock/Surge/ishowshu/spotify/spotify-scroll.js",
       "retained": false
     },
     {

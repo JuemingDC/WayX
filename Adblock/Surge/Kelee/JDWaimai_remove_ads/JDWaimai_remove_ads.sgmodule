@@ -20,7 +20,9 @@ http-response-jq (?i)^https:\/\/color\.jddj\.com\/client\.action\?functionId=hou
 
 http-response-jq (?i)^https:\/\/color\.jddj\.com\/client\.action\?functionId=wmHome$ '(.floors |= map(del(.data.tnData.newsInfo?))) | .floors |= (map(select(.mId != "newWalletIdFloor" and .mId != "recommendfloor"))) | .floors |= (map(.data |= (if .tnData? then del(.tnData.cardList, .tnData.cardListStatic, .tnData.walletList) else . end)))'
 
-http-response-jq (?i)^https:\/\/api\.m\.jd\.com\/client\.action$ 'del(.data.searchDTO.searchWords,.data.wishlistDTO.bubbleTip) | (.data.tabList|=(map(select(.code=="recommendation" or .code=="find_food"))|map(if .code=="recommendation" then .dpHomeFeedTabResultDTOList=.dpHomeFeedTabResultDTOList[0:2] else . end|.dpHomeBannerResultDTOList=[])))'
+http-response-jq (?i)^https:\/\/api\.m\.jd\.com\/client\.action$ 'del(.data.searchDTO.searchWords,.data.wishlistDTO.bubbleTip)'
+
+http-response-jq (?i)^https:\/\/api\.m\.jd\.com\/client\.action$ '.data.tabList |= (map(select(.code == "recommendation" or .code == "find_food")) | map(if .code == "recommendation" then .dpHomeFeedTabResultDTOList = .dpHomeFeedTabResultDTOList[0:2] else . end | .dpHomeBannerResultDTOList = []))'
 
 [Map Local]
 

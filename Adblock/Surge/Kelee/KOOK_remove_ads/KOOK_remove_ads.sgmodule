@@ -17,7 +17,9 @@
 
 [Body Rewrite]
 
-http-response-jq (?i)^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'del(.ad_banner,.advertise_on_off) | setpath(["ios_mall_switch"]; false)'
+http-response-jq (?i)^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'del(.ad_banner,.advertise_on_off)'
+
+http-response-jq (?i)^https:\/\/(m|www)\.kookapp\.cn\/api\/v\d\/user\/settings$ 'setpath(["ios_mall_switch"]; false)'
 
 http-response-jq (?i)^https:\/\/www\.kookapp\.cn\/api\/v3\/discover\/tab-list\? '.data.items |= map(select(.id == 472 or .id == 473 or .id == 475))'
 

@@ -18,7 +18,9 @@
 [Body Rewrite]
 http-response-jq (?i)^https:\/\/api\.cece\.com\/user\/init\? 'del(.data.launch_img_url,.data.launch_goto_url)'
 
-http-response-jq (?i)^https:\/\/api\.cece\.com\/common\/app\/app_config\? 'setpath(["data","is_new_year"]; false) | setpath(["data","spring_festival"]; false) | setpath(["data","show_feedback_entry"]; false) | setpath(["data","show_course_entry"]; false) | setpath(["data","show_store_entry"]; false) | setpath(["data","show_luna"]; false) | setpath(["data","show_ead"]; false) | setpath(["data","show_ad"]; false) | setpath(["data","show_live_filter_tarot"]; false) | setpath(["data","community_feed_adswitch"]; false) | setpath(["data","open_screen_ad_times"]; 0) | setpath(["data","open_screen_ad_duration"]; 0) | setpath(["data","isShowThumbsGif"]; false) | setpath(["data","teenager_mode_open"]; false) | setpath(["data","flu_log"]; false) | del(.data.activity_list,.data.fortune_ab_config)'
+http-response-jq (?i)^https:\/\/api\.cece\.com\/common\/app\/app_config\? 'setpath(["data","is_new_year"]; false) | setpath(["data","spring_festival"]; false) | setpath(["data","show_feedback_entry"]; false) | setpath(["data","show_course_entry"]; false) | setpath(["data","show_store_entry"]; false) | setpath(["data","show_luna"]; false) | setpath(["data","show_ead"]; false) | setpath(["data","show_ad"]; false) | setpath(["data","show_live_filter_tarot"]; false) | setpath(["data","community_feed_adswitch"]; false) | setpath(["data","open_screen_ad_times"]; 0) | setpath(["data","open_screen_ad_duration"]; 0) | setpath(["data","isShowThumbsGif"]; false) | setpath(["data","teenager_mode_open"]; false) | setpath(["data","flu_log"]; false)'
+
+http-response-jq (?i)^https:\/\/api\.cece\.com\/common\/app\/app_config\? 'del(.data.activity_list,.data.fortune_ab_config)'
 
 http-response-jq (?i)^https:\/\/api\.cece\.com\/chart\/tools\/home_10_tools\? '.data.tools |= map(del(.icon_tip_image))'
 

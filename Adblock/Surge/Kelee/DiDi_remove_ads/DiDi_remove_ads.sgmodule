@@ -34,7 +34,9 @@ http-response-jq (?i)^https:\/\/common\.diditaxi\.com\.cn\/common\/v\d\/usercent
 
 http-response-jq (?i)^https:\/\/conf\.diditaxi\.com\.cn\/homepage\/v\d\/other\/fast\? 'del(.data.disorder_cards.guess_card,.data.disorder_cards.scene_list_card)'
 
-http-response-jq (?i)^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/dache_homepage_layout\? 'del(.data.instances.dache_main_core_icon) | (.data|=(.instances|=(to_entries|map(select(.key|test("feed_back_|dache_main_member|order_container_|dache_main_core_icon|dache_main_card_")))|from_entries)))'
+http-response-jq (?i)^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/dache_homepage_layout\? 'del(.data.instances.dache_main_core_icon)'
+
+http-response-jq (?i)^https:\/\/api\.udache\.com\/gulfstream\/porsche\/v\d\/dache_homepage_layout\? '.data |= (.instances |= (to_entries | map(select(.key | test("feed_back_|dache_main_member|order_container_|dache_main_core_icon|dache_main_card_"))) | from_entries))'
 
 http-response-jq (?i)^https:\/\/api\.udache\.com\/intercity\/ticket\/api\/v\d\/core\/getFullPageInfoLayout\? '.data.disorder_components |= (map(select(.name == "history_order_card" or .name == "inprogress_order_card" or .name == "station_calendar" or .name == "main_card_v2" or .name == "user_history_order")))'
 

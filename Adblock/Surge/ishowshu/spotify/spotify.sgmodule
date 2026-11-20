@@ -17,7 +17,7 @@
 # Source: https://raw.githubusercontent.com/ishowshu/qx/main/rewrite/spotify.snippet
 # Upstream name = Spotify
 # Upstream desc = 移除广告,顺序听歌,仅支持新版本(旧版不兼容
-# Upstream author = Auto-001(电报@SOLO灵魂), 001ProMax
+# Upstream author = Auto-001(电报@SOLO灵魂), 001ProMax, 树先生
 
 [URL Rewrite]
 ^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/artistview\/v1\/artist\/(.*)&platform=iphone https://spclient.wg.spotify.com/artistview/v1/artist/$1&platform=ipad 302
@@ -28,6 +28,8 @@
 [Script]
 ishowshu_spotify_1 = type=http-response,pattern=^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(?:bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)(?:\?.*)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ishowshu/spotify/spotify-qx.js,requires-body=true,binary-body-mode=true
 ishowshu_spotify_2 = type=http-response,pattern=^https:\/\/(?:spclient\.wg|[\w-]+-spclient)\.spotify\.com(?::443)?\/(?:remote-config-resolver\/v\d+\/configuration|nebula\/v\d+\/configuration\/attributes)(?:\?[^#]*)?$,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ishowshu/spotify/spotify-qx.js,requires-body=true,binary-body-mode=true
+ishowshu_spotify_3 = type=http-response,pattern=^https:\/\/(?:[\w-]+-)?spclient\.(?:wg\.)?spotify\.com(?::443)?\/browsita\/v1\/browse,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ishowshu/spotify/spotify-browse.js,requires-body=true,binary-body-mode=true
+ishowshu_spotify_4 = type=http-response,pattern=^https:\/\/(?:[\w-]+-)?spclient\.(?:wg\.)?spotify\.com(?::443)?\/scrollsita\/v1\/scroll\/,script-path=https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Surge/ishowshu/spotify/spotify-scroll.js,requires-body=true,binary-body-mode=true
 
 [MITM]
 hostname = %APPEND% *-spclient.spotify.com, spclient.wg.spotify.com

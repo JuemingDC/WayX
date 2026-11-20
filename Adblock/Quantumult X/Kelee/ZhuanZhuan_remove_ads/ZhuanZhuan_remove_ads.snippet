@@ -44,7 +44,8 @@
 
 (?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmymoretools$ url jsonjq-response-body 'walk(if type == "object" and .name == "免流量特权" then empty else . end) | del(.respData.groupList[] | select(.groupName == "活动参与" or .groupName == "金融工具"))'
 
-(?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ url jsonjq-response-body 'del(.respData.bmNewInfo) | (del(.respData.itemGroupList[].itemList[]|select(.name=="天天赚钱" or .name=="借钱"))|del(.respData.itemGroupList[]|select(.groupType==15)))'
+(?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ url jsonjq-response-body 'del(.respData.bmNewInfo)'
+(?i)^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3$ url jsonjq-response-body 'del(.respData.itemGroupList[].itemList[] | select(.name == "天天赚钱" or .name == "借钱")) | del(.respData.itemGroupList[] | select(.groupType == 15))'
 
 # [mitm]
 hostname = app.zhuanzhuan.com
