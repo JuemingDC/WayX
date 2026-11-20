@@ -171,7 +171,7 @@ const qxV2=planQxScript(v2Ir,{
 });
 assert.equal(qxV2.ok,true);
 assert.match(qxV2.line,/ url script-response-body https:\/\/example\.com\/v2\.js$/);
-assert.match(qxV2.notes.join('\n'),/binary_body_mode=true ignored/i);
+assert.match(qxV2.notes.join('\n'),/omitted unsupported options:.*binary_body_mode=true/i);
 
 const qxV2RequiresOnlyIr=scriptV2AstToSemanticIr(
   parseScriptV2('response if ${url} ~= /api/ then script("https://example.com/v2.js") with requires_body=true, binary_body_mode=false, tag="V2"')
@@ -190,7 +190,7 @@ const qxTimeoutUnsupported=planQxScript(
 );
 assert.equal(qxTimeoutUnsupported.ok,true);
 assert.doesNotMatch(qxTimeoutUnsupported.line,/timeout=/);
-assert.match(qxTimeoutUnsupported.notes.join('\n'),/timeout ignored/i);
+assert.match(qxTimeoutUnsupported.notes.join('\n'),/omitted unsupported options:.*timeout/i);
 
 const qxEnableTrue=planQxScript(
   scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /enabled/ then script("https://example.com/e.js") with enable=true')),
@@ -215,7 +215,7 @@ const qxV2Debug=planQxScript(v2DebugIr,{
 });
 assert.equal(qxV2Debug.ok,true);
 assert.doesNotMatch(qxV2Debug.line,/debug=/);
-assert.match(qxV2Debug.notes.join('\n'),/debug.*omitted/i);
+assert.match(qxV2Debug.notes.join('\n'),/omitted unsupported options:.*debug/i);
 
 const v2DynamicDebugSource='response if ${url} ~= /debug-dynamic/ then script("https://example.com/debug-dynamic.js") with debug=${debugSwitch}, tag="DebugDynamic"';
 const v2DynamicDebugIr=scriptV2AstToSemanticIr(parseScriptV2(v2DynamicDebugSource),{source:v2DynamicDebugSource});
@@ -242,7 +242,7 @@ const qxBinaryWithoutBody=planQxScript(
 assert.equal(qxBinaryWithoutBody.ok,true);
 assert.match(qxBinaryWithoutBody.line,/script-request-header/);
 assert.doesNotMatch(qxBinaryWithoutBody.line,/script-request-body/);
-assert.match(qxBinaryWithoutBody.notes.join('\n'),/binary_body_mode=true ignored/i);
+assert.match(qxBinaryWithoutBody.notes.join('\n'),/omitted unsupported options:.*binary_body_mode=true/i);
 
 const surgeV2=planSurgeScript(v2Ir,{
   scriptUrl:'https://example.com/v2.js',
@@ -389,7 +389,9 @@ if(selectedCase==='script-ir-target-planners.mjs') {
         const again=parseScriptV2(scriptV2ToSource(ast));
         assert.equal(field==='path'?again.script.path:again.options[0].value.value,expected);
         const ir=parseScriptDeclaration(source(value));
-        assert.equal(planQxScript(ir).ok,true);assert.equal(planSurgeScript(ir).ok,true);
+        const qxHttpPath = field === 'path' && /^(?:request|response) /.test(trigger);
+        assert.equal(planQxScript(ir).ok, !qxHttpPath);
+        assert.equal(planSurgeScript(ir).ok, true);
       }
     }
     assert.throws(()=>parseScriptV2(trigger+' then script("")'),/non-empty/);

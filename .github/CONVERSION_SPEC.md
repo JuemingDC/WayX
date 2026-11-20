@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Revised | 2026-11-18 |
+| Revised | 2026-11-20 |
 | Maintainer | chance |
 | Authority | Single conversion and maintenance specification |
 | Format | English headings, dated tables, mapping examples |
@@ -59,7 +59,7 @@
 | 2026-10-25 | Unsupported mapping | Comment source declaration + diagnostic; no misleading active rule |
 | 2026-10-25 | Scanner | Protect regex alternation, logical OR, strings/raw strings, jq pipes, variables, arrays, parentheses and Script options |
 | 2026-11-15 | Continuous JSON/JQ actions | One source pipeline → one native jq expression; preserve order and per-expression scope |
-| 2026-11-15 | Same URL JSON/JQ declarations | Group identical fixed condition + flags + phase in source IR before target planning; include separate source lines; preserve original dependency indices and comments |
+| 2026-11-20 | Same URL JSON/JQ declarations | Group only consecutive entries with identical fixed condition, flags and phase within one section; preserve action order, duplicates, dependency indices and comments |
 | 2026-11-15 | Different conditions/phases | Keep separate; no post-emission rule-string merging |
 | 2026-11-15 | Mixed declarations | Continuous JSON/JQ stays together; non-JSON actions retain independent planning boundaries |
 | 2026-11-15 | Failed JSON dependency | Diagnose the entire affected JSON pipeline; never publish a shortened pipeline |
@@ -139,6 +139,7 @@ request if ${url} ~= /^https?:\/\/mapi\.dianping\.com\/mapi\/operating\/(?>index
 | 2026-10-25 | URL redirect | Native `url 302/307 target`; exact supported conditions → `url-and-header` | Native redirect with supported captures |
 | 2026-10-25 | Unrepresentable QX redirect | Comment + review | No broad `script-echo-response` redirect fallback |
 | 2026-10-25 | Header add/set/del/replace | request-header / response-header | http-request / http-response + header-add/header-del/header-replace-regex; set → del then add |
+| 2026-11-20 | Loon V2 framing headers | Withhold declarations that modify fixed Content-Length or Transfer-Encoding fields; check names case-insensitively, including array entries | Same preflight for both targets |
 | 2026-10-25 | Header text rule | Complete Header text, CRLF boundaries; two identical phase action tokens | Native fields when semantics fit; helper otherwise |
 | 2026-10-25 | Header replace | Preserve field prefix and adjust capture numbering | Preserve duplicates/order using full-header-mode where needed |
 | 2026-10-25 | Duplicate Header add | No dictionary-based equivalence claim | Preserve field/value arrays and order; unsupported lookup semantics remain review |
@@ -210,6 +211,7 @@ http-response-jq ^https:\/\/api\.example\/v1 'setpath(["data","enabled"]; false)
 | 2026-11-05 | Trigger fields | Preserve phase, body/binary independently, explicit timeout/enable/debug/argument and supported task trigger |
 | 2026-10-25 | QX script enable | Force representable active author declarations enabled, including false/default-off/dynamic; keep commented source inactive |
 | 2026-11-17 | QX declaration options | No invented enable/timeout/debug/argument fields; remote Loon Script arguments use official URL-fragment transport; bodyBytes remains supported |
+| 2026-11-20 | QX HTTP Script V2 paths | HTTPS remote references or recognizable relative local JavaScript paths; diagnose unsupported paths |
 | 2026-11-05 | Surge performance options | Use target native defaults; no copied Loon 10/20/300-second defaults, no forced max-size=-1; preserve explicit supported settings |
 | 2026-11-17 | QX argument transport | Remote HTTP(S) scripts: fixed String/Raw String and legacy literal String → reserved `_wayx_argument` fragment envelope; PluginObject → typed declared defaults; retain existing fragments/query; missing defaults, dynamic Strings, local-only paths and reserved-key collision → omission diagnostic; invalid bindings still fail |
 | 2026-10-25 | Surge arguments | Supported String / PluginObject encoding and placeholder transport; unproven dynamic transport → review |
@@ -594,6 +596,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
+| 2026-11-20 | jq source order, framing headers and HTTP Script V2 | A/B/A → three ordered rules; adjacent identical matchers → one pipeline; reject fixed Content-Length or Transfer-Encoding header mutations, including arrays; QX Script V2 emits HTTPS or local paths |
 | 2026-11-18 | HTTP exception compatibility, runtime policy 14 | Escaped synchronous error / returned rejected Promise → log + `$done({})` once before submission; author catches/native submission errors/non-HTTP triggers preserved; replace blanket no-passthrough rule |
 | 2026-11-18 | Remove Nexitally Rule inputs | Extra_CN_3 / Extra_Proxies / Extra_AI / Extra_Crypto / ApplePush → no registered source or mirror; existing Actions owns output regeneration |
 | 2026-11-17 | Reserved Surge mock-response emitter | `prepareSurgeMockResponse({status:200, trailers:{"grpc-status":"0"}})` → native payload; dictionary/array validation and isolated tests; source mappings remain inactive; runtime policy unchanged |

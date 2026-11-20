@@ -1903,6 +1903,38 @@ if(selectedCase==='conversion-policy.mjs') {
 }
 
 if(selectedCase==='conversion-policy.mjs') {
+  const entry={id:'V2Review',source:'https://example.test/main.lpx',category:'Test'};
+  const options={stamp:'2026-11-20',rawBase:'https://example.test'};
+  for (const phase of ['request','response']) {
+    for (const change of [
+      'add("CoNtEnT-LeNgTh", "7")',
+      'set(["X-Test", "TRANSFER-ENCODING"], ["a", "chunked"])',
+      'del(["X-Test", "content-length"])',
+      'replace("transfer-encoding", /old/, "new")',
+    ]) {
+      const rewrite='[Rewrite]\n'+phase+' if ${url} ~= /blocked/ then '+phase+'.header.'+change+
+        '\nrequest if ${url} ~= /kept/ then reject(404)';
+      const out=convertPlugin(entry,rewrite,options);
+      for (const target of ['qx','surge']) {
+        assert.match(out[target],/cannot modify an HTTP framing header/i);
+        assert.doesNotMatch(out[target],/^[^#\n]*blocked/m);
+        assert.match(out[target],/^[^#\n]*kept[^\n]*reject/m);
+      }
+    }
+  }
+  const script='[Script]\n'+
+    'response if ${url} ~= /plain/ then script("http://example.test/plain.js") with tag="Plain"\n'+
+    'response if ${url} ~= /secure/ then script("https://example.test/secure.js") with requires_body=true,binary_body_mode=true,timeout=10,debug=true\n'+
+    'request if ${url} ~= /local/ then script("folder/local.js")';
+  const out=convertPlugin(entry,script,options);
+  assert.match(out.qx,/requires an HTTPS URL or a local script path/);
+  assert.doesNotMatch(out.qx,/^[^#\n]*script-response-header http:/m);
+  assert.match(out.qx,/script-response-body https:\/\/example\.test\/secure\.js/);
+  assert.match(out.qx,/script-request-header folder\/local\.js/);
+  assert.match(out.qx,/QX Script V2 omitted unsupported options: binary_body_mode=true, timeout, debug/);
+}
+
+if(selectedCase==='conversion-policy.mjs') {
   const entry={id:'FixedScriptFields',source:'https://example.test/main.lpx',category:'Test'};
   for(const field of ['path','tag','img_url']) {
     const bad='response if ${url} ~= /api/ then script('+(field==='path'?'"https://example.test/${region}.js"':'"https://example.test/bad.js"')+')'+(field==='path'?'':' with '+field+'="${region}"');
@@ -1997,32 +2029,6 @@ if(selectedCase==='conversion-policy.mjs') {
   console.log('Independent action output passed: both phases/sections/orders, original Script URL, JSON and Header retention, and per-file failure isolation');
 }
 
-if(selectedCase==='conversion-policy.mjs') {
-  const manifest=JSON.parse(await fs.readFile(new URL('../.github/sources/loon.json',import.meta.url),'utf8'));
-  for(const name of ['Taqu','XiaobaiPrint','Zhihu']) {
-    const entry=manifest.find(x=>x.file===name+'_remove_ads.lpx');
-    const source=await fs.readFile(new URL('../Resource/Loon/'+entry.file,import.meta.url),'utf8');
-    const groups=new Map();
-    for(const {line} of groupSourceSectionItems(parseLoonPlugin(source).sections.get('Rewrite'))) {
-      if(!line?.startsWith('response '))continue;
-      const ast=parseRewriteV2(line),c=ast.condition;
-      if(c.type!=='comparison'||c.right.type!=='regex'||!ast.actions[0].name.includes('.json.'))continue;
-      const pattern=c.right.pattern;if(!groups.has(pattern))groups.set(pattern,[]);groups.get(pattern).push(ast);
-    }
-    const [pattern,asts]=[...groups].find(([,xs])=>xs.filter(x=>x.actions.some(a=>a.name==='response.json.jq')).length>1);
-    assert.ok(pattern);
-    const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
-    for(const target of ['qx','surge']) {
-      // Modified: 2026-11-05 (chance). Both clients retain the source matcher flags.
-      const inlinePattern=compileRegexForTarget(asts[0].condition.right,{target}).pattern;
-      const prefix=target==='qx'?inlinePattern+' url jsonjq-response-body ': 'http-response-jq '+inlinePattern+' ';
-      const active=out[target].split('\n').filter(x=>x.startsWith(prefix));
-      // Modified: 2026-11-15 (chance). Prepare one source JSON pipeline per URL/phase before planning.
-      assert.equal(active.length,1,name+' has one JSON/JQ rule for its source URL condition in '+target);
-    }
-  }
-  console.log('Real source URL groups: Taqu, XiaobaiPrint and Zhihu each emit one JSON/JQ rule in QX and Surge');
-}
 
 if(selectedCase==='conversion-policy.mjs') {
   const entry={id:'DependencyShapes',source:'https://example.test/main.lpx',category:'Test'};

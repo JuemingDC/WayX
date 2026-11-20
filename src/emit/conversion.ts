@@ -674,11 +674,10 @@ function sanitizeName(value: any): any {
       .slice(0, 64) || "script"
   );
 }
-// Modified: 2026-11-15 (chance). Form one source JSON pipeline per fixed URL
-// condition/phase before either target planner runs. Resolve each original file
-// action against its original declaration/index; never merge emitted rule text.
+// Modified: 2026-11-20 (chance). Combine only consecutive JSON declarations
+// for the same URL and phase, keeping other rewrites in source order.
 function prepareJsonUrlGroups(plugin: any, ctx: any): any {
-  const groups = new Map<string, any[]>();
+  const groups: any[][] = [];
   const sections = new Map(plugin.sections);
   const sectionItems = new Map<string, any[]>();
   for (const section of ["Rewrite", "Script"]) {
@@ -686,7 +685,10 @@ function prepareJsonUrlGroups(plugin: any, ctx: any): any {
     if (!lines) continue;
     const items = groupSourceSectionItems(lines);
     sectionItems.set(section, items);
+    let previousKey: string | undefined;
     for (const item of items) {
+      const precedingKey = previousKey;
+      previousKey = undefined;
       if (!item.line || !isRewriteV2(item.line) || isScriptV2(item.line)) continue;
       try {
         const ast = preparedRewriteAst(ctx.declarations, item.line);
@@ -694,15 +696,15 @@ function prepareJsonUrlGroups(plugin: any, ctx: any): any {
         if (!simpleUrlRewriteCondition(ast).ok || !ast.actions.every((action: any): boolean =>
           new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq|jq_file)$").test(action.name),
         )) continue;
-        const key = JSON.stringify([ast.phase, ast.condition]);
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key)!.push({item, ast});
+        previousKey = JSON.stringify([ast.phase, ast.condition]);
+        if (previousKey !== precedingKey) groups.push([]);
+        groups.at(-1)!.push({item, ast});
       } catch { /* Preserve the ordinary source diagnostic. */ }
     }
   }
   const replacement = new Map<any, string | null>();
   const comments = new Map<any, string[]>();
-  for (const group of groups.values()) {
+  for (const group of groups) {
     if (group.length < 2) continue;
     let actions: any[] = [];
     let failure: any = null;

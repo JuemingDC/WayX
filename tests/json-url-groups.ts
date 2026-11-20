@@ -1,5 +1,5 @@
 // Modified: 2026-11-15 (chance). Verify the real repeated-URL failure and
-// source-stage grouping, including comments, phases and per-line file indices.
+// consecutive grouping, including comments, phases and per-line file indices.
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import {spawnSync} from "node:child_process";
@@ -12,9 +12,9 @@ const before = JSON.stringify([...context.declarations]);
 for (let iteration = 0; iteration < 2; iteration++) {
   const out = convertPluginWithContext(entry,source,context,options);
   for (const target of ['qx','surge']) {
-    const rows = out[target].split('\n').filter((line: string) => target === 'qx' ? line.startsWith('(?i)same url jsonjq-response-body ') : line.startsWith('http-response-jq (?i)same '));
-    assert.equal(rows.length,1,out[target]);
-    const program = rows[0].slice(rows[0].indexOf(" '")+2,-1);
+    const rows = out[target].split('\n').map(line => line.replace(/^\{#.*?#\} /, "")).filter((line: string) => target === 'qx' ? line.startsWith('(?i)same url jsonjq-response-body ') : line.startsWith('http-response-jq (?i)same '));
+    assert.equal(rows.length,3,out[target]);
+    const program = rows.map(row => '(' + row.slice(row.indexOf(" '")+2,-1) + ')').join(' | ');
     const result = spawnSync('jq',['-c',program],{input:'{"ad":1}',encoding:'utf8'});
     assert.equal(result.status,0,result.stderr);
     assert.equal(result.stdout.trim(),'{"x":9}');
@@ -34,14 +34,29 @@ for (const target of ['qx','surge']) {
   assert.match(broken[target],/REVIEW REQUIRED.*missing URL group fixture/);
   assert.doesNotMatch(broken[target],/^[^#\n]*(?:jsonjq-response-body|http-response-jq)/m);
 }
+// Non-adjacent matching programs must remain A/B/A, including exact repeats.
+const repeated = 'response if ${url} ~= /api/ then response.json.jq(".x += 1")';
+const interleaved = 'response if ${url} ~= /api.*/ then response.json.jq(".x *= 10")';
+for (const adjacent of [true, false]) {
+  const source = ['[Rewrite]', ...(adjacent ? [repeated, repeated] : [repeated, interleaved, repeated])].join('\n');
+  const outputs = convertPlugin(entry, source, options);
+  for (const target of ['qx', 'surge']) {
+    const rows = outputs[target].split('\n').filter(row => /^(?:http-response-jq |[^#].* url jsonjq-response-body )/.test(row));
+    assert.equal(rows.length, adjacent ? 1 : 3, outputs[target]);
+    if (!adjacent) assert.equal(rows[0], rows[2]);
+    const program = rows.map(row => '(' + row.slice(row.indexOf(" '") + 2, -1) + ')').join(' | ');
+    const result = spawnSync('jq', ['-c', program], {input: '{"x":0}', encoding: 'utf8'});
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(JSON.parse(result.stdout).x, adjacent ? 2 : 11);
+  }
+}
 const realChecks: any[] = [];
 for (const name of ['Tieba','Taqu','XiaobaiPrint','Zhihu']) {
   const original = await fs.readFile(`Resource/Loon/${name}_remove_ads.lpx`,'utf8');
   const out = convertPlugin({...entry,id:name},original,options);
   for (const target of ['qx','surge']) {
-    const jqRows = out[target].split('\n').filter((line: string) => target === 'qx' ? !line.startsWith('#') && line.includes('url jsonjq-response-body ') : line.startsWith('http-response-jq '));
-    const keys = jqRows.map((line: string) => line.slice(0,line.indexOf(" '")));
-    assert.equal(new Set(keys).size,keys.length,`${name}/${target}: duplicate active JQ URL`);
+    const jqRows = out[target].split('\n').map(line => line.replace(/^\{#.*?#\} /, "")).filter((line: string) => target === 'qx' ? !line.startsWith('#') && line.includes('url jsonjq-response-body ') : line.startsWith('http-response-jq '));
+
     if(name==='Tieba') {
       const sync = jqRows.filter((line: string) => line.includes('c\\/s\\/sync'));
       assert.equal(sync.length,1,`${target}: Tieba sync must be one rule`);
@@ -56,7 +71,7 @@ for (const name of ['Tieba','Taqu','XiaobaiPrint','Zhihu']) {
       assert.deepEqual(body.index_tab_info,[{tab_name:'推荐'}]);
       assert.deepEqual(body.top_level_navi,{推荐:1,侧边栏:2,关注:3});
     }
-    realChecks.push({name,target,jqRules:jqRows.length,duplicateUrls:keys.length-new Set(keys).size});
+    realChecks.push({name,target,jqRules:jqRows.length});
   }
 }
 console.log(JSON.stringify(realChecks));

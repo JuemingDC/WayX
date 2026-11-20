@@ -1598,6 +1598,13 @@ export function qxScriptV2Plan(
   if (!["request", "response"].includes(ast.phase)) {
     return qxNonHttpScriptV2Plan(ast, { scriptUrl, argumentTable });
   }
+  // Modified: 2026-11-20 (chance). Only emit HTTPS URLs or local script paths.
+  const path = String(scriptUrl ?? "");
+  const remote = /^https:\/\/[^/?#]+(?:[/?#]|$)/i.test(path);
+  const local = /^(?:[\w.@-]+\/)*[\w.@-]+\.js$/i.test(path) &&
+    !path.split("/").some(part => part === "." || part === "..");
+  if (/[\s"'<>\\\x00-\x1f\x7f]/.test(path) || (!remote && !local))
+    return unsupported("Quantumult X HTTP Script requires an HTTPS URL or a local script path");
   // QX official Rewrite Script declarations do not expose Loon's enable,
   // timeout, debug or binary_body_mode fields. Target planning therefore
   // omits those fields instead of emitting invented QX syntax. Keep
@@ -1633,21 +1640,14 @@ export function qxScriptV2Plan(
   const notes: any = [...(condition.notes || [])];
   noteQxForcedEnable(ast, notes);
   scriptUrl = qxScriptArgumentUrl(scriptUrl, ast.script.argument, argumentTable, notes);
-  if (timeout) {
-    notes.push("Source Script timeout ignored for Quantumult X.");
+  const omittedOptions: string[] = [];
+  if (binaryBodyMode) omittedOptions.push("binary_body_mode=true");
+  if (timeout) omittedOptions.push("timeout");
+  if (debug?.type === "variable" || (debug?.type === "boolean" && debug.value)) {
+    omittedOptions.push("debug");
   }
-  if (
-    debug?.type === "variable" ||
-    (debug?.type === "boolean" && debug.value === true)
-  ) {
-    notes.push(
-      "Source Script debug is not a Quantumult X Rewrite Script field and was omitted.",
-    );
-  }
-  if (binaryBodyMode) {
-    notes.push(
-      "Source binary_body_mode=true ignored for Quantumult X; requires_body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.",
-    );
+  if (omittedOptions.length) {
+    notes.push("QX Script V2 omitted unsupported options: " + omittedOptions.join(", "));
   }
   const action: any = selectQxScriptAction({
     phase: ast.phase,

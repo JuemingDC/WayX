@@ -1041,6 +1041,13 @@ export function validateRewriteV2Action(action: any): any {
     if (lengths.size !== 1)
       throw actionError(action, "bulk arrays must have equal lengths");
   }
+  // Modified: 2026-11-20 (chance). Leave HTTP message framing to the client.
+  if (/\.header\.(?:add|set|del|replace)$/.test(action.name)) {
+    const name = scalarItems(action.args[0]).map(stringNode).find(
+      (value: string | null) => value !== null && /^(?:content-length|transfer-encoding)$/i.test(value.trim()),
+    );
+    if (name) throw actionError(action, "cannot modify an HTTP framing header: " + name);
+  }
   return def;
 }
 function conditionError(message: any): any {
