@@ -24,7 +24,7 @@
 
 (?i)^https:\/\/api\.zhihu\.com\/root\/tab\/v\d(?:\?.+)?$ url jsonjq-response-body '.tab_list |= map(select(.tab_type == "follow" or .tab_type == "recommend" or .tab_type == "hot" or .tab_type == "ring_tab"))'
 
-(?i)^https:\/\/api\.zhihu\.com\/topstory\/recommend\? url jsonjq-response-body '(.data|=map(select(.type=="ComponentCard"))) | (.data[]?.children|=(if type=="array" then map(select(.id !="ring")) else . end))'
+(?i)^https:\/\/api\.zhihu\.com\/topstory\/recommend\? url jsonjq-response-body '.data |= map(select(.type == "ComponentCard"))'
 
 (?i)^https:\/\/api\.zhihu\.com\/commercial_api\/banners_v\d\/app_float_corner\? url reject-dict
 
@@ -35,6 +35,7 @@
 (?i)^https:\/\/api\.zhihu\.com\/comment_v\d\/(answers|pins)\/\d+\/root_comment\? url jsonjq-response-body 'del(.atmosphere_voting_config)'
 
 (?i)^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ url jsonjq-response-body 'del(.third_business,.float_search_word) | (.structured_content.segments|=map(select(.type !="card")))'
+(?i)^https:\/\/api\.zhihu\.com\/topstory\/recommend\? url jsonjq-response-body '.data[]?.children |= (if type == "array" then map(select(.id != "ring")) else . end)'
 
 (?i)^https:\/\/api\.zhihu\.com\/(articles|answers|pins)\/v\d\/\d+\? url jsonjq-response-body 'del(.third_business,.ring_info,.interaction_bar_plugins)'
 

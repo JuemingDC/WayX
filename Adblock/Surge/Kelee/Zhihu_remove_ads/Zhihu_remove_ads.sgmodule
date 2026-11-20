@@ -20,13 +20,14 @@ http-response-jq (?i)^https:\/\/m-cloud\.zhihu\.com\/api\/cloud\/zhihu\/config\/
 
 http-response-jq (?i)^https:\/\/api\.zhihu\.com\/root\/tab\/v\d(?:\?.+)?$ '.tab_list |= map(select(.tab_type == "follow" or .tab_type == "recommend" or .tab_type == "hot" or .tab_type == "ring_tab"))'
 
-http-response-jq (?i)^https:\/\/api\.zhihu\.com\/topstory\/recommend\? '(.data|=map(select(.type=="ComponentCard"))) | (.data[]?.children|=(if type=="array" then map(select(.id !="ring")) else . end))'
+http-response-jq (?i)^https:\/\/api\.zhihu\.com\/topstory\/recommend\? '.data |= map(select(.type == "ComponentCard"))'
 
 http-response-jq (?i)^https:\/\/api\.zhihu\.com\/questions\/\d+\/feeds\? 'del(.ad_info)'
 
 http-response-jq (?i)^https:\/\/api\.zhihu\.com\/comment_v\d\/(answers|pins)\/\d+\/root_comment\? 'del(.atmosphere_voting_config)'
 
 http-response-jq (?i)^https:\/\/(api|page-info)(?:\.zhihu)?\.com\/answers\/v\d\/\d+(?:\?.*)?$ 'del(.third_business,.float_search_word) | (.structured_content.segments|=map(select(.type !="card")))'
+http-response-jq (?i)^https:\/\/api\.zhihu\.com\/topstory\/recommend\? '.data[]?.children |= (if type == "array" then map(select(.id != "ring")) else . end)'
 
 http-response-jq (?i)^https:\/\/api\.zhihu\.com\/(articles|answers|pins)\/v\d\/\d+\? 'del(.third_business,.ring_info,.interaction_bar_plugins)'
 

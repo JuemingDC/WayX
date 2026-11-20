@@ -34,20 +34,26 @@ host, ipv6.music.163.com, reject
 
 (?i)^https:\/\/interface\d\.music\.163\.com\/eapi\/my\/podcast\/tab\/recommend url reject-dict
 # 评论区、热推、有话想说、分享一下、歌曲下的祝福等小提示
+# [WayX] QX Script V2 omitted unsupported options: binary_body_mode=true, timeout
 (?i)^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:batch|v2\/resource\/comment\/floor\/get) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/NeteaseCloudMusic_remove_ads/NeteaseCloudMusic_remove_ads.js
 # 推荐、home、主页
 # [WayX] Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.
 # [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
+# [WayX] QX Script V2 omitted unsupported options: binary_body_mode=true, timeout
 (?i)^https?:\/\/interface\d?\.music\.163\.com\/eapi\/(?:homepage\/block\/page|link\/page\/rcmd\/(?:block\/resource\/multi\/refresh|resource\/show)) url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/NeteaseCloudMusic_remove_ads/NeteaseCloudMusic_remove_ads.js#_wayx_argument=%7B%22value%22%3A%7B%22PRGG%22%3Afalse%2C%22PRRK%22%3Afalse%2C%22PRDRD%22%3Afalse%2C%22PRSCVPT%22%3Afalse%2C%22PRST%22%3Afalse%2C%22PRRR%22%3Afalse%2C%22HMPR%22%3Afalse%2C%22PRMST%22%3Afalse%2C%22PRCN%22%3Afalse%7D%7D
 # 底部选项卡
 # [WayX] Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.
 # [WayX] Source Script argument transported through Quantumult X URL fragment _wayx_argument.
+# [WayX] QX Script V2 omitted unsupported options: binary_body_mode=true, timeout
 (?i)^https?:\/\/interface\d?\.music\.163\.com\/eapi\/link\/home\/framework\/tab url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/NeteaseCloudMusic_remove_ads/NeteaseCloudMusic_remove_ads.js#_wayx_argument=%7B%22value%22%3A%7B%22MY%22%3Afalse%2C%22DT%22%3Afalse%2C%22FX%22%3Afalse%7D%7D
 # 发现页
+# [WayX] QX Script V2 omitted unsupported options: binary_body_mode=true, timeout
 (?i)^https?:\/\/interface\d?\.music\.163\.com\/eapi\/link\/page\/discovery\/resource\/show url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/NeteaseCloudMusic_remove_ads/NeteaseCloudMusic_remove_ads.js
 # 我的页面
+# [WayX] QX Script V2 omitted unsupported options: binary_body_mode=true, timeout
 (?i)^https?:\/\/interface\d?\.music\.163\.com\/eapi\/link\/position\/show\/resource url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/NeteaseCloudMusic_remove_ads/NeteaseCloudMusic_remove_ads.js
 # 显示未关注你的人
+# [WayX] QX Script V2 omitted unsupported options: binary_body_mode=true, timeout
 (?i)^https?:\/\/interface\d?\.music\.163\.com\/eapi\/user\/follow\/users\/mixed\/get url script-response-body https://raw.githubusercontent.com/JuemingDC/WayX/main/Adblock/Quantumult%20X/Kelee/NeteaseCloudMusic_remove_ads/NeteaseCloudMusic_remove_ads.js
 
 # [mitm]

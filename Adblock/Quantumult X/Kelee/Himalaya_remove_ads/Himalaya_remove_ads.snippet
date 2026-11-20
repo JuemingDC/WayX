@@ -53,9 +53,11 @@ host, adbehavior.wsa.ximalaya.com, reject
 
 (?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/app-skin-service\/skin\/setting\/info\/ url reject-dict
 
-(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body 'del(.data.freeListenV2) | (.data.serviceModule.entrances|=map(select(.name=="全部服务")))'
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body 'del(.data.freeListenV2)'
 
 (?i)^https:\/\/(live|livewsa)\.ximalaya\.com\/lamia\/v1\/subscribe\/status$ url reject-dict
+
+(?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ url jsonjq-response-body '.data.serviceModule.entrances |= map(select(.name == "全部服务"))'
 
 (?i)^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/subscribe\/v\d\/subscribe\/recommend\? url reject-dict
 
