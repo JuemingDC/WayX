@@ -1371,6 +1371,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
         };
         const buffer = value => { const b = bytes(value); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength); };
+        const binaryBody = value => { const field = "bodyBytes", alternate = field === 'body' ? 'bodyBytes' : 'body'; return binary(value[field]) ? value[field] : binary(value[alternate]) ? value[alternate] : undefined; };
         const status = value => {
             if (typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599)
                 return value;
@@ -1428,15 +1429,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 result["status"] = status(value["statusCode"]);
                 delete result["statusCode"];
             }
-            if (binary(value.bodyBytes) || binary(value.body)) {
-                const valueBytes = value.bodyBytes;
-                if (valueBytes !== undefined) {
-                    const b = bytes(valueBytes);
-                    {
-                        result.body = b;
-                        delete result.bodyBytes;
-                    }
-                }
+            const data = binaryBody(value);
+            {
+                if (data !== undefined && (typeof result.body !== 'string'))
+                    result.body = bytes(data);
+                delete result.bodyBytes;
             }
             return result;
         }
@@ -1479,8 +1476,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     delete out[key];
                 }
             delete out.abort;
-            if (!synthetic && false && own(out, 'headers') && !own(out, 'body') && !own(out, 'bodyBytes') && true)
-                fail('QX response-body requires body with changed headers');
+            if (!synthetic && false && own(out, 'headers') && !own(out, 'body') && !own(out, 'bodyBytes') && true) {
+                const original = host.response;
+                const data = original && binaryBody(original);
+                if (data !== undefined && data !== null)
+                    out.bodyBytes = buffer(data);
+                else if (typeof original?.body === 'string')
+                    out.body = original.body;
+                else
+                    delete out.headers;
+            }
             return out;
         }
         function done(value) {

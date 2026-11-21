@@ -65,6 +65,7 @@
                 return false;
             }
         };
+        const binaryBody = value => { const field = "body", alternate = field === 'body' ? 'bodyBytes' : 'body'; return binary(value[field]) ? value[field] : binary(value[alternate]) ? value[alternate] : undefined; };
         const status = value => {
             if (typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599)
                 return value;
@@ -121,15 +122,11 @@
                 result["status"] = status(value["status"]);
                 ;
             }
-            if (binary(value.bodyBytes) || binary(value.body)) {
-                const valueBytes = value.body;
-                if (valueBytes !== undefined) {
-                    const b = bytes(valueBytes);
-                    {
-                        result.body = b;
-                        delete result.bodyBytes;
-                    }
-                }
+            const data = binaryBody(value);
+            {
+                if (data !== undefined && (typeof result.body !== 'string'))
+                    result.body = bytes(data);
+                delete result.bodyBytes;
             }
             return result;
         }

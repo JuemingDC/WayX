@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js",
-  "sourceSha256": "116e9e3d34694be20d53ffd926e657d7e6c09fc4bced4a2ac707344fa8eec2f9",
+  "sourceSha256": "825a0c28ef374695f61c29e3665b74e5aa3736cc1b22f7a9f68b80636be14e98",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "116e9e3d34694be20d53ffd926e657d7e6c09fc4bced4a2ac707344fa8eec2f9",
+    "sha256": "825a0c28ef374695f61c29e3665b74e5aa3736cc1b22f7a9f68b80636be14e98",
     "operations": [
       {
         "api": "require",
@@ -1562,8 +1562,8 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 1006367,
-        "end": 1006377,
+        "start": 1006671,
+        "end": 1006681,
         "line": 311,
         "column": 29556,
         "members": [
@@ -1573,8 +1573,8 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 1007710,
-        "end": 1007771,
+        "start": 1008014,
+        "end": 1008075,
         "line": 311,
         "column": 30899,
         "members": [
@@ -1584,8 +1584,8 @@
       {
         "api": "$persistentStore",
         "access": "read",
-        "start": 1032158,
-        "end": 1032174,
+        "start": 1032462,
+        "end": 1032478,
         "line": 357,
         "column": 52,
         "members": [
@@ -1595,8 +1595,8 @@
       {
         "api": "$httpClient",
         "access": "read",
-        "start": 1032175,
-        "end": 1032186,
+        "start": 1032479,
+        "end": 1032490,
         "line": 357,
         "column": 69,
         "members": [
@@ -1606,8 +1606,8 @@
       {
         "api": "$notification",
         "access": "read",
-        "start": 1032187,
-        "end": 1032200,
+        "start": 1032491,
+        "end": 1032504,
         "line": 357,
         "column": 81,
         "members": [
@@ -1617,8 +1617,8 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1293906,
-        "end": 1293916,
+        "start": 1294229,
+        "end": 1294239,
         "line": 1689,
         "column": 71,
         "members": [
@@ -1628,8 +1628,8 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1296161,
-        "end": 1296171,
+        "start": 1296484,
+        "end": 1296494,
         "line": 1693,
         "column": 144,
         "members": [
@@ -1639,8 +1639,8 @@
       {
         "api": "$options",
         "access": "read",
-        "start": 1323457,
-        "end": 1323465,
+        "start": 1323790,
+        "end": 1323798,
         "line": 1724,
         "column": 2506,
         "members": [
@@ -1650,8 +1650,8 @@
       {
         "api": "$options",
         "access": "read",
-        "start": 1332836,
-        "end": 1332844,
+        "start": 1333169,
+        "end": 1333177,
         "line": 1724,
         "column": 11885,
         "members": [
@@ -1661,7 +1661,7 @@
     ],
     "diagnostics": []
   },
-  "runtimePolicyVersion": 14,
+  "runtimePolicyVersion": 15,
   "sourceView": "unmodified author source; API inventory offsets are UTF-16, not byte offsets",
   "plans": {
     "request": {
@@ -1670,7 +1670,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "116e9e3d34694be20d53ffd926e657d7e6c09fc4bced4a2ac707344fa8eec2f9",
+        "analysisSourceSha256": "825a0c28ef374695f61c29e3665b74e5aa3736cc1b22f7a9f68b80636be14e98",
         "operations": [
           {
             "id": "api:0",
@@ -5045,8 +5045,8 @@
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 1006367,
-              "end": 1006377,
+              "start": 1006671,
+              "end": 1006681,
               "line": 311,
               "column": 29556,
               "access": "call",
@@ -5069,8 +5069,8 @@
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 1007710,
-              "end": 1007771,
+              "start": 1008014,
+              "end": 1008075,
               "line": 311,
               "column": 30899,
               "access": "call",
@@ -5093,8 +5093,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore",
-              "start": 1032158,
-              "end": 1032174,
+              "start": 1032462,
+              "end": 1032478,
               "line": 357,
               "column": 52,
               "access": "read",
@@ -5117,8 +5117,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient",
-              "start": 1032175,
-              "end": 1032186,
+              "start": 1032479,
+              "end": 1032490,
               "line": 357,
               "column": 69,
               "access": "read",
@@ -5141,8 +5141,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$notification",
-              "start": 1032187,
-              "end": 1032200,
+              "start": 1032491,
+              "end": 1032504,
               "line": 357,
               "column": 81,
               "access": "read",
@@ -5165,8 +5165,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1293906,
-              "end": 1293916,
+              "start": 1294229,
+              "end": 1294239,
               "line": 1689,
               "column": 71,
               "access": "read",
@@ -5189,8 +5189,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1296161,
-              "end": 1296171,
+              "start": 1296484,
+              "end": 1296494,
               "line": 1693,
               "column": 144,
               "access": "read",
@@ -5213,8 +5213,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$options",
-              "start": 1323457,
-              "end": 1323465,
+              "start": 1323790,
+              "end": 1323798,
               "line": 1724,
               "column": 2506,
               "access": "read",
@@ -5237,8 +5237,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$options",
-              "start": 1332836,
-              "end": 1332844,
+              "start": 1333169,
+              "end": 1333177,
               "line": 1724,
               "column": 11885,
               "access": "read",

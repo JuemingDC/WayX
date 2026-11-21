@@ -1371,6 +1371,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 return false;
             }
         };
+        const binaryBody = value => { const field = "body", alternate = field === 'body' ? 'bodyBytes' : 'body'; return binary(value[field]) ? value[field] : binary(value[alternate]) ? value[alternate] : undefined; };
         const status = value => {
             if (typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599)
                 return value;
@@ -1427,15 +1428,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 result["status"] = status(value["status"]);
                 ;
             }
-            if (binary(value.bodyBytes) || binary(value.body)) {
-                const valueBytes = value.body;
-                if (valueBytes !== undefined) {
-                    const b = bytes(valueBytes);
-                    {
-                        result.body = b;
-                        delete result.bodyBytes;
-                    }
-                }
+            const data = binaryBody(value);
+            {
+                if (data !== undefined && (typeof result.body !== 'string'))
+                    result.body = bytes(data);
+                delete result.bodyBytes;
             }
             return result;
         }
@@ -1914,7 +1911,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 function j(r, e) { return Array.from(r.querySelectorAll(e)); }
                 function v(r, ...e) { return e.map(t => r.appendChild(t)); }
                 function M(r) { return r.map(e => e.parentElement?.removeChild(e)); }
-                var $ = (r, e) => { let t = r.state; return t.injectScript = "\"use strict\";(()=>{document.addEventListener(\"ready\",()=>{if(window.open=()=>{},window.player?.pause){let e=window.player.pause;window.player.pause=()=>{document.hasFocus()&&e()}}});})();\n", t.injectStyle = ".lg\\:block,.lg\\:hidden,a[href*=\"//bit.ly/\"],div[x-init*=\"#genki-counter'\"]{display:none!important}div:has(a[href*=\"go.myavlive.com\"]){display:none!important}[x-show$=\"video_details'\"]>div>ul{display:none!important}div[style*=\"width: 300px; height: 250px;\"]{display:none!important}.relative>div[x-init*=\"campaignId=under_player\"]{display:none!important}div[x-show^=recommendItems]~div[class]:has(>div>div.mx-auto>div.flex>a[rel^=sponsored]){display:none!important}div>a[href^=\"https://missav\"][href$=\"/vip\"]{display:none!important}div>a[href*=\"myavlive.com\"]{display:none!important}div.space-y-6.mb-6{display:none!important}.order-first>div.bg-primary.py-3{display:none!important}\n", t.nodeFilters = [{ selector: "script", predicate: s => { let o = s.src || "", n = s.innerText || ""; return o.includes("tsyndicate.com") || n.includes("TSOutstreamVideo") || n.includes("htmlAds"); } }], e(); };
+                var $ = (r, e) => { let t = r.state; return t.injectScript = "\"use strict\";(()=>{document.addEventListener(\"ready\",()=>{if(window.open=()=>{},window.player?.pause){let e=window.player.pause;window.player.pause=()=>{document.hasFocus()&&e()}}});})();\n", t.injectStyle = ".lg\\:block,.lg\\:hidden,a[href*=\"//bit.ly/\"],div[x-init*=\"#genki-counter'\"]{display:none!important}div:has(a[href*=\"go.myavlive.com\"]){display:none!important}[x-show$=\"video_details'\"]>div>ul{display:none!important}div[style*=\"width: 300px; height: 250px;\"]{display:none!important}.relative>div[x-init*=\"campaignId=under_player\"]{display:none!important}div[x-show^=recommendItems]~div[class]:has(>div>div.mx-auto>div.flex>a[rel^=sponsored]){display:none!important}div>a[href^=\"https://missav\"][href$=\"/vip\"]{display:none!important}div>a[href*=\"myavlive.com\"]{display:none!important}div.space-y-6.mb-6{display:none!important}.order-first>div.bg-primary.py-3{display:none!important}#b-a-b{display:none!important}\n", t.nodeFilters = [{ selector: "script", predicate: s => { let o = s.src || "", n = s.innerText || ""; return o.includes("tsyndicate.com") || n.includes("TSOutstreamVideo") || n.includes("htmlAds") || n.includes("b-a-b") || n.includes("mrst.ccwu.cc"); } }], e(); };
                 new g().use(S).use(A).use(O).use($).use(H).run();
             }).call(this);
         }

@@ -21,13 +21,11 @@
         return new Uint8Array(get('buffer'), get('byteOffset'), get('byteLength'));
     } throw new TypeError('WayX API: binary body requires BufferSource'); };
     const __wayxView = value => { if (value === undefined)
-        return undefined; const result = Object.assign({}, value); if (__wayxBinary(value.bodyBytes) || __wayxBinary(value.body)) {
-        const data = value.body;
-        if (data !== undefined) {
+        return undefined; const result = Object.assign({}, value); if (typeof value.body !== 'string') {
+        const data = __wayxBinary(value.body) ? value.body : value.bodyBytes;
+        if (__wayxBinary(data))
             result.body = __wayxBytes(data);
-            delete result.bodyBytes;
-        }
-    } return result; };
+    } delete result.bodyBytes; return result; };
     return (function (nativeDone, run) {
         let attempted = false, nativeFailed = false, nativeError;
         const done = value => {

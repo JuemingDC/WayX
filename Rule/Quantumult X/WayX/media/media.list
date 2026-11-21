@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-11-21 02:39:25 UTC
+# Updated: 2026-11-21 09:24:26 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7396
+# Rules: 7268
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,ssid
@@ -1450,7 +1450,6 @@ host-suffix,3dstudio.com,ssid
 host-suffix,3dtin.com,ssid
 host-suffix,3dtin.net,ssid
 host-suffix,3lateral.com,ssid
-host-suffix,40shopping.com,ssid
 host-suffix,4gamer.net,ssid
 host-suffix,4gtv.tv,ssid
 host-suffix,5-d.com,ssid
@@ -1468,7 +1467,6 @@ host-suffix,9anime.to,ssid
 host-suffix,9anime.ws,ssid
 host-suffix,9ineverse.com,ssid
 host-suffix,a2z.com,ssid
-host-suffix,aanaan.com,ssid
 host-suffix,abc.xyz,ssid
 host-suffix,abema-tv.com,ssid
 host-suffix,abema.io,ssid
@@ -1565,7 +1563,6 @@ host-suffix,adskengpr.net,ssid
 host-suffix,adtcc.com,ssid
 host-suffix,adventofcode.com,ssid
 host-suffix,adx.promo,ssid
-host-suffix,aeasyshop.com,ssid
 host-suffix,aecexcellence.com,ssid
 host-suffix,aerospace-cadcam.com,ssid
 host-suffix,aerospace-design.com,ssid
@@ -1586,12 +1583,10 @@ host-suffix,airgonetworks.com,ssid
 host-suffix,airgunstudio.com,ssid
 host-suffix,airhorn.solutions,ssid
 host-suffix,airhornbot.com,ssid
-host-suffix,airmay.com,ssid
 host-suffix,airwatchexpress.com,ssid
 host-suffix,airwatchqa.com,ssid
 host-suffix,aiv-cdn.net,ssid
 host-suffix,aiv-delivery.net,ssid
-host-suffix,ajtalk.com,ssid
 host-suffix,akamaized.net,ssid
 host-suffix,akiba-souken.com,ssid
 host-suffix,alexa.com,ssid
@@ -1776,7 +1771,6 @@ host-suffix,anidom.com,ssid
 host-suffix,anigema.jp,ssid
 host-suffix,animary.jp,ssid
 host-suffix,animedao-tv.com,ssid
-host-suffix,annstores.net,ssid
 host-suffix,anthemgame.com,ssid
 host-suffix,anthemthegame.com,ssid
 host-suffix,antiphishing.nl,ssid
@@ -1784,7 +1778,6 @@ host-suffix,antiphishing.ru,ssid
 host-suffix,anydesk.com,ssid
 host-suffix,ao3.org,ssid
 host-suffix,aodahl.com,ssid
-host-suffix,aokwholesale.net,ssid
 host-suffix,aolcdn.com,ssid
 host-suffix,aorus.com,ssid
 host-suffix,aoruszone.cn,ssid
@@ -2070,11 +2063,9 @@ host-suffix,b2c-digest.ru,ssid
 host-suffix,babes.com,ssid
 host-suffix,badaas.com,ssid
 host-suffix,badgen.net,ssid
-host-suffix,bag-glasses1.com,ssid
 host-suffix,bananacall.ru,ssid
 host-suffix,band.us,ssid
 host-suffix,bandcamp.com,ssid
-host-suffix,bandgirlz.com,ssid
 host-suffix,bandwagonhost.com,ssid
 host-suffix,bang-dream.com,ssid
 host-suffix,bangumi.tv,ssid
@@ -2096,7 +2087,6 @@ host-suffix,battlefieldv.com,ssid
 host-suffix,battlefront2.com,ssid
 host-suffix,battlefrontii.com,ssid
 host-suffix,battlelog.com,ssid
-host-suffix,baxsound.com,ssid
 host-suffix,bbc.co,ssid
 host-suffix,bbc.com,ssid
 host-suffix,bbc.in,ssid
@@ -2104,7 +2094,6 @@ host-suffix,bbcchinese.com,ssid
 host-suffix,bbci.co,ssid
 host-suffix,bbcpersian.com,ssid
 host-suffix,bbcverticals.com,ssid
-host-suffix,bbestmall.com,ssid
 host-suffix,bbg.gov,ssid
 host-suffix,bcbits.com,ssid
 host-suffix,beeline.tv,ssid
@@ -2121,7 +2110,6 @@ host-suffix,beget.pro,ssid
 host-suffix,beget.ru,ssid
 host-suffix,beget.tech,ssid
 host-suffix,begetcdn.cloud,ssid
-host-suffix,begin-trade.com,ssid
 host-suffix,behance.net,ssid
 host-suffix,behindthescreenz.com,ssid
 host-suffix,bejeweledstars.com,ssid
@@ -2146,7 +2134,6 @@ host-suffix,bgm.tv,ssid
 host-suffix,bigbeans.solutions,ssid
 host-suffix,bigbigshop.com,ssid
 host-suffix,biggggg.com,ssid
-host-suffix,biitii.com,ssid
 host-suffix,bilibili.tv,ssid
 host-suffix,biliintl.com,ssid
 host-suffix,bim-360.com,ssid
@@ -2184,7 +2171,6 @@ host-suffix,blackboxgames.com,ssid
 host-suffix,blizzard.com,ssid
 host-suffix,blizzardgearstore.com,ssid
 host-suffix,blogoverflow.com,ssid
-host-suffix,bloommicroventures.com,ssid
 host-suffix,blox.com,ssid
 host-suffix,blubrry.com,ssid
 host-suffix,bluearchive-cn.com,ssid
@@ -2200,7 +2186,6 @@ host-suffix,bnxz.net,ssid
 host-suffix,bohemia.net,ssid
 host-suffix,boldgrid.com,ssid
 host-suffix,bookmate.ru,ssid
-host-suffix,bookonsky.net,ssid
 host-suffix,boom.ru,ssid
 host-suffix,boombeach.com,ssid
 host-suffix,boomerang.com,ssid
@@ -2208,7 +2193,6 @@ host-suffix,boosty.to,ssid
 host-suffix,booth.pm,ssid
 host-suffix,bootstrapcdn.com,ssid
 host-suffix,boringcompany.com,ssid
-host-suffix,bossae.com,ssid
 host-suffix,botim.me,ssid
 host-suffix,botmechanic.io,ssid
 host-suffix,bowenpress.com,ssid
@@ -2216,10 +2200,6 @@ host-suffix,bowlroll.net,ssid
 host-suffix,bowsersinsidestory.com,ssid
 host-suffix,boxofficemojo.com,ssid
 host-suffix,boxun.com,ssid
-host-suffix,brandeasygo.com,ssid
-host-suffix,brandelectronic.com,ssid
-host-suffix,brandproducts1688.com,ssid
-host-suffix,brands098.com,ssid
 host-suffix,brantect.com,ssid
 host-suffix,braventures.com,ssid
 host-suffix,braveux.com,ssid
@@ -2263,12 +2243,8 @@ host-suffix,bushiroad-works.com,ssid
 host-suffix,bushiroad.com,ssid
 host-suffix,bushiroadgames.com,ssid
 host-suffix,businesscatalyst.com,ssid
-host-suffix,businesswebwise.com,ssid
 host-suffix,busybox.net,ssid
-host-suffix,buy-from-shanghai.com,ssid
 host-suffix,buyaltera.com,ssid
-host-suffix,buyshoponly.com,ssid
-host-suffix,buzzardflapper.com,ssid
 host-suffix,buzzsprout.com,ssid
 host-suffix,bwh1.net,ssid
 host-suffix,bwh8.net,ssid
@@ -2426,21 +2402,14 @@ host-suffix,channel4.com,ssid
 host-suffix,channel5.com,ssid
 host-suffix,charlotte-anime.jp,ssid
 host-suffix,chatter.com,ssid
-host-suffix,cheapheadsetmall.com,ssid
-host-suffix,cheapheadsetshop.com,ssid
-host-suffix,cheapshoesvip.com,ssid
-host-suffix,cheapwireless04.com,ssid
-host-suffix,cheerwholesale.us,ssid
 host-suffix,chef.io,ssid
 host-suffix,chegg.com,ssid
 host-suffix,cheggcdn.com,ssid
 host-suffix,chess.com,ssid
 host-suffix,chesscomfiles.com,ssid
-host-suffix,chihair-straightener.com,ssid
 host-suffix,chii.in,ssid
 host-suffix,chillingo.com,ssid
 host-suffix,china-autodesk.com,ssid
-host-suffix,chinaclothesstore.com,ssid
 host-suffix,chintaidx.com,ssid
 host-suffix,chipcore.com,ssid
 host-suffix,chipcore.ru,ssid
@@ -2450,7 +2419,6 @@ host-suffix,chocolatey.org,ssid
 host-suffix,chunkbase.com,ssid
 host-suffix,ci-en.jp,ssid
 host-suffix,ci-en.net,ssid
-host-suffix,ciattackers.com,ssid
 host-suffix,ciciq.net,ssid
 host-suffix,cilk.com,ssid
 host-suffix,cilk.net,ssid
@@ -2534,7 +2502,6 @@ host-suffix,clstorage.net,ssid
 host-suffix,clubhouse.com,ssid
 host-suffix,clubhouseapi.com,ssid
 host-suffix,clusterconnection.com,ssid
-host-suffix,cmhalq.com,ssid
 host-suffix,cmpaas.com,ssid
 host-suffix,cnbc.com,ssid
 host-suffix,cnbcfm.com,ssid
@@ -2546,7 +2513,6 @@ host-suffix,cnnarabic.com,ssid
 host-suffix,cnnlabs.com,ssid
 host-suffix,cnnmoney.ch,ssid
 host-suffix,cnpmjs.org,ssid
-host-suffix,cnshopin.com,ssid
 host-suffix,cobatt.com,ssid
 host-suffix,cobeuz.fr,ssid
 host-suffix,cobuz.fr,ssid
@@ -2606,7 +2572,6 @@ host-suffix,covid19-rx.org,ssid
 host-suffix,covid19rx.org,ssid
 host-suffix,cpan.org,ssid
 host-suffix,cpedge.com,ssid
-host-suffix,cqcorea.com,ssid
 host-suffix,crankplayer.com,ssid
 host-suffix,crashbandicoot.com,ssid
 host-suffix,crates.io,ssid
@@ -2630,7 +2595,6 @@ host-suffix,csifund.org,ssid
 host-suffix,cstatic.net,ssid
 host-suffix,cubicmotion.com,ssid
 host-suffix,cubicodyssey.game,ssid
-host-suffix,cuffiesaldi.com,ssid
 host-suffix,cups.online,ssid
 host-suffix,curbed.com,ssid
 host-suffix,curiositystream.com,ssid
@@ -2661,7 +2625,6 @@ host-suffix,dandalinvoa.com,ssid
 host-suffix,dandanplay.com,ssid
 host-suffix,dandanplay.net,ssid
 host-suffix,dandanzan.cc,ssid
-host-suffix,danemarket.com,ssid
 host-suffix,daoc.net,ssid
 host-suffix,darivoa.com,ssid
 host-suffix,darkageofcamelot.com,ssid
@@ -2830,7 +2793,6 @@ host-suffix,designxml.com,ssid
 host-suffix,designxml.net,ssid
 host-suffix,desk.com,ssid
 host-suffix,destinationbim.com,ssid
-host-suffix,detaliczny.com,ssid
 host-suffix,detodosparatodos.org,ssid
 host-suffix,dev-my.com,ssid
 host-suffix,dev-my.games,ssid
@@ -3026,7 +2988,6 @@ host-suffix,dscloud.mobi,ssid
 host-suffix,dsmynas.com,ssid
 host-suffix,dsmynas.net,ssid
 host-suffix,dsmynas.org,ssid
-host-suffix,dtsell.com,ssid
 host-suffix,dtv2009offers.com,ssid
 host-suffix,dtvce.com,ssid
 host-suffix,dungeonkeeper.cn,ssid
@@ -3058,7 +3019,6 @@ host-suffix,eamythic.com,ssid
 host-suffix,eamythic.net,ssid
 host-suffix,eanordic.com,ssid
 host-suffix,eaplay.com,ssid
-host-suffix,earphonescheapest.com,ssid
 host-suffix,earthdell.com,ssid
 host-suffix,easic.com,ssid
 host-suffix,easports.com,ssid
@@ -3074,7 +3034,6 @@ host-suffix,easy-signing.com,ssid
 host-suffix,easy.ac,ssid
 host-suffix,easyanticheat.net,ssid
 host-suffix,eater.com,ssid
-host-suffix,ebuyheadphones.com,ssid
 host-suffix,echocdn.com,ssid
 host-suffix,echosign.com,ssid
 host-suffix,ecmascript.org,ssid
@@ -3148,7 +3107,6 @@ host-suffix,esforce.ru,ssid
 host-suffix,esmarthealth.com,ssid
 host-suffix,esopworld.com,ssid
 host-suffix,esports.gg,ssid
-host-suffix,etheadphones.com,ssid
 host-suffix,eueuropeansustainabledesign.net,ssid
 host-suffix,eurocodesoftware.com,ssid
 host-suffix,europeansustainabledesign.com,ssid
@@ -3191,7 +3149,6 @@ host-suffix,familyds.com,ssid
 host-suffix,familyds.net,ssid
 host-suffix,familyds.org,ssid
 host-suffix,famitsu.com,ssid
-host-suffix,famosascalvas.com,ssid
 host-suffix,fanatical.com,ssid
 host-suffix,fanbox.cc,ssid
 host-suffix,fandango.com,ssid
@@ -3455,8 +3412,6 @@ host-suffix,framer.website,ssid
 host-suffix,framercanvas.com,ssid
 host-suffix,framerstatic.com,ssid
 host-suffix,framerusercontent.com,ssid
-host-suffix,free-aa.com,ssid
-host-suffix,free-sns.com,ssid
 host-suffix,freebsd.org,ssid
 host-suffix,freebuff.com,ssid
 host-suffix,freedirecttvspecial.com,ssid
@@ -3465,7 +3420,6 @@ host-suffix,freefbx.com,ssid
 host-suffix,freenode.net,ssid
 host-suffix,freeterabox.com,ssid
 host-suffix,friday.tw,ssid
-host-suffix,frishoes.com,ssid
 host-suffix,frontrow.com,ssid
 host-suffix,frostbite.com,ssid
 host-suffix,fse.tv,ssid
@@ -3613,7 +3567,6 @@ host-suffix,globalsign.net,ssid
 host-suffix,globalsign.nl,ssid
 host-suffix,globalsigncdn.com,ssid
 host-suffix,gloryofheracles.com,ssid
-host-suffix,gmnetworks.net,ssid
 host-suffix,gmo-aozora.com,ssid
 host-suffix,gmo-app.jp,ssid
 host-suffix,gmo-c.jp,ssid
@@ -3670,7 +3623,6 @@ host-suffix,gooblox.com,ssid
 host-suffix,good-apps.jp,ssid
 host-suffix,gooddaychicago.com,ssid
 host-suffix,goodreads.com,ssid
-host-suffix,goodsdunk.net,ssid
 host-suffix,goodsrv.de,ssid
 host-suffix,goope.jp,ssid
 host-suffix,gopayment.com,ssid
@@ -3782,14 +3734,6 @@ host-suffix,hboprod.com,ssid
 host-suffix,hbospain.com,ssid
 host-suffix,hbotvsales.com,ssid
 host-suffix,hddirectv.com,ssid
-host-suffix,headphonepubs.com,ssid
-host-suffix,headphones-cool.com,ssid
-host-suffix,headphoneshome.com,ssid
-host-suffix,headphoneshotsales.com,ssid
-host-suffix,headphonesol.com,ssid
-host-suffix,headphonessupply.com,ssid
-host-suffix,headphonezip.com,ssid
-host-suffix,headset987.com,ssid
 host-suffix,healthreach.hk,ssid
 host-suffix,heaven-burns-red.com,ssid
 host-suffix,hellofax.com,ssid
@@ -3826,8 +3770,6 @@ host-suffix,hidive.com,ssid
 host-suffix,highmoonstudios.com,ssid
 host-suffix,himalaya.com,ssid
 host-suffix,hinet.net,ssid
-host-suffix,hipaa6020.com,ssid
-host-suffix,hipzoom.net,ssid
 host-suffix,historyofdota.com,ssid
 host-suffix,historyofdota.net,ssid
 host-suffix,historyofdota.org,ssid
@@ -3851,7 +3793,6 @@ host-suffix,homephoneplus.com,ssid
 host-suffix,homestylerapp.com,ssid
 host-suffix,homestylernews.com,ssid
 host-suffix,hominis.media,ssid
-host-suffix,honawalaan.com,ssid
 host-suffix,honkaiimpact3.com,ssid
 host-suffix,honkaistarrail.com,ssid
 host-suffix,horizontal-llc.com,ssid
@@ -3860,7 +3801,6 @@ host-suffix,horizontalglue.com,ssid
 host-suffix,horizontalsystems.com,ssid
 host-suffix,hotel-reviewn.com,ssid
 host-suffix,hotsrv.de,ssid
-host-suffix,hottestheadphonesonline.com,ssid
 host-suffix,hoyo.link,ssid
 host-suffix,hoyolab.com,ssid
 host-suffix,hoyoverse.com,ssid
@@ -3990,7 +3930,6 @@ host-suffix,hpvirtualthin.com,ssid
 host-suffix,hpwallart.com,ssid
 host-suffix,hpwellnesscentral.com,ssid
 host-suffix,hpwsn.com,ssid
-host-suffix,hrsaz.com,ssid
 host-suffix,hrtek.ru,ssid
 host-suffix,hsm-works.com,ssid
 host-suffix,hsm-xpress.com,ssid
@@ -4084,8 +4023,6 @@ host-suffix,iflix.com,ssid
 host-suffix,igcc.jp,ssid
 host-suffix,ign.com,ssid
 host-suffix,ignimg.com,ssid
-host-suffix,igoshopping.net,ssid
-host-suffix,illianacomputerrecycling.com,ssid
 host-suffix,imageglass.org,ssid
 host-suffix,imagemodeler.com,ssid
 host-suffix,images-amazon.com,ssid
@@ -4100,7 +4037,6 @@ host-suffix,immidio.com,ssid
 host-suffix,imod.com,ssid
 host-suffix,impactdesignhub.com,ssid
 host-suffix,inbox.ru,ssid
-host-suffix,incentivetravelgifts.com,ssid
 host-suffix,indazn.com,ssid
 host-suffix,indaznlab.com,ssid
 host-suffix,industrialtoys.com,ssid
@@ -4312,13 +4248,11 @@ host-suffix,inventorseries.com,ssid
 host-suffix,ioe.com,ssid
 host-suffix,iole.tv,ssid
 host-suffix,ip73.com,ssid
-host-suffix,iphonecase2013.com,ssid
 host-suffix,ipleadership.org,ssid
 host-suffix,iprad-ryoma.com,ssid
 host-suffix,ipstatp.com,ssid
 host-suffix,iq.com,ssid
 host-suffix,iskoot.com,ssid
-host-suffix,islamiccenterofnewlondon.com,ssid
 host-suffix,isnssdk.com,ssid
 host-suffix,isomorphiclabs.com,ssid
 host-suffix,istorytell.com,ssid
@@ -4455,7 +4389,6 @@ host-suffix,kfs.io,ssid
 host-suffix,kgisystems.com,ssid
 host-suffix,kgslb.com,ssid
 host-suffix,kick.com,ssid
-host-suffix,kickshatchannel.com,ssid
 host-suffix,kicu.tv,ssid
 host-suffix,killercb.ru,ssid
 host-suffix,kilmeadeandfriends.com,ssid
@@ -4507,7 +4440,6 @@ host-suffix,konamionline.com,ssid
 host-suffix,konamiopen.jp,ssid
 host-suffix,konamisportsclub.jp,ssid
 host-suffix,konamistyle.jp,ssid
-host-suffix,kopfhorergunstigshop.com,ssid
 host-suffix,kotl.in,ssid
 host-suffix,kotlinconf.com,ssid
 host-suffix,kotlinlang.org,ssid
@@ -4557,10 +4489,8 @@ host-suffix,learningfreedomandtheweb.org,ssid
 host-suffix,learnwithleague.com,ssid
 host-suffix,leavinghpinc.com,ssid
 host-suffix,lede-project.org,ssid
-host-suffix,leecountytimes.com,ssid
 host-suffix,legendofzelda.cn,ssid
 host-suffix,lerna.ru,ssid
-host-suffix,lexuemei.com,ssid
 host-suffix,lfai.foundation,ssid
 host-suffix,lg.com,ssid
 host-suffix,lgappstv.com,ssid
@@ -4646,12 +4576,10 @@ host-suffix,lowiro.com,ssid
 host-suffix,lputil.com,ssid
 host-suffix,lrfdsoftware.com,ssid
 host-suffix,lua.org,ssid
-host-suffix,luckyissue.com,ssid
 host-suffix,luckysrv.de,ssid
 host-suffix,lunchwithpype.com,ssid
 host-suffix,lvcampaign.com,ssid
 host-suffix,lxqt-project.org,ssid
-host-suffix,lyzsxx.com,ssid
 host-suffix,m2m.com,ssid
 host-suffix,machine-dna.com,ssid
 host-suffix,macports.org,ssid
@@ -4682,14 +4610,12 @@ host-suffix,makeanything.com,ssid
 host-suffix,makeappli.jp,ssid
 host-suffix,makearmanotwar.com,ssid
 host-suffix,makebettercode.com,ssid
-host-suffix,makeeu.com,ssid
 host-suffix,makeitrealcontest.com,ssid
 host-suffix,makerepeater.jp,ssid
 host-suffix,makesenseofdata.com,ssid
 host-suffix,makeshop.jp,ssid
 host-suffix,makingstartshere.com,ssid
 host-suffix,maktoob.com,ssid
-host-suffix,mallheadphone.com,ssid
 host-suffix,mangacopy.com,ssid
 host-suffix,mangafox.me,ssid
 host-suffix,mangafuna.xyz,ssid
@@ -4753,7 +4679,6 @@ host-suffix,mayaunlimited.com,ssid
 host-suffix,mayauser.com,ssid
 host-suffix,mayauser.net,ssid
 host-suffix,mayavisualization.com,ssid
-host-suffix,mbheadphone.com,ssid
 host-suffix,mcisco.com,ssid
 host-suffix,mcs.st,ssid
 host-suffix,mdhcdn.com,ssid
@@ -4804,7 +4729,6 @@ host-suffix,mgo-images.com,ssid
 host-suffix,mgo.com,ssid
 host-suffix,mhgui.com,ssid
 host-suffix,michill.jp,ssid
-host-suffix,micstl.com,ssid
 host-suffix,miitomo.com,ssid
 host-suffix,miiverse.com,ssid
 host-suffix,mikanani.me,ssid
@@ -4872,10 +4796,8 @@ host-suffix,molesports.com,ssid
 host-suffix,molviewer.com,ssid
 host-suffix,mongodb.com,ssid
 host-suffix,mongodb.org,ssid
-host-suffix,monsterproduct.net,ssid
 host-suffix,moov.hk,ssid
 host-suffix,more.tv,ssid
-host-suffix,moreheadphones.com,ssid
 host-suffix,morewithautodesk.com,ssid
 host-suffix,motiongraphicsandmore.com,ssid
 host-suffix,motionpictureser.com,ssid
@@ -5073,7 +4995,6 @@ host-suffix,nbys.tv,ssid
 host-suffix,nbys1.tv,ssid
 host-suffix,nbyy.tv,ssid
 host-suffix,ncloud.com,ssid
-host-suffix,neborder.com,ssid
 host-suffix,nebula.app,ssid
 host-suffix,needforspeed.com,ssid
 host-suffix,needforspeedboost.com,ssid
@@ -5123,11 +5044,8 @@ host-suffix,netzerobuildingstudio.com,ssid
 host-suffix,neuralink.com,ssid
 host-suffix,nevex.com,ssid
 host-suffix,new2fea.com,ssid
-host-suffix,newbemany.com,ssid
-host-suffix,newlysprung.net,ssid
 host-suffix,newpipe.net,ssid
 host-suffix,newpppp.com,ssid
-host-suffix,newschristmasshopping.com,ssid
 host-suffix,newsnowfox.com,ssid
 host-suffix,newsupermariobrosu.com,ssid
 host-suffix,newtofea.com,ssid
@@ -5138,7 +5056,6 @@ host-suffix,nextgenerationcam.com,ssid
 host-suffix,nextgenerationcenter.com,ssid
 host-suffix,nexus-cdn.com,ssid
 host-suffix,nexusmods.com,ssid
-host-suffix,nflhotsalejerseys.com,ssid
 host-suffix,nfsworld.com,ssid
 host-suffix,nftables.org,ssid
 host-suffix,nginx.com,ssid
@@ -5150,7 +5067,6 @@ host-suffix,nic.ru,ssid
 host-suffix,nicegram.app,ssid
 host-suffix,nicegram.cloud,ssid
 host-suffix,nicesrv.de,ssid
-host-suffix,nicesshop.net,ssid
 host-suffix,nichost.ru,ssid
 host-suffix,nico.ms,ssid
 host-suffix,nicochannel.jp,ssid
@@ -5297,11 +5213,9 @@ host-suffix,odnoklassniki.ru,ssid
 host-suffix,odnoklassniki.tj,ssid
 host-suffix,odysee.com,ssid
 host-suffix,oekakiskey.com,ssid
-host-suffix,offerairjordanlebron.com,ssid
 host-suffix,offworldindustries.com,ssid
 host-suffix,offworldindustries.net,ssid
 host-suffix,ofiii.com,ssid
-host-suffix,ogameblog.com,ssid
 host-suffix,ok.me,ssid
 host-suffix,ok.ru,ssid
 host-suffix,okcdn.ru,ssid
@@ -5338,7 +5252,6 @@ host-suffix,onetrust.com,ssid
 host-suffix,onkakao.net,ssid
 host-suffix,onlinegamer.jp,ssid
 host-suffix,onlyfans.com,ssid
-host-suffix,onsaletrend.com,ssid
 host-suffix,op.gg,ssid
 host-suffix,openamt.com,ssid
 host-suffix,openapiplatform.com,ssid
@@ -5414,7 +5327,6 @@ host-suffix,passwordday.org,ssid
 host-suffix,pastahealth.com,ssid
 host-suffix,patentgold.net,ssid
 host-suffix,patenttruth.org,ssid
-host-suffix,paulsimon-music.com,ssid
 host-suffix,pawoo.net,ssid
 host-suffix,paygonline.com,ssid
 host-suffix,payroll.com,ssid
@@ -5430,11 +5342,9 @@ host-suffix,peacocktv.com,ssid
 host-suffix,pentium.com,ssid
 host-suffix,pentium.net,ssid
 host-suffix,pepabo.com,ssid
-host-suffix,perfectkickz.net,ssid
 host-suffix,perl.org,ssid
 host-suffix,persagg.com,ssid
 host-suffix,personaltrainermath.com,ssid
-host-suffix,personeelsland.com,ssid
 host-suffix,phantomjs.org,ssid
 host-suffix,phncdn.com,ssid
 host-suffix,photolia.net,ssid
@@ -5443,9 +5353,7 @@ host-suffix,php.net,ssid
 host-suffix,phprcdn.com,ssid
 host-suffix,pi-vr.com,ssid
 host-suffix,piapro.net,ssid
-host-suffix,picknicekicks.net,ssid
 host-suffix,pickpackapp.com,ssid
-host-suffix,pickshoesclothes.com,ssid
 host-suffix,pikpak.io,ssid
 host-suffix,pikpak.me,ssid
 host-suffix,pikpakdrive.com,ssid
@@ -5501,7 +5409,6 @@ host-suffix,plutotv.net,ssid
 host-suffix,pm.me,ssid
 host-suffix,pmem.org,ssid
 host-suffix,pmem.us,ssid
-host-suffix,pocketbiketrader.com,ssid
 host-suffix,pocketcasts.com,ssid
 host-suffix,pogo.com,ssid
 host-suffix,pogobeta.com,ssid
@@ -5720,7 +5627,6 @@ host-suffix,razerzone.jp,ssid
 host-suffix,rblx.co,ssid
 host-suffix,rblx.com,ssid
 host-suffix,rblx.org,ssid
-host-suffix,rbsgr.com,ssid
 host-suffix,rbx.com,ssid
 host-suffix,rbxcdn.com,ssid
 host-suffix,rbxinfra.net,ssid
@@ -5758,7 +5664,6 @@ host-suffix,redislabs.com,ssid
 host-suffix,redtube.com,ssid
 host-suffix,redtubepremium.com,ssid
 host-suffix,redzonechannel.com,ssid
-host-suffix,reform-apple.com,ssid
 host-suffix,reg.cloud,ssid
 host-suffix,reg.com,ssid
 host-suffix,reg.ru,ssid
@@ -5770,8 +5675,6 @@ host-suffix,renderingtoolkit.org,ssid
 host-suffix,renshu.com,ssid
 host-suffix,report-megafon.ru,ssid
 host-suffix,repotama.com,ssid
-host-suffix,repsneakermall.com,ssid
-host-suffix,repswing.com,ssid
 host-suffix,researchintel.com,ssid
 host-suffix,resella.jp,ssid
 host-suffix,resellablue.com,ssid
@@ -5877,7 +5780,6 @@ host-suffix,safetycli.com,ssid
 host-suffix,saffrontech.com,ssid
 host-suffix,sahabatsetiasmartone.com,ssid
 host-suffix,saiganak.com,ssid
-host-suffix,salecheaphandbags.com,ssid
 host-suffix,salesforce-setup.com,ssid
 host-suffix,salesforce-sites.com,ssid
 host-suffix,salesforce.com,ssid
@@ -5885,7 +5787,6 @@ host-suffix,salesforce.org,ssid
 host-suffix,salesforceiq.com,ssid
 host-suffix,salesforceliveagent.com,ssid
 host-suffix,salesforcemarketingcloud.com,ssid
-host-suffix,samebags.com,ssid
 host-suffix,samsung.com,ssid
 host-suffix,samsungadhub.com,ssid
 host-suffix,samsungads.com,ssid
@@ -5915,7 +5816,6 @@ host-suffix,sandisk.in,ssid
 host-suffix,sandisk.it,ssid
 host-suffix,sandisk.nl,ssid
 host-suffix,sandisk.sg,ssid
-host-suffix,sanvaras.com,ssid
 host-suffix,savoycomputing.com,ssid
 host-suffix,sayeasy.eu,ssid
 host-suffix,sbnation.com,ssid
@@ -5929,7 +5829,6 @@ host-suffix,scartel.ru,ssid
 host-suffix,scea.com,ssid
 host-suffix,scene7.com,ssid
 host-suffix,scientificlinux.org,ssid
-host-suffix,scnshop.cc,ssid
 host-suffix,scoop.sh,ssid
 host-suffix,scpic.net,ssid
 host-suffix,screens-lab.jp,ssid
@@ -5990,12 +5889,8 @@ host-suffix,shellcheck.net,ssid
 host-suffix,shields.io,ssid
 host-suffix,shisho.dev,ssid
 host-suffix,sho.com,ssid
-host-suffix,shoers.com,ssid
-host-suffix,shoestop2.com,ssid
 host-suffix,shop-pro.jp,ssid
 host-suffix,shopalienware.com,ssid
-host-suffix,shopping-days.net,ssid
-host-suffix,shoppinguheadphones.com,ssid
 host-suffix,shopspeedtv.com,ssid
 host-suffix,shotgridsoftware.com,ssid
 host-suffix,shotgridstudio.com,ssid
@@ -6096,9 +5991,6 @@ host-suffix,snapkit.co,ssid
 host-suffix,snapstore.io,ssid
 host-suffix,snapvolumes.com,ssid
 host-suffix,sndcdn.com,ssid
-host-suffix,sneaker666.com,ssid
-host-suffix,sneakerpage.net,ssid
-host-suffix,sneakerskick.com,ssid
 host-suffix,snk-corp.info,ssid
 host-suffix,snkplaymore.info,ssid
 host-suffix,snmc.io,ssid
@@ -6181,7 +6073,6 @@ host-suffix,sonypicturesmuseum.com,ssid
 host-suffix,sonypicturesstudios.com,ssid
 host-suffix,sonypicturestelevision.com,ssid
 host-suffix,sonypicturestelevisiongames.com,ssid
-host-suffix,soso7778.com,ssid
 host-suffix,soundcloud.cloud,ssid
 host-suffix,soundcloud.com,ssid
 host-suffix,soundcloudmail.com,ssid
@@ -6194,7 +6085,6 @@ host-suffix,spaceship.com,ssid
 host-suffix,spacex.com,ssid
 host-suffix,spcc-sp.com,ssid
 host-suffix,spearhead.kr,ssid
-host-suffix,specialtyheadphones.com,ssid
 host-suffix,speeddreamride.com,ssid
 host-suffix,speedfantasybid.com,ssid
 host-suffix,speedhunters.com,ssid
@@ -6202,7 +6092,6 @@ host-suffix,speedracegear.com,ssid
 host-suffix,speedrun.com,ssid
 host-suffix,speedxtra.com,ssid
 host-suffix,spigotmc.org,ssid
-host-suffix,spiritclubs.com,ssid
 host-suffix,splatoon2tournament.com,ssid
 host-suffix,splunk.com,ssid
 host-suffix,spore.com,ssid
@@ -6290,20 +6179,17 @@ host-suffix,sublimetext.com,ssid
 host-suffix,submarin.online,ssid
 host-suffix,submittal-log.com,ssid
 host-suffix,subscene.com,ssid
-host-suffix,sulwerphoto.com,ssid
 host-suffix,summerstage.ru,ssid
 host-suffix,summitceo.ru,ssid
 host-suffix,sun.com,ssid
 host-suffix,sundanceignite2016.com,ssid
 host-suffix,sundayready.com,ssid
-host-suffix,sunglassessale2014.com,ssid
 host-suffix,supercell.com,ssid
 host-suffix,supercell.net,ssid
 host-suffix,supercellcreators.com,ssid
 host-suffix,supercellgames.com,ssid
 host-suffix,supercellid.com,ssid
 host-suffix,supercellstore.com,ssid
-host-suffix,superearsenjoy.com,ssid
 host-suffix,supermario.com,ssid
 host-suffix,supermario3dworld.com,ssid
 host-suffix,supermariogalaxy.com,ssid
@@ -6312,7 +6198,6 @@ host-suffix,superpapermario.com,ssid
 host-suffix,supersmashbros.cn,ssid
 host-suffix,supersrv.de,ssid
 host-suffix,superuser.com,ssid
-host-suffix,supplybestjerseys.com,ssid
 host-suffix,support-uber.com,ssid
 host-suffix,supr.cl,ssid
 host-suffix,supremacy.com,ssid
@@ -6341,13 +6226,11 @@ host-suffix,synologydownload.com,ssid
 host-suffix,synologyupdate.com,ssid
 host-suffix,syosetu.com,ssid
 host-suffix,system76.com,ssid
-host-suffix,szwinnertechnology.com,ssid
 host-suffix,t-splines.com,ssid
 host-suffix,t2.ru,ssid
 host-suffix,tail-f.com,ssid
 host-suffix,tailf.com,ssid
 host-suffix,take2games.com,ssid
-host-suffix,takegoto.com,ssid
 host-suffix,talantix.ru,ssid
 host-suffix,talkingkotlin.com,ssid
 host-suffix,tampermonkey.net,ssid
@@ -6423,7 +6306,6 @@ host-suffix,thesims3.com,ssid
 host-suffix,thesims4.com,ssid
 host-suffix,thesimssocial.com,ssid
 host-suffix,thetvdb.com,ssid
-host-suffix,theuab.net,ssid
 host-suffix,theverge.com,ssid
 host-suffix,thewitcher.com,ssid
 host-suffix,thewonderful101.com,ssid
@@ -6486,7 +6368,6 @@ host-suffix,toy-cadcam.com,ssid
 host-suffix,toy-people.com,ssid
 host-suffix,toycadcam.com,ssid
 host-suffix,trace-flow.ru,ssid
-host-suffix,tradevip1.com,ssid
 host-suffix,transfer.it,ssid
 host-suffix,trbcdn.net,ssid
 host-suffix,trello.com,ssid
@@ -6509,7 +6390,6 @@ host-suffix,trydesign.com,ssid
 host-suffix,tsi.ai,ssid
 host-suffix,tspline.com,ssid
 host-suffix,tsplines.com,ssid
-host-suffix,tteshop.com,ssid
 host-suffix,ttvnw.net,ssid
 host-suffix,tube8.com,ssid
 host-suffix,tube8.fr,ssid
@@ -6611,7 +6491,6 @@ host-suffix,unraveltwo.com,ssid
 host-suffix,unrealengine.com,ssid
 host-suffix,unrealtournament.com,ssid
 host-suffix,unsplash.com,ssid
-host-suffix,unstyle.us,ssid
 host-suffix,uo.com,ssid
 host-suffix,uoherald.com,ssid
 host-suffix,upfrontcfd.com,ssid
@@ -6630,7 +6509,6 @@ host-suffix,uverse.com,ssid
 host-suffix,uweb.ru,ssid
 host-suffix,uwn.com,ssid
 host-suffix,uxzw.club,ssid
-host-suffix,v-has.com,ssid
 host-suffix,v.ps,ssid
 host-suffix,vagrantcloud.com,ssid
 host-suffix,vagrantup.com,ssid
@@ -6723,8 +6601,6 @@ host-suffix,vimeocdn.com,ssid
 host-suffix,vimeogoods.com,ssid
 host-suffix,vimeoondemand.com,ssid
 host-suffix,vimeostatus.com,ssid
-host-suffix,vipheadphones.com,ssid
-host-suffix,vipshoes2.com,ssid
 host-suffix,viqeo.tv,ssid
 host-suffix,viqeotv.com,ssid
 host-suffix,viriondb.com,ssid
@@ -6895,7 +6771,6 @@ host-suffix,wariolandshakeit.com,ssid
 host-suffix,wariowarediy.com,ssid
 host-suffix,warnerbrosgames.com,ssid
 host-suffix,warthunder.com,ssid
-host-suffix,wasdj.com,ssid
 host-suffix,wasmer.io,ssid
 host-suffix,watchanimeattheoffice.com,ssid
 host-suffix,watchnebula.com,ssid
@@ -6945,10 +6820,6 @@ host-suffix,wholefoods.com,ssid
 host-suffix,wholefoodsmarket.com,ssid
 host-suffix,wholekidsfoundation.org,ssid
 host-suffix,wholeplanetfoundation.org,ssid
-host-suffix,wholesale-exporter1.com,ssid
-host-suffix,wholesalediscountpurses.com,ssid
-host-suffix,wholesalefine.com,ssid
-host-suffix,wholesaleonlinemart.com,ssid
 host-suffix,whosthehost.com,ssid
 host-suffix,whvn.cc,ssid
 host-suffix,whychoosehorizon.com,ssid
@@ -6998,7 +6869,6 @@ host-suffix,worksmobile.com,ssid
 host-suffix,workspaceair.com,ssid
 host-suffix,workspaceone.com,ssid
 host-suffix,workstations.tv,ssid
-host-suffix,worldcoinpay.com,ssid
 host-suffix,worldflipper.jp,ssid
 host-suffix,worldoftanks.com,ssid
 host-suffix,worldoftanks.eu,ssid
@@ -7331,6 +7201,7 @@ host-suffix,flickr,ssid
 host-suffix,gmo,ssid
 host-suffix,godaddy,ssid
 host-suffix,hbo,ssid
+host-suffix,hkt,ssid
 host-suffix,ibm,ssid
 host-suffix,imdb,ssid
 host-suffix,intuit,ssid
@@ -7339,6 +7210,7 @@ host-suffix,kindle,ssid
 host-suffix,nico,ssid
 host-suffix,oracle,ssid
 host-suffix,panasonic,ssid
+host-suffix,pccw,ssid
 host-suffix,playstation,ssid
 host-suffix,samsung,ssid
 host-suffix,sony,ssid

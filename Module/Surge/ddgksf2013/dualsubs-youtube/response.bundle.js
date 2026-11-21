@@ -2312,6 +2312,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
         };
         const buffer = value => { const b = bytes(value); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength); };
+        const binaryBody = value => { const field = "body", alternate = field === 'body' ? 'bodyBytes' : 'body'; return binary(value[field]) ? value[field] : binary(value[alternate]) ? value[alternate] : undefined; };
         const status = value => {
             if (typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599)
                 return value;
@@ -2368,14 +2369,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 result["statusCode"] = status(value["status"]);
                 delete result["status"];
             }
-            if (binary(value.bodyBytes) || binary(value.body)) {
-                const valueBytes = value.body;
-                if (valueBytes !== undefined) {
-                    const b = bytes(valueBytes);
-                    {
-                        result.bodyBytes = buffer(b);
+            const data = binaryBody(value);
+            {
+                if (data !== undefined) {
+                    result.bodyBytes = buffer(data);
+                    if (typeof result.body !== 'string')
                         delete result.body;
-                    }
                 }
             }
             return result;
@@ -2526,7 +2525,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 const normalize = (native, data) => {
                     if (!native)
                         return reject({ error: 'HTTP transport returned no response' });
-                    const out = { statusCode: status(native["status"]), headers: headers(native.headers || {}) };
+                    const out = { statusCode: status(native["status"]), headers: headerView(native.headers || {}) };
                     if (binary(data)) {
                         out.bodyBytes = buffer(data);
                         {
