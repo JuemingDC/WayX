@@ -1892,15 +1892,15 @@ if(selectedCase==='conversion-policy.mjs') {
       : 'response if ${url} ~= /api/ then script("https://example.test/bad.js") with timeout=${value},tag="Bad"\nresponse if ${url} ~= /api/ then script("https://example.test/good.js") with debug=${value},tag="Good"');
     const out=convertPlugin(entry,source,{stamp:'2026-10-04',rawBase:'https://raw.githubusercontent.com/JuemingDC/WayX/main'});
     assert.match(out.surge,/invalid plugin \[Argument\] type for timeout/);
-    assert.match(out.qx,/invalid plugin \[Argument\] type for timeout/);
+    if(!legacy) assert.match(out.qx,/omitted unsupported options: timeout/);
     assert.doesNotMatch(out.surge,/^[^#\n]*script-path=https:\/\/example\.test\/bad\.js/m);
-    assert.doesNotMatch(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/bad\.js/m);
+    assert.match(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/bad\.js/m);
     assert.match(out.surge,/^Good = type=http-response[^\n]*script-path=https:\/\/example\.test\/good\.js[^\n]*debug=\{\{\{value\}\}\}/m);
     assert.match(out.qx,/^[^#\n]*script-response-header https:\/\/example\.test\/good\.js$/m);
     assert.equal(out.generatedScripts.size,0);
     validateQX(out.qx,entry);validateSurgeModule(out.surge,entry);
   }
-  console.log('Dynamic option failure isolation passed: invalid timeout declaration rejected, adjacent valid debug Script retained in both targets');
+  console.log('Dynamic option handling passed: Surge validates timeout, QX omits it and retains the Script');
 }
 
 if(selectedCase==='conversion-policy.mjs') {

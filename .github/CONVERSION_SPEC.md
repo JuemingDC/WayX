@@ -345,6 +345,8 @@ http-response-jq ^https:\/\/api\.example\/v1 'setpath(["data","enabled"]; false)
 | 2026-11-02 | Loon body-base64 | Decode to actual bodyBytes | Decode to actual binary body |
 | 2026-11-02 | HTTP response | statusCode + headers + body/bodyBytes | status + headers + body; preserve callback `(error,response,data)` |
 | 2026-11-02 | Native QX decoded body | Preserve String even when bodyBytes present | Foreign byte decode uses explicit charset, default UTF-8; missing/unknown decoder rejects UNSUPPORTED_RESPONSE_CHARSET |
+| 2026-11-21 | Intercept body and header completion, policy 15 | For Loon input use text when present unless the source invocation profile is uniformly binary; keep exact byte-view ranges. Response-body header changes carry the original raw bytes or text if the author omitted the body | Preserve native text/binary mode; normalize Surge callback header arrays for QX fetch consumers |
+| 2026-11-21 | Unsupported Script options | Omit timeout/debug bindings without blocking an otherwise valid script; keep argument and trigger validation | Validate and emit supported timeout/debug bindings |
 | 2026-11-02 | Dynamic completion | Validate result before locking one host submission; author may catch validation error and retry | Same; preserve native submit errors and exact byte views |
 | 2026-11-02 | Synthetic response | Flat source/target shape + proper echo declaration | response-wrapped shape; correct status and bytes |
 | 2026-11-10 | QX scheme/path reads | Derive from actual URL; preserve query/escaping | Expose source fields through facade |

@@ -79,7 +79,7 @@ const qxLegacy=planQxScript(legacyIr,{
 assert.equal(qxLegacy.ok,true);
 assert.match(qxLegacy.line,/ url script-response-body https:\/\/example\.com\/resp\.js#_wayx_argument=/);
 assert.match(qxLegacy.notes.join('\n'),/timeout ignored/i);
-assert.match(qxLegacy.notes.join('\n'),/binary-body-mode=true ignored/i);
+assert.match(qxLegacy.notes.join('\n'),/runtime adapts binary data via bodyBytes/i);
 
 const qxLegacyCompatibleIr=legacyScriptToSemanticIr(
   parseLegacyScriptLine('http-response ^https://api\\.example\\.com script-path=https://example.com/resp.js, requires-body=true, argument={"mode":"x"}, tag=Resp')
@@ -224,8 +224,8 @@ const qxV2DynamicDebug=planQxScript(v2DynamicDebugIr,{
   sourceText:'$done({});',
   argumentIds:new Set(),
 });
-assert.equal(qxV2DynamicDebug.ok,false);
-assert.match(qxV2DynamicDebug.reason,/undeclared.*debugSwitch/);
+assert.equal(qxV2DynamicDebug.ok,true);
+assert.match(qxV2DynamicDebug.notes.join(" "),/omitted unsupported options: debug/);
 
 const surgeBinaryWithoutBody=planSurgeScript(
   scriptV2AstToSemanticIr(parseScriptV2('request if ${url} ~= /raw/ then script("raw.js") with binary_body_mode=true')),
@@ -345,8 +345,8 @@ if(selectedCase==='script-ir-target-planners.mjs') {
       const surge=planSurgeScript(ir,opts);
       assert.equal(surge.ok,false,source);assert.match(surge.reason,new RegExp('invalid.*'+reason+'.*'+name));
       const qx=planQxScript(ir,opts);
-      assert.equal(qx.ok,name==='enable',source); // Explicit user policy wins.
-      if(!qx.ok)assert.match(qx.reason,new RegExp('invalid.*'+reason+'.*'+name));
+      assert.equal(qx.ok,true,source);
+      assert.doesNotMatch(qx.line,/timeout=|debug=/);
     }
   }
   for(const [name,declaration] of [['timeout','value=input,"20"'],['timeout','value=input,"+20"'],['timeout','value=input,".5"'],['timeout','value=input,"1e2"'],['timeout','value=input,2.5,type=number'],['debug','value=switch,true'],['enable','value=switch,false']]) {

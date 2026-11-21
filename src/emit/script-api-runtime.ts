@@ -15,6 +15,7 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
   const bytes=value=>{let length;try{length=abLength.call(value);}catch{}if(length!==undefined)return new Uint8Array(value,0,length);if(ArrayBuffer.isView(value)){const isTyped=tag.call(value)!==undefined,getter=name=>isTyped?get(name).call(value):Object.getOwnPropertyDescriptor(DataView.prototype,name).get.call(value);return new Uint8Array(getter('buffer'),getter('byteOffset'),getter('byteLength'));}return fail('binary body requires BufferSource');};
   const binary=value=>{if(ArrayBuffer.isView(value))return true;try{abLength.call(value);return true;}catch{return false;}};
   const buffer=value=>{const b=bytes(value);return b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);};
+  const binaryBody=value=>{const field=target.binaryField,alternate=field==='body'?'bodyBytes':'body';return binary(value[field])?value[field]:binary(value[alternate])?value[alternate]:undefined;};
   const status=value=>{if(typeof value==='number'&&Number.isInteger(value)&&value>=100&&value<=599)return value;const m=typeof value==='string'&&/^HTTP\/[\d.]+\s+(\d{3})(?:\s.*)?$/.exec(value);if(m)return status(Number(m[1]));return fail('invalid HTTP status');};
   const statusLine=value=>{const code=status(value);return typeof value==='string'?value:'HTTP/1.1 '+code+' '+({200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',304:'Not Modified',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',500:'Internal Server Error'}[code]||'Status');};
   // Modified: 2026-11-10 (chance). QX request context and completion use path;
@@ -55,10 +56,12 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(nativeHeaders!==undefined)result.headers=headerView(nativeHeaders);
     if(!requestRole)trailerView(result,source.responseTrailers,target.responseTrailers,config.phase==='response'&&config.responseBody);
     if(own(value,target.responseStatus)){result[source.responseStatus]=status(value[target.responseStatus]);if(source.responseStatus!==target.responseStatus)delete result[target.responseStatus];}
-    // Modified: 2026-11-05 (chance). Target-provided BufferSource determines binary conversion.
-    if(config.binary||binary(value.bodyBytes)||binary(value.body)){
-      const valueBytes=target.binaryField==='bodyBytes'?value.bodyBytes:value.body;
-      if(valueBytes!==undefined){const b=bytes(valueBytes);if(source.binaryField==='bodyBytes'){result.bodyBytes=buffer(b);delete result.body;}else{result.body=b;delete result.bodyBytes;}}
+    const data=binaryBody(value);
+    if(source.binaryField==='bodyBytes'){
+      if(data!==undefined){result.bodyBytes=buffer(data);if(typeof result.body!=='string')delete result.body;}
+    }else{
+      if(data!==undefined&&(config.binary||typeof result.body!=='string'))result.body=bytes(data);
+      delete result.bodyBytes;
     }
     return result;
   }
@@ -96,7 +99,13 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     }
     for(const key of Object.keys(out))if(!['url','headers','body','bodyBytes','status','abort',...(config.to==='qx'&&config.phase==='request'&&!synthetic?['path']:[]),...(config.to==='loon'?['h2_trailers']:[]),...(config.to==='surge'?['trailers']:[])].includes(key)){if(config.to==='qx')delete out[key];else fail('unmapped completion field: '+key);}
     if(target.completion.synthetic==='flat')delete out.abort;
-    if(target.completion.synthetic==='flat'&&!synthetic&&config.phase==='response'&&own(out,'headers')&&!own(out,'body')&&!own(out,'bodyBytes')&&config.responseBody)fail('QX response-body requires body with changed headers');
+    if(target.completion.synthetic==='flat'&&!synthetic&&config.phase==='response'&&own(out,'headers')&&!own(out,'body')&&!own(out,'bodyBytes')&&config.responseBody){
+      const original=host.response;
+      const data=original&&binaryBody(original);
+      if(data!==undefined&&data!==null)out.bodyBytes=buffer(data);
+      else if(typeof original?.body==='string')out.body=original.body;
+      else delete out.headers;
+    }
     return out;
   }
   function done(value){
@@ -151,7 +160,7 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
       let plan;try{plan=transport(input,'promise');}catch(error){reject(error);return;}
       const normalize=(native,data)=>{
         if(!native)return reject({error:'HTTP transport returned no response'});
-        const out={statusCode:status(native[target.responseStatus]),headers:headers(native.headers||{})};
+        const out={statusCode:status(native[target.responseStatus]),headers:headerView(native.headers||{})};
         if(binary(data)){
           out.bodyBytes=buffer(data);
           if(target.http.style==='promise'&&typeof native.body==='string')out.body=native.body;

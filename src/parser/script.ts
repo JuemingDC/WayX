@@ -1618,15 +1618,6 @@ export function qxScriptV2Plan(
   );
   if (argumentIds !== null) {
     const usage: any = scriptV2PluginArgumentUsage(ast, argumentIds);
-    const undeclared: any = usage.undeclaredOptionRefs
-      .filter((ref: any): any => ref.option !== "enable")
-      .map((ref: any): any => ref.id);
-    if (undeclared.length) {
-      return unsupported(
-        "undeclared plugin [Argument] reference(s): " +
-          [...new Set(undeclared)].sort().join(", "),
-      );
-    }
     if (usage.conditionRefs.length) {
       return unsupported(
         "plugin [Argument] condition cannot be represented by the Quantumult X rewrite declaration: " +
@@ -1712,7 +1703,7 @@ function dynamicScriptOptionBindings(
   for (const option of ast.options || []) {
     const name: any = option.name === "enabled" ? "enable" : option.name;
     if (!["enable", "debug", "timeout"].includes(name)) continue;
-    if (target === "qx" && name === "enable") continue; // Explicit user force-enable policy.
+    if (target === "qx") continue; // QX omits timeout/debug and uses the force-enable policy.
     const value: any = option.value;
     const id: any =
       value?.type === "variable"
@@ -1946,7 +1937,7 @@ export function planQxScript(ir: any, ctx: any = {}): any {
   }
   if (sc.binaryBodyMode) {
     notes.push(
-      "Source binary-body-mode=true ignored for Quantumult X; requires-body alone selects script-request/response-body, matching KOP-XIAO resource-parser conversion behavior.",
+      "Source binary-body-mode=true ignored for Quantumult X declaration syntax; the runtime adapts binary data via bodyBytes.",
     );
   }
   if (debugEnabled) {

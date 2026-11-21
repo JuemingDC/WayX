@@ -84,7 +84,7 @@ export function planUniversalAdblockScript(
     );
     if (!candidates.length) continue;
     // Modified: 2026-11-05 (chance). Optional provenance is descriptive, not an API conversion gate.
-    // Read binary input from actual target values rather than requiring one source declaration profile.
+    // Uniform declaration profiles disambiguate hosts that supply both text and bytes.
     const names = [...new Set(candidates.map((p) => p.name).filter(Boolean))];
     const schemas = [
       ...new Set(
@@ -93,7 +93,7 @@ export function planUniversalAdblockScript(
     ];
     const profile = {
       ...candidates[0],
-      binary: false,
+      binary: candidates.every((p) => p.binary === true && p.binaryKnown !== false),
       name: names.length === 1 ? names[0] : undefined,
       argumentSchema:
         schemas.length === 1 ? candidates[0].argumentSchema : undefined,

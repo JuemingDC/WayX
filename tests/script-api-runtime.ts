@@ -15,6 +15,22 @@ import { planUniversalAdblockScript as universal } from "../src/parser/universal
 import { refreshSourceBackups } from "../src/application/backups.ts";
 import { validateSourceBackups } from "../src/validation/backups.ts";
 const flat = (x: any) => JSON.parse(JSON.stringify(x));
+// A QX host can supply decoded text and raw bytes together. The archived
+// Loon declaration determines which representation its script should read.
+for (const binary of [false, true]) for (const source of [
+  '$done({body:$response.body});',
+  'const read=()=>globalThis.$response.body;$done({body:read()});',
+]) {
+  const plan = pair(source,{from:"loon",to:"qx",phase:"response",responseBody:true,binary});
+  let result: any;
+  const payload = new Uint8Array([7,0,255,9]);
+  vm.runInNewContext(plan.code!,{
+    $response:{statusCode:200,body:'{"text":true}',bodyBytes:new DataView(payload.buffer,1,2)},
+    $done:(value: any)=>{result=value;},
+  });
+  if(binary) assert.deepEqual([...new Uint8Array(result.bodyBytes)],[0,255]);
+  else assert.equal(result.body,'{"text":true}');
+}
 const directions = [
   ["loon", "qx"],
   ["loon", "surge"],
@@ -161,6 +177,16 @@ const parallel = execute(
 );
 await new Promise((r) => setTimeout(r, 10));
 assert.equal(parallel.out.body, "1,2,3");
+const arrayHeaders = execute(
+  '$task.fetch("https://test/").then(r=>$done({body:r.headers["x-test"]}));',
+  "qx", "surge", {
+    $response: {},
+    $httpClient: {get: (_o: any, cb: any) =>
+      cb(null, {status: 200, headers: [{field:"X-Test",value:"ok"}]}, "")},
+  },
+);
+await new Promise((r) => setTimeout(r, 0));
+assert.equal(arrayHeaders.out.body,"ok");
 for (const to of ["qx", "surge"] as const) {
   let seen: any;
   const native: any =
@@ -283,6 +309,12 @@ const changed = execute(
   { $response: { status: 200, headers: {}, body: "original" } },
 );
 assert.equal(changed.out.body, "changed");
+const headersOnly = execute(
+  '$done({headers:{"X-Test":"kept"}});', "loon", "qx",
+  {$response:{statusCode:200,body:"decoded",bodyBytes:new Uint8Array([9,0,255,9]).subarray(1,3)}},
+);
+assert.deepEqual(flat(headersOnly.out.headers),{"x-test":"kept"});
+assert.deepEqual([...new Uint8Array(headersOnly.out.bodyBytes)],[0,255]);
 const echo = execute(
   "$done(JSON.parse(input));",
   "qx",

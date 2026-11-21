@@ -444,6 +444,7 @@ export function emitBodyScript(
     )
   )
     return null;
+  if (new Set(configs.map(c => Boolean(c.binary))).size > 1) return null;
   if (
     [...usage.roots].some(
       (root) => !["$request", "$response", "$done"].includes(root),
@@ -495,7 +496,7 @@ const ${nativeDone}=$done;
 let ${completed}=false;
 const ${isBinary}=value=>{if(ArrayBuffer.isView(value))return true;try{Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get.call(value);return true;}catch{return false;}};
 const ${bytes}=value=>{let length;try{length=Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get.call(value);}catch{}if(length!==undefined)return new Uint8Array(value,0,length);if(ArrayBuffer.isView(value)){const proto=Object.getPrototypeOf(Uint8Array.prototype),typed=Object.getOwnPropertyDescriptor(proto,Symbol.toStringTag).get.call(value)!==undefined,get=name=>Object.getOwnPropertyDescriptor(typed?proto:DataView.prototype,name).get.call(value);return new Uint8Array(get('buffer'),get('byteOffset'),get('byteLength'));}throw new TypeError('WayX API: binary body requires BufferSource');};
-const ${view}=value=>{if(value===undefined)return undefined;const result=Object.assign({},value);if(${isBinary}(value.bodyBytes)||${isBinary}(value.body)){const data=value.${to === "qx" ? "bodyBytes" : "body"};if(data!==undefined){result.body=${bytes}(data);delete result.bodyBytes;}}return result;};
+const ${view}=value=>{if(value===undefined)return undefined;const result=Object.assign({},value);if(${configs[0].binary ? "true" : "typeof value.body!=='string'"}){const data=${isBinary}(value.${to === "qx" ? "bodyBytes" : "body"})?value.${to === "qx" ? "bodyBytes" : "body"}:value.${to === "qx" ? "body" : "bodyBytes"};if(${isBinary}(data))result.body=${bytes}(data);}delete result.bodyBytes;return result;};
 return (${scriptErrorBoundary})(${nativeDone},${guardDone}=>(function($request,$response,$done){return (function(){\n${source}\n}).call(this);}).call(globalThis,${usage.roots.has("$request") ? `${view}(typeof $request==='undefined'?undefined:$request)` : "undefined"},${usage.roots.has("$response") ? `${view}(typeof $response==='undefined'?undefined:$response)` : "undefined"},value=>{
 if(${completed})return;
 const result=value==null?{}:Object.assign({},value);
