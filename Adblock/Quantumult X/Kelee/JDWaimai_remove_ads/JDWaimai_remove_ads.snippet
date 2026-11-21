@@ -22,9 +22,7 @@
 
 (?i)^https:\/\/color\.jddj\.com\/client\.action\?functionId=wmHome$ url jsonjq-response-body '(.floors |= map(del(.data.tnData.newsInfo?))) | .floors |= (map(select(.mId != "newWalletIdFloor" and .mId != "recommendfloor"))) | .floors |= (map(.data |= (if .tnData? then del(.tnData.cardList, .tnData.cardListStatic, .tnData.walletList) else . end)))'
 
-(?i)^https:\/\/api\.m\.jd\.com\/client\.action$ url jsonjq-response-body 'del(.data.searchDTO.searchWords,.data.wishlistDTO.bubbleTip)'
-
-(?i)^https:\/\/api\.m\.jd\.com\/client\.action$ url jsonjq-response-body '.data.tabList |= (map(select(.code == "recommendation" or .code == "find_food")) | map(if .code == "recommendation" then .dpHomeFeedTabResultDTOList = .dpHomeFeedTabResultDTOList[0:2] else . end | .dpHomeBannerResultDTOList = []))'
+(?i)^https:\/\/api\.m\.jd\.com\/client\.action$ url jsonjq-response-body '(del(.data.searchDTO.searchWords,.data.wishlistDTO.bubbleTip)) | (.data.tabList |= (map(select(.code == "recommendation" or .code == "find_food")) | map(if .code == "recommendation" then .dpHomeFeedTabResultDTOList = .dpHomeFeedTabResultDTOList[0:2] else . end | .dpHomeBannerResultDTOList = [])))'
 
 (?i)^https:\/\/color\.jddj\.com\/client\.action\?functionId=search_recommendRanking$ url reject-dict
 

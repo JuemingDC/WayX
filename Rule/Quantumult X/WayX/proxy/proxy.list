@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-20 11:35:05 UTC
+# Updated: 2026-11-21 02:28:32 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34250
+# Rules: 34270
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -2382,6 +2382,7 @@ host-suffix,dynacw.com.hk,ssid
 host-suffix,dynacw.com.tw,ssid
 host-suffix,dynupdate.no-ip.com,ssid
 host-suffix,e-classical.com.tw,ssid
+host-suffix,e-info.org.tw,ssid
 host-suffix,e-zone.com.hk,ssid
 host-suffix,e.mindbox.ru,ssid
 host-suffix,eakorea.co.kr,ssid
@@ -3204,6 +3205,7 @@ host-suffix,momami18.livedoor.blog,ssid
 host-suffix,momomall.com.tw,ssid
 host-suffix,momoshop.com.tw,ssid
 host-suffix,money-link.com.tw,ssid
+host-suffix,moneynet.com.tw,ssid
 host-suffix,morisawa.co.jp,ssid
 host-suffix,mortein.co.in,ssid
 host-suffix,mortein.co.nz,ssid
@@ -3233,6 +3235,7 @@ host-suffix,muji.com.cn,ssid
 host-suffix,muji.com.hk,ssid
 host-suffix,mundomais.com.br,ssid
 host-suffix,musashinobank.co.jp,ssid
+host-suffix,my-formosa.com.tw,ssid
 host-suffix,my-private-network.co.uk,ssid
 host-suffix,my.pcloud.com,ssid
 host-suffix,mypearsonshop.com.mx,ssid
@@ -11219,6 +11222,7 @@ host-suffix,cm.expert,ssid
 host-suffix,cmcn.org,ssid
 host-suffix,cmegroup.com,ssid
 host-suffix,cmhalq.com,ssid
+host-suffix,cmoney.tw,ssid
 host-suffix,cmpaas.com,ssid
 host-suffix,cmrbank.ru,ssid
 host-suffix,cms-twdigitalassets.com,ssid
@@ -15435,6 +15439,7 @@ host-suffix,gametap.com,ssid
 host-suffix,gameuxmasterguide.com,ssid
 host-suffix,gamewtb.com,ssid
 host-suffix,gaming-notebooks.com,ssid
+host-suffix,gamma.app,ssid
 host-suffix,gandhara.ru,ssid
 host-suffix,gandi.net,ssid
 host-suffix,ganjing.com,ssid
@@ -16292,6 +16297,7 @@ host-suffix,greatfirewallofchina.org,ssid
 host-suffix,greatgame.asia,ssid
 host-suffix,greatretroporn.com,ssid
 host-suffix,green-box-tv.com,ssid
+host-suffix,greenbean.media,ssid
 host-suffix,greenbuildingstudio.com,ssid
 host-suffix,greenhouse.io,ssid
 host-suffix,greenlakeaas.com,ssid
@@ -16919,8 +16925,10 @@ host-suffix,hkbu.hk,ssid
 host-suffix,hkchronicles.com,ssid
 host-suffix,hkcircleapp.com,ssid
 host-suffix,hkcitizenmedia.com,ssid
+host-suffix,hkcitycreation.com,ssid
 host-suffix,hkcnews.com,ssid
 host-suffix,hkcoc.com,ssid
+host-suffix,hkcourtnews.com,ssid
 host-suffix,hkcsl.com,ssid
 host-suffix,hkdc.us,ssid
 host-suffix,hkedcity.net,ssid
@@ -16932,6 +16940,7 @@ host-suffix,hkf2023.lat,ssid
 host-suffix,hkf202311.site,ssid
 host-suffix,hkf202312.shop,ssid
 host-suffix,hkfaa.com,ssid
+host-suffix,hkfeature.com,ssid
 host-suffix,hkfg1.xyz,ssid
 host-suffix,hkfg2.xyz,ssid
 host-suffix,hkfg3.xyz,ssid
@@ -20102,6 +20111,7 @@ host-suffix,life-global.org,ssid
 host-suffix,lifeatspotify.com,ssid
 host-suffix,lifemiles.com,ssid
 host-suffix,lifeselector.com,ssid
+host-suffix,lifesitenews.com,ssid
 host-suffix,lifestyle-tec.ru,ssid
 host-suffix,lifewire.com,ssid
 host-suffix,lightbridge.com,ssid
@@ -20829,6 +20839,7 @@ host-suffix,massage-in-taipei.com,ssid
 host-suffix,massagerepublic.com,ssid
 host-suffix,masseffect.com,ssid
 host-suffix,masseffectarchives.com,ssid
+host-suffix,master-insight.com,ssid
 host-suffix,mastercad.com,ssid
 host-suffix,mastercard-email.com,ssid
 host-suffix,mastercard.ae,ssid
@@ -25264,6 +25275,7 @@ host-suffix,pugpig.com,ssid
 host-suffix,pullfolio.co,ssid
 host-suffix,pullstring.net,ssid
 host-suffix,pulsebrowser.app,ssid
+host-suffix,pulsehknews.com,ssid
 host-suffix,punishbang.com,ssid
 host-suffix,punishworld.com,ssid
 host-suffix,pure18.com,ssid
@@ -27016,6 +27028,7 @@ host-suffix,shahvani.site,ssid
 host-suffix,shakethesnake.com,ssid
 host-suffix,shameless.com,ssid
 host-suffix,shanghaidisneyresort.com,ssid
+host-suffix,shanghainationalparty.com,ssid
 host-suffix,shaparak.ir,ssid
 host-suffix,shapelcounset.xyz,ssid
 host-suffix,share-videos.se,ssid
@@ -27787,6 +27800,7 @@ host-suffix,sotwe.com,ssid
 host-suffix,soubory.com,ssid
 host-suffix,souka.xyz,ssid
 host-suffix,soulcaliburhentai.net,ssid
+host-suffix,soulogic.com,ssid
 host-suffix,soundcloud.cloud,ssid
 host-suffix,soundcloud.com,ssid
 host-suffix,soundofhope.eu,ssid
@@ -28713,6 +28727,7 @@ host-suffix,taiwanembassy.org,ssid
 host-suffix,taiwanhot.net,ssid
 host-suffix,taiwanjustice.net,ssid
 host-suffix,taiwansex.tw,ssid
+host-suffix,taiwantoday.tw,ssid
 host-suffix,take2games.com,ssid
 host-suffix,takegoto.com,ssid
 host-suffix,takens.tw,ssid
@@ -28989,6 +29004,7 @@ host-suffix,thechinacollection.org,ssid
 host-suffix,theclasshroom.com,ssid
 host-suffix,thecleversense.com,ssid
 host-suffix,theclubprive.com,ssid
+host-suffix,thecollectivehk.com,ssid
 host-suffix,thecompaqstore.com,ssid
 host-suffix,theconversation.com,ssid
 host-suffix,thecuckold.com,ssid
@@ -29052,6 +29068,7 @@ host-suffix,thenewslens.com,ssid
 host-suffix,thenewstack.io,ssid
 host-suffix,thenextweb.com,ssid
 host-suffix,thenipslip.com,ssid
+host-suffix,theonlinecitizen.com,ssid
 host-suffix,theopportunityproject.org,ssid
 host-suffix,thepaypalshop.com,ssid
 host-suffix,thepervs.com,ssid
@@ -29087,6 +29104,7 @@ host-suffix,thesims3.com,ssid
 host-suffix,thesims4.com,ssid
 host-suffix,thesimssocial.com,ssid
 host-suffix,thestandnews.com,ssid
+host-suffix,thestar.com,ssid
 host-suffix,thestationbymaker.com,ssid
 host-suffix,thesun.ie,ssid
 host-suffix,thetatoken.org,ssid
@@ -29108,6 +29126,7 @@ host-suffix,theweek.in,ssid
 host-suffix,thewgo.org,ssid
 host-suffix,thewirechina.com,ssid
 host-suffix,thewitcher.com,ssid
+host-suffix,thewitnesshk.com,ssid
 host-suffix,thewonderful101.com,ssid
 host-suffix,theync.com,ssid
 host-suffix,theyxxx.com,ssid
@@ -31915,6 +31934,7 @@ host-suffix,wolfberries.ru,ssid
 host-suffix,wolframalpha.com,ssid
 host-suffix,wolfsex-me.sbs,ssid
 host-suffix,wolterskluwer.com,ssid
+host-suffix,womany.net,ssid
 host-suffix,wombo.ai,ssid
 host-suffix,womensnikeshox.com,ssid
 host-suffix,womenwill.com,ssid

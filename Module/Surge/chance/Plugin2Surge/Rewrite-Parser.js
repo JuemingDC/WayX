@@ -3679,6 +3679,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                             modInfoObj['name'] = nName == null ? modInfoObj['name'] : name;
                             modInfoObj['desc'] = nName == null ? modInfoObj['desc'] : desc;
                             modInfoObj['category'] = category == null ? modInfoObj['category'] : category;
+                            if (isStashiOS) {
+                                modInfoObj['category'] = modInfoObj['category'] || modInfoObj['tag'] || modInfoObj['keyword'];
+                                delete modInfoObj['tag'];
+                                delete modInfoObj['keyword'];
+                            }
                             if (icon == null) {
                                 modInfoObj['icon'] = iconReplace == '禁用' ? modInfoObj['icon'] : randomicon;
                             }

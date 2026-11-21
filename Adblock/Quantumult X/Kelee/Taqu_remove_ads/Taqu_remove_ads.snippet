@@ -16,9 +16,7 @@
 # [filter_local]
 
 # [rewrite_local]
-(?i)^https:\/\/gw-cn\.jiaoliuqu\.com\/mp-dolphin\/v\d\/rec\/recByPositions\? url jsonjq-response-body '.info.data |= map(if .materials and (.materials | type) == "array" then .materials |= map(select(has("adPosition") | not)) else . end)'
-
-(?i)^https:\/\/gw-cn\.jiaoliuqu\.com\/mp-dolphin\/v\d\/rec\/recByPositions\? url jsonjq-response-body '.info.data |= map(if .materials and (.materials | type) == "array" then .materials |= map(select((keys | length) != 2 or (keys | sort) != ["link", "pic"])) else . end)'
+(?i)^https:\/\/gw-cn\.jiaoliuqu\.com\/mp-dolphin\/v\d\/rec\/recByPositions\? url jsonjq-response-body '(.info.data |= map(if .materials and (.materials | type) == "array" then .materials |= map(select(has("adPosition") | not)) else . end)) | (.info.data |= map(if .materials and (.materials | type) == "array" then .materials |= map(select((keys | length) != 2 or (keys | sort) != ["link", "pic"])) else . end))'
 
 (?i)^https:\/\/gw-cn\.jiaoliuqu\.com\/taqu-homepage\/v\d\/Banner\/getBannerByPositions\? url reject-dict
 

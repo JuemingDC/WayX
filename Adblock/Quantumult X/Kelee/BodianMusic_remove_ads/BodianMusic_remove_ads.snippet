@@ -18,15 +18,11 @@
 # [rewrite_local]
 (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/(play|service|advert)\/advert\/ url reject-dict
 
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? url jsonjq-response-body 'del(.data.groupSign.adStartAppDialog,.data.groupSign.adGuideTest,.data.groupSign.playTips,.data.groupSign.adExitChange,.data.conf.adGuidePopCount,.data.conf.adDownListOpen)'
-
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? url jsonjq-response-body 'setpath(["data","conf","flowControlConfig","uploadEnable"]; false) | setpath(["data","conf","flowControlConfig","p2pEnable"]; false)'
+(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/conf\/all\? url jsonjq-response-body '(del(.data.groupSign.adStartAppDialog,.data.groupSign.adGuideTest,.data.groupSign.playTips,.data.groupSign.adExitChange,.data.conf.adGuidePopCount,.data.conf.adDownListOpen)) | (setpath(["data","conf","flowControlConfig","uploadEnable"]; false) | setpath(["data","conf","flowControlConfig","p2pEnable"]; false))'
 
 (?i)^https:\/\/ab-bodian\.kuwo\.cn\/abtest\/ui\/info\? url jsonjq-response-body 'del(.data.mapTestInfo.CommentADPosition,.data.mapTestInfo.DiscoverADPosition,.data.mapTestInfo.DownloadAd,.data.mapTestInfo.FreeModVoiceReminder,.data.mapTestInfo.GamesTrans,.data.mapTestInfo.bodianmvdialog,.data.mapTestInfo.MvTryShowAds,.data.mapTestInfo.insert)'
 
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? url jsonjq-response-body 'del(.data.iosP2PCacheEnable,.data.warmStartDialog,.data.adsNotFinishVipPop4DayInterval)'
-
-(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? url jsonjq-response-body 'setpath(["data","showShopEntry"]; false) | setpath(["data","iosP2pEnableSendDataLimit"]; 1)'
+(?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/global\/config\/scene\? url jsonjq-response-body '(del(.data.iosP2PCacheEnable,.data.warmStartDialog,.data.adsNotFinishVipPop4DayInterval)) | (setpath(["data","showShopEntry"]; false) | setpath(["data","iosP2pEnableSendDataLimit"]; 1))'
 
 (?i)^https:\/\/bd-api\.kuwo\.cn\/api\/service\/banner\/ url reject-dict
 
