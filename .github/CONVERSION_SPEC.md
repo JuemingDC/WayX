@@ -59,8 +59,8 @@
 | 2026-10-25 | Unsupported mapping | Comment source declaration + diagnostic; no misleading active rule |
 | 2026-10-25 | Scanner | Protect regex alternation, logical OR, strings/raw strings, jq pipes, variables, arrays, parentheses and Script options |
 | 2026-11-15 | Continuous JSON/JQ actions | One source pipeline → one native jq expression; preserve order and per-expression scope |
-| 2026-11-20 | Same URL JSON/JQ declarations | Convert each declaration independently in source order, including adjacent identical matchers; preserve duplicates, dependency indices and comments |
-| 2026-11-15 | Different conditions/phases | Keep separate; no post-emission rule-string merging |
+| 2026-11-21 | Same URL JSON/JQ declarations | Resolve each declaration independently. Quantumult X folds identical emitted URL patterns and phases into one ordered pipeline when intervening rewrites are provably disjoint. Surge keeps each declaration separate |
+| 2026-11-21 | Different conditions/phases | Keep separate. An intervening rewrite with possible URL overlap blocks Quantumult X folding |
 | 2026-11-15 | Mixed declarations | A declaration containing JSON/JQ emits one equivalent native rule or one existing helper; otherwise preserve the complete declaration as a diagnostic. Pipelines without JSON/JQ retain independent planning boundaries |
 | 2026-11-15 | Failed JSON dependency | Diagnose the entire affected JSON pipeline; never publish a shortened pipeline |
 | 2026-10-25 | Independent action failure | Preserve neighboring successful independent actions; no declaration-text deduplication |
@@ -611,7 +611,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-11-16 | HTTP callback trailers, policy 12 | Loon callback `response.h2_trailers` ← actual Surge callback `response.trailers`; no intercept body-buffer requirement |
 | 2026-11-16 | Response-script trailers, policy 11 | `$response.h2_trailers` ↔ `$response.trailers`; `$done({h2_trailers:{}})` → `$done({trailers:{}})`; buffered response only |
 | 2026-11-16 | Global API resolution | `globalThis.$done(value)` → facade call; locally shadowed globalThis remains local |
-| 2026-11-20 | JSON/JQ declaration boundaries | One source declaration → one target rule per client; preserve the complete diagnostic if no single equivalent rule exists |
+| 2026-11-21 | JSON/JQ declaration boundaries | Preserve action order within each declaration and keep each jq program scoped when folding Quantumult X rules. Preserve the complete diagnostic if a declaration cannot be represented |
 | 2026-11-14 | Inline JQ files | `jq_file("program.jq")` → fetched program inline; no Resource/JQ or CLI-file-option assumption |
 | 2026-11-13 | Native QX published JS | Original bytes → exact archive; executable/legal content → published native copy without API runtime |
 | 2026-11-13 | Bounded Issue history | Closed record → number/title/state only; open record additionally body |

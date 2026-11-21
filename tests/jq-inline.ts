@@ -49,16 +49,16 @@ try {
   }
   const nested = String.raw`"x \("a # O'Reilly")"`;
   assert.ok(quoteJq(minifyJqFile(nested)).includes("\\u0027"));
-  const files = new Map<string,string>([["https://example.test/one.jq", ".x = 1"], ["https://example.test/two.jq", ".x += 2"]]);
+  const files = new Map<string,string>([["https://example.test/one.jq", "def update: .x = 1; update"], ["https://example.test/two.jq", "def update: .x += 2; update"]]);
   for (const phase of ["request", "response"]) {
     const source = `#!name=Order\n[Rewrite]\n${phase} if \${url} ~= /^https:\\/\\/example\\.test/ then ${phase}.json.jq_file("one.jq")\n${phase} if \${url} ~= /^https:\\/\\/example\\.test/ then ${phase}.json.jq_file("two.jq")\n`;
     const context = await materializeConversionRunContext(entry, source, {root, fetchText: async (url: string) => files.get(url)!});
     const out = convertPluginWithContext(entry, source, context, {stamp:"2026-11-14"});
     for (const target of ["qx", "surge"]) {
       const expressions = out[target].split('\n').filter((line: string) => target === "qx" ? line.includes(`url jsonjq-${phase}-body `) : line.startsWith(`http-${phase}-jq `)).map((line: string) => line.slice(line.indexOf(" '") + 2, -1));
-      // Modified: 2026-11-15 (chance). Same-URL file actions are grouped in source IR for both clients.
-      assert.equal(expressions.length, 2, out[target]);
-      const result = spawnSync("jq", ["-c", expressions.join(" | ")], {input:'{}', encoding:"utf8"});
+      assert.equal(expressions.length, target === "qx" ? 1 : 2, out[target]);
+      const result = spawnSync("jq", ["-c", expressions.map(expression => "(" + expression + ")").join(" | ")], {input:'{}', encoding:"utf8"});
+      assert.equal(result.status,0,result.stderr);
       assert.equal(result.stdout.trim(), '{"x":3}');
     }
   }

@@ -33,7 +33,8 @@ for (const phase of ['request', 'response']) for (const section of ['Rewrite', '
   assert.equal(out.generatedScripts.size, 0);
   // Repeated URL conditions in separate declarations remain distinct.
   const independent = convertPlugin(entry, `[${section}]\n` + actions.slice(0,2).map(action => declaration(phase,[action])).join('\n'), options);
-  for (const target of ['qx','surge']) assert.equal(rules(independent[target],target,phase).length,2);
+  assert.equal(rules(independent.qx,'qx',phase).length,1);
+  assert.equal(rules(independent.surge,'surge',phase).length,2);
   // A mixed declaration that requires two target rules stays diagnostic-only.
   const mixed = convertPlugin(entry, `[${section}]\n` + declaration(phase,[...actions,'script("https://example.test/original.js") with requires_body=true,tag="Original"']), options);
   for (const target of ['qx','surge']) {

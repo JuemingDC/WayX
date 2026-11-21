@@ -673,6 +673,64 @@ function sanitizeName(value: any): any {
       .slice(0, 64) || "script"
   );
 }
+function anchoredUrlPrefix(pattern: string): string {
+  // Alternation can bypass the prefix. Only compare mandatory literals.
+  if (pattern.includes("|")) return "";
+  const match = pattern.match(/^(?:\(\?i\))?\^((?:[a-zA-Z0-9_:/%=-]|\\[/.?+*(){}\[\]$^])+)(.*)$/);
+  if (!match) return "";
+  const prefix = match[1].replace(/\\(.)/g, "$1").toLowerCase();
+  return /^[?*{]/.test(match[2]) ? prefix.slice(0, -1) : prefix;
+}
+
+type QxJqGroup = {
+  index: number;
+  prefix: string;
+  note: string;
+  rule: string;
+  programs: string[];
+};
+
+// Group only generated QX rules after resolving each source dependency.
+// A potentially overlapping rewrite is a barrier to moving a jq program.
+function mergeQxJqRewrites(lines: string[]): string[] {
+  const output: string[] = [];
+  const pending = new Map<string, QxJqGroup>();
+  const groups: QxJqGroup[] = [];
+  for (const line of lines) {
+    const [, note = "", rule = line] = line.match(/^(\{#.*?#\}\s+)(.*)$/) ?? [];
+    if (!rule.trim() || /^\s*[#;]/.test(rule)) {
+      output.push(line);
+      continue;
+    }
+    const jq = rule.match(/^(\S+ url jsonjq-(?:request|response)-body) '(.+)'$/);
+    const key = jq?.[1];
+    const prefix = anchoredUrlPrefix(rule.split(/\s/, 1)[0]);
+    for (const [other, group] of pending) {
+      if (other !== key && (!prefix || !group.prefix ||
+          prefix.startsWith(group.prefix) || group.prefix.startsWith(prefix)))
+        pending.delete(other);
+    }
+    const group = key ? pending.get(key) : undefined;
+    if (jq && group) {
+      group.programs.push(jq[2]);
+      if (note) output.push("# " + note.trim().slice(2, -2).trim());
+      continue;
+    }
+    if (jq) {
+      const next = { index: output.length, prefix, note, rule: jq[1], programs: [jq[2]] };
+      pending.set(jq[1], next);
+      groups.push(next);
+    }
+    output.push(line);
+  }
+  for (const group of groups) {
+    if (group.programs.length > 1)
+      output[group.index] = group.note + group.rule + " '" +
+        group.programs.map(program => "(" + program + ")").join(" | ") + "'";
+  }
+  return output;
+}
+
 export function convertPlugin(
   entry: any,
   source: any,
@@ -1192,7 +1250,12 @@ export function convertPlugin(
   return {
     qx: compactGeneratedPluginComments(
       addAppIcon(
-        renderQxOutput({ state: qx, headerLines: sourceHeader, entry, stamp }),
+        renderQxOutput({
+          state: { ...qx, rewrite: mergeQxJqRewrites(qx.rewrite) },
+          headerLines: sourceHeader,
+          entry,
+          stamp,
+        }),
         icons,
         [entry.id],
       ).text,
