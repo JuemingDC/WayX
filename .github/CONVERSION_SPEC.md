@@ -60,7 +60,7 @@
 | 2026-10-25 | Scanner | Protect regex alternation, logical OR, strings/raw strings, jq pipes, variables, arrays, parentheses and Script options |
 | 2026-11-15 | Continuous JSON/JQ actions | One source pipeline → one native jq expression; preserve order and per-expression scope |
 | 2026-11-21 | Same URL JSON/JQ declarations | Resolve each declaration independently. Quantumult X folds identical emitted URL patterns and phases into one ordered pipeline when intervening rewrites are provably disjoint. Surge keeps each declaration separate |
-| 2026-11-21 | Different conditions/phases | Keep separate. An intervening rewrite with possible URL overlap blocks Quantumult X folding |
+| 2026-11-21 | Different conditions/phases | Keep separate. Potentially overlapping rewrites and unresolved declarations block Quantumult X folding. Keep jq module directives and stream/process builtins in standalone programs |
 | 2026-11-15 | Mixed declarations | A declaration containing JSON/JQ emits one equivalent native rule or one existing helper; otherwise preserve the complete declaration as a diagnostic. Pipelines without JSON/JQ retain independent planning boundaries |
 | 2026-11-15 | Failed JSON dependency | Diagnose the entire affected JSON pipeline; never publish a shortened pipeline |
 | 2026-10-25 | Independent action failure | Preserve neighboring successful independent actions; no declaration-text deduplication |

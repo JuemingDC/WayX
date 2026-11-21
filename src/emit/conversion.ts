@@ -3,6 +3,7 @@ import { compactGeneratedPluginComments } from "../domain/output-comments.ts";
 import { repairScriptEchoDeclarations } from "../parser/backup-references.ts";
 import { bindKnownBackups } from "../parser/backup-references.ts";
 import { addAppIcon } from "../domain/icons.ts";
+import { disjointUrls } from "../domain/qx-header.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript emit layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -684,30 +685,54 @@ function anchoredUrlPrefix(pattern: string): string {
 
 type QxJqGroup = {
   index: number;
+  pattern: string;
   prefix: string;
   note: string;
   rule: string;
   programs: string[];
 };
 
+function disjointQxJqUrls(a: string, b: string): boolean {
+  const left = a.replace(/^\(\?i\)/, "");
+  const right = b.replace(/^\(\?i\)/, "");
+  // The prefix scanner supports optional schemes. Leave regex quoting,
+  // nested character sets and inline mode changes to the client.
+  const opaque = /\\Q|\[.*\[|\(\?(?!:)/;
+  return !opaque.test(left) && !opaque.test(right) &&
+    disjointUrls(left.toLowerCase(), right.toLowerCase());
+}
+
 // Group only generated QX rules after resolving each source dependency.
 // A potentially overlapping rewrite is a barrier to moving a jq program.
-function mergeQxJqRewrites(lines: string[]): string[] {
+function mergeQxJqRewrites(lines: string[], barriers: ReadonlySet<number>): string[] {
   const output: string[] = [];
   const pending = new Map<string, QxJqGroup>();
   const groups: QxJqGroup[] = [];
-  for (const line of lines) {
+  for (const [index, line] of lines.entries()) {
+    if (barriers.has(index)) pending.clear();
     const [, note = "", rule = line] = line.match(/^(\{#.*?#\}\s+)(.*)$/) ?? [];
     if (!rule.trim() || /^\s*[#;]/.test(rule)) {
+      // Diagnostics carry a source declaration which did not produce a
+      // rule. Keep its source position as a barrier, unlike author comments.
+      if (/(?:^|\n)# Source declaration:/.test(rule)) pending.clear();
       output.push(line);
       continue;
     }
-    const jq = rule.match(/^(\S+ url jsonjq-(?:request|response)-body) '(.+)'$/);
+    const candidate = rule.match(/^(\S+ url jsonjq-(?:request|response)-body) '(.+)'$/);
+    // Module declarations must stay at the top level, and stream/process
+    // builtins can observe the difference between one invocation and two.
+    const standalone = candidate && (
+      /^\s*(?:module|import|include)\s*["{]/.test(candidate[2]) ||
+      /(?<![\w.$])(?:input|inputs|input_filename|input_line_number|halt|halt_error)\b/.test(candidate[2])
+    );
+    const jq = standalone ? null : candidate;
     const key = jq?.[1];
-    const prefix = anchoredUrlPrefix(rule.split(/\s/, 1)[0]);
+    const pattern = rule.split(/\s/, 1)[0];
+    const prefix = anchoredUrlPrefix(pattern);
     for (const [other, group] of pending) {
       if (other !== key && (!prefix || !group.prefix ||
-          prefix.startsWith(group.prefix) || group.prefix.startsWith(prefix)))
+          prefix.startsWith(group.prefix) || group.prefix.startsWith(prefix)) &&
+          !disjointQxJqUrls(pattern, group.pattern))
         pending.delete(other);
     }
     const group = key ? pending.get(key) : undefined;
@@ -717,7 +742,7 @@ function mergeQxJqRewrites(lines: string[]): string[] {
       continue;
     }
     if (jq) {
-      const next = { index: output.length, prefix, note, rule: jq[1], programs: [jq[2]] };
+      const next = { index: output.length, pattern, prefix, note, rule: jq[1], programs: [jq[2]] };
       pending.set(jq[1], next);
       groups.push(next);
     }
@@ -751,6 +776,7 @@ export function convertPlugin(
   declarations = new Map(declarations ?? prepareRewriteDeclarations(plugin));
   const sourceHeader: any = plugin.header;
   const qx: any = createQxOutputState();
+  const qxJqBarriers = new Set<number>();
   const sg: any = createSurgeOutputState();
   for (const [sectionName, sectionLines] of plugin.sections) {
     if (isSupportedSourceSection(sectionName)) continue;
@@ -1038,6 +1064,7 @@ export function convertPlugin(
       smembers: any = sr.members || [sr];
     for (const [index, qr] of qmembers.entries()) {
       const qdest: any = qxRewriteOutputDestination(qx, qr.section);
+      if (qr.section === "comment") qxJqBarriers.add(qx.rewrite.length);
       if (qr.section === "drop") {
         qdest.push(...(index === 0 ? comments : []));
       } else if (qr.section === "rewrite") {
@@ -1082,6 +1109,8 @@ export function convertPlugin(
         );
         for (const member of result?.members || [result]) {
           if (!member) continue;
+          if (target === "qx" && member.section === "comment")
+            qxJqBarriers.add(qx.rewrite.length);
           const dest: any =
             target === "qx"
               ? qxRewriteOutputDestination(qx, member.section)
@@ -1251,7 +1280,7 @@ export function convertPlugin(
     qx: compactGeneratedPluginComments(
       addAppIcon(
         renderQxOutput({
-          state: { ...qx, rewrite: mergeQxJqRewrites(qx.rewrite) },
+          state: { ...qx, rewrite: mergeQxJqRewrites(qx.rewrite, qxJqBarriers) },
           headerLines: sourceHeader,
           entry,
           stamp,

@@ -81,6 +81,56 @@ console.log('Source URL groups: real Tieba/Taqu/XiaobaiPrint/Zhihu outputs, orig
 const amapSource = await fs.readFile('Resource/Loon/Amap_remove_ads.lpx','utf8');
 const amapSurge = await fs.readFile('Adblock/Surge/Kelee/Amap_remove_ads/Amap_remove_ads.sgmodule','utf8');
 const jqProgram = (row: string) => row.slice(row.indexOf(" '")+2,-1);
+const runProgram = (program: string, input: string) => {
+  const result = spawnSync('jq',['-c',program],{input,encoding:'utf8'});
+  assert.ifError(result.error);
+  return {status:result.status,stdout:result.stdout};
+};
+
+// These real plugins cover nonadjacent matches, multiple transformations
+// of the same array, field writes, and regex alternatives.
+for (const [name, endpoint, body] of [
+  ['DiDi','other\\/fast',{data:{disorder_cards:{guess_card:1,communicate_card:1,keep:1}}}],
+  ['Taqu','recByPositions',{info:{data:[{materials:[{adPosition:1},{link:1,pic:1},{keep:1}]}]}}],
+  ['BodianMusic','conf\\/all',{data:{groupSign:{playTips:1,keep:1},conf:{flowControlConfig:{uploadEnable:true,p2pEnable:true}}}}],
+  ['Zhihu','topstory\\/recommend',{data:[{type:'ComponentCard',children:[{id:'ring'},{id:'keep'}]},{type:'Ad'}]}],
+  ['HKDouYin','homepage\\/render',{data:{tab_config:{},tab_list:[{extra:{tab_list:[{tab_id:'homepage_follow'},{tab_id:'ad'}]}}]}}],
+] as const) {
+  const source = await fs.readFile(`Resource/Loon/${name}_remove_ads.lpx`,'utf8');
+  const out = convertPlugin({...entry,id:name},source,options);
+  const matches = (line: string) => line.split(" '",1)[0].includes(endpoint);
+  const qx = out.qx.split('\n').filter(line => line.includes(' url jsonjq-response-body ') && matches(line));
+  const surge = out.surge.split('\n').filter(line => line.startsWith('http-response-jq ') && matches(line));
+  assert.equal(surge.length,2,name);
+  // Zhihu's intervening URL alternatives have no provably distinct prefix.
+  assert.equal(qx.length,name==='Zhihu'?2:1,name);
+  const executeInOrder = (rows: string[]) => {
+    let current = {status:0 as number|null,stdout:JSON.stringify(body)};
+    for (const row of rows) {
+      if (current.status !== 0) break;
+      current = runProgram(jqProgram(row),current.stdout);
+    }
+    return current;
+  };
+  const expected = executeInOrder(surge);
+  assert.equal(expected.status,0,name);
+  assert.deepEqual(executeInOrder(qx),expected,name);
+}
+
+const portable = 'response if ${url} ~= /^https?:\\/\\/example\\.test\\/jq$/i then response.json.jq(".x += 1")';
+const disjoint = 'response if ${url} ~= /^https:\\/\\/example\\.test\\/other$/i then response.json.jq(".x = 0")';
+const moduleRule = portable.replace('.x += 1','module {}; .x += 10');
+const streamRule = portable.replace('.x += 1','inputs');
+const missingRule = portable.replace('jq(".x += 1")','jq_file("missing.jq")');
+for (const [middle, count] of [[disjoint,2],[moduleRule,3],[streamRule,3],[missingRule,2]] as const) {
+  const source = ['[Rewrite]',portable,middle,portable].join('\n');
+  const result = convertPlugin(entry,source,options);
+  const rows = result.qx.split('\n').filter(line => line.includes(' url jsonjq-response-body '));
+  assert.equal(rows.length,count,result.qx);
+  if (middle===moduleRule) assert.equal(runProgram(jqProgram(rows[1]),'{"x":0}').stdout,'{"x":10}\n');
+  if (middle===missingRule) assert.match(result.qx,/# Source declaration: .*jq_file/);
+}
+
 const amapFiles = new Map(
   [['updatable.jq','updatable'], ['search_poi_detail.jq','poi']].map(([file,endpoint]) => {
     const row = amapSurge.split('\n').find(line => line.startsWith('http-response-jq ') && line.includes(endpoint) && jqProgram(line).startsWith('def '));
@@ -106,20 +156,15 @@ for (const [endpoint, count, example] of [
   const surge = amap.surge.split('\n').filter(line => line.startsWith('http-response-jq ') && matcher(line));
   assert.equal(qx.length,1,endpoint);
   assert.equal(surge.length,count,endpoint);
-  const execute = (program: string, input: string) => {
-    const result = spawnSync('jq',['-c',program],{input,encoding:'utf8'});
-    assert.ifError(result.error);
-    return {status:result.status,stdout:result.stdout};
-  };
   for (const input of [example,{data:{}},{}]) {
     const original = JSON.stringify(input);
-    let sequential: ReturnType<typeof execute> = {status:0,stdout:original};
+    let sequential: ReturnType<typeof runProgram> = {status:0,stdout:original};
     for (const row of surge) {
       if (sequential.status !== 0) break;
-      sequential = execute(jqProgram(row),sequential.stdout);
+      sequential = runProgram(jqProgram(row),sequential.stdout);
     }
     if (input === example) assert.equal(sequential.status,0,endpoint);
-    assert.deepEqual(execute(jqProgram(qx[0]),original),sequential,endpoint);
+    assert.deepEqual(runProgram(jqProgram(qx[0]),original),sequential,endpoint);
   }
 }
 console.log('Kelee Amap: four duplicate URL groups, jq_file programs and sequential jq results passed');
