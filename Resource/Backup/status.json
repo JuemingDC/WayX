@@ -1,7 +1,10 @@
 {
   "version": 1,
   "scriptCleanup": {
-    "removed": [],
+    "removed": [
+      "Script/Adblock/raw.githubusercontent.com-a4e51069fae9/qx/pixiv_enhanced.js",
+      "Script/Adblock/raw.githubusercontent.com-a4e51069fae9/surge/pixiv_enhanced.js"
+    ],
     "retainedGenerated": 461,
     "policy": "unreferenced-generated-only; active/transitive/manual/source dependencies retained"
   },

@@ -313,8 +313,11 @@
             }
             const data = binaryBody(value);
             {
-                if (data !== undefined && (true))
-                    result.body = bytes(data);
+                if (data !== undefined && (true)) {
+                    const body = bytes(data);
+                    result.body =
+                        body;
+                }
                 delete result.bodyBytes;
             }
             return result;

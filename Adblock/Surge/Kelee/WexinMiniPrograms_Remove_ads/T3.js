@@ -20,11 +20,13 @@
         const proto = Object.getPrototypeOf(Uint8Array.prototype), typed = Object.getOwnPropertyDescriptor(proto, Symbol.toStringTag).get.call(value) !== undefined, get = name => Object.getOwnPropertyDescriptor(typed ? proto : DataView.prototype, name).get.call(value);
         return new Uint8Array(get('buffer'), get('byteOffset'), get('byteLength'));
     } throw new TypeError('WayX API: binary body requires BufferSource'); };
-    const __wayxView = value => { if (value === undefined)
+    const __wayxView = (value, phase) => { if (value === undefined)
         return undefined; const result = Object.assign({}, value); if (typeof value.body !== 'string') {
         const data = __wayxBinary(value.body) ? value.body : value.bodyBytes;
-        if (__wayxBinary(data))
-            result.body = __wayxBytes(data);
+        if (__wayxBinary(data)) {
+            const body = __wayxBytes(data);
+            result.body = body;
+        }
     } delete result.bodyBytes; return result; };
     return (function (nativeDone, run) {
         let attempted = false, nativeFailed = false, nativeError;
@@ -65,7 +67,7 @@
             delete obj.data;
             $done({ body: JSON.stringify(obj) });
         }).call(this);
-    }).call(globalThis, undefined, __wayxView(typeof $response === 'undefined' ? undefined : $response), value => {
+    }).call(globalThis, undefined, __wayxView(typeof $response === 'undefined' ? undefined : $response, 'response'), value => {
         if (__wayxCompleted)
             return;
         const result = value == null ? {} : Object.assign({}, value);

@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only; ScriptHub derivative. */
 (function () {
-    const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, environment: typeof $environment === 'undefined' ? undefined : $environment, global: globalThis, codecs: (function (legacy, native = {}) {
+    const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, codecs: (function (legacy, native = {}) {
             let legacyProvider;
             const text = value => { if (typeof value === 'symbol')
                 throw new TypeError('Cannot convert a Symbol to a string'); return String(value); };
@@ -187,7 +187,7 @@
                 out += alphabet[(word >>> 18) & 63] + alphabet[(word >>> 12) & 63] + (i + 1 < s.length ? alphabet[(word >>> 6) & 63] : '=') + (i + 2 < s.length ? alphabet[word & 63] : '=');
             } return out; }
             return { TextEncoder, TextDecoder, atob, btoa };
-        })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }) };
+        })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), response: typeof $response === 'undefined' ? undefined : $response, done: $done, environment: typeof $environment === 'undefined' ? undefined : $environment, global: globalThis };
     if ((__wayxHost.response === undefined ? 'request' : 'response') !== "response")
         throw new Error('Unregistered HTTP source/target declaration');
     const __wayxConfig = { "apiPlan": { "target": { "responseStatus": "statusCode", "responseTrailers": null, "scriptStartTime": "absent", "binaryField": "bodyBytes", "store": { "style": "prefs", "read": "valueForKey", "write": "setValueForKey", "remove": "removeValueForKey", "undefinedDeletes": false }, "http": { "responseTrailers": null, "style": "promise", "root": "$task.fetch", "optionsRoot": "opts", "redirect": "redirection", "cookie": "auto-cookie", "tls": "skip-cert-verify", "policy": "policy", "timeoutMs": null, "directPolicy": "direct", "defaults": { "redirect": true, "cookie": false, "tls": false } }, "notification": { "root": "$notify", "open": "open-url", "media": "media-url", "action": null, "openAction": null, "stringLink": false, "delay": false }, "completion": { "statusEncoding": "line", "synthetic": "flat" }, "argument": "absent" } } };
@@ -313,8 +313,25 @@
             }
             const data = binaryBody(value);
             {
-                if (data !== undefined && (typeof result.body !== 'string'))
-                    result.body = bytes(data);
+                if (data !== undefined && (typeof result.body !== 'string')) {
+                    const body = bytes(data);
+                    result.body = "response" === (requestRole ? 'request' : 'response')
+                        ? (function (value, data, decoder) {
+                            const headers = value.headers || {};
+                            const header = name => headers[Object.keys(headers).find(key => key.toLowerCase() === name)];
+                            const type = String(header('content-type') || '');
+                            const charset = /;\s*charset\s*=\s*["']?([^;"'\s]+)/i.exec(type)?.[1];
+                            if (charset && !/^utf-?8$/i.test(charset))
+                                return data;
+                            if (type && !/^(?:text\/|application\/(?:[\w.+-]+\+)?(?:json|xml)(?:\s*;|\s*$))/i.test(type.trim()))
+                                return data;
+                            const encoding = header('content-encoding');
+                            if (encoding && !/^identity$/i.test(String(encoding).trim()))
+                                return data;
+                            return new decoder('utf-8', { fatal: true }).decode(data);
+                        })(value, body, host.codecs.TextDecoder)
+                        : body;
+                }
                 delete result.bodyBytes;
             }
             return result;

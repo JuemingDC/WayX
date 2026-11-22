@@ -60,7 +60,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 (function () {
     const __wayxTarget = "qx";
-    const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, response: typeof $response === 'undefined' ? undefined : $response, done: $done, codecs: (function (legacy, native = {}) {
+    const __wayxHost = { request: typeof $request === 'undefined' ? undefined : $request, codecs: (function (legacy, native = {}) {
             let legacyProvider;
             const text = value => { if (typeof value === 'symbol')
                 throw new TypeError('Cannot convert a Symbol to a string'); return String(value); };
@@ -247,7 +247,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 out += alphabet[(word >>> 18) & 63] + alphabet[(word >>> 12) & 63] + (i + 1 < s.length ? alphabet[(word >>> 6) & 63] : '=') + (i + 2 < s.length ? alphabet[word & 63] : '=');
             } return out; }
             return { TextEncoder, TextDecoder, atob, btoa };
-        })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), task: typeof $task === 'undefined' ? undefined : $task, prefs: typeof $prefs === 'undefined' ? undefined : $prefs, notifyQx: typeof $notify === 'undefined' ? undefined : $notify, environment: typeof $environment === 'undefined' ? undefined : $environment, script: typeof $script === 'undefined' ? undefined : $script, compression: undefined, aes: undefined, global: globalThis, url: (function (codecs) {
+        })((undefined), { TextDecoder: typeof TextDecoder === 'undefined' ? undefined : TextDecoder }), response: typeof $response === 'undefined' ? undefined : $response, done: $done, task: typeof $task === 'undefined' ? undefined : $task, prefs: typeof $prefs === 'undefined' ? undefined : $prefs, notifyQx: typeof $notify === 'undefined' ? undefined : $notify, environment: typeof $environment === 'undefined' ? undefined : $environment, script: typeof $script === 'undefined' ? undefined : $script, compression: undefined, aes: undefined, global: globalThis, url: (function (codecs) {
             const TextEncoder = codecs.TextEncoder, TextDecoder = codecs.TextDecoder;
             var __wayxProvider = (() => { var A2 = Object.create; var Q = Object.defineProperty; var s2 = Object.getOwnPropertyDescriptor; var n2 = Object.getOwnPropertyNames; var i2 = Object.getPrototypeOf, F2 = Object.prototype.hasOwnProperty; var E2 = (u, e) => () => (u && (e = u(u = 0)), e); var w = (u, e) => () => (e || u((e = { exports: {} }).exports, e), e.exports), R1 = (u, e) => { for (var t in e)
                 Q(u, t, { get: e[t], enumerable: !0 }); }, L1 = (u, e, t, r) => { if (e && typeof e == "object" || typeof e == "function")
@@ -1433,8 +1433,25 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             const data = binaryBody(value);
             {
-                if (data !== undefined && (typeof result.body !== 'string'))
-                    result.body = bytes(data);
+                if (data !== undefined && (typeof result.body !== 'string')) {
+                    const body = bytes(data);
+                    result.body = config.phase === (requestRole ? 'request' : 'response')
+                        ? (function (value, data, decoder) {
+                            const headers = value.headers || {};
+                            const header = name => headers[Object.keys(headers).find(key => key.toLowerCase() === name)];
+                            const type = String(header('content-type') || '');
+                            const charset = /;\s*charset\s*=\s*["']?([^;"'\s]+)/i.exec(type)?.[1];
+                            if (charset && !/^utf-?8$/i.test(charset))
+                                return data;
+                            if (type && !/^(?:text\/|application\/(?:[\w.+-]+\+)?(?:json|xml)(?:\s*;|\s*$))/i.test(type.trim()))
+                                return data;
+                            const encoding = header('content-encoding');
+                            if (encoding && !/^identity$/i.test(String(encoding).trim()))
+                                return data;
+                            return new decoder('utf-8', { fatal: true }).decode(data);
+                        })(value, body, host.codecs.TextDecoder)
+                        : body;
+                }
                 delete result.bodyBytes;
             }
             return result;
@@ -2977,8 +2994,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 const INJECT_CSS = `
 #px-fab {
   position: fixed;
-  right: 12px;
-  bottom: 150px;
+  right: 10px;
+  bottom: 147px;
   z-index: 2147483647;
   width: 48px;
   height: 48px;

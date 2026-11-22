@@ -1429,8 +1429,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             const data = binaryBody(value);
             {
-                if (data !== undefined && (typeof result.body !== 'string'))
-                    result.body = bytes(data);
+                if (data !== undefined && (typeof result.body !== 'string')) {
+                    const body = bytes(data);
+                    result.body =
+                        body;
+                }
                 delete result.bodyBytes;
             }
             return result;

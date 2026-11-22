@@ -1431,8 +1431,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             const data = binaryBody(value);
             {
-                if (data !== undefined && (typeof result.body !== 'string'))
-                    result.body = bytes(data);
+                if (data !== undefined && (typeof result.body !== 'string')) {
+                    const body = bytes(data);
+                    result.body =
+                        body;
+                }
                 delete result.bodyBytes;
             }
             return result;
@@ -2916,8 +2919,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 const INJECT_CSS = `
 #px-fab {
   position: fixed;
-  right: 12px;
-  bottom: 150px;
+  right: 10px;
+  bottom: 147px;
   z-index: 2147483647;
   width: 48px;
   height: 48px;

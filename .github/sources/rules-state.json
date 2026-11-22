@@ -17,7 +17,7 @@
     "Rule/Quantumult X/WayX/media_cn/media_cn.list": "5eeccda8b613c0523d5d186e1abecf31613944b239d9010eecbc4bcbdc82eace",
     "Rule/Quantumult X/WayX/media/media.list": "d2dc7939db5b2c54f9b17965dda360bb740dd698841e1456de240a5431219783",
     "Rule/Quantumult X/WayX/cn/cn.list": "03e209404b156092d318de0a7930b445ca0c737f967cdcd0a58e81d1ce0a0644",
-    "Rule/Quantumult X/WayX/proxy/proxy.list": "845d170ee5aeedb8fb25460f47796d55cfa23ceff330e81a5b2c1c3ec8b4cc33",
+    "Rule/Quantumult X/WayX/proxy/proxy.list": "d8da463225e1f8eb6c31b4d10e1459c4e54718858c9bd81fbda5167f38e2970a",
     "Rule/Quantumult X/WayX/adblock/adblock.list": "8e24c126761a002c7a5bf57933f30af1e6832a74be24595280a42025963b38f8",
     "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": "8e06824663b45e25d138bfc259d4d63f1a42545a921bccb7a9ef6f56fe468d8b",
     "Rule/Surge/WayX/google/google.list": "912e0c6188e8ba45b52e86b262bb46ce9f2c31cb29b0cbe28a13f04e5482eaa9",
@@ -39,7 +39,7 @@
     "Rule/Surge/WayX/media_cn/media_cn.list": "ee85280c9d45727221cc470833d21c76952f1beae489e561376ec9d772208163",
     "Rule/Surge/WayX/media/media.list": "fe7eef79ec20566abb1165b891b72351c131cbd57ec33e8716198031de8fd35b",
     "Rule/Surge/WayX/cn/cn.list": "85e04d434260daa878959a854907a0fcbf8977baea89b81df3587fec935c7799",
-    "Rule/Surge/WayX/proxy/proxy.list": "e40648912a956989d8d44dd829794a9b7444084472a889b32f247cfa0de8699f",
+    "Rule/Surge/WayX/proxy/proxy.list": "7a75b033e5c4689980e5098b68d7c1327349fdbc1e8bc89b23ff04f7e4ed0b3a",
     "Rule/Surge/WayX/adblock/adblock.list": "45c5ca0850949d3c71c61b861a1e55c046e6ef29a41fc2ecfa25c56260edf4ef",
     "Rule/Surge/WayX/adblock_extra/adblock_extra.list": "a9db6e6272ee8e449f592ff7d2e25d40ebebc1155c69e4cda95d4dc2947dc142",
     "Rule/Quantumult X/WayX/filterfix/filterfix.list": "bc2f4b0be6d4d4f0a9c490b2f4e3259cabeda3ae6cd729a4c7d32d76fc1edffd",
@@ -62,7 +62,7 @@
     "Rule/Quantumult X/WayX/media_cn/media_cn.list": 1520,
     "Rule/Quantumult X/WayX/media/media.list": 7269,
     "Rule/Quantumult X/WayX/cn/cn.list": 128123,
-    "Rule/Quantumult X/WayX/proxy/proxy.list": 34162,
+    "Rule/Quantumult X/WayX/proxy/proxy.list": 34161,
     "Rule/Quantumult X/WayX/adblock/adblock.list": 304217,
     "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": 149660,
     "Rule/Surge/WayX/google/google.list": 897,
@@ -84,7 +84,7 @@
     "Rule/Surge/WayX/media_cn/media_cn.list": 1520,
     "Rule/Surge/WayX/media/media.list": 7269,
     "Rule/Surge/WayX/cn/cn.list": 128123,
-    "Rule/Surge/WayX/proxy/proxy.list": 34162,
+    "Rule/Surge/WayX/proxy/proxy.list": 34161,
     "Rule/Surge/WayX/adblock/adblock.list": 304217,
     "Rule/Surge/WayX/adblock_extra/adblock_extra.list": 149660,
     "Rule/Quantumult X/WayX/filterfix/filterfix.list": 63,
@@ -185,7 +185,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.json",
-      "sha256": "5b8a558599929af2dd1ef4c1c689cdd1bf5d88cd72d160a677f8529a824500df"
+      "sha256": "900a8025baa827562d4cdf8e2b9cab0470ca31a1abe05e4e5980edf6520e1d94"
     },
     {
       "id": "mihomo-facebook",
@@ -196,7 +196,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/meta.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/meta.json",
-      "sha256": "103f27aefc9481c4c670ac18d06fb6cc9ad869510f31930f56a7fca452535646"
+      "sha256": "243735f0b48c06e88a903d30114645d4eb7c2d0bc323da000f0814bb922ec94b"
     },
     {
       "id": "mihomo-netflix",
@@ -218,7 +218,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/disney.json",
-      "sha256": "8a694a3e9672ddb844f6c0dfb1bb8f00f56403a1eddcbc7a577143cdd3009230"
+      "sha256": "9452592f3da9181f0dda5dc5d4c16784c2d61fef0c9ce0fd4fc9d1e77f9eab5a"
     },
     {
       "id": "mihomo-youtube",
@@ -273,7 +273,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.json",
-      "sha256": "838d8385ba91deaad79d679813368eb6ff7b2cb699750907afc4fce299b553eb"
+      "sha256": "fa2228474b14254cf7869c48cf16ee4fdcf276c4348b228d2b8e5cb5cfe059f9"
     },
     {
       "id": "mihomo-openai",
@@ -306,7 +306,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json",
-      "sha256": "0c07c9d28fbc55d873ebcbd16130bac9ead8c41bc14e931a9888e08ba3a69551"
+      "sha256": "98f0907c83ff19edb9dbdda8df4ad2576640087fad0ce1a315caef8dab598c1f"
     },
     {
       "id": "mihomo-category-ai-not-cn",
@@ -317,7 +317,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-!cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-!cn.json",
-      "sha256": "3e03b10df0a53d6ca65e2e79a0c5149cd8614531e5575384d86b67670f4cee34"
+      "sha256": "3802d2b43c6f3e39265a21ca800ef9fd79cb87e15dede9dc5639335c88725a05"
     },
     {
       "id": "dustinwin-ai",
@@ -616,7 +616,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft@cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft@cn.json",
-      "sha256": "669a1aef4b0e0516ceb64d0ee4f565a6a9890fb9f8116c8ed80796f72e4c30ee"
+      "sha256": "c45f3dbf8ba1ed3f6241b94fc5dbad2183f61931b8fab436dd3ae4b935ac1719"
     },
     {
       "id": "mihomo-azure-cn",
@@ -759,7 +759,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-cn.json",
-      "sha256": "6735224ac86d842f9d02b729ea861cc123a9b9844fe3e35ed988d0661f223271"
+      "sha256": "2330bb3a02f227b4ff56b0bbff76075376739ded7a284dcb3ce7f08f6107086d"
     },
     {
       "id": "mihomo-category-netdisk-not-cn",
@@ -792,7 +792,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json",
-      "sha256": "c15c9f4a80c76233eaa6ec463a26a8b497ed02af358388632fc0e282de7fed5c"
+      "sha256": "a019edf2af429e0dcb8676764575b9a6b488961156298275ee9e5f353e96e8bf"
     },
     {
       "id": "mihomo-category-entertainment",
@@ -803,7 +803,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json",
-      "sha256": "47a17e600c1fa6b5e069754d96b5a1e07bb56f8e541102f592091b94a53079fb"
+      "sha256": "db9419eee71e0203e91fd894b9ba2ebc0cd9df45c17d8d0ffc64a35eb367a779"
     },
     {
       "id": "mihomo-category-communication",
@@ -814,7 +814,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json",
-      "sha256": "3d0d2d7866ad108d5838448cd9ef6ec6ff2ce168eb190d4551bf39a971815998"
+      "sha256": "c708e806adb48cc327e811e5a263136e39076c9ef964f3436c6724b601dace14"
     },
     {
       "id": "mihomo-category-dev",
@@ -825,7 +825,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json",
-      "sha256": "53acfdc4f34b454c6c7fff9e9d3dc3ff4514ec97b26b446538290480da567762"
+      "sha256": "938bf01c18339f48aac4cda555dc2f1aa8ef0e467710c395919b60a8d2ef2226"
     },
     {
       "id": "mihomo-category-social-media-not-cn",
@@ -836,7 +836,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json",
-      "sha256": "25de5376be9cc00750721be5615b9e46883488a540fbd64f9afca97c01b42920"
+      "sha256": "3e0174c543f4c16cee2bfc3d652aa156a2ac8eb066dec49d4098785d27e406a3"
     },
     {
       "id": "mihomo-category-entertainment-cn",
@@ -847,7 +847,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment-cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment-cn.json",
-      "sha256": "ab6d475ba7c48c595127ff80bd3c088312ec2ecd890baa60d6b0d8a754297242"
+      "sha256": "d65beb6e71e10e2e504c29edf5dc4bb2baa5d8f62fd21a88d30af0317a672cae"
     },
     {
       "id": "mihomo-category-social-media-cn",
@@ -858,7 +858,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-cn.json",
-      "sha256": "cd627408de5aaf707b0cec924afab9bb74d3f326de20d7fe813852c907bd20a5"
+      "sha256": "37e2ba058751fcb81103b998c9e1de7e6d13d945becfdfecc4fa5db82a860377"
     },
     {
       "id": "mihomo-category-dev-cn",
@@ -869,7 +869,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json",
-      "sha256": "126bae5f7fa1e3ade7e43ce094ba8a414b41448088a281e0fd84458cd3ed9e8a"
+      "sha256": "126410205d3f4392c3d528fdd0cf11293d4c3b9dbd1f6cf7eecd78dd4ae41bbc"
     },
     {
       "id": "mihomo-category-ai-cn",
@@ -880,7 +880,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json",
       "license": "See upstream LICENSE",
       "fetched_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json",
-      "sha256": "8f601e256e683107847364443af161f82016631f3f13914602e8481cba6bdc68"
+      "sha256": "b78c8bda2e70e65ee47dde49bb28864037a01ddede0a631a3c67f693bfa7cd27"
     },
     {
       "id": "mihomo-bing-cn",
@@ -952,20 +952,20 @@
       "id": "geosite",
       "author": "V2Fly",
       "format": "protobuf",
-      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261121130529/dlc.dat",
+      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261122062944/dlc.dat",
       "license": "MIT",
-      "revision": "20261121130529",
-      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261121130529/dlc.dat",
-      "sha256": "5a8225ba9e888ed8c9289681d502ca15feeb6257c13b4061bb3256e86cfb3059"
+      "revision": "20261122062944",
+      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261122062944/dlc.dat",
+      "sha256": "29b46dae5d10e8f6bad5ee15bc1ad34107946b552f4e52218681079d56c50854"
     },
     {
       "id": "geosite-checksum",
       "author": "V2Fly",
       "format": "checksum",
-      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261121130529/dlc.dat.sha256sum",
+      "url": "https://github.com/v2fly/domain-list-community/releases/download/20261122062944/dlc.dat.sha256sum",
       "license": "MIT",
-      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261121130529/dlc.dat.sha256sum",
-      "sha256": "bfd22dc60dbfaab231255d15306c70e2de3d1780d4df3da9385787e629ee826a"
+      "fetched_url": "https://github.com/v2fly/domain-list-community/releases/download/20261122062944/dlc.dat.sha256sum",
+      "sha256": "c69d7f48ec9b0f8c01a724c2d7bd96f48348d74021796ad1444f9b2af7d19a67"
     }
   ],
   "configuration": "46e3ac773c4a747c20b37cde9349edf9c9b6a51c28a9a0ab92baa92426d8cef0",
