@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js",
-  "sourceSha256": "825a0c28ef374695f61c29e3665b74e5aa3736cc1b22f7a9f68b80636be14e98",
+  "sourceSha256": "d4ab18c83fecc40c47898a8bf83f1c355a57149f22512b11134bfd3e927d5666",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "825a0c28ef374695f61c29e3665b74e5aa3736cc1b22f7a9f68b80636be14e98",
+    "sha256": "d4ab18c83fecc40c47898a8bf83f1c355a57149f22512b11134bfd3e927d5666",
     "operations": [
       {
         "api": "require",
@@ -1584,8 +1584,8 @@
       {
         "api": "$persistentStore",
         "access": "read",
-        "start": 1032462,
-        "end": 1032478,
+        "start": 1032586,
+        "end": 1032602,
         "line": 357,
         "column": 52,
         "members": [
@@ -1595,8 +1595,8 @@
       {
         "api": "$httpClient",
         "access": "read",
-        "start": 1032479,
-        "end": 1032490,
+        "start": 1032603,
+        "end": 1032614,
         "line": 357,
         "column": 69,
         "members": [
@@ -1606,8 +1606,8 @@
       {
         "api": "$notification",
         "access": "read",
-        "start": 1032491,
-        "end": 1032504,
+        "start": 1032615,
+        "end": 1032628,
         "line": 357,
         "column": 81,
         "members": [
@@ -1617,9 +1617,9 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1294229,
-        "end": 1294239,
-        "line": 1689,
+        "start": 1298034,
+        "end": 1298044,
+        "line": 1720,
         "column": 71,
         "members": [
           "$arguments"
@@ -1628,9 +1628,9 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1296484,
-        "end": 1296494,
-        "line": 1693,
+        "start": 1300289,
+        "end": 1300299,
+        "line": 1724,
         "column": 144,
         "members": [
           "$arguments"
@@ -1639,9 +1639,9 @@
       {
         "api": "$options",
         "access": "read",
-        "start": 1323790,
-        "end": 1323798,
-        "line": 1724,
+        "start": 1327630,
+        "end": 1327638,
+        "line": 1755,
         "column": 2506,
         "members": [
           "$options"
@@ -1650,9 +1650,9 @@
       {
         "api": "$options",
         "access": "read",
-        "start": 1333169,
-        "end": 1333177,
-        "line": 1724,
+        "start": 1337009,
+        "end": 1337017,
+        "line": 1755,
         "column": 11885,
         "members": [
           "$options"
@@ -1670,7 +1670,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "825a0c28ef374695f61c29e3665b74e5aa3736cc1b22f7a9f68b80636be14e98",
+        "analysisSourceSha256": "d4ab18c83fecc40c47898a8bf83f1c355a57149f22512b11134bfd3e927d5666",
         "operations": [
           {
             "id": "api:0",
@@ -5093,8 +5093,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore",
-              "start": 1032462,
-              "end": 1032478,
+              "start": 1032586,
+              "end": 1032602,
               "line": 357,
               "column": 52,
               "access": "read",
@@ -5117,8 +5117,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient",
-              "start": 1032479,
-              "end": 1032490,
+              "start": 1032603,
+              "end": 1032614,
               "line": 357,
               "column": 69,
               "access": "read",
@@ -5141,8 +5141,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$notification",
-              "start": 1032491,
-              "end": 1032504,
+              "start": 1032615,
+              "end": 1032628,
               "line": 357,
               "column": 81,
               "access": "read",
@@ -5165,9 +5165,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1294229,
-              "end": 1294239,
-              "line": 1689,
+              "start": 1298034,
+              "end": 1298044,
+              "line": 1720,
               "column": 71,
               "access": "read",
               "memberPath": []
@@ -5189,9 +5189,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1296484,
-              "end": 1296494,
-              "line": 1693,
+              "start": 1300289,
+              "end": 1300299,
+              "line": 1724,
               "column": 144,
               "access": "read",
               "memberPath": []
@@ -5213,9 +5213,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$options",
-              "start": 1323790,
-              "end": 1323798,
-              "line": 1724,
+              "start": 1327630,
+              "end": 1327638,
+              "line": 1755,
               "column": 2506,
               "access": "read",
               "memberPath": []
@@ -5237,9 +5237,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$options",
-              "start": 1333169,
-              "end": 1333177,
-              "line": 1724,
+              "start": 1337009,
+              "end": 1337017,
+              "line": 1755,
               "column": 11885,
               "access": "read",
               "memberPath": []

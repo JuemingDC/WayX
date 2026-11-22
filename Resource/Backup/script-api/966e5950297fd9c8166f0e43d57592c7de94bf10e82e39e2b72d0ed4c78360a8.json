@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-1.min.js",
-  "sourceSha256": "8bafa058e20881a4a90b6703a553182282217179e01303a5d1b4585eef6a1791",
+  "sourceSha256": "b4a17279fed9f92bed4eeee1adce166a72b6607217e1424efd88d22ed6a7cf0b",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "8bafa058e20881a4a90b6703a553182282217179e01303a5d1b4585eef6a1791",
+    "sha256": "b4a17279fed9f92bed4eeee1adce166a72b6607217e1424efd88d22ed6a7cf0b",
     "operations": [
       {
         "api": "require",
@@ -338,8 +338,8 @@
       {
         "api": "window",
         "access": "read",
-        "start": 606522,
-        "end": 606528,
+        "start": 606530,
+        "end": 606536,
         "line": 134,
         "column": 18517,
         "members": [
@@ -349,8 +349,8 @@
       {
         "api": "window.Math",
         "access": "read",
-        "start": 606534,
-        "end": 606545,
+        "start": 606542,
+        "end": 606553,
         "line": 134,
         "column": 18529,
         "members": [
@@ -361,8 +361,8 @@
       {
         "api": "window",
         "access": "read",
-        "start": 606552,
-        "end": 606558,
+        "start": 606560,
+        "end": 606566,
         "line": 134,
         "column": 18547,
         "members": [
@@ -372,8 +372,8 @@
       {
         "api": "TextDecoder",
         "access": "read",
-        "start": 644089,
-        "end": 644100,
+        "start": 644097,
+        "end": 644108,
         "line": 147,
         "column": 5009,
         "members": [
@@ -383,8 +383,8 @@
       {
         "api": "TextDecoder",
         "access": "call",
-        "start": 644113,
-        "end": 644128,
+        "start": 644121,
+        "end": 644136,
         "line": 147,
         "column": 5033,
         "members": [
@@ -394,8 +394,8 @@
       {
         "api": "TextEncoder",
         "access": "read",
-        "start": 644146,
-        "end": 644157,
+        "start": 644154,
+        "end": 644165,
         "line": 147,
         "column": 5066,
         "members": [
@@ -405,8 +405,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 644170,
-        "end": 644185,
+        "start": 644178,
+        "end": 644193,
         "line": 147,
         "column": 5090,
         "members": [
@@ -416,8 +416,8 @@
       {
         "api": "btoa",
         "access": "read",
-        "start": 645004,
-        "end": 645008,
+        "start": 645012,
+        "end": 645016,
         "line": 147,
         "column": 5924,
         "members": [
@@ -427,8 +427,8 @@
       {
         "api": "btoa",
         "access": "call",
-        "start": 645024,
-        "end": 645031,
+        "start": 645032,
+        "end": 645039,
         "line": 147,
         "column": 5944,
         "members": [
@@ -438,8 +438,8 @@
       {
         "api": "atob",
         "access": "read",
-        "start": 646583,
-        "end": 646587,
+        "start": 646591,
+        "end": 646595,
         "line": 147,
         "column": 7503,
         "members": [
@@ -449,8 +449,8 @@
       {
         "api": "atob",
         "access": "call",
-        "start": 646603,
-        "end": 646614,
+        "start": 646611,
+        "end": 646622,
         "line": 147,
         "column": 7523,
         "members": [
@@ -460,8 +460,8 @@
       {
         "api": "$task",
         "access": "read",
-        "start": 647952,
-        "end": 647957,
+        "start": 647960,
+        "end": 647965,
         "line": 147,
         "column": 8872,
         "members": [
@@ -471,8 +471,8 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 647972,
-        "end": 647977,
+        "start": 647980,
+        "end": 647985,
         "line": 147,
         "column": 8892,
         "members": [
@@ -482,8 +482,8 @@
       {
         "api": "$httpClient",
         "access": "read",
-        "start": 648012,
-        "end": 648023,
+        "start": 648020,
+        "end": 648031,
         "line": 147,
         "column": 8932,
         "members": [
@@ -493,8 +493,8 @@
       {
         "api": "$environment",
         "access": "read",
-        "start": 648090,
-        "end": 648102,
+        "start": 648098,
+        "end": 648110,
         "line": 147,
         "column": 9010,
         "members": [
@@ -504,8 +504,8 @@
       {
         "api": "$environment.stash-version",
         "access": "read",
-        "start": 648108,
-        "end": 648137,
+        "start": 648116,
+        "end": 648145,
         "line": 147,
         "column": 9028,
         "members": [
@@ -516,8 +516,8 @@
       {
         "api": "$rocket",
         "access": "read",
-        "start": 648148,
-        "end": 648155,
+        "start": 648156,
+        "end": 648163,
         "line": 147,
         "column": 9068,
         "members": [
@@ -527,8 +527,8 @@
       {
         "api": "$native",
         "access": "read",
-        "start": 648170,
-        "end": 648177,
+        "start": 648178,
+        "end": 648185,
         "line": 147,
         "column": 9090,
         "members": [
@@ -538,8 +538,8 @@
       {
         "api": "$Plugins",
         "access": "read",
-        "start": 648192,
-        "end": 648200,
+        "start": 648200,
+        "end": 648208,
         "line": 147,
         "column": 9112,
         "members": [
@@ -549,8 +549,8 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 648219,
-        "end": 648224,
+        "start": 648227,
+        "end": 648232,
         "line": 147,
         "column": 9139,
         "members": [
@@ -560,8 +560,8 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 648236,
-        "end": 648241,
+        "start": 648244,
+        "end": 648249,
         "line": 147,
         "column": 9156,
         "members": [
@@ -571,8 +571,8 @@
       {
         "api": "$loon.isSubsCheckPro",
         "access": "read",
-        "start": 648250,
-        "end": 648270,
+        "start": 648258,
+        "end": 648278,
         "line": 147,
         "column": 9170,
         "members": [
@@ -583,8 +583,8 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 649200,
-        "end": 649228,
+        "start": 649208,
+        "end": 649236,
         "line": 147,
         "column": 10120,
         "members": [
@@ -594,8 +594,8 @@
       {
         "api": "$prefs.valueForKey",
         "access": "call",
-        "start": 649357,
-        "end": 649386,
+        "start": 649365,
+        "end": 649394,
         "line": 147,
         "column": 10277,
         "members": [
@@ -606,8 +606,8 @@
       {
         "api": "$persistentStore.read",
         "access": "call",
-        "start": 649432,
-        "end": 649464,
+        "start": 649440,
+        "end": 649472,
         "line": 147,
         "column": 10352,
         "members": [
@@ -618,8 +618,8 @@
       {
         "api": "$Plugins.SubStoreCache.get",
         "access": "call",
-        "start": 649500,
-        "end": 649537,
+        "start": 649508,
+        "end": 649545,
         "line": 147,
         "column": 10420,
         "members": [
@@ -631,8 +631,8 @@
       {
         "api": "$prefs.setValueForKey",
         "access": "call",
-        "start": 650875,
-        "end": 650912,
+        "start": 650883,
+        "end": 650920,
         "line": 147,
         "column": 11795,
         "members": [
@@ -643,8 +643,8 @@
       {
         "api": "$persistentStore.write",
         "access": "call",
-        "start": 650927,
-        "end": 650965,
+        "start": 650935,
+        "end": 650973,
         "line": 147,
         "column": 11847,
         "members": [
@@ -655,8 +655,8 @@
       {
         "api": "$Plugins.SubStoreCache.set",
         "access": "call",
-        "start": 650970,
-        "end": 651012,
+        "start": 650978,
+        "end": 651020,
         "line": 147,
         "column": 11890,
         "members": [
@@ -668,8 +668,8 @@
       {
         "api": "$persistentStore.write",
         "access": "call",
-        "start": 651380,
-        "end": 651407,
+        "start": 651388,
+        "end": 651415,
         "line": 147,
         "column": 12300,
         "members": [
@@ -680,8 +680,8 @@
       {
         "api": "$prefs.setValueForKey",
         "access": "call",
-        "start": 651421,
-        "end": 651447,
+        "start": 651429,
+        "end": 651455,
         "line": 147,
         "column": 12341,
         "members": [
@@ -692,8 +692,8 @@
       {
         "api": "$Plugins.SubStoreCache.set",
         "access": "call",
-        "start": 651482,
-        "end": 651513,
+        "start": 651490,
+        "end": 651521,
         "line": 147,
         "column": 12402,
         "members": [
@@ -705,8 +705,8 @@
       {
         "api": "$persistentStore.read",
         "access": "call",
-        "start": 651644,
-        "end": 651668,
+        "start": 651652,
+        "end": 651676,
         "line": 147,
         "column": 12564,
         "members": [
@@ -717,8 +717,8 @@
       {
         "api": "$prefs.valueForKey",
         "access": "call",
-        "start": 651682,
-        "end": 651703,
+        "start": 651690,
+        "end": 651711,
         "line": 147,
         "column": 12602,
         "members": [
@@ -729,8 +729,8 @@
       {
         "api": "$Plugins.SubStoreCache.get",
         "access": "call",
-        "start": 651743,
-        "end": 651772,
+        "start": 651751,
+        "end": 651780,
         "line": 147,
         "column": 12663,
         "members": [
@@ -742,8 +742,8 @@
       {
         "api": "$persistentStore.write",
         "access": "call",
-        "start": 651892,
-        "end": 651922,
+        "start": 651900,
+        "end": 651930,
         "line": 147,
         "column": 12812,
         "members": [
@@ -754,8 +754,8 @@
       {
         "api": "$prefs.removeValueForKey",
         "access": "call",
-        "start": 651936,
-        "end": 651963,
+        "start": 651944,
+        "end": 651971,
         "line": 147,
         "column": 12856,
         "members": [
@@ -766,8 +766,8 @@
       {
         "api": "$Plugins.SubStoreCache.remove",
         "access": "call",
-        "start": 652001,
-        "end": 652033,
+        "start": 652009,
+        "end": 652041,
         "line": 147,
         "column": 12921,
         "members": [
@@ -779,8 +779,8 @@
       {
         "api": "$notify",
         "access": "call",
-        "start": 652197,
-        "end": 652236,
+        "start": 652205,
+        "end": 652244,
         "line": 147,
         "column": 13117,
         "members": [
@@ -790,8 +790,8 @@
       {
         "api": "$notification.post",
         "access": "call",
-        "start": 652247,
-        "end": 652352,
+        "start": 652255,
+        "end": 652360,
         "line": 147,
         "column": 13167,
         "members": [
@@ -802,8 +802,8 @@
       {
         "api": "$notification.post",
         "access": "call",
-        "start": 652452,
-        "end": 652494,
+        "start": 652460,
+        "end": 652502,
         "line": 148,
         "column": 150,
         "members": [
@@ -814,8 +814,8 @@
       {
         "api": "$notification.post",
         "access": "call",
-        "start": 652495,
-        "end": 652539,
+        "start": 652503,
+        "end": 652547,
         "line": 148,
         "column": 193,
         "members": [
@@ -826,8 +826,8 @@
       {
         "api": "$Plugins.Notify",
         "access": "call",
-        "start": 653470,
-        "end": 653513,
+        "start": 653478,
+        "end": 653521,
         "line": 159,
         "column": 221,
         "members": [
@@ -838,8 +838,8 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 653752,
-        "end": 653767,
+        "start": 653760,
+        "end": 653775,
         "line": 160,
         "column": 250,
         "members": [
@@ -849,8 +849,8 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 653799,
-        "end": 653807,
+        "start": 653807,
+        "end": 653815,
         "line": 160,
         "column": 297,
         "members": [
@@ -860,8 +860,8 @@
       {
         "api": "$context",
         "access": "read",
-        "start": 653819,
-        "end": 653827,
+        "start": 653827,
+        "end": 653835,
         "line": 160,
         "column": 317,
         "members": [
@@ -871,8 +871,8 @@
       {
         "api": "$context.headers",
         "access": "write",
-        "start": 653834,
-        "end": 653850,
+        "start": 653842,
+        "end": 653858,
         "line": 160,
         "column": 332,
         "members": [
@@ -883,8 +883,8 @@
       {
         "api": "$context.statusCode",
         "access": "write",
-        "start": 653861,
-        "end": 653880,
+        "start": 653869,
+        "end": 653888,
         "line": 160,
         "column": 359,
         "members": [
@@ -895,8 +895,8 @@
       {
         "api": "$context.body",
         "access": "write",
-        "start": 653894,
-        "end": 653907,
+        "start": 653902,
+        "end": 653915,
         "line": 160,
         "column": 392,
         "members": [
@@ -907,8 +907,8 @@
       {
         "api": "$environment.surge-build",
         "access": "read",
-        "start": 655398,
-        "end": 655425,
+        "start": 655406,
+        "end": 655433,
         "line": 160,
         "column": 1896,
         "members": [
@@ -919,8 +919,8 @@
       {
         "api": "$task.fetch",
         "access": "call",
-        "start": 655542,
-        "end": 655639,
+        "start": 655550,
+        "end": 655647,
         "line": 160,
         "column": 2040,
         "members": [
@@ -931,8 +931,8 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 656568,
-        "end": 656585,
+        "start": 656576,
+        "end": 656593,
         "line": 160,
         "column": 3066,
         "members": [
@@ -942,8 +942,8 @@
       {
         "api": "$httpClient.<runtime-key>",
         "access": "call",
-        "start": 657789,
-        "end": 657949,
+        "start": 657797,
+        "end": 657957,
         "line": 160,
         "column": 4287,
         "members": [
@@ -954,8 +954,8 @@
       {
         "api": "$Plugins.Requests",
         "access": "call",
-        "start": 658037,
-        "end": 658220,
+        "start": 658045,
+        "end": 658228,
         "line": 160,
         "column": 4535,
         "members": [
@@ -966,8 +966,8 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 658627,
-        "end": 658770,
+        "start": 658635,
+        "end": 658778,
         "line": 160,
         "column": 5125,
         "members": [
@@ -977,8 +977,8 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 662062,
-        "end": 662072,
+        "start": 662070,
+        "end": 662080,
         "line": 160,
         "column": 8560,
         "members": [
@@ -988,8 +988,8 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 662121,
-        "end": 662131,
+        "start": 662129,
+        "end": 662139,
         "line": 160,
         "column": 8619,
         "members": [
@@ -999,8 +999,8 @@
       {
         "api": "$argument",
         "access": "read",
-        "start": 662298,
-        "end": 662307,
+        "start": 662306,
+        "end": 662315,
         "line": 160,
         "column": 8796,
         "members": [
@@ -1010,8 +1010,8 @@
       {
         "api": "$argument",
         "access": "read",
-        "start": 662319,
-        "end": 662328,
+        "start": 662327,
+        "end": 662336,
         "line": 160,
         "column": 8817,
         "members": [
@@ -1021,8 +1021,8 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 663451,
-        "end": 663461,
+        "start": 663459,
+        "end": 663469,
         "line": 160,
         "column": 9949,
         "members": [
@@ -1032,8 +1032,8 @@
       {
         "api": "$request",
         "access": "read",
-        "start": 665496,
-        "end": 665504,
+        "start": 665504,
+        "end": 665512,
         "line": 161,
         "column": 1904,
         "members": [
@@ -1043,8 +1043,8 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 666063,
-        "end": 666071,
+        "start": 666071,
+        "end": 666079,
         "line": 161,
         "column": 2471,
         "members": [
@@ -1054,8 +1054,8 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 666083,
-        "end": 666102,
+        "start": 666091,
+        "end": 666110,
         "line": 161,
         "column": 2491,
         "members": [
@@ -1065,8 +1065,8 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 675569,
-        "end": 675584,
+        "start": 675577,
+        "end": 675592,
         "line": 161,
         "column": 11977,
         "members": [
@@ -1076,8 +1076,8 @@
       {
         "api": "atob",
         "access": "read",
-        "start": 722635,
-        "end": 722639,
+        "start": 722643,
+        "end": 722647,
         "line": 211,
         "column": 7384,
         "members": [
@@ -1087,8 +1087,8 @@
       {
         "api": "atob",
         "access": "call",
-        "start": 722659,
-        "end": 722688,
+        "start": 722667,
+        "end": 722696,
         "line": 211,
         "column": 7408,
         "members": [
@@ -1098,8 +1098,8 @@
       {
         "api": "btoa",
         "access": "read",
-        "start": 722961,
-        "end": 722965,
+        "start": 722969,
+        "end": 722973,
         "line": 211,
         "column": 7710,
         "members": [
@@ -1109,8 +1109,8 @@
       {
         "api": "btoa",
         "access": "call",
-        "start": 723046,
-        "end": 723053,
+        "start": 723054,
+        "end": 723061,
         "line": 211,
         "column": 7795,
         "members": [
@@ -1120,8 +1120,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 796140,
-        "end": 796157,
+        "start": 796148,
+        "end": 796165,
         "line": 294,
         "column": 3405,
         "members": [
@@ -1131,8 +1131,8 @@
       {
         "api": "globalThis",
         "access": "read",
-        "start": 796819,
-        "end": 796829,
+        "start": 796827,
+        "end": 796837,
         "line": 294,
         "column": 4084,
         "members": [
@@ -1142,8 +1142,8 @@
       {
         "api": "globalThis.crypto",
         "access": "read",
-        "start": 796840,
-        "end": 796857,
+        "start": 796848,
+        "end": 796865,
         "line": 294,
         "column": 4105,
         "members": [
@@ -1154,8 +1154,8 @@
       {
         "api": "globalThis",
         "access": "read",
-        "start": 830314,
-        "end": 830324,
+        "start": 830322,
+        "end": 830332,
         "line": 294,
         "column": 37579,
         "members": [
@@ -1165,8 +1165,8 @@
       {
         "api": "globalThis.crypto",
         "access": "read",
-        "start": 830335,
-        "end": 830352,
+        "start": 830343,
+        "end": 830360,
         "line": 294,
         "column": 37600,
         "members": [
@@ -1177,8 +1177,8 @@
       {
         "api": "TextDecoder",
         "access": "call",
-        "start": 924035,
-        "end": 924052,
+        "start": 924043,
+        "end": 924060,
         "line": 294,
         "column": 131300,
         "members": [
@@ -1188,8 +1188,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 926201,
-        "end": 926218,
+        "start": 926209,
+        "end": 926226,
         "line": 298,
         "column": 25,
         "members": [
@@ -1199,8 +1199,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 926272,
-        "end": 926289,
+        "start": 926280,
+        "end": 926297,
         "line": 298,
         "column": 96,
         "members": [
@@ -1210,8 +1210,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 927124,
-        "end": 927141,
+        "start": 927132,
+        "end": 927149,
         "line": 299,
         "column": 809,
         "members": [
@@ -1221,8 +1221,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 927815,
-        "end": 927832,
+        "start": 927823,
+        "end": 927840,
         "line": 299,
         "column": 1500,
         "members": [
@@ -1232,8 +1232,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 928338,
-        "end": 928355,
+        "start": 928346,
+        "end": 928363,
         "line": 299,
         "column": 2023,
         "members": [
@@ -1243,8 +1243,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 928518,
-        "end": 928535,
+        "start": 928526,
+        "end": 928543,
         "line": 299,
         "column": 2203,
         "members": [
@@ -1254,8 +1254,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 928591,
-        "end": 928608,
+        "start": 928599,
+        "end": 928616,
         "line": 299,
         "column": 2276,
         "members": [
@@ -1265,8 +1265,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 928779,
-        "end": 928796,
+        "start": 928787,
+        "end": 928804,
         "line": 299,
         "column": 2464,
         "members": [
@@ -1276,8 +1276,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 928852,
-        "end": 928869,
+        "start": 928860,
+        "end": 928877,
         "line": 299,
         "column": 2537,
         "members": [
@@ -1287,8 +1287,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 929210,
-        "end": 929227,
+        "start": 929218,
+        "end": 929235,
         "line": 299,
         "column": 2895,
         "members": [
@@ -1298,8 +1298,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 929651,
-        "end": 929668,
+        "start": 929659,
+        "end": 929676,
         "line": 299,
         "column": 3336,
         "members": [
@@ -1309,8 +1309,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 930249,
-        "end": 930266,
+        "start": 930257,
+        "end": 930274,
         "line": 299,
         "column": 3934,
         "members": [
@@ -1320,8 +1320,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 930955,
-        "end": 930972,
+        "start": 930963,
+        "end": 930980,
         "line": 299,
         "column": 4640,
         "members": [
@@ -1331,8 +1331,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 931738,
-        "end": 931755,
+        "start": 931746,
+        "end": 931763,
         "line": 299,
         "column": 5423,
         "members": [
@@ -1342,8 +1342,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 932032,
-        "end": 932049,
+        "start": 932040,
+        "end": 932057,
         "line": 299,
         "column": 5717,
         "members": [
@@ -1353,8 +1353,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 932754,
-        "end": 932771,
+        "start": 932762,
+        "end": 932779,
         "line": 299,
         "column": 6439,
         "members": [
@@ -1364,8 +1364,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 936161,
-        "end": 936178,
+        "start": 936169,
+        "end": 936186,
         "line": 305,
         "column": 1431,
         "members": [
@@ -1375,8 +1375,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 936257,
-        "end": 936274,
+        "start": 936265,
+        "end": 936282,
         "line": 305,
         "column": 1527,
         "members": [
@@ -1386,8 +1386,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 936452,
-        "end": 936469,
+        "start": 936460,
+        "end": 936477,
         "line": 305,
         "column": 1722,
         "members": [
@@ -1397,8 +1397,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 937064,
-        "end": 937081,
+        "start": 937072,
+        "end": 937089,
         "line": 305,
         "column": 2334,
         "members": [
@@ -1408,8 +1408,8 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 937511,
-        "end": 937528,
+        "start": 937519,
+        "end": 937536,
         "line": 305,
         "column": 2781,
         "members": [
@@ -1419,8 +1419,8 @@
       {
         "api": "globalThis",
         "access": "read",
-        "start": 939111,
-        "end": 939121,
+        "start": 939119,
+        "end": 939129,
         "line": 305,
         "column": 4381,
         "members": [
@@ -1430,8 +1430,8 @@
       {
         "api": "globalThis",
         "access": "read",
-        "start": 941032,
-        "end": 941042,
+        "start": 941040,
+        "end": 941050,
         "line": 305,
         "column": 6302,
         "members": [
@@ -1441,8 +1441,8 @@
       {
         "api": "TextDecoder",
         "access": "call",
-        "start": 941729,
-        "end": 941746,
+        "start": 941737,
+        "end": 941754,
         "line": 305,
         "column": 6999,
         "members": [
@@ -1452,8 +1452,8 @@
       {
         "api": "URL",
         "access": "call",
-        "start": 972478,
-        "end": 972488,
+        "start": 972486,
+        "end": 972496,
         "line": 305,
         "column": 37748,
         "members": [
@@ -1463,8 +1463,8 @@
       {
         "api": "setTimeout",
         "access": "call",
-        "start": 973821,
-        "end": 973882,
+        "start": 973829,
+        "end": 973890,
         "line": 305,
         "column": 39091,
         "members": [
@@ -1474,8 +1474,8 @@
       {
         "api": "$environment",
         "access": "read",
-        "start": 977073,
-        "end": 977085,
+        "start": 977081,
+        "end": 977093,
         "line": 305,
         "column": 42343,
         "members": [
@@ -1485,8 +1485,8 @@
       {
         "api": "$environment",
         "access": "read",
-        "start": 977099,
-        "end": 977111,
+        "start": 977107,
+        "end": 977119,
         "line": 305,
         "column": 42369,
         "members": [
@@ -1496,8 +1496,8 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 977120,
-        "end": 977125,
+        "start": 977128,
+        "end": 977133,
         "line": 305,
         "column": 42390,
         "members": [
@@ -1507,8 +1507,8 @@
       {
         "api": "$loon",
         "access": "read",
-        "start": 977140,
-        "end": 977145,
+        "start": 977148,
+        "end": 977153,
         "line": 305,
         "column": 42410,
         "members": [
@@ -1518,8 +1518,8 @@
       {
         "api": "$script",
         "access": "read",
-        "start": 977154,
-        "end": 977161,
+        "start": 977162,
+        "end": 977169,
         "line": 305,
         "column": 42424,
         "members": [
@@ -1529,8 +1529,8 @@
       {
         "api": "$script",
         "access": "read",
-        "start": 977178,
-        "end": 977185,
+        "start": 977186,
+        "end": 977193,
         "line": 305,
         "column": 42448,
         "members": [
@@ -1540,8 +1540,8 @@
       {
         "api": "$Plugin",
         "access": "read",
-        "start": 977194,
-        "end": 977201,
+        "start": 977202,
+        "end": 977209,
         "line": 305,
         "column": 42464,
         "members": [
@@ -1551,8 +1551,8 @@
       {
         "api": "$Plugin",
         "access": "read",
-        "start": 977218,
-        "end": 977225,
+        "start": 977226,
+        "end": 977233,
         "line": 305,
         "column": 42488,
         "members": [
@@ -1562,8 +1562,8 @@
       {
         "api": "$persistentStore",
         "access": "read",
-        "start": 998989,
-        "end": 999005,
+        "start": 999121,
+        "end": 999137,
         "line": 351,
         "column": 52,
         "members": [
@@ -1573,8 +1573,8 @@
       {
         "api": "$httpClient",
         "access": "read",
-        "start": 999006,
-        "end": 999017,
+        "start": 999138,
+        "end": 999149,
         "line": 351,
         "column": 69,
         "members": [
@@ -1584,8 +1584,8 @@
       {
         "api": "$notification",
         "access": "read",
-        "start": 999018,
-        "end": 999031,
+        "start": 999150,
+        "end": 999163,
         "line": 351,
         "column": 81,
         "members": [
@@ -1595,9 +1595,9 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1266631,
-        "end": 1266641,
-        "line": 1683,
+        "start": 1270436,
+        "end": 1270446,
+        "line": 1714,
         "column": 71,
         "members": [
           "$arguments"
@@ -1606,9 +1606,9 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1268886,
-        "end": 1268896,
-        "line": 1687,
+        "start": 1272691,
+        "end": 1272701,
+        "line": 1718,
         "column": 144,
         "members": [
           "$arguments"
@@ -1617,9 +1617,9 @@
       {
         "api": "TextEncoder",
         "access": "read",
-        "start": 1294447,
-        "end": 1294458,
-        "line": 1718,
+        "start": 1298287,
+        "end": 1298298,
+        "line": 1749,
         "column": 1493,
         "members": [
           "TextEncoder"
@@ -1628,9 +1628,9 @@
       {
         "api": "TextEncoder",
         "access": "call",
-        "start": 1294463,
-        "end": 1294480,
-        "line": 1718,
+        "start": 1298303,
+        "end": 1298320,
+        "line": 1749,
         "column": 1509,
         "members": [
           "TextEncoder"
@@ -1639,9 +1639,9 @@
       {
         "api": "$options",
         "access": "read",
-        "start": 1298999,
-        "end": 1299007,
-        "line": 1719,
+        "start": 1302839,
+        "end": 1302847,
+        "line": 1750,
         "column": 2505,
         "members": [
           "$options"
@@ -1650,9 +1650,9 @@
       {
         "api": "$options",
         "access": "read",
-        "start": 1315106,
-        "end": 1315114,
-        "line": 1724,
+        "start": 1318946,
+        "end": 1318954,
+        "line": 1755,
         "column": 953,
         "members": [
           "$options"
@@ -1670,7 +1670,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "8bafa058e20881a4a90b6703a553182282217179e01303a5d1b4585eef6a1791",
+        "analysisSourceSha256": "b4a17279fed9f92bed4eeee1adce166a72b6607217e1424efd88d22ed6a7cf0b",
         "operations": [
           {
             "id": "api:0",
@@ -2386,8 +2386,8 @@
             "kind": "unmapped",
             "source": {
               "api": "window",
-              "start": 606522,
-              "end": 606528,
+              "start": 606530,
+              "end": 606536,
               "line": 134,
               "column": 18517,
               "access": "read",
@@ -2410,8 +2410,8 @@
             "kind": "unmapped",
             "source": {
               "api": "window.Math",
-              "start": 606534,
-              "end": 606545,
+              "start": 606542,
+              "end": 606553,
               "line": 134,
               "column": 18529,
               "access": "read",
@@ -2436,8 +2436,8 @@
             "kind": "unmapped",
             "source": {
               "api": "window",
-              "start": 606552,
-              "end": 606558,
+              "start": 606560,
+              "end": 606566,
               "line": 134,
               "column": 18547,
               "access": "read",
@@ -2460,8 +2460,8 @@
             "kind": "codec",
             "source": {
               "api": "TextDecoder",
-              "start": 644089,
-              "end": 644100,
+              "start": 644097,
+              "end": 644108,
               "line": 147,
               "column": 5009,
               "access": "read",
@@ -2484,8 +2484,8 @@
             "kind": "codec",
             "source": {
               "api": "TextDecoder",
-              "start": 644113,
-              "end": 644128,
+              "start": 644121,
+              "end": 644136,
               "line": 147,
               "column": 5033,
               "access": "call",
@@ -2508,8 +2508,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 644146,
-              "end": 644157,
+              "start": 644154,
+              "end": 644165,
               "line": 147,
               "column": 5066,
               "access": "read",
@@ -2532,8 +2532,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 644170,
-              "end": 644185,
+              "start": 644178,
+              "end": 644193,
               "line": 147,
               "column": 5090,
               "access": "call",
@@ -2556,8 +2556,8 @@
             "kind": "codec",
             "source": {
               "api": "btoa",
-              "start": 645004,
-              "end": 645008,
+              "start": 645012,
+              "end": 645016,
               "line": 147,
               "column": 5924,
               "access": "read",
@@ -2580,8 +2580,8 @@
             "kind": "codec",
             "source": {
               "api": "btoa",
-              "start": 645024,
-              "end": 645031,
+              "start": 645032,
+              "end": 645039,
               "line": 147,
               "column": 5944,
               "access": "call",
@@ -2604,8 +2604,8 @@
             "kind": "codec",
             "source": {
               "api": "atob",
-              "start": 646583,
-              "end": 646587,
+              "start": 646591,
+              "end": 646595,
               "line": 147,
               "column": 7503,
               "access": "read",
@@ -2628,8 +2628,8 @@
             "kind": "codec",
             "source": {
               "api": "atob",
-              "start": 646603,
-              "end": 646614,
+              "start": 646611,
+              "end": 646622,
               "line": 147,
               "column": 7523,
               "access": "call",
@@ -2652,8 +2652,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$task",
-              "start": 647952,
-              "end": 647957,
+              "start": 647960,
+              "end": 647965,
               "line": 147,
               "column": 8872,
               "access": "read",
@@ -2676,8 +2676,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 647972,
-              "end": 647977,
+              "start": 647980,
+              "end": 647985,
               "line": 147,
               "column": 8892,
               "access": "read",
@@ -2700,8 +2700,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient",
-              "start": 648012,
-              "end": 648023,
+              "start": 648020,
+              "end": 648031,
               "line": 147,
               "column": 8932,
               "access": "read",
@@ -2724,8 +2724,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment",
-              "start": 648090,
-              "end": 648102,
+              "start": 648098,
+              "end": 648110,
               "line": 147,
               "column": 9010,
               "access": "read",
@@ -2748,8 +2748,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment.stash-version",
-              "start": 648108,
-              "end": 648137,
+              "start": 648116,
+              "end": 648145,
               "line": 147,
               "column": 9028,
               "access": "read",
@@ -2774,8 +2774,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$rocket",
-              "start": 648148,
-              "end": 648155,
+              "start": 648156,
+              "end": 648163,
               "line": 147,
               "column": 9068,
               "access": "read",
@@ -2798,8 +2798,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$native",
-              "start": 648170,
-              "end": 648177,
+              "start": 648178,
+              "end": 648185,
               "line": 147,
               "column": 9090,
               "access": "read",
@@ -2822,8 +2822,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugins",
-              "start": 648192,
-              "end": 648200,
+              "start": 648200,
+              "end": 648208,
               "line": 147,
               "column": 9112,
               "access": "read",
@@ -2846,8 +2846,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 648219,
-              "end": 648224,
+              "start": 648227,
+              "end": 648232,
               "line": 147,
               "column": 9139,
               "access": "read",
@@ -2870,8 +2870,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 648236,
-              "end": 648241,
+              "start": 648244,
+              "end": 648249,
               "line": 147,
               "column": 9156,
               "access": "read",
@@ -2894,8 +2894,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon.isSubsCheckPro",
-              "start": 648250,
-              "end": 648270,
+              "start": 648258,
+              "end": 648278,
               "line": 147,
               "column": 9170,
               "access": "read",
@@ -2920,8 +2920,8 @@
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 649200,
-              "end": 649228,
+              "start": 649208,
+              "end": 649236,
               "line": 147,
               "column": 10120,
               "access": "call",
@@ -2944,8 +2944,8 @@
             "kind": "storage",
             "source": {
               "api": "$prefs.valueForKey",
-              "start": 649357,
-              "end": 649386,
+              "start": 649365,
+              "end": 649394,
               "line": 147,
               "column": 10277,
               "access": "call",
@@ -2970,8 +2970,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore.read",
-              "start": 649432,
-              "end": 649464,
+              "start": 649440,
+              "end": 649472,
               "line": 147,
               "column": 10352,
               "access": "call",
@@ -2996,8 +2996,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.SubStoreCache.get",
-              "start": 649500,
-              "end": 649537,
+              "start": 649508,
+              "end": 649545,
               "line": 147,
               "column": 10420,
               "access": "call",
@@ -3023,8 +3023,8 @@
             "kind": "storage",
             "source": {
               "api": "$prefs.setValueForKey",
-              "start": 650875,
-              "end": 650912,
+              "start": 650883,
+              "end": 650920,
               "line": 147,
               "column": 11795,
               "access": "call",
@@ -3049,8 +3049,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore.write",
-              "start": 650927,
-              "end": 650965,
+              "start": 650935,
+              "end": 650973,
               "line": 147,
               "column": 11847,
               "access": "call",
@@ -3075,8 +3075,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.SubStoreCache.set",
-              "start": 650970,
-              "end": 651012,
+              "start": 650978,
+              "end": 651020,
               "line": 147,
               "column": 11890,
               "access": "call",
@@ -3102,8 +3102,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore.write",
-              "start": 651380,
-              "end": 651407,
+              "start": 651388,
+              "end": 651415,
               "line": 147,
               "column": 12300,
               "access": "call",
@@ -3128,8 +3128,8 @@
             "kind": "storage",
             "source": {
               "api": "$prefs.setValueForKey",
-              "start": 651421,
-              "end": 651447,
+              "start": 651429,
+              "end": 651455,
               "line": 147,
               "column": 12341,
               "access": "call",
@@ -3154,8 +3154,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.SubStoreCache.set",
-              "start": 651482,
-              "end": 651513,
+              "start": 651490,
+              "end": 651521,
               "line": 147,
               "column": 12402,
               "access": "call",
@@ -3181,8 +3181,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore.read",
-              "start": 651644,
-              "end": 651668,
+              "start": 651652,
+              "end": 651676,
               "line": 147,
               "column": 12564,
               "access": "call",
@@ -3207,8 +3207,8 @@
             "kind": "storage",
             "source": {
               "api": "$prefs.valueForKey",
-              "start": 651682,
-              "end": 651703,
+              "start": 651690,
+              "end": 651711,
               "line": 147,
               "column": 12602,
               "access": "call",
@@ -3233,8 +3233,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.SubStoreCache.get",
-              "start": 651743,
-              "end": 651772,
+              "start": 651751,
+              "end": 651780,
               "line": 147,
               "column": 12663,
               "access": "call",
@@ -3260,8 +3260,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore.write",
-              "start": 651892,
-              "end": 651922,
+              "start": 651900,
+              "end": 651930,
               "line": 147,
               "column": 12812,
               "access": "call",
@@ -3286,8 +3286,8 @@
             "kind": "storage",
             "source": {
               "api": "$prefs.removeValueForKey",
-              "start": 651936,
-              "end": 651963,
+              "start": 651944,
+              "end": 651971,
               "line": 147,
               "column": 12856,
               "access": "call",
@@ -3312,8 +3312,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.SubStoreCache.remove",
-              "start": 652001,
-              "end": 652033,
+              "start": 652009,
+              "end": 652041,
               "line": 147,
               "column": 12921,
               "access": "call",
@@ -3339,8 +3339,8 @@
             "kind": "notification",
             "source": {
               "api": "$notify",
-              "start": 652197,
-              "end": 652236,
+              "start": 652205,
+              "end": 652244,
               "line": 147,
               "column": 13117,
               "access": "call",
@@ -3363,8 +3363,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$notification.post",
-              "start": 652247,
-              "end": 652352,
+              "start": 652255,
+              "end": 652360,
               "line": 147,
               "column": 13167,
               "access": "call",
@@ -3389,8 +3389,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$notification.post",
-              "start": 652452,
-              "end": 652494,
+              "start": 652460,
+              "end": 652502,
               "line": 148,
               "column": 150,
               "access": "call",
@@ -3415,8 +3415,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$notification.post",
-              "start": 652495,
-              "end": 652539,
+              "start": 652503,
+              "end": 652547,
               "line": 148,
               "column": 193,
               "access": "call",
@@ -3441,8 +3441,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.Notify",
-              "start": 653470,
-              "end": 653513,
+              "start": 653478,
+              "end": 653521,
               "line": 159,
               "column": 221,
               "access": "call",
@@ -3467,8 +3467,8 @@
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 653752,
-              "end": 653767,
+              "start": 653760,
+              "end": 653775,
               "line": 160,
               "column": 250,
               "access": "call",
@@ -3491,8 +3491,8 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 653799,
-              "end": 653807,
+              "start": 653807,
+              "end": 653815,
               "line": 160,
               "column": 297,
               "access": "call",
@@ -3515,8 +3515,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$context",
-              "start": 653819,
-              "end": 653827,
+              "start": 653827,
+              "end": 653835,
               "line": 160,
               "column": 317,
               "access": "read",
@@ -3539,8 +3539,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$context.headers",
-              "start": 653834,
-              "end": 653850,
+              "start": 653842,
+              "end": 653858,
               "line": 160,
               "column": 332,
               "access": "write",
@@ -3565,8 +3565,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$context.statusCode",
-              "start": 653861,
-              "end": 653880,
+              "start": 653869,
+              "end": 653888,
               "line": 160,
               "column": 359,
               "access": "write",
@@ -3591,8 +3591,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$context.body",
-              "start": 653894,
-              "end": 653907,
+              "start": 653902,
+              "end": 653915,
               "line": 160,
               "column": 392,
               "access": "write",
@@ -3617,8 +3617,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment.surge-build",
-              "start": 655398,
-              "end": 655425,
+              "start": 655406,
+              "end": 655433,
               "line": 160,
               "column": 1896,
               "access": "read",
@@ -3643,8 +3643,8 @@
             "kind": "http",
             "source": {
               "api": "$task.fetch",
-              "start": 655542,
-              "end": 655639,
+              "start": 655550,
+              "end": 655647,
               "line": 160,
               "column": 2040,
               "access": "call",
@@ -3669,8 +3669,8 @@
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 656568,
-              "end": 656585,
+              "start": 656576,
+              "end": 656593,
               "line": 160,
               "column": 3066,
               "access": "call",
@@ -3693,8 +3693,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient.<runtime-key>",
-              "start": 657789,
-              "end": 657949,
+              "start": 657797,
+              "end": 657957,
               "line": 160,
               "column": 4287,
               "access": "call",
@@ -3719,8 +3719,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugins.Requests",
-              "start": 658037,
-              "end": 658220,
+              "start": 658045,
+              "end": 658228,
               "line": 160,
               "column": 4535,
               "access": "call",
@@ -3745,8 +3745,8 @@
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 658627,
-              "end": 658770,
+              "start": 658635,
+              "end": 658778,
               "line": 160,
               "column": 5125,
               "access": "call",
@@ -3769,8 +3769,8 @@
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 662062,
-              "end": 662072,
+              "start": 662070,
+              "end": 662080,
               "line": 160,
               "column": 8560,
               "access": "call",
@@ -3793,8 +3793,8 @@
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 662121,
-              "end": 662131,
+              "start": 662129,
+              "end": 662139,
               "line": 160,
               "column": 8619,
               "access": "call",
@@ -3817,8 +3817,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$argument",
-              "start": 662298,
-              "end": 662307,
+              "start": 662306,
+              "end": 662315,
               "line": 160,
               "column": 8796,
               "access": "read",
@@ -3841,8 +3841,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$argument",
-              "start": 662319,
-              "end": 662328,
+              "start": 662327,
+              "end": 662336,
               "line": 160,
               "column": 8817,
               "access": "read",
@@ -3865,8 +3865,8 @@
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 663451,
-              "end": 663461,
+              "start": 663459,
+              "end": 663469,
               "line": 160,
               "column": 9949,
               "access": "call",
@@ -3889,8 +3889,8 @@
             "kind": "context",
             "source": {
               "api": "$request",
-              "start": 665496,
-              "end": 665504,
+              "start": 665504,
+              "end": 665512,
               "line": 161,
               "column": 1904,
               "access": "read",
@@ -3913,8 +3913,8 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 666063,
-              "end": 666071,
+              "start": 666071,
+              "end": 666079,
               "line": 161,
               "column": 2471,
               "access": "call",
@@ -3937,8 +3937,8 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 666083,
-              "end": 666102,
+              "start": 666091,
+              "end": 666110,
               "line": 161,
               "column": 2491,
               "access": "call",
@@ -3961,8 +3961,8 @@
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 675569,
-              "end": 675584,
+              "start": 675577,
+              "end": 675592,
               "line": 161,
               "column": 11977,
               "access": "call",
@@ -3985,8 +3985,8 @@
             "kind": "codec",
             "source": {
               "api": "atob",
-              "start": 722635,
-              "end": 722639,
+              "start": 722643,
+              "end": 722647,
               "line": 211,
               "column": 7384,
               "access": "read",
@@ -4009,8 +4009,8 @@
             "kind": "codec",
             "source": {
               "api": "atob",
-              "start": 722659,
-              "end": 722688,
+              "start": 722667,
+              "end": 722696,
               "line": 211,
               "column": 7408,
               "access": "call",
@@ -4033,8 +4033,8 @@
             "kind": "codec",
             "source": {
               "api": "btoa",
-              "start": 722961,
-              "end": 722965,
+              "start": 722969,
+              "end": 722973,
               "line": 211,
               "column": 7710,
               "access": "read",
@@ -4057,8 +4057,8 @@
             "kind": "codec",
             "source": {
               "api": "btoa",
-              "start": 723046,
-              "end": 723053,
+              "start": 723054,
+              "end": 723061,
               "line": 211,
               "column": 7795,
               "access": "call",
@@ -4081,8 +4081,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 796140,
-              "end": 796157,
+              "start": 796148,
+              "end": 796165,
               "line": 294,
               "column": 3405,
               "access": "call",
@@ -4105,8 +4105,8 @@
             "kind": "unmapped",
             "source": {
               "api": "globalThis",
-              "start": 796819,
-              "end": 796829,
+              "start": 796827,
+              "end": 796837,
               "line": 294,
               "column": 4084,
               "access": "read",
@@ -4129,8 +4129,8 @@
             "kind": "unmapped",
             "source": {
               "api": "globalThis.crypto",
-              "start": 796840,
-              "end": 796857,
+              "start": 796848,
+              "end": 796865,
               "line": 294,
               "column": 4105,
               "access": "read",
@@ -4155,8 +4155,8 @@
             "kind": "unmapped",
             "source": {
               "api": "globalThis",
-              "start": 830314,
-              "end": 830324,
+              "start": 830322,
+              "end": 830332,
               "line": 294,
               "column": 37579,
               "access": "read",
@@ -4179,8 +4179,8 @@
             "kind": "unmapped",
             "source": {
               "api": "globalThis.crypto",
-              "start": 830335,
-              "end": 830352,
+              "start": 830343,
+              "end": 830360,
               "line": 294,
               "column": 37600,
               "access": "read",
@@ -4205,8 +4205,8 @@
             "kind": "codec",
             "source": {
               "api": "TextDecoder",
-              "start": 924035,
-              "end": 924052,
+              "start": 924043,
+              "end": 924060,
               "line": 294,
               "column": 131300,
               "access": "call",
@@ -4229,8 +4229,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 926201,
-              "end": 926218,
+              "start": 926209,
+              "end": 926226,
               "line": 298,
               "column": 25,
               "access": "call",
@@ -4253,8 +4253,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 926272,
-              "end": 926289,
+              "start": 926280,
+              "end": 926297,
               "line": 298,
               "column": 96,
               "access": "call",
@@ -4277,8 +4277,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 927124,
-              "end": 927141,
+              "start": 927132,
+              "end": 927149,
               "line": 299,
               "column": 809,
               "access": "call",
@@ -4301,8 +4301,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 927815,
-              "end": 927832,
+              "start": 927823,
+              "end": 927840,
               "line": 299,
               "column": 1500,
               "access": "call",
@@ -4325,8 +4325,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 928338,
-              "end": 928355,
+              "start": 928346,
+              "end": 928363,
               "line": 299,
               "column": 2023,
               "access": "call",
@@ -4349,8 +4349,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 928518,
-              "end": 928535,
+              "start": 928526,
+              "end": 928543,
               "line": 299,
               "column": 2203,
               "access": "call",
@@ -4373,8 +4373,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 928591,
-              "end": 928608,
+              "start": 928599,
+              "end": 928616,
               "line": 299,
               "column": 2276,
               "access": "call",
@@ -4397,8 +4397,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 928779,
-              "end": 928796,
+              "start": 928787,
+              "end": 928804,
               "line": 299,
               "column": 2464,
               "access": "call",
@@ -4421,8 +4421,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 928852,
-              "end": 928869,
+              "start": 928860,
+              "end": 928877,
               "line": 299,
               "column": 2537,
               "access": "call",
@@ -4445,8 +4445,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 929210,
-              "end": 929227,
+              "start": 929218,
+              "end": 929235,
               "line": 299,
               "column": 2895,
               "access": "call",
@@ -4469,8 +4469,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 929651,
-              "end": 929668,
+              "start": 929659,
+              "end": 929676,
               "line": 299,
               "column": 3336,
               "access": "call",
@@ -4493,8 +4493,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 930249,
-              "end": 930266,
+              "start": 930257,
+              "end": 930274,
               "line": 299,
               "column": 3934,
               "access": "call",
@@ -4517,8 +4517,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 930955,
-              "end": 930972,
+              "start": 930963,
+              "end": 930980,
               "line": 299,
               "column": 4640,
               "access": "call",
@@ -4541,8 +4541,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 931738,
-              "end": 931755,
+              "start": 931746,
+              "end": 931763,
               "line": 299,
               "column": 5423,
               "access": "call",
@@ -4565,8 +4565,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 932032,
-              "end": 932049,
+              "start": 932040,
+              "end": 932057,
               "line": 299,
               "column": 5717,
               "access": "call",
@@ -4589,8 +4589,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 932754,
-              "end": 932771,
+              "start": 932762,
+              "end": 932779,
               "line": 299,
               "column": 6439,
               "access": "call",
@@ -4613,8 +4613,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 936161,
-              "end": 936178,
+              "start": 936169,
+              "end": 936186,
               "line": 305,
               "column": 1431,
               "access": "call",
@@ -4637,8 +4637,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 936257,
-              "end": 936274,
+              "start": 936265,
+              "end": 936282,
               "line": 305,
               "column": 1527,
               "access": "call",
@@ -4661,8 +4661,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 936452,
-              "end": 936469,
+              "start": 936460,
+              "end": 936477,
               "line": 305,
               "column": 1722,
               "access": "call",
@@ -4685,8 +4685,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 937064,
-              "end": 937081,
+              "start": 937072,
+              "end": 937089,
               "line": 305,
               "column": 2334,
               "access": "call",
@@ -4709,8 +4709,8 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 937511,
-              "end": 937528,
+              "start": 937519,
+              "end": 937536,
               "line": 305,
               "column": 2781,
               "access": "call",
@@ -4733,8 +4733,8 @@
             "kind": "unmapped",
             "source": {
               "api": "globalThis",
-              "start": 939111,
-              "end": 939121,
+              "start": 939119,
+              "end": 939129,
               "line": 305,
               "column": 4381,
               "access": "read",
@@ -4757,8 +4757,8 @@
             "kind": "unmapped",
             "source": {
               "api": "globalThis",
-              "start": 941032,
-              "end": 941042,
+              "start": 941040,
+              "end": 941050,
               "line": 305,
               "column": 6302,
               "access": "read",
@@ -4781,8 +4781,8 @@
             "kind": "codec",
             "source": {
               "api": "TextDecoder",
-              "start": 941729,
-              "end": 941746,
+              "start": 941737,
+              "end": 941754,
               "line": 305,
               "column": 6999,
               "access": "call",
@@ -4805,8 +4805,8 @@
             "kind": "codec",
             "source": {
               "api": "URL",
-              "start": 972478,
-              "end": 972488,
+              "start": 972486,
+              "end": 972496,
               "line": 305,
               "column": 37748,
               "access": "call",
@@ -4829,8 +4829,8 @@
             "kind": "environment",
             "source": {
               "api": "setTimeout",
-              "start": 973821,
-              "end": 973882,
+              "start": 973829,
+              "end": 973890,
               "line": 305,
               "column": 39091,
               "access": "call",
@@ -4853,8 +4853,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment",
-              "start": 977073,
-              "end": 977085,
+              "start": 977081,
+              "end": 977093,
               "line": 305,
               "column": 42343,
               "access": "read",
@@ -4877,8 +4877,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$environment",
-              "start": 977099,
-              "end": 977111,
+              "start": 977107,
+              "end": 977119,
               "line": 305,
               "column": 42369,
               "access": "read",
@@ -4901,8 +4901,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 977120,
-              "end": 977125,
+              "start": 977128,
+              "end": 977133,
               "line": 305,
               "column": 42390,
               "access": "read",
@@ -4925,8 +4925,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$loon",
-              "start": 977140,
-              "end": 977145,
+              "start": 977148,
+              "end": 977153,
               "line": 305,
               "column": 42410,
               "access": "read",
@@ -4949,8 +4949,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$script",
-              "start": 977154,
-              "end": 977161,
+              "start": 977162,
+              "end": 977169,
               "line": 305,
               "column": 42424,
               "access": "read",
@@ -4973,8 +4973,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$script",
-              "start": 977178,
-              "end": 977185,
+              "start": 977186,
+              "end": 977193,
               "line": 305,
               "column": 42448,
               "access": "read",
@@ -4997,8 +4997,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugin",
-              "start": 977194,
-              "end": 977201,
+              "start": 977202,
+              "end": 977209,
               "line": 305,
               "column": 42464,
               "access": "read",
@@ -5021,8 +5021,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$Plugin",
-              "start": 977218,
-              "end": 977225,
+              "start": 977226,
+              "end": 977233,
               "line": 305,
               "column": 42488,
               "access": "read",
@@ -5045,8 +5045,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$persistentStore",
-              "start": 998989,
-              "end": 999005,
+              "start": 999121,
+              "end": 999137,
               "line": 351,
               "column": 52,
               "access": "read",
@@ -5069,8 +5069,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$httpClient",
-              "start": 999006,
-              "end": 999017,
+              "start": 999138,
+              "end": 999149,
               "line": 351,
               "column": 69,
               "access": "read",
@@ -5093,8 +5093,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$notification",
-              "start": 999018,
-              "end": 999031,
+              "start": 999150,
+              "end": 999163,
               "line": 351,
               "column": 81,
               "access": "read",
@@ -5117,9 +5117,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1266631,
-              "end": 1266641,
-              "line": 1683,
+              "start": 1270436,
+              "end": 1270446,
+              "line": 1714,
               "column": 71,
               "access": "read",
               "memberPath": []
@@ -5141,9 +5141,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1268886,
-              "end": 1268896,
-              "line": 1687,
+              "start": 1272691,
+              "end": 1272701,
+              "line": 1718,
               "column": 144,
               "access": "read",
               "memberPath": []
@@ -5165,9 +5165,9 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 1294447,
-              "end": 1294458,
-              "line": 1718,
+              "start": 1298287,
+              "end": 1298298,
+              "line": 1749,
               "column": 1493,
               "access": "read",
               "memberPath": []
@@ -5189,9 +5189,9 @@
             "kind": "codec",
             "source": {
               "api": "TextEncoder",
-              "start": 1294463,
-              "end": 1294480,
-              "line": 1718,
+              "start": 1298303,
+              "end": 1298320,
+              "line": 1749,
               "column": 1509,
               "access": "call",
               "memberPath": []
@@ -5213,9 +5213,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$options",
-              "start": 1298999,
-              "end": 1299007,
-              "line": 1719,
+              "start": 1302839,
+              "end": 1302847,
+              "line": 1750,
               "column": 2505,
               "access": "read",
               "memberPath": []
@@ -5237,9 +5237,9 @@
             "kind": "unmapped",
             "source": {
               "api": "$options",
-              "start": 1315106,
-              "end": 1315114,
-              "line": 1724,
+              "start": 1318946,
+              "end": 1318954,
+              "line": 1755,
               "column": 953,
               "access": "read",
               "memberPath": []

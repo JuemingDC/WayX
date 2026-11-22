@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-21 09:24:26 UTC
+# Updated: 2026-11-22 01:29:14 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34160
+# Rules: 34162
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -14040,6 +14040,7 @@ host-suffix,fantasti.cc,ssid
 host-suffix,fantom.foundation,ssid
 host-suffix,fantom.network,ssid
 host-suffix,fantv.hk,ssid
+host-suffix,fanza.jp,ssid
 host-suffix,fap-xxx.com,ssid
 host-suffix,fap18.net,ssid
 host-suffix,fap666.com,ssid
@@ -29367,6 +29368,7 @@ host-suffix,torrentprivacy.com,ssid
 host-suffix,torrentproject.se,ssid
 host-suffix,torrenty.org,ssid
 host-suffix,torrindex.net,ssid
+host-suffix,tortoisegit.org,ssid
 host-suffix,tortoisesvn.net,ssid
 host-suffix,torvpn.com,ssid
 host-suffix,tospo-keiba.jp,ssid

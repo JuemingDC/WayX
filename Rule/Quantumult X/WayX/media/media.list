@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-11-21 09:24:26 UTC
+# Updated: 2026-11-22 01:29:14 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7268
+# Rules: 7269
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,ssid
@@ -5673,6 +5673,7 @@ host-suffix,relateiq.com,ssid
 host-suffix,remirepo.net,ssid
 host-suffix,renderingtoolkit.org,ssid
 host-suffix,renshu.com,ssid
+host-suffix,replit.com,ssid
 host-suffix,report-megafon.ru,ssid
 host-suffix,repotama.com,ssid
 host-suffix,researchintel.com,ssid
@@ -6167,7 +6168,6 @@ host-suffix,storageclassmemory.org,ssid
 host-suffix,streaks.jp,ssid
 host-suffix,strikingly.com,ssid
 host-suffix,strikinglycdn.com,ssid
-host-suffix,stripe.com,ssid
 host-suffix,strongboxsafe.com,ssid
 host-suffix,studiodell.com,ssid
 host-suffix,studiolico.com,ssid
@@ -6359,6 +6359,7 @@ host-suffix,toolmaking-cadcam.com,ssid
 host-suffix,topcoder.com,ssid
 host-suffix,topobase.com,ssid
 host-suffix,toritonssl.com,ssid
+host-suffix,tortoisegit.org,ssid
 host-suffix,touchsmartpc.com,ssid
 host-suffix,touchsmartpc.net,ssid
 host-suffix,touchsmartpc.org,ssid
