@@ -30,6 +30,29 @@ for (const binary of [false, true]) for (const source of [
   });
   if(binary) assert.deepEqual([...new Uint8Array(result.bodyBytes)],[0,255]);
   else assert.equal(result.body,'{"text":true}');
+
+  const input = new TextEncoder().encode('>{"中文":"🙂"}<');
+  const bodyBytes = new DataView(input.buffer,1,input.byteLength-2);
+  vm.runInNewContext(plan.code!,{
+    $response:{statusCode:200,headers:{"Content-Type":"application/json; charset=UTF-8"},bodyBytes},
+    $done:(value: any)=>{result=value;},
+  });
+  if(binary) assert.deepEqual([...new Uint8Array(result.bodyBytes)],[...input.subarray(1,-1)]);
+  else assert.equal(result.body,'{"中文":"🙂"}');
+
+  if(!binary) {
+    for (const headers of [
+      {"Content-Type":"application/octet-stream"},
+      {"Content-Type":"text/html; charset=gbk"},
+      {"Content-Encoding":"gzip"},
+    ]) {
+      vm.runInNewContext(plan.code!,{
+        $response:{statusCode:200,headers,bodyBytes},
+        $done:(value: any)=>{result=value;},
+      });
+      assert.deepEqual([...new Uint8Array(result.bodyBytes)],[...input.subarray(1,-1)]);
+    }
+  }
 }
 const directions = [
   ["loon", "qx"],

@@ -3,6 +3,7 @@
 import ts from "typescript";
 // Modified: 2026-11-18 (chance). Body-only bridges share the HTTP error policy.
 import { scriptErrorBoundary } from "./script-error-boundary.ts";
+import { decodeQxTextBody, scriptCodecs } from "./script-codecs.ts";
 import { collectScriptApiReferences } from "../parser/script-api-ir.ts";
 
 export function scriptApiUsage(tree: ts.SourceFile) {
@@ -445,6 +446,10 @@ export function emitBodyScript(
   )
     return null;
   if (new Set(configs.map(c => Boolean(c.binary))).size > 1) return null;
+  const textPhases = to === "qx" ? configs
+    .filter(c => c.binary === false && c.binaryKnown !== false &&
+      usage.refs.some(ref => ref.api === (c.phase === "request" ? "$request.body" : "$response.body")))
+    .map(c => c.phase) : [];
   if (
     [...usage.roots].some(
       (root) => !["$request", "$response", "$done"].includes(root),
@@ -483,7 +488,8 @@ export function emitBodyScript(
     completed = fresh("__wayxCompleted"),
     bytes = fresh("__wayxBytes"),
     isBinary = fresh("__wayxBinary"),
-    view = fresh("__wayxView");
+    view = fresh("__wayxView"),
+    decodeText = fresh("__wayxDecodeText");
   const phases = [
     ...new Set(
       configs.map((c) => (c.phase === "response" ? "response" : "request")),
@@ -496,8 +502,9 @@ const ${nativeDone}=$done;
 let ${completed}=false;
 const ${isBinary}=value=>{if(ArrayBuffer.isView(value))return true;try{Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get.call(value);return true;}catch{return false;}};
 const ${bytes}=value=>{let length;try{length=Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get.call(value);}catch{}if(length!==undefined)return new Uint8Array(value,0,length);if(ArrayBuffer.isView(value)){const proto=Object.getPrototypeOf(Uint8Array.prototype),typed=Object.getOwnPropertyDescriptor(proto,Symbol.toStringTag).get.call(value)!==undefined,get=name=>Object.getOwnPropertyDescriptor(typed?proto:DataView.prototype,name).get.call(value);return new Uint8Array(get('buffer'),get('byteOffset'),get('byteLength'));}throw new TypeError('WayX API: binary body requires BufferSource');};
-const ${view}=value=>{if(value===undefined)return undefined;const result=Object.assign({},value);if(${configs[0].binary ? "true" : "typeof value.body!=='string'"}){const data=${isBinary}(value.${to === "qx" ? "bodyBytes" : "body"})?value.${to === "qx" ? "bodyBytes" : "body"}:value.${to === "qx" ? "body" : "bodyBytes"};if(${isBinary}(data))result.body=${bytes}(data);}delete result.bodyBytes;return result;};
-return (${scriptErrorBoundary})(${nativeDone},${guardDone}=>(function($request,$response,$done){return (function(){\n${source}\n}).call(this);}).call(globalThis,${usage.roots.has("$request") ? `${view}(typeof $request==='undefined'?undefined:$request)` : "undefined"},${usage.roots.has("$response") ? `${view}(typeof $response==='undefined'?undefined:$response)` : "undefined"},value=>{
+${textPhases.length ? `const ${decodeText}=(value,body)=>(${decodeQxTextBody})(value,body,(${scriptCodecs})(undefined,{TextDecoder:globalThis.TextDecoder}).TextDecoder);` : ""}
+const ${view}=(value,phase)=>{if(value===undefined)return undefined;const result=Object.assign({},value);if(${configs[0].binary ? "true" : "typeof value.body!=='string'"}){const data=${isBinary}(value.${to === "qx" ? "bodyBytes" : "body"})?value.${to === "qx" ? "bodyBytes" : "body"}:value.${to === "qx" ? "body" : "bodyBytes"};if(${isBinary}(data)){const body=${bytes}(data);result.body=${textPhases.length ? `(typeof $response==='undefined'?'request':'response')===phase&&${JSON.stringify(textPhases)}.includes(phase)?${decodeText}(value,body):body` : "body"};}}delete result.bodyBytes;return result;};
+return (${scriptErrorBoundary})(${nativeDone},${guardDone}=>(function($request,$response,$done){return (function(){\n${source}\n}).call(this);}).call(globalThis,${usage.roots.has("$request") ? `${view}(typeof $request==='undefined'?undefined:$request,'request')` : "undefined"},${usage.roots.has("$response") ? `${view}(typeof $response==='undefined'?undefined:$response,'response')` : "undefined"},value=>{
 if(${completed})return;
 const result=value==null?{}:Object.assign({},value);
 if(${isBinary}(result.body)){const data=${bytes}(result.body);${to === "qx" ? "result.bodyBytes=data.buffer.slice(data.byteOffset,data.byteOffset+data.byteLength);delete result.body;" : "result.body=data;"}}

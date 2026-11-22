@@ -94,6 +94,9 @@ export function planUniversalAdblockScript(
     const profile = {
       ...candidates[0],
       binary: candidates.every((p) => p.binary === true && p.binaryKnown !== false),
+      binaryKnown: candidates.every((p) =>
+        p.binaryKnown !== false && typeof p.binary === "boolean" &&
+        p.binary === candidates[0].binary),
       name: names.length === 1 ? names[0] : undefined,
       argumentSchema:
         schemas.length === 1 ? candidates[0].argumentSchema : undefined,

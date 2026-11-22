@@ -6,6 +6,7 @@
 import { scriptCompression } from "./script-compression.ts";
 import { scriptCrypto } from "./script-crypto.ts";
 import { scriptHubHeaders } from "../vendor/script-hub/headers.ts";
+import { decodeQxTextBody } from "./script-codecs.ts";
 export const scriptApiRuntime = String.raw`function(config,host,run){
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
   const fail=message=>{throw new TypeError('WayX API: '+message);};
@@ -60,7 +61,12 @@ export const scriptApiRuntime = String.raw`function(config,host,run){
     if(source.binaryField==='bodyBytes'){
       if(data!==undefined){result.bodyBytes=buffer(data);if(typeof result.body!=='string')delete result.body;}
     }else{
-      if(data!==undefined&&(config.binary||typeof result.body!=='string'))result.body=bytes(data);
+      if(data!==undefined&&(config.binary||typeof result.body!=='string')){
+        const body=bytes(data);
+        result.body=config.from==='loon'&&config.to==='qx'&&config.binary===false&&config.binaryKnown!==false&&config.phase===(requestRole?'request':'response')
+          ? (${decodeQxTextBody})(value,body,host.codecs.TextDecoder)
+          : body;
+      }
       delete result.bodyBytes;
     }
     return result;

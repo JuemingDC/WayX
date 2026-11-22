@@ -18,6 +18,7 @@ export type ApiOptions = {
   phase: "request" | "response" | "echo" | "task" | "network" | "generic";
   name?: string;
   binary?: boolean;
+  binaryKnown?: boolean;
   responseBody?: boolean;
   argumentSchema?: ArgumentSchema;
   sourceUrl?: string;

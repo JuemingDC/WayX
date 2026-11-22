@@ -2,6 +2,18 @@
 // implementations need no Buffer, WebView, WASM, native codecs or global mutation.
 // Modified: 2026-11-02 (chance). Native decoding is preferred; pinned Exodus
 // handles legacy labels lazily through this branded standard facade.
+// Only promote byte-only bodies that can safely be written back as UTF-8 text.
+export const decodeQxTextBody = String.raw`function(value,data,decoder){
+  const headers=value.headers||{};
+  const header=name=>headers[Object.keys(headers).find(key=>key.toLowerCase()===name)];
+  const type=String(header('content-type')||'');
+  const charset=/;\s*charset\s*=\s*["']?([^;"'\s]+)/i.exec(type)?.[1];
+  if(charset&&!/^utf-?8$/i.test(charset))return data;
+  if(type&&!/^(?:text\/|application\/(?:[\w.+-]+\+)?(?:json|xml)(?:\s*;|\s*$))/i.test(type.trim()))return data;
+  const encoding=header('content-encoding');
+  if(encoding&&!/^identity$/i.test(String(encoding).trim()))return data;
+  return new decoder('utf-8',{fatal:true}).decode(data);
+}`;
 export const scriptCodecs=String.raw`function(legacy,native={}){
   let legacyProvider;
   const text=value=>{if(typeof value==='symbol')throw new TypeError('Cannot convert a Symbol to a string');return String(value);};

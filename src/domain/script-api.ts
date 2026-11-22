@@ -12,7 +12,7 @@ export type ScriptClient = "qx" | "loon" | "surge";
 // Modified: 2026-11-16 (chance). New Surge HTTP client callback trailers map independently of intercept declarations.
 // Modified: 2026-11-17 (chance). QX fragments carry source arguments without inventing a native $argument API.
 // Modified: 2026-11-18 (chance). Regenerate converted HTTP programs with the shared error boundary.
-export const scriptRuntimePolicyVersion = 15;
+export const scriptRuntimePolicyVersion = 16;
 // Modified: 2026-11-02 (chance). User excludes resolver and IP-database APIs
 // from adblock conversion, inventories and remaining-work priorities.
 export const excludedAdblockScriptApis = Object.freeze([
