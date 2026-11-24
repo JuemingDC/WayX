@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-23 01:53:21 UTC
+# Updated: 2026-11-24 05:24:55 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34161
+# Rules: 34162
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -15548,6 +15548,7 @@ host-suffix,gelbooru.me,ssid
 host-suffix,gemfire.net,ssid
 host-suffix,gemfury.com,ssid
 host-suffix,gemini.com,ssid
+host-suffix,gemma.ai,ssid
 host-suffix,genbank.ru,ssid
 host-suffix,gencraft.com,ssid
 host-suffix,gendai.net,ssid

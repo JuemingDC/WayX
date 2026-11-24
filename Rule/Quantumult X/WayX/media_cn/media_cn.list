@@ -1,11 +1,11 @@
 # Name: media_cn
-# Updated: 2026-11-23 01:53:21 UTC
+# Updated: 2026-11-24 05:24:55 UTC
 # Converted by: chance
 # Source Authors: MetaCubeX, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-ai-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-collaborate-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-documents-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-cn.json
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 1520
+# Rules: 1524
 # Managed by: WayX Rule Aggregator
 
 host,gitlab-assets.oss-cn-hongkong.aliyuncs.com,direct
@@ -121,6 +121,7 @@ host-suffix,baltamatica.org.cn,direct
 host-suffix,bestv.com.cn,direct
 host-suffix,bestvcdn.com.cn,direct
 host-suffix,biz.weibo.com,direct
+host-suffix,chunithm.wahlap.com,direct
 host-suffix,click.gamersky.com,direct
 host-suffix,click.hunantv.com,direct
 host-suffix,cloud.189.cn,direct
@@ -159,6 +160,7 @@ host-suffix,log.hunantv.com,direct
 host-suffix,log.sina.cn,direct
 host-suffix,log2.sina.cn,direct
 host-suffix,lstat.youku.com,direct
+host-suffix,maimai.wahlap.com,direct
 host-suffix,marscode.com.cn,direct
 host-suffix,mbdlog.iqiyi.com,direct
 host-suffix,mixer.sina.cn,direct
@@ -189,6 +191,7 @@ host-suffix,sina.com.cn,direct
 host-suffix,slog.sina.cn,direct
 host-suffix,splash-ads.unitychina.cn,direct
 host-suffix,stat.youku.com,direct
+host-suffix,tgk-wcaime.wahlap.com,direct
 host-suffix,tieba.baidu.com,direct
 host-suffix,tongyi.aliyun.com,direct
 host-suffix,trae.com.cn,direct
@@ -1364,6 +1367,7 @@ host-suffix,vrzwk.net,direct
 host-suffix,vrzwk.top,direct
 host-suffix,vsread.com,direct
 host-suffix,vzuu.com,direct
+host-suffix,wahlap.net,direct
 host-suffix,wanmei.com,direct
 host-suffix,wanwan4399.com,direct
 host-suffix,wasu.cn,direct

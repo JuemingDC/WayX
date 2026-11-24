@@ -20,7 +20,7 @@
 # Upstream author = 树先生
 
 [Map Local]
-^https?:\/\/m9\.360buyimg\.com\/mobilecms\/s1125x2436_jfs\/t1\/.+\.jpg\.webp$ data-type=text data="" status-code=200
+^https?:\/\/m9\.360buyimg\.com\/mobilecms\/s1125x2436_jfs\/t1\/.+\.jpg(?:\.webp)?$ data-type=text data="" status-code=200
 ^https?:\/\/m\.360buyimg\.com\/mobilecms\/s1125x2436_jfs data-type=text data="" status-code=200
 ^https?:\/\/m\.360buyimg\.com\/mobilecms\/jfs\/t1\/\d+\/\d+\/\d+\/\d+\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+\.jpg$ data-type=text data="" status-code=200
 
