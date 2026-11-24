@@ -6,7 +6,7 @@ import {archiveOpaque,identifyResource,opaqueEntries,clearOpaque} from '../src/i
 import {buildCatalog,extractLpxUrl,buildRucu6Catalog} from '../src/ingest/catalog.ts';
 import {monitorSource,normalizeDocument,selected} from '../src/application/monitor.ts';
 import {commitFiles,safePath} from '../src/publish/transaction.ts';
-import {executeChecks,publicationGate,publish} from '../src/application/automation.ts';
+import {executeChecks,publicationGate,publish,summary} from '../src/application/automation.ts';
 import {validateQX,validateSurgeModule,convertPlugin} from '../src/index.ts';
 const root=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-platform-')),cwd=process.cwd();
 try{
@@ -59,8 +59,11 @@ try{
  const src={id:'http',kind:'http',url:'https://example.test/spec',save_as:'spec.txt'},settings={mirror_root:'mirror'};let sent:any;
  const response=async(_url:string,options:any)=>{sent=options;return {status:200,bytes:Buffer.from('original\r\n'),headers:new Headers({etag:'v1'}),finalUrl:src.url};};
  const first=await monitorSource(root,src,{},settings,response);await commitFiles(root,first.changes);assert.equal(first.changed,false);
- const unchanged=await monitorSource(root,src,first.state,settings,async(_url,opts)=>{sent=opts;return {...await response(_url,opts),status:304};});assert.equal(unchanged.stateChanged,false);assert.equal(sent.headers['If-None-Match'],'v1');
- await fs.writeFile(path.join(root,'mirror/spec.txt'),'corrupt');await monitorSource(root,src,first.state,settings,response);assert.equal(sent.headers['If-None-Match'],undefined);await assert.rejects(monitorSource(root,src,first.state,settings,async()=>({...await response('',{}),status:304})),/304/);
+ const unchanged=await monitorSource(root,src,first.state,settings,async(url,opts)=>({...await response(url,opts),headers:new Headers({etag:'v2','last-modified':'Mon, 23 Nov 2026 13:00:00 GMT'})}));
+ assert.equal(unchanged.stateChanged,false);assert.equal(unchanged.changes.size,0);assert.deepEqual(unchanged.state,first.state);assert.equal(sent.headers['If-None-Match'],undefined);assert.equal('etag' in first.state,false);
+ const changed=await monitorSource(root,src,first.state,settings,async(url,opts)=>({...await response(url,opts),bytes:Buffer.from('revised')}));
+ assert.equal(changed.changed,true);assert.equal(changed.stateChanged,true);assert.equal(changed.changes.get('mirror/spec.txt')?.toString(),'revised');
+ await fs.writeFile(path.join(root,'mirror/spec.txt'),'corrupt');const repaired=await monitorSource(root,src,first.state,settings,response);assert.equal(repaired.changed,false);assert.equal(repaired.changes.get('mirror/spec.txt')?.toString(),'original\r\n');await assert.rejects(monitorSource(root,src,first.state,settings,async()=>({...await response('',{}),status:304})),/304/);
  assert.equal(normalizeDocument(Buffer.from('<p>A &amp; B</p><script>ignored</script><p>C</p>'),'html_text').toString(),'A & B\nC\n');assert.equal(selected('a/b.js',['*.js']),true);assert.equal(selected('b.js',['[a-c].js']),true);assert.equal(selected('d.js',['[!a-c].js']),true);assert.equal(selected('b.js',['[!a-c].js']),false);
  process.chdir(root);const errorLog=console.error;console.error=()=>{};await assert.rejects(executeChecks('fixture',[['fail',[process.execPath,'-e','process.exit(2)']],['next',[process.execPath,'-e','console.log("done")']]]));
  const evidence=JSON.parse(await fs.readFile('.github/monitor/.runtime/validation-results.json','utf8'));assert.deepEqual(evidence.stages.fixture.checks.map((c:any)=>c.status),['failed','passed']);
@@ -71,13 +74,23 @@ try{
  const publicationRoot=path.join(root,'publication'),remoteRoot=path.join(root,'remote.git');
  await fs.mkdir(publicationRoot);const git=(...args:string[])=>execFileSync('git',args,{cwd:publicationRoot,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
  git('init','--bare',remoteRoot);git('init','-b','main');git('config','user.name','Fixture');git('config','user.email','fixture@example.test');git('remote','add','origin',remoteRoot);
- for(const file of ['Module/QuantumultX/fixture.snippet','Module/Surge/fixture.sgmodule','.github/sources/fixture.json']){await fs.mkdir(path.dirname(path.join(publicationRoot,file)),{recursive:true});await fs.writeFile(path.join(publicationRoot,file),'old');}
+ for(const file of ['Module/QuantumultX/fixture.snippet','Module/Surge/fixture.sgmodule','Module/QuantumultX/fixture.js','Resource/Backup/fixture-backup.js','Script/fixture-internal.js','.github/sources/fixture.json']){await fs.mkdir(path.dirname(path.join(publicationRoot,file)),{recursive:true});await fs.writeFile(path.join(publicationRoot,file),'old');}
+ await fs.writeFile(path.join(publicationRoot,'README.md'),'# WayX\n\n## Module\nOld module\n\n## Adblock\nSame entries\n');
  git('add','.');git('commit','-m','baseline');git('push','origin','main');
  const expected=git('rev-parse','HEAD');
- for(const file of ['Module/QuantumultX/fixture.snippet','Module/Surge/fixture.sgmodule','.github/sources/fixture.json'])await fs.writeFile(path.join(publicationRoot,file),'new');
- const envKeys=['PUBLISHABLE','PUBLISH_BRANCH','EXPECTED_HEAD','MONITOR_ENABLED'],saved=Object.fromEntries(envKeys.map(key=>[key,process.env[key]]));
+ for(const file of ['Module/QuantumultX/fixture.snippet','Module/Surge/fixture.sgmodule','Module/QuantumultX/fixture.js','Resource/Backup/fixture-backup.js','Script/fixture-internal.js','.github/sources/fixture.json'])await fs.writeFile(path.join(publicationRoot,file),'new');
+ await fs.writeFile(path.join(publicationRoot,'README.md'),'# WayX\n\n## Module\nNew module\n\n## Adblock\nSame entries\n');
+ const envKeys=['PUBLISHABLE','PUBLISH_BRANCH','EXPECTED_HEAD','MONITOR_ENABLED','GITHUB_STEP_SUMMARY','PUBLICATION'],saved=Object.fromEntries(envKeys.map(key=>[key,process.env[key]]));
  process.chdir(publicationRoot);Object.assign(process.env,{PUBLISHABLE:'true',PUBLISH_BRANCH:'main',EXPECTED_HEAD:expected,MONITOR_ENABLED:'false'});
- try{await publish();assert.equal(git('status','--porcelain'),'');assert.equal(git('show','HEAD:Module/QuantumultX/fixture.snippet'),'new');assert.equal(git('show','HEAD:Module/Surge/fixture.sgmodule'),'new');assert.equal(git('ls-remote','origin','refs/heads/main').split(/\s+/)[0],git('rev-parse','HEAD'));}
+ try{await publish();assert.equal(git('status','--porcelain'),'');assert.equal(git('show','HEAD:Module/QuantumultX/fixture.snippet'),'new');assert.equal(git('show','HEAD:Module/Surge/fixture.sgmodule'),'new');assert.equal(git('ls-remote','origin','refs/heads/main').split(/\s+/)[0],git('rev-parse','HEAD'));
+  const summaryFile=path.join(root,'summary.md');Object.assign(process.env,{GITHUB_STEP_SUMMARY:summaryFile,PUBLICATION:'pushed'});
+  await summary();const report=await fs.readFile(summaryFile,'utf8');
+  assert.match(report,/## README changes\n\n- Module\n/);assert.match(report,/Module\/QuantumultX\/fixture\.js/);assert.doesNotMatch(report,/Adblock|fixture\.json|fixture-backup|fixture-internal/);
+  await fs.writeFile(path.join(publicationRoot,'Module/QuantumultX/new.js'),'new');
+  Object.assign(process.env,{EXPECTED_HEAD:git('rev-parse','HEAD'),PUBLICATION:'read-only'});
+  await fs.writeFile(summaryFile,'');await summary();const candidate=await fs.readFile(summaryFile,'utf8');
+  assert.match(candidate,/No catalog sections changed/);assert.match(candidate,/Module\/QuantumultX\/new\.js/);
+ }
  finally{for(const key of envKeys)if(saved[key]===undefined)delete process.env[key];else process.env[key]=saved[key];process.chdir(root);}
  console.error=errorLog;console.log(`Platform contracts passed: ${cases.length} pre-migration rule baselines, archive bytes, stable catalog identities, metadata, rollback, monitor and gates`);
 }finally{process.chdir(cwd);await fs.rm(root,{recursive:true,force:true});}

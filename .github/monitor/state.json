@@ -1,23 +1,16 @@
 {
   "sources": {
     "kelee-plugin-directory": {
-      "checked_at": "2026-10-19T21:44:52.008026+00:00",
-      "etag": null,
       "kind": "http",
-      "last_modified": null,
       "sha256": "a0906f7b643cfa3fb46bb8cf8f475d741529c2da9f8b3205954ea94580fec185",
       "url": "https://hub.kelee.one/list.json"
     },
     "loon-rewrite-v2": {
       "kind": "http",
       "url": "https://nsloon.app/docs/Rewrite/rewrite_v2/",
-      "sha256": "13a4b4e591115ec4135793ece71b7fff5b299845f41277868a8ffcce1e579fb0",
-      "etag": "\"6b043bc1-20720\"",
-      "last_modified": "Mon, 23 Nov 2026 13:12:33 GMT",
-      "checked_at": "2026-11-24T05:32:33.912Z"
+      "sha256": "13a4b4e591115ec4135793ece71b7fff5b299845f41277868a8ffcce1e579fb0"
     },
     "quantumultx-official": {
-      "checked_at": "2026-10-01T21:30:42.191479+00:00",
       "kind": "github_repo",
       "ref": "master",
       "remote_sha": "af6fb594233ec4a3ec6d4ccb3601e9c36b75ea2d",
@@ -27,40 +20,27 @@
       "kind": "github_repo",
       "repo": "KOP-XIAO/QuantumultX",
       "ref": "master",
-      "remote_sha": "449d1075cc991c7ddeae9974f64627ffd6edfc2b",
-      "checked_at": "2026-11-24T05:32:34.477Z"
+      "remote_sha": "449d1075cc991c7ddeae9974f64627ffd6edfc2b"
     },
     "surge-official-llms": {
       "kind": "http",
       "url": "https://nssurge.com/llms.txt",
-      "sha256": "50eb239a4861608ec6883874707698d3ab206b1a0202b6aca0997574f6f23f49",
-      "etag": "\"6b045720-c52\"",
-      "last_modified": "Mon, 23 Nov 2026 15:09:20 GMT",
-      "checked_at": "2026-11-24T05:32:33.808Z"
+      "sha256": "50eb239a4861608ec6883874707698d3ab206b1a0202b6aca0997574f6f23f49"
     },
     "icons-lige47": {
       "kind": "http",
       "url": "https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/ligeicon.json",
-      "sha256": "a95c8bdcec8b453a39989dd30360d25795e923bbf201157b5524e944bdcfa205",
-      "etag": null,
-      "last_modified": null,
-      "checked_at": "2026-11-24T05:32:35.405Z"
+      "sha256": "a95c8bdcec8b453a39989dd30360d25795e923bbf201157b5524e944bdcfa205"
     },
     "icons-fmz200": {
       "kind": "http",
       "url": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/icons-all.json",
-      "sha256": "f0d3ed93ba799fd47950417b212d1012f6a8bf9af0bce3964093404d349ec798",
-      "etag": null,
-      "last_modified": null,
-      "checked_at": "2026-10-30T07:49:04.258Z"
+      "sha256": "f0d3ed93ba799fd47950417b212d1012f6a8bf9af0bce3964093404d349ec798"
     },
     "icons-qure-color": {
       "kind": "http",
       "url": "https://raw.githubusercontent.com/Koolson/Qure/master/Other/QureColor.json",
-      "sha256": "917353be615d571db5f1c429d2f47e855e67744d1ac40dd090d18fb7d261e756",
-      "etag": null,
-      "last_modified": null,
-      "checked_at": "2026-10-30T07:49:04.260Z"
+      "sha256": "917353be615d571db5f1c429d2f47e855e67744d1ac40dd090d18fb7d261e756"
     }
   },
   "version": 1

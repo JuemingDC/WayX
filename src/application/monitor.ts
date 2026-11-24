@@ -120,18 +120,13 @@ export async function monitorSource(
           "/" +
           (src.save_as ?? src.id),
       ),
-    ),
-    stamp = new Date().toISOString();
+    );
   if (src.kind === "http") {
     const file = safePath(root, base),
       mirror = await readOptional(file),
       cached = previous.url === src.url && previous.sha256,
-      valid = Boolean(mirror && cached && sha(mirror) === previous.sha256),
-      headers: Record<string, string> = { "Accept-Encoding": "identity" };
-    if (valid && previous.etag) headers["If-None-Match"] = previous.etag;
-    if (valid && previous.last_modified)
-      headers["If-Modified-Since"] = previous.last_modified;
-    let raw: Buffer, responseHeaders: Headers;
+      valid = Boolean(mirror && cached && sha(mirror) === previous.sha256);
+    let raw: Buffer;
     if (src.cached_feed) {
       const feed = await readJson<any>(safePath(root, src.cached_feed), {});
       if (
@@ -143,28 +138,15 @@ export async function monitorSource(
           "Current discovery feed unavailable or URL does not match: " + src.id,
         );
       raw = Buffer.from(feed.text);
-      responseHeaders = new Headers();
     } else {
       const result = await request(src.url, {
-        headers,
+        headers: { "Accept-Encoding": "identity" },
         timeoutMs,
         maxBytes: 128 * 1024 * 1024,
-        allowStatuses: [304],
       });
-      if (result.status === 304) {
-        if (!valid) throw Error("HTTP 304 without a valid cached mirror");
-        return {
-          changed: false,
-          stateChanged: false,
-          message: "304 Not Modified",
-          state: previous,
-          changes,
-        };
-      }
       if (result.status !== 200)
         throw Error("HTTP " + result.status + ": " + src.url);
       raw = result.bytes;
-      responseHeaders = result.headers;
     }
     const data = normalizeDocument(raw, src.normalize ?? "raw"),
       digest = sha(data),
@@ -173,16 +155,9 @@ export async function monitorSource(
         kind: "http",
         url: src.url,
         sha256: digest,
-        etag: responseHeaders.get("etag"),
-        last_modified: responseHeaders.get("last-modified"),
-        checked_at: stamp,
       },
       changed = old !== null && old !== digest,
-      stateChanged =
-        old !== digest ||
-        !valid ||
-        previous.etag !== newState.etag ||
-        previous.last_modified !== newState.last_modified;
+      stateChanged = old !== digest || !valid;
     if (!valid || old !== digest) changes.set(base, data);
     return {
       changed,
@@ -227,7 +202,6 @@ export async function monitorSource(
       repo: src.repo,
       ref,
       remote_sha: head,
-      checked_at: stamp,
     };
   if (!old)
     return {

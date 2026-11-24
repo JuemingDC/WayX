@@ -538,7 +538,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-10-30 | `catalog`, `rules`, `sync` | Discover → acquire/aggregate/convert once per run |
 | 2026-10-30 | `verify` | One final type/script/actual-output/ICU audit; no canonical regeneration |
 | 2026-10-30 | `monitor`, `reports`, `issues` | Official changes → evidence reconciliation → category Issues; read-only outside publication context |
-| 2026-10-30 | `gate`, `publish`, `summary` | Require machine evidence → checked transactional publication → counts/exceptions |
+| 2026-10-30 | `gate`, `publish`, `summary` | Require machine evidence → checked transactional publication → changed README sections, JS changes under the catalog directories, and failed gates |
 | 2026-10-30 | `regenerate` | Explicit developer canonical comparison only; never routine daily synchronization |
 | 2026-10-30 | `icons` | Metadata-only refresh of registered targets; no plugin/routing regeneration |
 
@@ -557,7 +557,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-10-25 | Removed managed inputs | Remove owned stale source/targets/helpers after valid catalog; protect reused paths/manual resources; failed discovery never authorizes deletion |
 | 2026-10-25 | Reports | Distinguish converted, updated, unchanged, retained, deferred; verified = actual generated output format passed, not device certification |
 | 2026-10-25 | Reconciliation | Reuse run records and final file hashes; no extra canonical reconstruction |
-| 2026-10-25 | Monitor | Official document/repository changes only; reuse discovery bytes; mirrors + state atomic; conditional requests require intact mirror |
+| 2026-11-24 | Monitor | Official document/repository changes only; reuse discovery bytes; compare normalized HTTP content hashes; store mirror and baseline atomically without HTTP validators or check timestamps |
 | 2026-10-25 | Incomplete comparisons | Download failure, truncated GitHub diff or non-forward history retains baseline + failure; no guessed capability expansion |
 | 2026-10-25 | Read-only PR | No Issues/mirror/state mutation; save candidates/artifacts only |
 | 2026-10-25 | Artifacts | Logs, snapshots, generated outputs, reports and candidates; 14-day retention; runtime logs not committed |

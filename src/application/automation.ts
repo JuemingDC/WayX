@@ -304,7 +304,7 @@ export async function publish() {
       "user.email",
       "41898282+github-actions[bot]@users.noreply.github.com",
     ]);
-    run(["git", "commit", "-m", "chore: sync upstream and regenerate targets"]);
+    run(["git", "commit", "--quiet", "-m", "chore: sync upstream and regenerate targets"]);
     run(["git", "push", "origin", "HEAD:" + branch]);
     await setOutput("publication", "pushed");
   } else throw Error("Cannot inspect staged Git diff");
@@ -323,58 +323,60 @@ export async function publish() {
   )
     throw Error("Managed working tree is not clean after publication");
 }
+function readmeSections(text: string) {
+  const headings = [...text.matchAll(/^##[ \t]+(.+?)\s*$/gm)];
+  return new Map(headings.map((heading, index) => [
+    heading[1],
+    text.slice(heading.index, headings[index + 1]?.index).trim(),
+  ]));
+}
 export async function summary() {
   const result = await readReport("pipeline-result.json", {
     publishable: false,
   });
   result.publication = process.env.PUBLICATION || "blocked";
   await writeReport("pipeline-result.json", result);
-  const sync = await readReport("sync-failures.json", {}),
-    monitor = await readReport("monitor-result.json", {}),
-    discovery = await readReport("catalog-discovery.json", {}),
-    rules = await readReport("rules-result.json", {}),
-    validation = await readReport("validation-results.json", { stages: {} });
   const lines = [
     "# WayX Actions result",
     "",
     `Publication: ${result.publication}`,
-    "",
   ];
-  for (const key of [
-    "validatedPlugins",
-    "convertedPlugins",
-    "updatedPlugins",
-    "unchangedPlugins",
-    "retainedPlugins",
-    "deferredPlugins",
-    "opaquePlugins",
-  ])
-    lines.push(`- ${key}: ${sync[key]?.length ?? 0}`);
-  lines.push(
-    `- Aggregated rule sets: ${Object.keys(rules.counts ?? {}).length}`,
-    `- Intentionally ignored rules: ${rules.filtered?.length ?? 0}`,
-    `- Quarantined source rules: ${rules.quarantined?.length ?? 0}`,
-    `- Monitor failures: ${monitor.failures?.length ?? 0}`,
-  );
-  for (const key of ["added", "updated", "removed"])
-    lines.push(`- Discovery ${key}: ${discovery[key]?.length ?? 0}`);
-  let passed = 0;
-  const failed: string[] = [];
-  for (const [name, stage] of Object.entries(validation.stages) as [
-    string,
-    any,
-  ][])
-    for (const check of stage.checks ?? [])
-      if (check.status === "passed") passed++;
-      else failed.push(`${name}/${check.id}: ${check.log}`);
-  lines.push(
-    "",
-    `- Automated checks passed: ${passed}`,
-    `- Checks requiring review: ${failed.length}`,
-    ...failed,
-    "",
-    "Failed gates: " + (result.failedGates ?? []).join(", "),
-  );
+  const baseline = process.env.EXPECTED_HEAD;
+  if (baseline) {
+    const previous = readmeSections(run(["git", "show", `${baseline}:README.md`], true));
+    const current = readmeSections(await fs.readFile("README.md", "utf8"));
+    const changed = ["BoxJs", "Module", "Adblock", "Rule"].filter(
+      (name) => previous.get(name) !== current.get(name),
+    );
+    lines.push(
+      "",
+      result.publication === "pushed" || result.publication === "unchanged"
+        ? "## README changes"
+        : "## README changes in working tree",
+      "",
+      ...(changed.length ? changed.map((name) => `- ${name}`) : ["No catalog sections changed."]),
+    );
+    const scriptDirectories = ["Boxjs", "Module", "Adblock", "Rule"];
+    const scripts = [
+      run(
+        ["git", "diff", "--name-only", "-z", "--no-renames", baseline, "--", ...scriptDirectories],
+        true,
+      ),
+      run(
+        ["git", "ls-files", "--others", "--exclude-standard", "-z", "--", ...scriptDirectories],
+        true,
+      ),
+    ].join("\0").split("\0").filter((file) => /\.js$/i.test(file));
+    if (scripts.length)
+      lines.push(
+        "",
+        "## Changed catalog scripts",
+        "",
+        ...[...new Set(scripts)].sort().map((file) => `- \`${file}\``),
+      );
+  }
+  if (result.failedGates?.length)
+    lines.push("", "Failed gates: " + result.failedGates.join(", "));
   if (process.env.GITHUB_STEP_SUMMARY)
     await fs.appendFile(
       process.env.GITHUB_STEP_SUMMARY,
