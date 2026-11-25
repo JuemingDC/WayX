@@ -6,7 +6,7 @@ import {archiveOpaque,identifyResource,opaqueEntries,clearOpaque} from '../src/i
 import {buildCatalog,extractLpxUrl,buildRucu6Catalog} from '../src/ingest/catalog.ts';
 import {monitorSource,normalizeDocument,selected} from '../src/application/monitor.ts';
 import {commitFiles,safePath} from '../src/publish/transaction.ts';
-import {executeChecks,publicationGate,publish,summary,syntaxChecks} from '../src/application/automation.ts';
+import {executeChecks,publicationGate,publish,summary,syntaxChecks,prepare} from '../src/application/automation.ts';
 import {validateQX,validateSurgeModule,convertPlugin} from '../src/index.ts';
 const root=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-platform-')),cwd=process.cwd();
 try{
@@ -121,8 +121,19 @@ const acquisitionRoot=path.join(root,'rule-acquisition');await fs.mkdir(path.joi
  assert.equal(syntaxResult.status,1);assert.match(syntaxResult.stderr,/Module\/a\.js/);assert.match(syntaxResult.stderr,/Module\/c\.js/);assert.match(syntaxResult.stdout,/checked=3, failed=2/);
  process.chdir(root);const errorLog=console.error;console.error=()=>{};await assert.rejects(executeChecks('fixture',[['fail',[process.execPath,'-e','process.exit(2)']],['next',[process.execPath,'-e','console.log("done")']]]));
  const evidence=JSON.parse(await fs.readFile('.github/monitor/.runtime/validation-results.json','utf8'));assert.deepEqual(evidence.stages.fixture.checks.map((c:any)=>c.status),['failed','passed']);
- const required=['catalog','rules','loon_sync','verify','reports','issues'];const stages=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));const validation={version:1,stages:Object.fromEntries(required.filter(x=>x!=='issues').map(name=>[name,{complete:true,checks:[{status:'passed'}]}]))};
+ const required=['catalog','rules','loon_sync','verify','reports','issues'];const stages=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));const validation={version:1,stages:Object.fromEntries(required.filter(x=>x!=='issues').map(name=>[name,{complete:true,checks:[name==='verify'?{id:'repository-audit',status:'passed',checked:1,findings:[],coverage:{plugins:['Fixture'],artifacts:{'Module/fixture.snippet':'a'.repeat(64)},regexPatterns:0}}:{id:name,status:'passed'}]}]))};
  await fs.writeFile('.github/monitor/.runtime/validation-results.json',JSON.stringify(validation));const env={STAGES:JSON.stringify(stages),SYNC_PUBLISHABLE:'true'};assert.equal((await publicationGate(env)).publishable,true);assert.equal((await publicationGate({...env,SYNC_PUBLISHABLE:'false'})).publishable,false);assert.equal((await publicationGate({...env,STAGES:JSON.stringify({...stages,verify:{outcome:'skipped'}})})).publishable,false);
+ assert.equal((await publicationGate({...env,STAGES:'invalid JSON'})).publishable,false);
+ const validationPath='.github/monitor/.runtime/validation-results.json';
+ await fs.writeFile(validationPath,JSON.stringify({...validation,stages:{...validation.stages,verify:{complete:true,checks:[{id:'repository-audit',status:'passed'}]}}}));
+ const missingAudit=await publicationGate(env);assert.equal(missingAudit.publishable,false);assert.ok(missingAudit.failedGates.includes('validation integrity'));
+ await fs.writeFile(validationPath,'invalid JSON');
+ assert.equal((await publicationGate(env)).publishable,false);
+ await fs.writeFile(validationPath,JSON.stringify(validation));
+ await assert.rejects(executeChecks('verify',[['repository-audit',[process.execPath,'-e','process.exit(0)']]]),/require review/);
+ assert.equal((await publicationGate(env)).publishable,false);
+ await fs.writeFile(validationPath,JSON.stringify(validation));
+
  // Modified: 2026-11-01 (chance). A real local Git publication must commit updated native Module files with their registry state.
  const {execFileSync}=await import('node:child_process');
  const publicationRoot=path.join(root,'publication'),remoteRoot=path.join(root,'remote.git');
@@ -136,11 +147,20 @@ const acquisitionRoot=path.join(root,'rule-acquisition');await fs.mkdir(path.joi
  await fs.writeFile(path.join(publicationRoot,'README.md'),'# WayX\n\n## Module\nNew module\n\n## Adblock\nSame entries\n');
  const envKeys=['PUBLISHABLE','PUBLISH_BRANCH','EXPECTED_HEAD','MONITOR_ENABLED','GITHUB_STEP_SUMMARY','PUBLICATION'],saved=Object.fromEntries(envKeys.map(key=>[key,process.env[key]]));
  process.chdir(publicationRoot);Object.assign(process.env,{PUBLISHABLE:'true',PUBLISH_BRANCH:'main',EXPECTED_HEAD:expected,MONITOR_ENABLED:'false'});
- try{await publish();assert.equal(git('status','--porcelain'),'');assert.equal(git('show','HEAD:Module/QuantumultX/fixture.snippet'),'new');assert.equal(git('show','HEAD:Module/Surge/fixture.sgmodule'),'new');assert.equal(git('ls-remote','origin','refs/heads/main').split(/\s+/)[0],git('rev-parse','HEAD'));
+ try{
+  await fs.writeFile(path.join(publicationRoot,'unrelated.txt'),'unrelated work');git('add','unrelated.txt');
+  await assert.rejects(publish(),/clean staging index/);
+  assert.equal(git('ls-remote','origin','refs/heads/main').split(/\s+/)[0],expected);
+  assert.equal(git('diff','--cached','--name-only'),'unrelated.txt');
+  git('reset','--','unrelated.txt');await fs.rm(path.join(publicationRoot,'unrelated.txt'));
+  await publish();assert.equal(git('status','--porcelain'),'');assert.equal(git('show','HEAD:Module/QuantumultX/fixture.snippet'),'new');assert.equal(git('show','HEAD:Module/Surge/fixture.sgmodule'),'new');assert.equal(git('ls-remote','origin','refs/heads/main').split(/\s+/)[0],git('rev-parse','HEAD'));
   const summaryFile=path.join(root,'summary.md');Object.assign(process.env,{GITHUB_STEP_SUMMARY:summaryFile,PUBLICATION:'pushed'});
   await summary();const report=await fs.readFile(summaryFile,'utf8');
   assert.match(report,/## README changes\n\n- Module\n/);assert.match(report,/Module\/QuantumultX\/fixture\.js/);assert.match(report,/Module\/QuantumultX\/fixture\.snippet/);assert.match(report,/Module\/Surge\/fixture\.sgmodule/);assert.doesNotMatch(report,/Adblock|fixture\.json|fixture-backup|fixture-internal/);
   await fs.writeFile(path.join(publicationRoot,'Module/QuantumultX/new.js'),'new');
+  await fs.writeFile(summaryFile,'');await summary();
+  assert.doesNotMatch(await fs.readFile(summaryFile,'utf8'),/new\.js/);
+
   Object.assign(process.env,{EXPECTED_HEAD:git('rev-parse','HEAD'),PUBLICATION:'read-only'});
   await fs.writeFile(summaryFile,'');await summary();const candidate=await fs.readFile(summaryFile,'utf8');
   assert.match(candidate,/No catalog sections changed/);assert.match(candidate,/Module\/QuantumultX\/new\.js/);

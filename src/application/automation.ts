@@ -46,10 +46,76 @@ export function run(command: string[], capture = false): string {
     );
   return capture ? result.stdout.trim() : "";
 }
-export async function readReport(name: string, fallback: any) {
-  return readJson<any>(path.join(runtime, name), fallback);
+interface ValidationCheck {
+  id: string;
+  status: "passed" | "failed";
+  command?: string[];
+  exitCode?: number;
+  log?: string;
+  detail?: string;
+  checked?: number;
+  findings?: unknown[];
+  coverage?: Record<string, unknown>;
 }
-async function writeReport(name: string, value: any) {
+interface ValidationStage {
+  complete: boolean;
+  checks: ValidationCheck[];
+}
+interface ValidationReport {
+  version: 1;
+  stages: Record<string, ValidationStage>;
+}
+interface PipelineResult {
+  publishable: boolean;
+  failedGates?: string[];
+  stages?: Record<string, string>;
+  publication?: string;
+}
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+export async function readValidationReport(root = process.cwd()): Promise<ValidationReport> {
+  const value = await readJson<unknown>(path.join(root, runtime, "validation-results.json"), {
+    version: 1,
+    stages: {},
+  });
+  if (!isRecord(value) || value.version !== 1 || !isRecord(value.stages))
+    throw Error("Invalid validation-results.json");
+  for (const [stage, result] of Object.entries(value.stages)) {
+    if (!isRecord(result) || typeof result.complete !== "boolean" || !Array.isArray(result.checks) ||
+        result.checks.some(check => !isRecord(check) || typeof check.id !== "string" || !check.id ||
+          (check.status !== "passed" && check.status !== "failed") ||
+          (check.findings !== undefined && !Array.isArray(check.findings)) ||
+          (check.coverage !== undefined && !isRecord(check.coverage)) ||
+          (check.status === "passed" &&
+            ((Array.isArray(check.findings) && check.findings.length > 0) ||
+             (check.exitCode !== undefined && check.exitCode !== 0)))))
+      throw Error("Invalid validation-results.json stage: " + stage);
+    const ids = result.checks.map(check => check.id);
+    if (new Set(ids).size !== ids.length)
+      throw Error("Duplicate validation check: " + stage);
+  }
+  return value as unknown as ValidationReport;
+}
+export function validAuditEvidence(check: ValidationCheck | undefined): check is ValidationCheck & {
+  checked: number;
+  findings: unknown[];
+  coverage: { plugins: string[]; artifacts: Record<string, string>; regexPatterns: number };
+} {
+  if (!check) return false;
+  const coverage = check.coverage;
+  return Number.isSafeInteger(check.checked) && check.checked! > 0 &&
+    Array.isArray(check.findings) && check.findings.length === 0 &&
+    !!coverage && Array.isArray(coverage.plugins) &&
+    coverage.plugins.every(id => typeof id === "string") &&
+    isRecord(coverage.artifacts) && Object.keys(coverage.artifacts).length > 0 &&
+    Object.values(coverage.artifacts).every(hash => typeof hash === "string" && /^[a-f0-9]{64}$/.test(hash)) &&
+    Number.isSafeInteger(coverage.regexPatterns) && Number(coverage.regexPatterns) >= 0;
+}
+export async function readReport<T>(name: string, fallback: T): Promise<T> {
+  return readJson<T>(path.join(runtime, name), fallback);
+}
+async function writeReport(name: string, value: unknown) {
   await commitFiles(
     process.cwd(),
     new Map([[runtime + "/" + name, JSON.stringify(value, null, 2) + "\n"]]),
@@ -60,18 +126,8 @@ export async function executeChecks(
   checks: [string, string[]][],
 ): Promise<void> {
   await fs.mkdir(runtime, { recursive: true });
-  const report = await readReport("validation-results.json", {
-    version: 1,
-    stages: {},
-  });
-  if (
-    report.version !== 1 ||
-    !report.stages ||
-    typeof report.stages !== "object" ||
-    Array.isArray(report.stages)
-  )
-    throw Error("Invalid validation-results.json");
-  const results: any[] = [];
+  const report = await readValidationReport();
+  const results: ValidationCheck[] = [];
   report.stages[stage] = { complete: false, checks: results };
   await writeReport("validation-results.json", report);
   for (const [index, [id, command]] of checks.entries()) {
@@ -94,28 +150,32 @@ export async function executeChecks(
     } finally {
       await handle.close();
     }
-    const item: any = {
+    const item: ValidationCheck = {
       id,
       command,
       status: result.status === 0 && !result.error ? "passed" : "failed",
       exitCode: result.status ?? 127,
       log,
     };
-    if (await readOptional(evidence))
-      try {
-        const e = await readJson<any>(evidence);
-        if (e.version !== 1 || !Array.isArray(e.findings))
+    const evidenceBytes = await readOptional(evidence);
+    try {
+      if (evidenceBytes) {
+        const value: unknown = JSON.parse(evidenceBytes.toString("utf8"));
+        if (!isRecord(value) || value.version !== 1 || !Array.isArray(value.findings))
           throw Error("Invalid check evidence");
-        item.findings = e.findings;
-        item.checked = e.checked ?? 0;
-        item.coverage = e.coverage ?? {};
-        if (e.findings.length) item.status = "failed";
-      } catch (error: any) {
-        item.status = "failed";
-        item.findings = [
-          { code: "invalid-check-evidence", text: error.message },
-        ];
+        item.findings = value.findings;
+        if (typeof value.checked === "number") item.checked = value.checked;
+        if (isRecord(value.coverage)) item.coverage = value.coverage;
+        if (item.findings.length) item.status = "failed";
       }
+      if (stage === "verify" && id === "repository-audit" && item.status === "passed" &&
+          !validAuditEvidence(item))
+        throw Error("Missing or incomplete repository audit evidence");
+    } catch (error: any) {
+      item.status = "failed";
+      item.findings = [{ code: "invalid-check-evidence", text: error.message }];
+      await fs.appendFile(log, "\n" + error.message + "\n");
+    }
     if (item.status === "failed") {
       const text = await fs.readFile(log, "utf8");
       // Modified: 2026-11-14 (chance). Surface mid-log failures before progress.
@@ -140,10 +200,12 @@ export async function executeChecks(
 // working paths before regression tests inspect the published resource layout.
 export async function prepare({ logsOnly = false }: { logsOnly?: boolean } = {}) {
   await fs.mkdir(runtime, { recursive: true });
+  // Previous run evidence is never valid for a fresh run, including early failures.
+  for (const file of ["validation-results.json", "pipeline-result.json"])
+    await fs.rm(path.join(runtime, file), { force: true });
   if (logsOnly) return;
   // Modified: 2026-11-05 (chance). Restore converter working paths before acquisition; only the final client layout is published.
   await prepareWorkingLayout(process.cwd());
-  await fs.rm(runtime + "/validation-results.json", { force: true });
   const branches = run(["git", "ls-remote", "--heads", "origin"], true)
     .split("\n")
     .filter(Boolean)
@@ -233,39 +295,45 @@ export async function syntaxChecks(
   return checks;
 }
 export async function publicationGate(env: NodeJS.ProcessEnv = process.env) {
-  const stages = JSON.parse(env.STAGES ?? "{}"),
-    required = ["catalog", "rules", "loon_sync", "verify", "reports", "issues"];
+  const required = ["catalog", "rules", "loon_sync", "verify", "reports", "issues"];
   if (env.MONITOR_ENABLED === "true") required.push("monitor");
-  const failed = required.filter((s) => stages[s]?.outcome !== "success"),
-    validation = await readReport("validation-results.json", {
-      version: 1,
-      stages: {},
-    });
-  if (
-    validation.version !== 1 ||
-    required
-      .filter((s) => s !== "issues")
-      .some(
-        (s) =>
-          validation.stages?.[s]?.complete !== true ||
-          !validation.stages[s].checks?.length ||
-          validation.stages[s].checks.some((c: any) => c.status !== "passed"),
-      )
-  )
+  const failed: string[] = [];
+  const stages: Record<string, string> = {};
+  try {
+    const value: unknown = JSON.parse(env.STAGES ?? "{}");
+    if (!isRecord(value)) throw Error("Invalid workflow stages");
+    for (const [stage, result] of Object.entries(value)) {
+      if (!isRecord(result) || typeof result.outcome !== "string")
+        throw Error("Invalid workflow stage: " + stage);
+      stages[stage] = result.outcome;
+    }
+  } catch {
+    failed.push("workflow integrity");
+  }
+  failed.push(...required.filter(stage => stages[stage] !== "success"));
+  try {
+    const validation = await readValidationReport();
+    if (required.filter(stage => stage !== "issues").some(stage => {
+      const result = validation.stages[stage];
+      return result?.complete !== true || !result.checks.length ||
+        result.checks.some(check => check.status !== "passed");
+    })) throw Error("Incomplete validation");
+    const audit = validation.stages.verify.checks.find(check => check.id === "repository-audit");
+    if (!audit || !validAuditEvidence(audit)) throw Error("Missing repository audit evidence");
+  } catch {
     failed.push("validation integrity");
+  }
   if (env.SYNC_PUBLISHABLE !== "true") failed.push("sync integrity");
   if (env.MONITOR_ENABLED === "true" && env.MONITOR_COMPLETE !== "true")
     failed.push("monitor integrity");
-  const result = {
+  const result: PipelineResult = {
     publishable: !failed.length,
     failedGates: failed,
-    stages: Object.fromEntries(
-      Object.entries(stages).map(([s, v]: any) => [s, v.outcome]),
-    ),
+    stages,
   };
   await writeReport("pipeline-result.json", result);
   await setOutput("publishable", String(result.publishable));
-  for (const s of failed) console.error("::error::Publication blocked: " + s);
+  for (const stage of failed) console.error("::error::Publication blocked: " + stage);
   return result;
 }
 export async function publish() {
@@ -282,32 +350,29 @@ export async function publish() {
   const expected = process.env.EXPECTED_HEAD;
   if (!expected || run(["git", "rev-parse", "HEAD"], true) !== expected)
     throw Error("Checked-out HEAD differs from requested baseline");
-  const existing: string[] = [];
-  for (const item of managed)
-    if (
-      (await readOptionalDirectory(item)) ||
-      run(["git", "ls-files", "--", item], true)
-    )
-      existing.push(item);
-  run(["git", "add", "-A", "--", ...existing]);
-  if (process.env.MONITOR_ENABLED === "true")
-    run([
-      "git",
-      "add",
-      "-A",
-      "--",
-      ".github/monitor/state.json",
-      ".github/monitor/upstream",
-    ]);
+  if (run(["git", "diff", "--cached", "--name-only"], true))
+    throw Error("Publication requires a clean staging index");
   const remote = run(
     ["git", "ls-remote", "origin", "refs/heads/" + branch],
     true,
   ).split(/\s+/)[0];
   if (remote !== expected)
     throw Error("Destination advanced; rerun from its new baseline");
+  const publicationPaths = [
+    ...managed,
+    ...(process.env.MONITOR_ENABLED === "true"
+      ? [".github/monitor/state.json", ".github/monitor/upstream"]
+      : []),
+  ];
+  const existing: string[] = [];
+  for (const item of publicationPaths)
+    if ((await readOptionalDirectory(item)) || run(["git", "ls-files", "--", item], true))
+      existing.push(item);
+  if (existing.length) run(["git", "add", "-A", "--", ...existing]);
   const diff = spawnSync("git", ["diff", "--cached", "--quiet"]);
-  if (diff.status === 0) await setOutput("publication", "unchanged");
-  else if (diff.status === 1) {
+  if (diff.status !== 0 && diff.status !== 1)
+    throw Error("Cannot inspect staged Git diff");
+  if (diff.status === 1) {
     run(["git", "config", "user.name", "chance-upstream-bot"]);
     run([
       "git",
@@ -316,23 +381,17 @@ export async function publish() {
       "41898282+github-actions[bot]@users.noreply.github.com",
     ]);
     run(["git", "commit", "--quiet", "-m", "chore: sync upstream and regenerate targets"]);
+    const files = run(["git", "diff", "--name-only", "-z", expected, "HEAD"], true).split("\0").filter(Boolean);
+    if (files.some(file => !publicationPaths.some(item =>
+      file === item || file.startsWith(item.endsWith("/") ? item : item + "/"))))
+      throw Error("Publication commit contains an unmanaged path");
+  }
+  if (run(["git", "status", "--porcelain", "--untracked-files=all", "--", ...publicationPaths], true))
+    throw Error("Managed working tree is not clean before publication");
+  if (diff.status === 1) {
     run(["git", "push", "origin", "HEAD:" + branch]);
     await setOutput("publication", "pushed");
-  } else throw Error("Cannot inspect staged Git diff");
-  if (
-    run(
-      [
-        "git",
-        "status",
-        "--porcelain",
-        "--untracked-files=all",
-        "--",
-        ...managed,
-      ],
-      true,
-    )
-  )
-    throw Error("Managed working tree is not clean after publication");
+  } else await setOutput("publication", "unchanged");
 }
 function readmeSections(text: string) {
   const headings = [...text.matchAll(/^##[ \t]+(.+?)\s*$/gm)];
@@ -342,7 +401,7 @@ function readmeSections(text: string) {
   ]));
 }
 export async function summary() {
-  const result = await readReport("pipeline-result.json", {
+  const result = await readReport<PipelineResult>("pipeline-result.json", {
     publishable: false,
   });
   result.publication = process.env.PUBLICATION || "blocked";
@@ -353,15 +412,18 @@ export async function summary() {
     `Publication: ${result.publication}`,
   ];
   const baseline = process.env.EXPECTED_HEAD;
+  const published = result.publication === "pushed" || result.publication === "unchanged";
   if (baseline) {
     const previous = readmeSections(run(["git", "show", `${baseline}:README.md`], true));
-    const current = readmeSections(await fs.readFile("README.md", "utf8"));
+    const current = readmeSections(published
+      ? run(["git", "show", "HEAD:README.md"], true)
+      : await fs.readFile("README.md", "utf8"));
     const changed = ["BoxJs", "Module", "Adblock", "Rule"].filter(
       (name) => previous.get(name) !== current.get(name),
     );
     lines.push(
       "",
-      result.publication === "pushed" || result.publication === "unchanged"
+      published
         ? "## README changes"
         : "## README changes in working tree",
       "",
@@ -370,18 +432,20 @@ export async function summary() {
     const catalogDirectories = ["Boxjs", "Module", "Adblock", "Rule"];
     const files = [
       run(
-        ["git", "diff", "--name-only", "-z", "--no-renames", baseline, "--", ...catalogDirectories],
+        ["git", "diff", "--name-only", "-z", "--no-renames", baseline, ...(published ? ["HEAD"] : []), "--", ...catalogDirectories],
         true,
       ),
-      run(
+      ...(published ? [] : [run(
         ["git", "ls-files", "--others", "--exclude-standard", "-z", "--", ...catalogDirectories],
         true,
-      ),
+      )]),
     ].join("\0").split("\0").filter(Boolean);
     if (files.length)
       lines.push(
         "",
-        "## Changed published resources",
+        published
+          ? "## Changed published resources"
+          : "## Changed resources in working tree",
         "",
         ...[...new Set(files)].sort().map((file) => `- \`${file}\``),
       );

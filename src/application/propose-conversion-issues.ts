@@ -1,4 +1,5 @@
 import { checkFailureExcerpt } from "../domain/check-failure.ts";
+import { readValidationReport } from "./automation.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript application layer; preserve source behavior.
 // WayX automated conversion issue proposer.
 // Author: chance
@@ -417,39 +418,9 @@ export async function validationIssueCandidates(
   root: any = ROOT,
   stages: any = {},
 ): Promise<any> {
-  let report: any;
-  try {
-    report = JSON.parse(
-      await fs.readFile(
-        path.join(root, ".github/monitor/.runtime/validation-results.json"),
-        "utf8",
-      ),
-    );
-  } catch (error: any) {
-    if (error.code !== "ENOENT") throw error;
-    report = { version: 1, stages: {} };
-  }
-  if (
-    report?.version !== 1 ||
-    !report.stages ||
-    typeof report.stages !== "object" ||
-    Array.isArray(report.stages)
-  )
-    throw new Error("Invalid validation-results.json");
-  const failures: any = [];
-  for (const [stage, result] of Object.entries(report.stages) as [
-    string,
-    any,
-  ][]) {
-    if (
-      typeof result?.complete !== "boolean" ||
-      !Array.isArray(result.checks) ||
-      result.checks.some(
-        (check: any): any =>
-          !check?.id || !["passed", "failed"].includes(check.status),
-      )
-    )
-      throw new Error("Invalid validation-results.json stage: " + stage);
+  const report = await readValidationReport(root);
+  const failures: any[] = [];
+  for (const [stage, result] of Object.entries(report.stages)) {
     const checks: any = result.checks.filter(
       (check: any): any => check.status === "failed",
     );

@@ -7,6 +7,7 @@ import { keleePaused, isKeleeSource, opaqueEntries } from "../ingest/resources.t
 import fs from "node:fs/promises";
 import path from "node:path";
 import { loadLoonSourceCatalog } from "../parser/input.ts";
+import { readValidationReport, validAuditEvidence } from "../application/automation.ts";
 import {
   validationArtifactDigest,
   qxTargetPath,
@@ -428,19 +429,16 @@ const reconciliation: any = {
   },
 };
 const inventory: any = [];
-const validation: any = await readJson(
-  path.join(ROOT, ".github/monitor/.runtime/validation-results.json"),
-  { stages: {} },
+const validation = await readValidationReport(ROOT);
+const auditCandidate = validation.stages.verify?.checks.find(
+  check => check.id === "repository-audit" && check.status === "passed",
 );
-const audit: any = validation.stages?.verify?.checks?.find(
-  (check: any): any =>
-    check.id === "repository-audit" && check.status === "passed",
-);
+const audit = validAuditEvidence(auditCandidate) ? auditCandidate : undefined;
 const sync: any = await readJson(
   path.join(ROOT, ".github/monitor/.runtime/sync-failures.json"),
   {},
 );
-const auditedPlugins: any = new Set(audit?.coverage?.plugins || []);
+const auditedPlugins = new Set(audit?.coverage.plugins ?? []);
 const verifiedPlugins: any = new Set(
   sync.publishable === true
     ? (sync.convertedPlugins || []).filter((id: any): any =>
@@ -488,19 +486,19 @@ for (const entry of catalog) {
   const parsed: any = sourceItems(source);
   const sourceVerified: any =
     verifiedPlugins.has(entry.id) &&
-    audit.coverage.artifacts?.[rel(sourcePath)] ===
+    audit?.coverage.artifacts[rel(sourcePath)] ===
       validationArtifactDigest(source);
   const qxRecon: any = reconcileTarget(
     parsed.items,
     qx,
     sourceVerified &&
-      audit.coverage.artifacts?.[rel(qxPath)] === validationArtifactDigest(qx),
+      audit?.coverage.artifacts[rel(qxPath)] === validationArtifactDigest(qx),
   );
   const surgeRecon: any = reconcileTarget(
     parsed.items,
     surge,
     sourceVerified &&
-      audit.coverage.artifacts?.[rel(surgePath)] ===
+      audit?.coverage.artifacts[rel(surgePath)] ===
         validationArtifactDigest(surge),
   );
   reconciliation.entries.push({

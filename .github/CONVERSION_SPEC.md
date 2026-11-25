@@ -557,6 +557,8 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-11-25 | Publication state | Validate layout manifest version, owned mappings and target uniqueness; write Adblock IDs in the same layout transaction; read-only layout planning makes no writes |
 | 2026-11-25 | Rollback | Shared rollback attempts every touched file independently; use unique temporary files and reject ambiguous or symbolic-link-managed paths |
 | 2026-10-25 | Per-plugin transaction | Source/targets/helpers rollback together; failure retains valid old baseline, first failure deferred; other plugins continue |
+| 2026-11-26 | Validation evidence | One typed report reader for checks, reconciliation, and Issues; require complete repository audit evidence before publication; malformed or stale evidence blocks the gate |
+| 2026-11-26 | Publication scope | Require a clean staging index, verify destination before staging, inspect commit scope and working tree before push; successful summaries report committed resources only |
 | 2026-10-25 | Hard gates | Rollback failure, missing/incomplete evidence, required monitor/Issue failure, unexpected remote head or dirty managed state blocks publication |
 | 2026-11-25 | Script syntax | Batch published program syntax checks in bounded groups; validate every selected file and report failing paths |
 | 2026-10-25 | Content comparison | Compare actual per-file content; unchanged files keep mtime/date; no unrelated rewrites; legacy conversion-clock differences ignored |
