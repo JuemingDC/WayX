@@ -493,7 +493,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | Date | Item | Required mapping / lifecycle |
 | --- | --- | --- |
 | 2026-11-10 | Adblock/Module Updated | Explicit upstream date only, including `#!date`, `@UpdateTime`, `> UpdateTime`; missing → `上游未标注`; retain distinct merged dates |
-| 2026-11-10 | Conversion clock | No generated conversion timestamp; spec rule changes carry dates here; Rule sync date remains separate |
+| 2026-11-10 | Conversion clock | No generated conversion timestamp; spec rule changes carry dates here; Rule Updated reflects actual content or metadata change |
 | 2026-11-10 | Manual/frozen content | Preserve author dates; fix owned metadata from frozen source without reacquisition |
 | 2026-10-25 | Config comments | Preserve upstream comments/author/source/name/description/icon; Converted by chance + applicable Category; QX section headings commented, Surge native sections active |
 | 2026-10-25 | MITM | Format conversion only; no hostname scope widening |
@@ -553,6 +553,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-11-01 | Same-repo test PR | Exact PR head + authorized existing test publication; external PR read-only artifacts/candidates |
 | 2026-10-25 | Per-plugin transaction | Source/targets/helpers rollback together; failure retains valid old baseline, first failure deferred; other plugins continue |
 | 2026-10-25 | Hard gates | Rollback failure, missing/incomplete evidence, required monitor/Issue failure, unexpected remote head or dirty managed state blocks publication |
+| 2026-11-25 | Script syntax | Batch published program syntax checks in bounded groups; validate every selected file and report failing paths |
 | 2026-10-25 | Content comparison | Compare actual per-file content; unchanged files keep mtime/date; no unrelated rewrites; legacy conversion-clock differences ignored |
 | 2026-10-25 | Removed managed inputs | Remove owned stale source/targets/helpers after valid catalog; protect reused paths/manual resources; failed discovery never authorizes deletion |
 | 2026-10-25 | Reports | Distinguish converted, updated, unchanged, retained, deferred; verified = actual generated output format passed, not device certification |
@@ -561,7 +562,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-10-25 | Incomplete comparisons | Download failure, truncated GitHub diff or non-forward history retains baseline + failure; no guessed capability expansion |
 | 2026-10-25 | Read-only PR | No Issues/mirror/state mutation; save candidates/artifacts only |
 | 2026-11-25 | GitHub diff display | Collapse acquisition archives, monitor mirrors and source state by default; show published catalog files including JS |
-| 2026-10-25 | Artifacts | Published catalog outputs only; 14-day retention; runtime logs remain in the Actions job and are not committed |
+| 2026-10-25 | Artifacts | Published catalog output bundle; separate diagnostic artifact only for failed runs or reported issues; 14-day retention; runtime logs are not committed |
 
 ### 7.3 Stable IDs, Issues and README
 

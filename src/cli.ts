@@ -197,8 +197,17 @@ try {
       if (!args[0]) throw Error("Missing script path");
       const { Script } = await import("node:vm");
       // Modified: 2026-11-05 (chance). Validate native proxy entrypoints in their function context without rewriting their bytes.
-      new Script("(function(){\n" + await fs.readFile(args[0], "utf8") + "\n})", { filename: args[0] });
-      console.log("Classic JavaScript syntax passed: " + args[0]);
+      let failures = 0;
+      for (const file of args) {
+        try {
+          new Script("(function(){\n" + await fs.readFile(file, "utf8") + "\n})", { filename: file });
+        } catch (error) {
+          failures++;
+          console.error("Script syntax failed: " + file, error);
+        }
+      }
+      console.log(`Classic JavaScript syntax: checked=${args.length}, failed=${failures}`);
+      if (failures) throw Error(`${failures} script(s) failed syntax validation`);
       break;
     }
     case "regex": {

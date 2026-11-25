@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fetchOriginalBytes } from "../ingest/resources.ts";
-import { build } from "../domain/aggregate.ts";
+import { build, type RuleMetadata } from "../domain/aggregate.ts";
 import { readJson, readOptional, commitFiles } from "../publish/transaction.ts";
 export const MARKER = "# Managed by: WayX Rule Aggregator";
 const digest = (v: string | Uint8Array) =>
@@ -137,7 +137,7 @@ export async function loadInputs(
   await commitFiles(root, changes);
   return [data, index];
 }
-export function ruleHeader(file: string, meta: any, stamp: string): string {
+export function ruleHeader(file: string, meta: RuleMetadata, stamp: string): string {
   return (
     [
       "# Name: " + path.basename(file, path.extname(file)),
@@ -215,7 +215,7 @@ export async function runRules(
     counts,
   };
   const changes = new Map<string, string | null>(),
-    withoutStamp = (s: string) => s.replace(/^# Updated:.*$/gm, "# Updated:");
+    withoutStamp = (s: string) => s.replace(/^(# Name:[^\n]*\n)# Updated:[^\n]*/, "$1# Updated:");
   for (const [file, content] of Object.entries(outputs)) {
     if (
       !/^Rule\/(QuantumultX|Surge)\/[a-z][a-z0-9_]*\.(list|dconf)$/.test(file)
@@ -237,8 +237,8 @@ export async function runRules(
       const stamp =
           new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC",
         candidate = ruleHeader(file, metadata[file], stamp) + content;
-      // Modified: 2026-11-10 (chance). Rule dates record every successful daily sync.
-      if (before !== candidate)
+      // Modified: 2026-11-25 (chance). Keep the previous update date when content and metadata are unchanged.
+      if (before === null || withoutStamp(before) !== withoutStamp(candidate))
         changes.set(file, candidate);
     } else if (
       before === null ||

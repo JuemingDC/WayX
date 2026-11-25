@@ -565,10 +565,18 @@ export function nativeRules(
   }
   return result;
 }
+export type RuleMetadata = {
+  authors: string[];
+  sources: string[];
+  category: string;
+  count: number;
+  policy: string;
+};
+
 export function build(
   config: any,
   inputs: Record<string, Uint8Array>,
-): [Record<string, string>, Record<string, any>, any[]] {
+): [Record<string, string>, Record<string, RuleMetadata>, any[]] {
   const anomalies: any[] = [],
     sites = geosites(inputs.geosite, anomalies),
     appNames = new Set<string>(config.applications.map((a: any) => a.name)),
@@ -971,7 +979,7 @@ export function build(
     urls.get(k)!.add(source);
   }
   const rendered: Record<string, string> = {},
-    metadata: Record<string, any> = {},
+    metadata: Record<string, RuleMetadata> = {},
     surgeAction = (p: string) =>
       p === "DIRECT" || p.startsWith("REJECT") ? p : "PROXY",
     layouts = config.surge_output ?? {},

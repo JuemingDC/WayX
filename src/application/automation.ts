@@ -183,7 +183,7 @@ export async function syntaxChecks(
   const checks: [string, string[]][] = [
     ["typescript", ["node", "node_modules/typescript/bin/tsc", "--noEmit"]],
   ];
-  let changed = new Set<string>();
+  const changed = new Set<string>();
   if (changedScripts) {
     for (const command of [
       [
@@ -212,13 +212,24 @@ export async function syntaxChecks(
       for (const f of result.split("\0")) changed.add(f);
     }
   }
-  // Modified: 2026-11-05 (chance). Colocated target scripts receive the same classic-JS check as legacy working helpers.
-  for (const directory of ["Script", "Adblock", "Module", "Rule"]) for (const file of await listFiles(directory)) {
-    const relative = directory + "/" + file;
-    const isProgram = file.endsWith(".js") || (directory === "Script" && file.startsWith("Adblock/"));
-    if (isProgram && (!changedScripts || changed.has(relative) || directory !== "Script"))
-      checks.push(["syntax:" + relative, ["node", "src/cli.ts", "script-syntax", relative]]);
+  // Modified: 2026-11-25 (chance). Preserve full target coverage and batch files
+  // to avoid launching one TypeScript CLI process per program.
+  const programs: string[] = [];
+  for (const directory of ["Script", "Adblock", "Module", "Rule"]) {
+    for (const file of await listFiles(directory)) {
+      const relative = directory + "/" + file;
+      const isProgram = file.endsWith(".js") || (directory === "Script" && file.startsWith("Adblock/"));
+      if (isProgram && (!changedScripts || changed.has(relative) || directory !== "Script"))
+        programs.push(relative);
+    }
   }
+  programs.sort();
+  const batchSize = 64;
+  for (let offset = 0; offset < programs.length; offset += batchSize)
+    checks.push([
+      "syntax:batch-" + (offset / batchSize + 1),
+      ["node", "src/cli.ts", "script-syntax", ...programs.slice(offset, offset + batchSize)],
+    ]);
   return checks;
 }
 export async function publicationGate(env: NodeJS.ProcessEnv = process.env) {

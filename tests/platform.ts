@@ -6,7 +6,7 @@ import {archiveOpaque,identifyResource,opaqueEntries,clearOpaque} from '../src/i
 import {buildCatalog,extractLpxUrl,buildRucu6Catalog} from '../src/ingest/catalog.ts';
 import {monitorSource,normalizeDocument,selected} from '../src/application/monitor.ts';
 import {commitFiles,safePath} from '../src/publish/transaction.ts';
-import {executeChecks,publicationGate,publish,summary} from '../src/application/automation.ts';
+import {executeChecks,publicationGate,publish,summary,syntaxChecks} from '../src/application/automation.ts';
 import {validateQX,validateSurgeModule,convertPlugin} from '../src/index.ts';
 const root=await fs.mkdtemp(path.join(os.tmpdir(),'wayx-platform-')),cwd=process.cwd();
 try{
@@ -43,7 +43,28 @@ try{
  await commitFiles(root,new Map([['.github/sources/loon.json',JSON.stringify([opaqueEntry,entry])],['.github/sources/kelee-pause.json',JSON.stringify({paused:true})],['.github/monitor/.runtime/sync-failures.json',JSON.stringify({version:2,publishable:true,failures:[],retainedPlugins:[entry.id],convertedPlugins:[]})],['Resource/Loon/'+entry.file,source],['Adblock/Quantumult X/'+entry.qx,output.qx],['Adblock/Surge/'+entry.surge,output.surge]]));
  const pausedReport=spawnSync(process.execPath,[path.join(cwd,'src/publish/conversion-reports.ts')],{cwd:root,encoding:'utf8'});assert.equal(pausedReport.status,0,pausedReport.stderr);const reconciliation=JSON.parse(await fs.readFile(path.join(root,'.github/monitor/.runtime/conversion-reconciliation.json'),'utf8'));assert.equal(reconciliation.entries.find(e=>e.id===entry.id).paused,true);assert.equal(reconciliation.entries.find(e=>e.id===entry.id).retained,true);
  // Explicit empty feeds are legitimate, while default byte downloads still reject empty responses.
- const {loadInputs}=await import('../src/application/rules.ts');const acquisitionRoot=path.join(root,'rule-acquisition');await fs.mkdir(path.join(acquisitionRoot,'.github/sources'),{recursive:true});
+ const {loadInputs,runRules}=await import('../src/application/rules.ts');
+ // Replay fixed source bytes to prove unchanged synchronized rule dates stay stable.
+ const dateRoot=path.join(root,'rule-date'),dateConfig=JSON.stringify({version:1,...cases[0].config});
+ const inputDir='.github/monitor/.runtime/rule-inputs/';
+ const fixtureInputs=Object.entries(cases[0].inputs).map(([id,value])=>[id,Buffer.from(value as string,'base64')] as const);
+ const hash=(value:string|Uint8Array)=>crypto.createHash('sha256').update(value).digest('hex');
+ await commitFiles(dateRoot,new Map<string,string|Uint8Array|null>([
+  ['.github/sources/rules.json',dateConfig],
+  ...fixtureInputs.map(([id,bytes])=>[inputDir+id,bytes] as const),
+  [inputDir+'index.json',JSON.stringify({version:1,configuration:hash(dateConfig),sources:fixtureInputs.map(([id,bytes])=>({id,sha256:hash(bytes)}))})],
+ ]));
+ const generated=await runRules('sync',dateRoot,false);
+ assert.ok(generated.updatedFiles>0);
+ const dateFile=Object.keys(generated.counts)[0],datePath=path.join(dateRoot,dateFile);
+ const previous=(await fs.readFile(datePath,'utf8')).replace(/^# Updated:.*$/m,'# Updated: 2000-01-01 00:00:00 UTC');
+ await fs.writeFile(datePath,previous);
+ assert.equal((await runRules('sync',dateRoot,false)).updatedFiles,0);
+ assert.equal(await fs.readFile(datePath,'utf8'),previous);
+ await fs.writeFile(datePath,previous.replace(/^# Category:.*$/m,'# Category: stale'));
+ assert.equal((await runRules('sync',dateRoot,false)).updatedFiles,1);
+ assert.doesNotMatch(await fs.readFile(datePath,'utf8'),/2000-01-01|# Category: stale/);
+const acquisitionRoot=path.join(root,'rule-acquisition');await fs.mkdir(path.join(acquisitionRoot,'.github/sources'),{recursive:true});
  const cfg={geosite:{release_api:'https://api.example.test/release'},sources:[{id:'empty',url:'https://example.test/empty',format:'ruleset',allow_empty:true}]};const cfgPath=path.join(acquisitionRoot,'.github/sources/rules.json');await fs.writeFile(cfgPath,JSON.stringify(cfg));
  const fetchSaved=globalThis.fetch,geo=Buffer.from('geosite-bytes'),checksum=crypto.createHash('sha256').update(geo).digest('hex');
  globalThis.fetch=async(url)=>new Response(url===cfg.geosite.release_api?JSON.stringify({published_at:new Date().toISOString(),assets:[{name:'dlc.dat',browser_download_url:'https://example.test/geosite'},{name:'dlc.dat.sha256sum',browser_download_url:'https://example.test/checksum'}]}):String(url).endsWith('/empty')?'':String(url).endsWith('/checksum')?checksum:geo);
@@ -65,6 +86,16 @@ try{
  assert.equal(changed.changed,true);assert.equal(changed.stateChanged,true);assert.equal(changed.changes.get('mirror/spec.txt')?.toString(),'revised');
  await fs.writeFile(path.join(root,'mirror/spec.txt'),'corrupt');const repaired=await monitorSource(root,src,first.state,settings,response);assert.equal(repaired.changed,false);assert.equal(repaired.changes.get('mirror/spec.txt')?.toString(),'original\r\n');await assert.rejects(monitorSource(root,src,first.state,settings,async()=>({...await response('',{}),status:304})),/304/);
  assert.equal(normalizeDocument(Buffer.from('<p>A &amp; B</p><script>ignored</script><p>C</p>'),'html_text').toString(),'A & B\nC\n');assert.equal(selected('a/b.js',['*.js']),true);assert.equal(selected('b.js',['[a-c].js']),true);assert.equal(selected('d.js',['[!a-c].js']),true);assert.equal(selected('b.js',['[!a-c].js']),false);
+ // A batch must continue after an invalid file and report every failing path.
+ const syntaxRoot=path.join(root,'syntax');
+ await fs.mkdir(path.join(syntaxRoot,'Module'),{recursive:true});
+ for(const [file,code] of [['a.js','const = 1'],['b.js','const value = 1'],['c.js','const = 2']])
+  await fs.writeFile(path.join(syntaxRoot,'Module',file),code);
+ process.chdir(syntaxRoot);
+ const batched=await syntaxChecks();
+ assert.equal(batched.length,2);assert.deepEqual(batched[1][1].slice(3),['Module/a.js','Module/b.js','Module/c.js']);
+ const syntaxResult=spawnSync(process.execPath,[path.join(cwd,'src/cli.ts'),'script-syntax',...batched[1][1].slice(3)],{cwd:syntaxRoot,encoding:'utf8'});
+ assert.equal(syntaxResult.status,1);assert.match(syntaxResult.stderr,/Module\/a\.js/);assert.match(syntaxResult.stderr,/Module\/c\.js/);assert.match(syntaxResult.stdout,/checked=3, failed=2/);
  process.chdir(root);const errorLog=console.error;console.error=()=>{};await assert.rejects(executeChecks('fixture',[['fail',[process.execPath,'-e','process.exit(2)']],['next',[process.execPath,'-e','console.log("done")']]]));
  const evidence=JSON.parse(await fs.readFile('.github/monitor/.runtime/validation-results.json','utf8'));assert.deepEqual(evidence.stages.fixture.checks.map((c:any)=>c.status),['failed','passed']);
  const required=['catalog','rules','loon_sync','verify','reports','issues'];const stages=Object.fromEntries(required.map(name=>[name,{outcome:'success'}]));const validation={version:1,stages:Object.fromEntries(required.filter(x=>x!=='issues').map(name=>[name,{complete:true,checks:[{status:'passed'}]}]))};

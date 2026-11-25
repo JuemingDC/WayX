@@ -28,6 +28,7 @@ const ROOT=process.cwd();
 const TARGETS=[
   path.join(ROOT,'Adblock','Quantumult X'),
   path.join(ROOT,'Adblock','Surge'),
+  path.join(ROOT,'Module'),
 ];
 const RAW_PREFIX='https://raw.githubusercontent.com/JuemingDC/WayX/main/';
 
@@ -50,9 +51,9 @@ for(const root of TARGETS){
     // Modified: 2026-11-02 (chance). Source names may end in .json or have no
     // extension; inspect actual script operands instead of truncating at .js.
     for(const operand of scriptReferences(text)){
-      if(!operand.value.startsWith(RAW_PREFIX+'Script/'))continue;
+      if(!operand.value.startsWith(RAW_PREFIX))continue;
       const rel=decodeURIComponent(new URL(operand.value).pathname.slice(new URL(RAW_PREFIX).pathname.length));
-      assert.ok(rel.startsWith('Script/') && !rel.split('/').includes('..'), 'unsafe generated helper path: '+rel);
+      assert.ok(/^(?:Script|Adblock|Module|Rule|Resource)\//.test(rel) && !rel.split('/').includes('..'), 'unsafe generated helper path: '+rel);
       refs.push({file:path.relative(ROOT,file),rel});
       try { await fs.access(path.join(ROOT,rel)); }
       catch { missing.push({file:path.relative(ROOT,file),rel}); }
@@ -60,6 +61,7 @@ for(const root of TARGETS){
   }
 }
 
+assert.ok(refs.length > 0, 'published local reference test must have coverage');
 assert.deepEqual(missing,[], 'target output references missing WayX script files:\n'+JSON.stringify(missing,null,2));
 console.log(`Generated/local script reference check passed: refs=${refs.length}`);
 }

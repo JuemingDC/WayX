@@ -191,3 +191,15 @@ jobs:
           PUBLICATION_OUTCOME: ${{ steps.publish.outcome }}
         run: node src/cli.ts final
 
+      - name: Upload diagnostics when review is needed
+        if: failure() || steps.issues.outputs.has_issues == 'true'
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: wayx-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 14
+          path: |
+            .github/monitor/.runtime/*.log
+            .github/monitor/.runtime/*.json
+            .github/monitor/.runtime/*.md
