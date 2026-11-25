@@ -8,7 +8,7 @@ import {
   rewriteV2AstToSemanticIr,
 } from "../parser/rewrite.ts";
 import { parseScriptDeclaration } from "../parser/script.ts";
-import { keleePaused, isKeleeSource } from "../ingest/source-pause.ts";
+import { keleePaused, isKeleeSource } from "../ingest/resources.ts";
 import { readOptional, commitFiles } from "../publish/transaction.ts";
 import { validateQX } from "../validation/output.ts";
 

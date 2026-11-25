@@ -1,5 +1,5 @@
-import { keleePaused, isKeleeSource } from "../ingest/source-pause.ts";
-import { opaqueEntries } from "../ingest/formats.ts";
+import { keleePaused, isKeleeSource, opaqueEntries } from "../ingest/resources.ts";
+
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
 // WayX machine-readable reconciliation + Review inventory reports
 // Author: chance

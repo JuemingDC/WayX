@@ -9,7 +9,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { conversionStampFromText, firstConversionStamp, generatedScriptDiffs, inspectManagedSource, isWayxGeneratedHelperFilename, managedSourceDigest, managedTargetDiffs, normalizeManagedSource, readCatalogSource, readManagedTargetState, syncGeneratedScripts, syncManagedSource, writeManagedSource, writeManagedTargets, ORIGINAL_FETCH_PROFILES, WAYX_FETCH_UA, resolveOriginalUrl, selectOriginalFetchProfile, loadLoonSourceCatalog, qxTargetPath, surgeTargetPath } from "../src/index.ts";
-import { repairNativeQxSource, mergeNativeQxSources, prepareNativeQxSync, commitNativeQxSync, recordOutputMismatch, outputMismatch, validationArtifactDigest, writeValidationEvidence, createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/publish/workflow.ts";
+import { repairNativeQxSource, mergeNativeQxSources, prepareNativeQxSync, commitNativeQxSync, recordOutputMismatch, outputMismatch, validationArtifactDigest, writeValidationEvidence, createWorkflowFailureReporter, formatWorkflowErrorAnnotation, buildSyncFailure, failureDeclarationContext, README_AUTO_UPDATE_INTERVAL, QX_MIXED_REWRITE_MIN_BUILD, buildReadmePlan, writeReadmePlan, qxAddResourceUrl, qxSnippetInstallUrl, surgeModuleInstallUrl } from "../src/publish/workflow.ts";
 import { isLoonPluginSource } from "../src/application/sync-convert.ts";
 import {validateQxFilterList,validateSurgeRuleSet,validateSurgeRuleSection} from '../src/validation/output.ts';
 import { syncFailureIssueBody, syncFailureTitle, targetProblemIssueBody, targetProblemTitle, monitorFailureTitle, monitorFailureIssueBody, recoveredMonitorIssues, validationIssueCandidates, validationFailureTitle, validationFailureIssueBody, recoveredValidationIssues, recoveredConversionIssues } from "../src/application/propose-conversion-issues.ts";
@@ -383,6 +383,13 @@ await fs.writeFile(path.join(root,'Rule/QuantumultX/Apple.list'),'# NAME: Apple 
 
 const plan=await buildReadmePlan(root);
 const readme=plan.get('README.md');
+await writeReadmePlan(root,plan);
+const readmePath=path.join(root,'README.md');
+const unchangedTime=new Date('2020-01-01T00:00:00Z');
+await fs.utimes(readmePath,unchangedTime,unchangedTime);
+await writeReadmePlan(root,plan);
+assert.equal((await fs.stat(readmePath)).mtimeMs,unchangedTime.getTime());
+
 assert.ok(readme);
 assert.equal(plan.size,1,'README generator must not create split QX installer resources');
 assert.ok(readme.indexOf('## BoxJs') < readme.indexOf('## Module'));
@@ -456,6 +463,51 @@ const nativeFiles={
 };
 const nativeFetch=async url=>url.includes('/commits/')?JSON.stringify({sha:'a'.repeat(40)}):url.includes('/git/trees/')?JSON.stringify({tree:Object.keys(nativeFiles).map(path=>({path,type:'blob'}))}):nativeFiles[new URL(url).pathname.split('/').slice(4).join('/')];
 const native=await prepareNativeQxSync(root,{fetchText:nativeFetch});
+// A current Git tree proves whether exact archived source bytes can be reused.
+const {createHash}=await import('node:crypto');
+const {backupObject}=await import('../src/ingest/resources.ts');
+const {createResourceSnapshot}=await import('../src/ingest/resources.ts');
+const rawSourceUrl=(file:string)=>'https://raw.githubusercontent.com/ishowshu/qx/main/'+file;
+const archiveRecords=Object.entries(nativeFiles).map(([file,text])=>backupObject(rawSourceUrl(file),Buffer.from(text),'plugin'));
+for(const record of archiveRecords){
+  const file=new URL(record.url).pathname.split('/').slice(4).join('/');
+  await fs.mkdir(path.dirname(path.join(root,record.path)),{recursive:true});
+  await fs.writeFile(path.join(root,record.path),nativeFiles[file]);
+}
+await fs.writeFile(path.join(root,'Resource/Backup/index.json'),JSON.stringify({
+  version:1,objects:Object.fromEntries(archiveRecords.map(record=>[record.path,record])),
+  latest:Object.fromEntries(archiveRecords.map(record=>[record.url,record.path])),
+}));
+const blobSha=(text:string)=>createHash('sha1').update('blob '+Buffer.byteLength(text)+'\0').update(text).digest('hex');
+let rawReads=0,snapshotRun=0;
+const pinnedFetch=async(url:string)=>{
+  if(url.includes('/git/trees/'))return JSON.stringify({tree:Object.entries(nativeFiles).map(([path,text])=>({path,type:'blob',sha:blobSha(text)}))});
+  if(url.includes('raw.githubusercontent.com'))rawReads++;
+  return nativeFetch(url);
+};
+const acquirePinned=async()=>{
+  const resources=createResourceSnapshot({directory:path.join(root,'cached-snapshot-'+snapshotRun++),fetchText:pinnedFetch});
+  const plan=await prepareNativeQxSync(root,{fetchText:resources.fetchText,resources});
+  await resources.seal();
+  return {plan,resources};
+};
+const cached=await acquirePinned();
+assert.equal(rawReads,0);
+assert.deepEqual(cached.plan.outputs,native.outputs);
+for(const input of cached.plan.inputs){
+  assert.equal(cached.resources.reusedArchive(input.acquiredUrl),true);
+  assert.deepEqual(await cached.resources.cachedBytes(input.acquiredUrl),Buffer.from(nativeFiles[input.path]));
+}
+const changedFile='filter/pdd.snippet',oldText=nativeFiles[changedFile];
+nativeFiles[changedFile]=oldText+'host,changed.example,DIRECT\n';
+const modified=await acquirePinned();
+assert.equal(rawReads,1);assert.notDeepEqual(modified.plan.outputs,native.outputs);
+nativeFiles[changedFile]=oldText;
+await fs.writeFile(path.join(root,archiveRecords[0].path),'corrupt');
+const repairedCache=await acquirePinned();
+assert.equal(rawReads,2);assert.deepEqual(repairedCache.plan.outputs,native.outputs);
+await fs.rm(path.join(root,'Resource/Backup'),{recursive:true,force:true});
+
 assert.equal(native.outputs.size,1);
 const merged=native.outputs.values().next().value;
 assert.match(merged,/# \[filter_local\][\s\S]*host,example.com,DIRECT/);
@@ -483,6 +535,13 @@ for(const fixture of [
 }
 
 await commitNativeQxSync(root,native);
+const nativeStatePath=path.join(root,'.github/sources/native-qx-state.json');
+const nativeState=JSON.parse(await fs.readFile(nativeStatePath,'utf8'));
+assert.equal('inputs' in nativeState,false);
+assert.deepEqual(nativeState.outputs,[...native.outputs.keys()]);
+await fs.utimes(nativeStatePath,unchangedTime,unchangedTime);
+await commitNativeQxSync(root,native);
+assert.equal((await fs.stat(nativeStatePath)).mtimeMs,unchangedTime.getTime());
 const owned=path.join(root,'Adblock/Quantumult X/ishowshu_pdd.snippet');
 const before=await fs.readFile(owned,'utf8');
 await commitNativeQxSync(root,{...native,outputs:new Map([...native.outputs].map(([file,text])=>[file,text.replace(/^# Updated:.*$/m,'# Updated: different')]))});

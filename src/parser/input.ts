@@ -41,18 +41,18 @@ import { resolveOriginalUrl } from "../ingest/resources.ts";
 // WayX declarative Loon source catalog
 // Author: chance
 // Category: Converter / Source Catalog
-const REQUIRED: any = Object.freeze([
+const REQUIRED = Object.freeze([
   "id",
   "file",
   "source",
   "qx",
   "surge",
   "category",
-]);
-function cleanString(value: any): any {
+] as const);
+function cleanString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
-function safeRelativePath(value: any, field: any): any {
+function safeRelativePath(value: unknown, field: string): string {
   const path: any = cleanString(value);
   if (!path) throw new Error(`catalog entry missing ${field}`);
   if (
@@ -66,7 +66,7 @@ function safeRelativePath(value: any, field: any): any {
   }
   return path;
 }
-function absoluteHttpUrl(value: any, field: any): any {
+function absoluteHttpUrl(value: unknown, field: string): string {
   const text: any = cleanString(value);
   let url: any;
   try {
@@ -79,12 +79,13 @@ function absoluteHttpUrl(value: any, field: any): any {
   }
   return text;
 }
-export function validateLoonSourceEntry(input: any): any {
+export function validateLoonSourceEntry(input: unknown): SourceEntry {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     throw new TypeError("catalog entry must be an object");
   }
+  const record = input as Record<string, unknown>;
   for (const field of REQUIRED) {
-    if (!cleanString(input[field]))
+    if (!cleanString(record[field]))
       throw new Error(`catalog entry missing ${field}`);
   }
   if (Object.prototype.hasOwnProperty.call(input, "mirrors")) {
@@ -92,13 +93,13 @@ export function validateLoonSourceEntry(input: any): any {
       "catalog mirrors are forbidden; use the original author source URL only",
     );
   }
-  const entry: any = {
-    id: cleanString(input.id),
-    file: safeRelativePath(input.file, "file"),
-    source: absoluteHttpUrl(input.source, "source"),
-    qx: safeRelativePath(input.qx, "qx"),
-    surge: safeRelativePath(input.surge, "surge"),
-    category: cleanString(input.category),
+  const entry: SourceEntry = {
+    id: cleanString(record.id),
+    file: safeRelativePath(record.file, "file"),
+    source: absoluteHttpUrl(record.source, "source"),
+    qx: safeRelativePath(record.qx, "qx"),
+    surge: safeRelativePath(record.surge, "surge"),
+    category: cleanString(record.category),
   };
   if (!/^[A-Za-z0-9._-]+$/.test(entry.id)) {
     throw new Error(`catalog id contains unsupported characters: ${entry.id}`);
@@ -113,30 +114,31 @@ export function validateLoonSourceEntry(input: any): any {
     );
   return Object.freeze(entry);
 }
-export function validateLoonSourceCatalog(input: any): any {
+export function validateLoonSourceCatalog(input: unknown): SourceEntry[] {
   if (!Array.isArray(input))
     throw new TypeError("Loon source catalog must be an array");
-  const entries: any = input.map(validateLoonSourceEntry);
-  const seen: any = {
-    id: new Set(),
-    file: new Set(),
-    qx: new Set(),
-    surge: new Set(),
+  const entries = input.map(validateLoonSourceEntry);
+  const seen = {
+    id: new Set<string>(),
+    file: new Set<string>(),
+    qx: new Set<string>(),
+    surge: new Set<string>(),
   };
   for (const entry of entries) {
-    for (const field of Object.keys(seen)) {
-      const key: any = entry[field];
+    for (const field of Object.keys(seen) as (keyof typeof seen)[]) {
+      const key = entry[field];
       if (seen[field].has(key))
         throw new Error(`duplicate catalog ${field}: ${key}`);
       seen[field].add(key);
     }
   }
-  return Object.freeze(entries);
+  Object.freeze(entries);
+  return entries;
 }
 export async function loadLoonSourceCatalog(
   file: string,
 ): Promise<SourceEntry[]> {
-  const raw: any = JSON.parse(await fs.readFile(file, "utf8"));
+  const raw: unknown = JSON.parse(await fs.readFile(file, "utf8"));
   return validateLoonSourceCatalog(raw);
 }
 

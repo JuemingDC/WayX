@@ -11,6 +11,7 @@ import { disjointUrls } from "../domain/qx-header.ts";
 import crypto from "node:crypto";
 import path from "node:path";
 import { createResourceSnapshot } from "../ingest/resources.ts";
+import type { SourceEntry } from "../domain/contracts.ts";
 import {
   surgeRegexParameter,
   normalizeUrlRegexForTarget,
@@ -1318,8 +1319,8 @@ function notify(onStage: any, stage: any): any {
 // Modified: 2026-10-25 (chance). Acquisition prepares a source-bound context;
 // conversion consumes it synchronously and never performs network I/O.
 export async function materializeConversionContext(
-  entry: any,
-  source: any,
+  entry: SourceEntry,
+  source: string,
   {
     fetchText = fetchOriginalText,
     fetchBytes = fetchOriginalBytes,
@@ -1367,11 +1368,11 @@ export async function materializeConversionContext(
   }
 }
 export async function materializeConversionRunContext(
-  entry: any,
-  source: any,
+  entry: SourceEntry,
+  source: string,
   { onStage = null, ...options }: any = {},
 ): Promise<any> {
-  notify(onStage, "materialize-context");
+  if (typeof onStage === "function") onStage("materialize-context");
   return await materializeConversionContext(entry, source, options);
 }
 export function convertPluginWithContext(

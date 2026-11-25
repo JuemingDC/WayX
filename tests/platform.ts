@@ -2,7 +2,7 @@
 // aggregation, source discovery, monitor integrity and publication evidence.
 import assert from 'node:assert/strict';import fs from 'node:fs/promises';import path from 'node:path';import os from 'node:os';import crypto from 'node:crypto';
 import {build,normalized,Rule,regexNative,nativeRules,serialize,geosites} from '../src/domain/aggregate.ts';
-import {archiveOpaque,identifyResource,opaqueEntries,clearOpaque} from '../src/ingest/formats.ts';
+import {archiveOpaque,identifyResource,opaqueEntries,clearOpaque} from '../src/ingest/resources.ts';
 import {buildCatalog,extractLpxUrl,buildRucu6Catalog} from '../src/ingest/catalog.ts';
 import {monitorSource,normalizeDocument,selected} from '../src/application/monitor.ts';
 import {commitFiles,safePath} from '../src/publish/transaction.ts';

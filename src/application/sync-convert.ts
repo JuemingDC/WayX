@@ -9,15 +9,17 @@ import {
   identifyResource,
   archiveOpaque,
   clearOpaque,
-} from "../ingest/formats.ts";
-import { fetchOriginalBytes } from "../ingest/resources.ts";
+  fetchOriginalBytes,
+  keleePaused,
+  isKeleeSource,
+  createResourceSnapshot,
+} from "../ingest/resources.ts";
+
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript application layer; preserve source behavior.
-import { keleePaused, isKeleeSource } from "../ingest/source-pause.ts";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import crypto from "node:crypto";
-import { createResourceSnapshot } from "../ingest/resources.ts";
 import { loadLoonSourceCatalog, fetchOriginalText } from "../parser/input.ts";
 import {
   materializeConversionRunContext,
@@ -38,10 +40,10 @@ import {
   writeSyncFailureReport,
 } from "../publish/workflow.ts";
 import { collectIssueCandidates } from "./propose-conversion-issues.ts";
-const ROOT: any = process.cwd();
-const RAW_BASE: any = "https://raw.githubusercontent.com/JuemingDC/WayX/main";
-export function isLoonPluginSource(text: any): any {
-  const source: any = String(text ?? "");
+const ROOT = process.cwd();
+const RAW_BASE = "https://raw.githubusercontent.com/JuemingDC/WayX/main";
+export function isLoonPluginSource(text: unknown): boolean {
+  const source = String(text ?? "");
   return /^#!name\s*=\s*\S/m.test(source) && /^\[[^\]]+\]\s*$/m.test(source);
 }
 // Modified: 2026-10-25 (chance). Preparation can be separated from the
@@ -130,7 +132,7 @@ export async function syncCatalogEntry(
       sourceState = await inspectManagedSource(root, entry, source);
       changed = sourceState.changed;
       log(
-        `${changed ? "changed" : "unchanged"} upstream source via ${entry.source}; sha256=${sourceState.digest}`,
+        `${changed ? "changed" : "unchanged"} upstream source via ${entry.source}`,
       );
       // Every Action compiles every entry, including unchanged upstream text:
       // Generator, specification and remote dependency changes affect output too.
@@ -276,7 +278,7 @@ export async function runCatalogSync({
   writeError = console.error,
   warn = console.warn,
 }: any = {}): Promise<any> {
-  const manifest: any = await loadLoonSourceCatalog(
+  const manifest = await loadLoonSourceCatalog(
     path.join(root, ".github/sources/loon.json"),
   );
   const failures: any = createWorkflowFailureReporter({
@@ -359,6 +361,7 @@ export async function runCatalogSync({
   try {
     nativeQxPlan = await prepareNativeQxSync(root, {
       fetchText: resources.fetchText,
+      resources,
       icons,
     });
   } catch (error: any) {

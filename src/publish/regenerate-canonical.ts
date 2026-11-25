@@ -1,8 +1,12 @@
 import { readJson as readBackupJson } from "./transaction.ts";
 import { loadIconIndex } from "../ingest/icons.ts";
-import { opaqueEntries } from "../ingest/formats.ts";
+import {
+  opaqueEntries,
+  keleePaused,
+  isKeleeSource,
+  createResourceSnapshot,
+} from "../ingest/resources.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
-import { keleePaused, isKeleeSource } from "../ingest/source-pause.ts";
 // Canonical target regeneration for checked-in Loon sources using original source-script URLs.
 // Author: chance
 // Category: Converter / Canonical Output
@@ -10,7 +14,6 @@ import path from "node:path";
 import { isWayxMapLocalPayloadFilename } from "../domain/generated-scripts.ts";
 import fs from "node:fs/promises";
 import crypto from "node:crypto";
-import { createResourceSnapshot } from "../ingest/resources.ts";
 import { loadLoonSourceCatalog } from "../parser/input.ts";
 import {
   materializeConversionRunContext,

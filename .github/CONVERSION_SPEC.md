@@ -507,6 +507,8 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-11-01 | Script archive | `Resource/Backup/script/<URL SHA>/<filename>`; exact BOM/newlines/comments/signatures |
 | 2026-11-02 | API evidence | `Resource/Backup/script-api/<URL SHA>.json`; original/program/plan hashes, UTF-16 positions, capability status |
 | 2026-11-01 | Archive identity | Query significant; fragment excluded from fetch identity and preserved in published script URL |
+| 2026-11-25 | Native QX state | Persist source revisions, output ownership and diagnostics; per-input URLs and checksums remain in the verified backup index and current run snapshot |
+| 2026-11-25 | Immutable acquisition | Native GitHub catalog entries may reuse exact archived bytes only after verifying archive identity, size, SHA-256 and the current Git blob hash; mutable URLs still fetch; reused bytes enter the same run snapshot and provenance is recorded |
 | 2026-11-01 | Backup refresh | Fetch referenced active HTTP(S) scripts every sync even when plugin unchanged; same path replaced on byte change; old versions in Git |
 | 2026-11-01 | Backup index | Original/acquisition URL, digest, size, path; no backup banner in author content |
 | 2026-11-01 | Retained/paused source | Label source snapshot state; permitted referenced-script backups do not resume plugin discovery/conversion |
@@ -528,6 +530,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-10-30 | src/ingest | Discovery, transport, snapshots, pauses, format classification |
 | 2026-10-30 | src/parser / src/emit | AST/IR/planning / target configurations and helpers |
 | 2026-10-30 | src/validation | Native ICU, target format and publication evidence |
+| 2026-11-25 | Module boundaries | Group README and publication in workflow.ts; dependency materialization and conversion in conversion.ts; archive identity, source-pause state, resource classification and acquisition in resources.ts; preserve existing exports |
 | 2026-10-30 | src/publish / src/application | Transactions/indexes / orchestration, reports, Issues and gates |
 | 2026-10-30 | src/index.ts | Public conversion re-exports; no second implementation |
 | 2026-10-30 | Runtime | Locked npm ci + supported Node; erasable TypeScript; no Python/MJS forwarding entrypoints |

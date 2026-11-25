@@ -8,7 +8,7 @@ import {
 } from "../domain/core.ts";
 import { parseRewriteV2 } from "../parser/rewrite.ts";
 import { parseScriptDeclaration } from "../parser/script.ts";
-import { keleePaused, isKeleeSource } from "../ingest/source-pause.ts";
+import { keleePaused, isKeleeSource } from "../ingest/resources.ts";
 import { readOptional, commitFiles } from "../publish/transaction.ts";
 import { validateSurgeModule } from "../validation/output.ts";
 

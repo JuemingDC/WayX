@@ -1,13 +1,13 @@
 // Modified: 2026-11-12 (chance). Website-listed resources supersede the limited
 // GitHub directory subset; embedded QX and native Surge keep separate handling.
 import {ddgksfCatalogUrl,parseDdgksfCatalog,websiteQxConfiguration} from "../ingest/ddgksf.ts";
-import {unavailableSource} from "../ingest/resources.ts";
+import { unavailableSource, backupObject, type BackupObject } from "../ingest/resources.ts";
 import {normalizeSurgeModuleHeader} from "../domain/surge-module-header.ts";
 // Modified: 2026-11-10 (chance). Native QX wrappers use author update dates and publish date-only source changes.
 import { upstreamUpdateTime } from "../domain/update-metadata.ts";
 import { QX_WAYX_REJECT_ACTIONS } from "../domain/core.ts";
 import { normalizeRemoteScriptEcho, bindKnownBackups } from "../parser/backup-references.ts";
-import { readJson } from "./transaction.ts";
+import { readJson, readOptional, commitFiles } from "./transaction.ts";
 import { addAppIcon } from "../domain/icons.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
 // Consolidated: 2026-10-03
@@ -22,6 +22,7 @@ import { quoteJq } from "../parser/rewrite.ts";
 import { validateQX,validateSurgeModule } from "../validation/output.ts";
 import { spawnSync } from "node:child_process";
 import { normalizePluginSource, parseLoonPlugin } from "../parser/input.ts";
+import type { SourceEntry } from "../domain/contracts.ts";
 
 // Managed source/target/helper artifact I/O for WayX converter workflows.
 // Author: chance
@@ -30,11 +31,11 @@ export const AD_BLOCK_ROOT: any = "Adblock";
 export const QX_ADBLOCK_DIR: any = "Adblock/Quantumult X";
 export const SURGE_ADBLOCK_DIR: any = "Adblock/Surge";
 export const BOXJS_SUBSCRIPTION: any = "Boxjs/QuantumultX/Chanceの订阅.json";
-export function qxTargetPath(entry: any): any {
+export function qxTargetPath(entry: Pick<SourceEntry, "qx">): string {
   if (!entry?.qx) throw new Error("manifest entry missing qx filename");
   return `${QX_ADBLOCK_DIR}/${entry.qx}`;
 }
-export function surgeTargetPath(entry: any): any {
+export function surgeTargetPath(entry: Pick<SourceEntry, "surge">): string {
   if (!entry?.surge) throw new Error("manifest entry missing surge filename");
   return `${SURGE_ADBLOCK_DIR}/${entry.surge}`;
 }
@@ -63,17 +64,17 @@ async function staleGeneratedHelpers(
     )
     .sort();
 }
-export function normalizeManagedSource(text: any): any {
+export function normalizeManagedSource(text: string): string {
   return normalizePluginSource(text).replace(/\n*$/, "\n");
 }
-export function managedSourceDigest(text: any, length: any = 12): any {
+export function managedSourceDigest(text: string, length = 12): string {
   return crypto
     .createHash("sha256")
     .update(String(text ?? ""))
     .digest("hex")
     .slice(0, length);
 }
-export function nowConversionStamp(): any {
+export function nowConversionStamp(): string {
   return (
     new Intl.DateTimeFormat("sv-SE", {
       timeZone: "Asia/Shanghai",
@@ -119,27 +120,32 @@ function artifactContent(text: any): any {
   if (text == null || Buffer.isBuffer(text)) return text;
   return String(text).replace(/^(#|\/\/) (?:Updated|Converted):[^\n]*/gm, "$1 Updated:");
 }
-async function managedFileExists(file: any): Promise<any> {
-  try {
-    await fs.access(file);
-    return true;
-  } catch {
-    return false;
-  }
+export async function readManagedTextIfExists(file: string): Promise<string | null> {
+  const bytes = await readOptional(file);
+  return bytes === null ? null : normalizePluginSource(bytes.toString("utf8"));
 }
-export async function readManagedTextIfExists(file: any): Promise<any> {
-  return (await managedFileExists(file))
-    ? normalizePluginSource(await fs.readFile(file, "utf8"))
-    : null;
+export interface ManagedSourceState {
+  sourcePath: string;
+  previous: string | null;
+  changed: boolean;
+  digest: string;
+}
+export interface ManagedTargetState {
+  qxRelativePath: string;
+  surgeRelativePath: string;
+  qxPath: string;
+  surgePath: string;
+  qx: string | null;
+  surge: string | null;
 }
 export async function inspectManagedSource(
-  root: any,
-  entry: any,
-  source: any,
-  { resourceDir = "Resource/Loon" }: any = {},
-): Promise<any> {
-  const sourcePath: any = path.join(root, resourceDir, entry.file);
-  const previous: any = await readManagedTextIfExists(sourcePath);
+  root: string,
+  entry: Pick<SourceEntry, "file">,
+  source: string,
+  { resourceDir = "Resource/Loon" } = {},
+): Promise<ManagedSourceState> {
+  const sourcePath = path.join(root, resourceDir, entry.file);
+  const previous = await readManagedTextIfExists(sourcePath);
   return {
     sourcePath,
     previous,
@@ -148,9 +154,9 @@ export async function inspectManagedSource(
   };
 }
 export async function writeManagedSource(
-  state: any,
-  source: any,
-): Promise<any> {
+  state: ManagedSourceState,
+  source: string,
+): Promise<boolean> {
   if (!state.changed) return false;
   await fs.mkdir(path.dirname(state.sourcePath), { recursive: true });
   await fs.writeFile(state.sourcePath, source);
@@ -167,21 +173,21 @@ export async function syncManagedSource(
   return state;
 }
 export async function readCatalogSource(
-  root: any,
-  entry: any,
-  { resourceDir = "Resource/Loon" }: any = {},
-): Promise<any> {
-  const sourcePath: any = path.join(root, resourceDir, entry.file);
+  root: string,
+  entry: Pick<SourceEntry, "file">,
+  { resourceDir = "Resource/Loon" } = {},
+): Promise<string> {
+  const sourcePath = path.join(root, resourceDir, entry.file);
   return normalizeManagedSource(await fs.readFile(sourcePath, "utf8"));
 }
 export async function readManagedTargetState(
-  root: any,
-  entry: any,
-): Promise<any> {
-  const qxRelativePath: any = qxTargetPath(entry);
-  const surgeRelativePath: any = surgeTargetPath(entry);
-  const qxPath: any = path.join(root, qxRelativePath);
-  const surgePath: any = path.join(root, surgeRelativePath);
+  root: string,
+  entry: Pick<SourceEntry, "qx" | "surge">,
+): Promise<ManagedTargetState> {
+  const qxRelativePath = qxTargetPath(entry);
+  const surgeRelativePath = surgeTargetPath(entry);
+  const qxPath = path.join(root, qxRelativePath);
+  const surgePath = path.join(root, surgeRelativePath);
   const [qx, surge] = await Promise.all([
     readManagedTextIfExists(qxPath),
     readManagedTextIfExists(surgePath),
@@ -467,7 +473,7 @@ function nativeWebsiteSurge(text:string,item:any){
 }
 export async function prepareNativeQxSync(
   root: any,
-  { fetchText, icons = null }: any = {},
+  { fetchText, icons = null, resources = null }: any = {},
 ): Promise<any> {
   let registry: any;
   try {
@@ -487,8 +493,26 @@ export async function prepareNativeQxSync(
   if (!Array.isArray(configs) || !configs.length)
     throw Error("Empty native QX registry");
   const plans: any = [];
+  // Modified: 2026-11-25 (chance). Immutable Git blobs can reuse the existing
+  // byte-exact archive after verifying both its checksum and the current tree.
+  const index = resources ? await readJson<{objects: Record<string, BackupObject>; latest: Record<string,string>} | null>(path.join(root, "Resource/Backup/index.json"), null) : null;
+  const fetchPinnedText = async (url: string, sourceUrl: string, blobSha: unknown) => {
+    const record = index?.objects?.[index?.latest?.[sourceUrl]];
+    if (resources && typeof blobSha === "string" && /^[a-f0-9]{40}$/.test(blobSha) &&
+        record?.kind === "plugin" && record.url === sourceUrl) {
+      const archivePath = backupObject(sourceUrl, new Uint8Array(), "plugin").path;
+      if (record.path === archivePath) {
+        const bytes = await readOptional(path.join(root, archivePath));
+        if (bytes && bytes.length === record.size &&
+            crypto.createHash("sha256").update(bytes).digest("hex") === record.sha256 &&
+            crypto.createHash("sha1").update("blob " + bytes.length + "\0").update(bytes).digest("hex") === blobSha)
+          return resources.reuseVerifiedText(url, bytes);
+      }
+    }
+    return fetchText(url);
+  };
   for (const config of configs)
-    plans.push(await prepareNativeQxSource(config, { fetchText, icons }));
+    plans.push(await prepareNativeQxSource(config, { fetchText, fetchPinnedText, icons }));
   const outputs: any = new Map();
   for (const plan of plans)
     for (const [file, text] of plan.outputs) {
@@ -512,7 +536,7 @@ export async function prepareNativeQxSync(
 }
 async function prepareNativeQxSource(
   config: any,
-  { fetchText, icons = null }: any,
+  { fetchText, fetchPinnedText, icons = null }: any,
 ): Promise<any> {
   if (
     config.version !== 1 ||
@@ -549,7 +573,7 @@ async function prepareNativeQxSource(
         !(config.exclude || []).includes(x.path),
     )
     // Git tree url points to the blob JSON API, not the downloadable resource.
-    .map((file: any) => ({path:file.path,type:file.type}))
+    .map((file: any) => ({path:file.path,type:file.type,sha:file.sha}))
     .sort((a: any, b: any): any => a.path.localeCompare(b.path, "en"));
   if (!selectedFiles.length) throw Error("Empty native QX source catalog");
   if (config.include?.some((p: string) => !selectedFiles.some((f: any) => f.path === p))) throw Error("Missing requested native QX source");
@@ -574,15 +598,15 @@ async function prepareNativeQxSource(
   for (const file of files) {
     const url:any=file.url??"https://raw.githubusercontent.com/"+config.repository+"/"+commit+"/"+file.path;
     if(unavailableSource(url)){skipped.push({application:file.name??file.path,source:url,reason:unavailableSource(url)});continue;}
+    const sourceUrl=file.url??"https://raw.githubusercontent.com/"+config.repository+"/"+config.ref+"/"+file.path;
     let rawText:string;
-    try{rawText=await fetchText(url);}catch(error:any){
+    try{rawText=file.url ? await fetchText(url) : await fetchPinnedText(url,sourceUrl,file.sha);}catch(error:any){
       if(!config.website||![404,410].includes(error.status))throw error;
       skipped.push({application:file.name,source:url,reason:'HTTP '+error.status});continue;
     }
     if(/^\s*</.test(rawText))throw Error("HTML response for "+url);
     let text=rawText;
     if(config.website)text=websiteQxConfiguration(text,url);
-    const sourceUrl=file.url??"https://raw.githubusercontent.com/"+config.repository+"/"+config.ref+"/"+file.path;
     inputs.push({repository:config.repository,path:file.path,acquiredUrl:url,sourceUrl,sha256:crypto.createHash('sha256').update(rawText).digest('hex')});
     if(config.website&&!/\surl(?:-and-header)?\s/.test(text)&&/^\[(?:Script|URL Rewrite|Map Local)\]\s*$/m.test(text)){
       nativeSurge.push({...file,text,sourceUrl});continue;
@@ -704,9 +728,8 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
   } catch (error: any) {
     if (error.code !== "ENOENT") throw error;
   }
-  const old: any = new Map(),
-    writes: any = new Map();
-  for (const relative of new Set([...prior.outputs, ...plan.outputs.keys()])) {
+  const writes = new Map<string, string | null>();
+  for (const relative of new Set<string>([...prior.outputs, ...plan.outputs.keys()])) {
     if (
       !/^(?:Adblock\/(?:Quantumult X\/(?:ishowshu|zenmofeishi|ddgksf2013|fmz200)_[a-z0-9-]+\.snippet|Surge\/(?:ishowshu|zenmofeishi|ddgksf2013|fmz200)_[a-z0-9-]+\.sgmodule)|Module\/(?:QuantumultX\/ddgksf2013_[a-z0-9-]+\.snippet|Surge\/ddgksf2013_[a-z0-9-]+\.sgmodule))$/.test(
         relative,
@@ -723,18 +746,10 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
       throw Error(
         "Refusing to overwrite unmanaged native QX resource: " + relative,
       );
-    old.set(relative, previous);
     // Modified: 2026-11-10 (chance). An upstream-only date change is publishable metadata.
     const next: any = plan.outputs.get(relative) ?? null;
     if (next !== previous) writes.set(relative, next);
   }
-  let state: any = null;
-  try {
-    state = await fs.readFile(path.join(root, statePath), "utf8");
-  } catch (error: any) {
-    if (error.code !== "ENOENT") throw error;
-  }
-  old.set(statePath, state);
   writes.set(
     statePath,
     JSON.stringify(
@@ -742,7 +757,6 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
         version: 1,
         commit: plan.commit,
         sources: plan.sources,
-        inputs: plan.inputs,
         skipped: plan.skipped,
         diagnostics: plan.diagnostics,
         discovery: plan.discovery,
@@ -752,26 +766,12 @@ export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
       2,
     ) + "\n",
   );
-  try {
-    for (const [relative, text] of writes) {
-      const file: any = path.join(root, relative);
-      await fs.mkdir(path.dirname(file), { recursive: true });
-      if (text === null) await fs.rm(file, { force: true });
-      else await fs.writeFile(file, text);
-    }
-  } catch (error: any) {
-    for (const [relative, text] of old) {
-      const file: any = path.join(root, relative);
-      if (text === null) await fs.rm(file, { force: true });
-      else await fs.writeFile(file, text);
-    }
-    throw error;
-  }
+  await commitFiles(root, writes);
 }
 
-export const README_AUTO_UPDATE_INTERVAL: any = 86400;
-export const QX_MIXED_REWRITE_MIN_BUILD: any = 844;
-export const README_CATEGORY_ORDER: any = Object.freeze([
+export const README_AUTO_UPDATE_INTERVAL = 86400;
+export const QX_MIXED_REWRITE_MIN_BUILD = 844;
+export const README_CATEGORY_ORDER = Object.freeze([
   "BoxJs",
   "Module",
   "Adblock",
@@ -1181,7 +1181,7 @@ function ruleGroup(row: any): any {
   return "Proxy";
 }
 // Modified: 2026-10-27 (chance). Show Apple/Microsoft import order separately from resource-index display order.
-export async function buildReadmePlan(root: any = process.cwd()): Promise<any> {
+export async function buildReadmePlan(root = process.cwd()): Promise<Map<string, string>> {
   const sections: any = [];
   for (const category of README_CATEGORY_ORDER) {
     const rows: any = await scanCategory(root, category);
@@ -1267,11 +1267,11 @@ export async function buildReadmePlan(root: any = process.cwd()): Promise<any> {
   return new Map([["README.md", readme]]);
 }
 export async function readmePlanDiff(
-  root: any = process.cwd(),
-  plan: any = null,
-): Promise<any> {
-  const desired: any = plan ?? (await buildReadmePlan(root));
-  const changed: any = [];
+  root = process.cwd(),
+  plan: Map<string, string> | null = null,
+): Promise<string[]> {
+  const desired = plan ?? (await buildReadmePlan(root));
+  const changed: string[] = [];
   for (const [rel, content] of desired) {
     let current: any = null;
     try {
@@ -1284,15 +1284,13 @@ export async function readmePlanDiff(
   return changed.sort();
 }
 export async function writeReadmePlan(
-  root: any = process.cwd(),
-  plan: any = null,
-): Promise<any> {
-  const desired: any = plan ?? (await buildReadmePlan(root));
-  for (const [rel, content] of desired) {
-    const abs: any = path.join(root, rel);
-    await fs.mkdir(path.dirname(abs), { recursive: true });
-    await fs.writeFile(abs, content);
-  }
+  root = process.cwd(),
+  plan: Map<string, string> | null = null,
+): Promise<Map<string, string>> {
+  const desired = plan ?? (await buildReadmePlan(root));
+  // Modified: 2026-11-25 (chance). Use the same byte comparison and atomic
+  // writes as other publication steps; unchanged README retains its mtime.
+  await commitFiles(root, desired);
   return desired;
 }
 

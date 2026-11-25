@@ -4,8 +4,7 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import crypto from "node:crypto";
 import { Parser } from "htmlparser2";
-import { requestOriginal } from "../ingest/resources.ts";
-import { keleePaused } from "../ingest/source-pause.ts";
+import { requestOriginal, keleePaused } from "../ingest/resources.ts";
 import {
   readJson,
   readOptional,

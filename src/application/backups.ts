@@ -1,5 +1,12 @@
-import {keleePaused, isKeleeSource} from "../ingest/source-pause.ts";
-import { unavailableSource } from "../ingest/resources.ts";
+import {
+  keleePaused,
+  isKeleeSource,
+  unavailableSource,
+  identifyResource,
+  backupObject,
+  sourceKey,
+  type BackupObject,
+} from "../ingest/resources.ts";
 import { disableUnavailableDeclarations } from "../domain/source-health.ts";
 import { prepareQxHeaderRewrites } from "./qx-header.ts";
 import { compactGeneratedPluginComments } from "../domain/output-comments.ts";
@@ -22,23 +29,11 @@ import {
   sourceScriptUrls,
   replaceScriptReferences,
 } from "../parser/backup-references.ts";
-import { identifyResource } from "../ingest/formats.ts";
+export { backupObject, type BackupObject } from "../ingest/resources.ts";
 const RAW_BASE = "https://raw.githubusercontent.com/JuemingDC/WayX/main";
 const INDEX = "Resource/Backup/index.json";
 const digest = (value: string | Uint8Array) =>
   crypto.createHash("sha256").update(value).digest("hex");
-export type BackupObject = {
-  url: string;
-  path: string;
-  sha256: string;
-  size: number;
-  kind: "script" | "plugin";
-  acquiredUrl?: string;
-  provenance?: string;
-  updatedAt?: string;
-  author?: string;
-  category?: string;
-};
 type BackupIndex = {
   version: number;
   objects: Record<string, BackupObject>;
@@ -46,33 +41,6 @@ type BackupIndex = {
   adapters?: Record<string, any>;
   bindings?: Record<string, any>;
 };
-function sourceKey(value: string): string {
-  const url = new URL(value);
-  url.hash = "";
-  return url.href;
-}
-export function backupObject(
-  url: string,
-  bytes: Uint8Array,
-  kind: BackupObject["kind"],
-): BackupObject {
-  const key = sourceKey(url),
-    sha256 = digest(bytes);
-  let name =
-    path.posix
-      .basename(new URL(key).pathname)
-      .replace(/[^a-zA-Z0-9_.-]/g, "_") ||
-    (kind === "script" ? "script.js" : "plugin.bin");
-  if (kind === "script" && !/\.(?:js|mjs|cjs)$/.test(name)) name += ".js";
-  return {
-    url: key,
-    // Modified: 2026-11-01 (chance). Keep the URL stable and update bytes in place; Git retains every previous revision.
-    path: `Resource/Backup/${kind}/${digest(key)}/${name}`,
-    sha256,
-    size: bytes.byteLength,
-    kind,
-  };
-}
 export async function refreshSourceBackups(
   root: string,
   {
@@ -235,7 +203,8 @@ export async function refreshSourceBackups(
         "Native source response missing from run snapshot: " +
           input.acquiredUrl,
       );
-    await source(input.sourceUrl, bytes, "run-response", input.acquiredUrl);
+    await source(input.sourceUrl, bytes, resources.reusedArchive?.(input.acquiredUrl)
+      ? "verified-repository-archive" : "run-response", input.acquiredUrl);
   }
   const artifacts: {
     relative: string;

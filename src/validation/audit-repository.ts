@@ -1,6 +1,6 @@
 import { readJson } from "../publish/transaction.ts";
 import { validateSourceBackups } from "./backups.ts";
-import { opaqueEntries } from "../ingest/formats.ts";
+import { opaqueEntries } from "../ingest/resources.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript validation layer; preserve source behavior.
 // Repository-wide static audit for target configs and converter safety.
 // Author: chance

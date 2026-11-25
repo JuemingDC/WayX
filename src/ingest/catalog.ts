@@ -2,8 +2,12 @@
 // explicit retirements and source pauses; encrypted transitions retain identities.
 import path from "node:path";
 import crypto from "node:crypto";
-import { fetchOriginalText, requestOriginal } from "./resources.ts";
-import { keleePaused, isKeleeSource } from "./source-pause.ts";
+import {
+  fetchOriginalText,
+  requestOriginal,
+  keleePaused,
+  isKeleeSource,
+} from "./resources.ts";
 import {
   readJson,
   readOptional,

@@ -7,7 +7,8 @@ import crypto from "node:crypto";
 import http from "node:http";
 import https from "node:https";
 import { Readable } from "node:stream";
-import type { FetchOptions } from "../domain/contracts.ts";
+import type { FetchOptions, ResourceFormat, AcquisitionRecord } from "../domain/contracts.ts";
+import { commitFiles, readJson, safePath } from "../publish/transaction.ts";
 const settings = JSON.parse(
   readFileSync(new URL("../../config/fetch.json", import.meta.url), "utf8"),
 ) as {
@@ -276,6 +277,14 @@ export async function fetchOriginalBytes(
     throw Error("empty response from original source " + url);
   return result.bytes;
 }
+function decodeSourceText(bytes: Uint8Array, url: string): string {
+  const text = new TextDecoder("utf-8", { fatal: true })
+    .decode(bytes)
+    .replace(/\r\n?/g, "\n")
+    .replace(/^\uFEFF/, "");
+  if (!text.trim()) throw Error("empty response from original source " + url);
+  return text;
+}
 export async function fetchOriginalText(
   url: string,
   options: number | FetchOptions = {},
@@ -285,12 +294,7 @@ export async function fetchOriginalText(
     ...opts,
     maxBytes: opts.maxBytes ?? FETCH_LIMITS.text,
   });
-  const text = new TextDecoder("utf-8", { fatal: true })
-    .decode(bytes)
-    .replace(/\r\n?/g, "\n")
-    .replace(/^\uFEFF/, "");
-  if (!text.trim()) throw Error("empty response from original source " + url);
-  return text;
+  return decodeSourceText(bytes, url);
 }
 export function memoizeResourceReads({
   fetchText = fetchOriginalText,
@@ -315,16 +319,34 @@ export function memoizeResourceReads({
     fetchBytes: (url: string) => once("binary", url, fetchBytes),
   };
 }
+interface SnapshotOptions {
+  directory?: string;
+  fetchBytes?: (url: string, options: FetchOptions) => Promise<Uint8Array>;
+  fetchText?: ((url: string) => Promise<string>) | null;
+}
+interface SnapshotRecord {
+  url: string;
+  profile: string;
+  sha256: string;
+  size: number;
+  storage: string;
+  provenance?: "verified-repository-archive";
+}
+interface SnapshotFailure {
+  url: string;
+  error: string;
+}
 export function createResourceSnapshot({
   directory,
   fetchBytes = fetchOriginalBytes,
   fetchText = null,
-}: any = {}) {
+}: SnapshotOptions = {}) {
   if (!directory) throw TypeError("Resource snapshot requires a run directory");
-  const pending = new Map<string, Promise<any>>(),
-    records = new Map<string, any>();
+  const snapshotDirectory = directory;
+  const pending = new Map<string, Promise<SnapshotRecord & { file: string }>>(),
+    records = new Map<string, SnapshotRecord | SnapshotFailure>();
   let sealed = false;
-  async function read(url: string, kind: "text" | "binary"): Promise<Buffer> {
+  async function read(url: string, kind: "text" | "binary", verifiedBytes?: Uint8Array): Promise<Buffer> {
     // Modified: 2026-11-01 (chance). Fragments are client arguments, never HTTP resource identity; reuse one byte snapshot across fragment variants.
     const requestUrl = new URL(assertHttpUrl(url));
     requestUrl.hash = "";
@@ -338,9 +360,11 @@ export function createResourceSnapshot({
         (async () => {
           try {
             const bytes =
-              kind === "text" && fetchText
-                ? Buffer.from(await fetchText(original), "utf8")
-                : Buffer.from(await fetchBytes(original, { maxBytes: limit }));
+              verifiedBytes !== undefined
+                ? Buffer.from(verifiedBytes)
+                : kind === "text" && fetchText
+                  ? Buffer.from(await fetchText(original), "utf8")
+                  : Buffer.from(await fetchBytes(original, { maxBytes: limit }));
             if (bytes.length > limit)
               throw Object.assign(
                 Error("Source exceeds bounded download size: " + original),
@@ -350,18 +374,19 @@ export function createResourceSnapshot({
               .createHash("sha256")
               .update(bytes)
               .digest("hex");
-            await fs.mkdir(directory, { recursive: true });
+            await fs.mkdir(snapshotDirectory, { recursive: true });
             const file = path.join(
-              directory,
+              snapshotDirectory,
               crypto.createHash("sha256").update(key).digest("hex") + ".bin",
             );
             await fs.writeFile(file, bytes);
-            const record = {
+            const record: SnapshotRecord = {
               url: original,
               profile: profile.id,
               sha256,
               size: bytes.length,
               storage: path.basename(file),
+              ...(verifiedBytes !== undefined ? { provenance: "verified-repository-archive" } : {}),
             };
             records.set(key, record);
             return { file, ...record };
@@ -375,7 +400,7 @@ export function createResourceSnapshot({
         })(),
       );
     }
-    const record = await pending.get(key);
+    const record = await pending.get(key)!;
     if (record.size > limit)
       throw Object.assign(
         Error("Source exceeds " + kind + " download size: " + original),
@@ -389,6 +414,9 @@ export function createResourceSnapshot({
       throw Error("Resource snapshot checksum mismatch: " + original);
     return bytes;
   }
+  async function readText(url: string, verifiedBytes?: Uint8Array) {
+    return decodeSourceText(await read(url, "text", verifiedBytes), url);
+  }
   return Object.freeze({
     // Modified: 2026-11-01 (chance). Expose the acquired response without a second request so archives and conversion share exact bytes.
     async cachedBytes(url: string): Promise<Buffer | null> {
@@ -396,31 +424,28 @@ export function createResourceSnapshot({
       requestUrl.hash = "";
       const key = JSON.stringify([requestUrl.href, profile]);
       if (!pending.has(key)) return null;
-      const record = await pending.get(key);
+      const record = await pending.get(key)!;
       const bytes = await fs.readFile(record.file);
-      if (
-        crypto.createHash("sha256").update(bytes).digest("hex") !==
-        record.sha256
-      )
+      if (bytes.length !== record.size || digest(bytes) !== record.sha256)
         throw Error("Resource snapshot checksum mismatch: " + url);
       return bytes;
     },
-    fetchBytes: (url: string) => read(url, "binary"),
-    fetchText: async (url: string) => {
-      const text = new TextDecoder("utf-8", { fatal: true })
-        .decode(await read(url, "text"))
-        .replace(/\r\n?/g, "\n")
-        .replace(/^\uFEFF/, "");
-      if (!text.trim())
-        throw Error("empty response from original source " + url);
-      return text;
+    reusedArchive(url: string): boolean {
+      const requestUrl = new URL(assertHttpUrl(url));
+      requestUrl.hash = "";
+      const record = records.get(JSON.stringify([requestUrl.href, profile]));
+      return record !== undefined && "provenance" in record &&
+        record.provenance === "verified-repository-archive";
     },
+    fetchBytes: (url: string) => read(url, "binary"),
+    fetchText: (url: string) => readText(url),
+    reuseVerifiedText: (url: string, bytes: Uint8Array) => readText(url, bytes),
     async seal() {
       sealed = true;
       await Promise.allSettled(pending.values());
-      await fs.mkdir(directory, { recursive: true });
+      await fs.mkdir(snapshotDirectory, { recursive: true });
       await fs.writeFile(
-        path.join(directory, "manifest.json"),
+        path.join(snapshotDirectory, "manifest.json"),
         JSON.stringify(
           { version: 1, resources: [...records.values()] },
           null,
@@ -429,4 +454,168 @@ export function createResourceSnapshot({
       );
     },
   });
+}
+
+// Archive identity and exact source-byte evidence.
+const digest = (value: string | Uint8Array) => crypto.createHash("sha256").update(value).digest("hex");
+export type BackupObject = {
+  url: string;
+  path: string;
+  sha256: string;
+  size: number;
+  kind: "script" | "plugin";
+  acquiredUrl?: string;
+  provenance?: string;
+  updatedAt?: string;
+  author?: string;
+  category?: string;
+};
+export function sourceKey(value: string): string {
+  const url = new URL(value);
+  url.hash = "";
+  return url.href;
+}
+export function backupObject(
+  url: string,
+  bytes: Uint8Array,
+  kind: BackupObject["kind"],
+): BackupObject {
+  const key = sourceKey(url),
+    sha256 = digest(bytes);
+  let name =
+    path.posix
+      .basename(new URL(key).pathname)
+      .replace(/[^a-zA-Z0-9_.-]/g, "_") ||
+    (kind === "script" ? "script.js" : "plugin.bin");
+  if (kind === "script" && !/\.(?:js|mjs|cjs)$/.test(name)) name += ".js";
+  return {
+    url: key,
+    // Modified: 2026-11-01 (chance). Keep the URL stable and update bytes in place; Git retains every previous revision.
+    path: `Resource/Backup/${kind}/${digest(key)}/${name}`,
+    sha256,
+    size: bytes.byteLength,
+    kind,
+  };
+}
+
+// Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript ingest layer; preserve source behavior.
+// Modified: 2026-11-25 (chance). The registry controls whether source acquisition and conversion are paused.
+export async function keleePaused(root: string): Promise<boolean> {
+  try {
+    return (
+      JSON.parse(
+        await fs.readFile(
+          path.join(root, ".github/sources/kelee-pause.json"),
+          "utf8",
+        ),
+      ).paused === true
+    );
+  } catch (error: any) {
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+}
+export function isKeleeSource(source: string): boolean {
+  const host = new URL(source).hostname;
+  return host === "kelee.one" || host.endsWith(".kelee.one");
+}
+
+// Modified: 2026-10-30 (chance). Classify opaque packages before text parsing;
+// archive original bytes and provenance without guessing an encryption header.
+export function identifyResource(
+  bytes: Uint8Array,
+  url: string,
+): ResourceFormat {
+  let text: string;
+  try {
+    text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    return /\.lpxe$/i.test(new URL(url).pathname) ? "encrypted-loon" : "opaque";
+  }
+  if (/^\s*(?:<!doctype\s+html|<html\b)/i.test(text)) return "html";
+  if (/\.lpxe$/i.test(new URL(url).pathname)) return "encrypted-loon";
+  if (text.includes("\0")) return "opaque";
+  if (
+    /^#!name\s*=\s*\S/m.test(text) &&
+    /^\[(?:General|Rule|Rewrite|Script|Host|Mitm|Argument|IP Rewrite)\]\s*$/im.test(
+      text,
+    )
+  )
+    return "loon-text";
+  return "text";
+}
+export async function archiveOpaque(
+  root: string,
+  id: string,
+  url: string,
+  bytes: Uint8Array,
+  format: ResourceFormat,
+): Promise<AcquisitionRecord> {
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(id))
+    throw Error("Unsafe opaque source id");
+  const sha256 = crypto.createHash("sha256").update(bytes).digest("hex"),
+    relative = `Resource/Encrypted/Loon/${id}/${sha256}.${format === "encrypted-loon" ? "lpxe" : "bin"}`;
+  const record = {
+    url,
+    sha256,
+    size: bytes.byteLength,
+    format,
+    storage: relative,
+  };
+  const state = await readJson<Record<string, AcquisitionRecord>>(
+    path.join(root, ".github/sources/opaque-state.json"),
+    {},
+  );
+  state[id] = record;
+  await commitFiles(
+    root,
+    new Map<string, string | Uint8Array>([
+      [relative, bytes],
+      [relative + ".json", JSON.stringify(record, null, 2) + "\n"],
+      [
+        ".github/sources/opaque-state.json",
+        JSON.stringify(state, null, 2) + "\n",
+      ],
+    ]),
+  );
+  return record;
+}
+
+// Modified: 2026-10-30 (chance). Validate archive evidence before exempting an opaque entry from conversion.
+export async function opaqueEntries(
+  root: string,
+): Promise<Record<string, AcquisitionRecord>> {
+  const state = await readJson<Record<string, AcquisitionRecord>>(
+    path.join(root, ".github/sources/opaque-state.json"),
+    {},
+  );
+  for (const [id, record] of Object.entries(state)) {
+    if (
+      !/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(id) ||
+      !["encrypted-loon", "opaque"].includes(record.format) ||
+      !record.storage.startsWith("Resource/Encrypted/Loon/" + id + "/")
+    )
+      throw Error("Invalid opaque acquisition evidence: " + id);
+    const bytes = await fs.readFile(safePath(root, record.storage));
+    if (
+      bytes.length !== record.size ||
+      crypto.createHash("sha256").update(bytes).digest("hex") !== record.sha256
+    )
+      throw Error("Opaque archive checksum mismatch: " + id);
+  }
+  return state;
+}
+export async function clearOpaque(root: string, id: string) {
+  const file = ".github/sources/opaque-state.json",
+    state = await readJson<Record<string, AcquisitionRecord>>(
+      path.join(root, file),
+      {},
+    );
+  if (id in state) {
+    delete state[id];
+    await commitFiles(
+      root,
+      new Map([[file, JSON.stringify(state, null, 2) + "\n"]]),
+    );
+  }
 }

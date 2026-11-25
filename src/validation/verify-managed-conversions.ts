@@ -1,4 +1,4 @@
-import { opaqueEntries } from "../ingest/formats.ts";
+import { opaqueEntries } from "../ingest/resources.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript validation layer; preserve source behavior.
 // Managed conversion cleanliness gate.
 // Author: chance
