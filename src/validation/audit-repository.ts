@@ -22,9 +22,9 @@ import {
 } from "./output.ts";
 import { parseLoonPlugin } from "../parser/input.ts";
 import { validateSurgeModule } from "./output.ts";
-const ROOT: any = process.cwd();
+const ROOT = process.cwd();
 const findings: any = [];
-const validated: any = { qx: 0, surge: 0, loon: 0 };
+const validated = { qx: 0, surge: 0, loon: 0 };
 const artifacts: any = {};
 const catalog: any = JSON.parse(
   await fs.readFile(".github/sources/loon.json", "utf8"),
@@ -49,7 +49,7 @@ const managed: any = new Map(
     [surgeTargetPath(entry), { entry, target: "surge" }],
   ]),
 );
-const routing: any = new Set(
+const routing = new Set(
   Object.keys(
     JSON.parse(await fs.readFile(".github/sources/rules-state.json", "utf8"))
       .outputs,
@@ -64,13 +64,13 @@ async function walk(dir: any): Promise<any> {
       ent.name === ".runtime"
     )
       continue;
-    const p: any = path.join(dir, ent.name);
+    const p = path.join(dir, ent.name);
     if (ent.isDirectory()) out.push(...(await walk(p)));
     else out.push(p);
   }
   return out;
 }
-const rel: any = (p: any): any =>
+const rel: any = (p: any) =>
   path.relative(ROOT, p).split(path.sep).join("/");
 const add: any = (file: any, line: any, code: any, text: any): any =>
   findings.push({
@@ -137,7 +137,7 @@ for (const file of files) {
     } catch (error: any) {
       add(file, 1, "qx-validator", error?.message || error);
     }
-    for (let i: any = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) {
       const t: any = lines[i].trim();
       if (/^#!(?!source=)/.test(t)) add(file, i + 1, "qx-active-metadata", t);
       if (/^#\s*Category:.*\bLoon\b/i.test(t))
@@ -180,7 +180,7 @@ for (const file of files) {
         add(file, 1, "surge-adblock-validator", error?.message || error);
       }
     }
-    for (let i: any = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) {
       const t: any = lines[i].trim();
       if (
         /^#!(?:author|icon|date|loon_version|homepage|tag|openurl|system_version|raw-url|tg-channel)\s*=/i.test(
@@ -211,7 +211,7 @@ for (const file of files) {
     }
   }
   if (/^src\//.test(rp) && rp !== "src/validation/audit-repository.ts") {
-    for (let i: any = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) {
       const t: any = lines[i];
       if (/\[hH\]\[tT\]\[tT\]\[pP\]/.test(t))
         add(file, i + 1, "converter-synthetic-casefold", t.trim());
@@ -226,7 +226,7 @@ for (const file of files) {
     }
   }
   if (/^Script\/.+\.js$/.test(rp)) {
-    for (let i: any = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) {
       const t: any = lines[i].trim();
       // Adaptation markers are generator metadata/comments. Generated mock
       // helpers may legitimately embed arbitrary upstream JS/HTML text in
@@ -245,7 +245,7 @@ for (const file of files) {
 // Modified: 2026-11-01 (chance). Never publish a dangling or corrupted backed-up script reference.
 for (const problem of await validateSourceBackups(ROOT)) findings.push(problem);
 // Validate the serialized target expressions independently of helper bodies.
-const regexAudit: any = spawnSync(process.execPath, ["src/cli.ts", "regex"], {
+const regexAudit = spawnSync(process.execPath, ["src/cli.ts", "regex"], {
   input: JSON.stringify(targetRegexValidationInventory()),
   encoding: "utf8",
   maxBuffer: 4 * 1024 * 1024,
@@ -259,7 +259,7 @@ if (regexAudit.error || regexAudit.status !== 0) {
   });
 } else console.log(regexAudit.stdout.trim());
 const plugins: any = catalog
-  .filter((entry: any): any =>
+  .filter((entry: any) =>
     [
       "Resource/Loon/" + entry.file,
       qxTargetPath(entry),

@@ -53,7 +53,7 @@ function cleanString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 function safeRelativePath(value: unknown, field: string): string {
-  const path: any = cleanString(value);
+  const path = cleanString(value);
   if (!path) throw new Error(`catalog entry missing ${field}`);
   if (
     path.startsWith("/") ||
@@ -67,7 +67,7 @@ function safeRelativePath(value: unknown, field: string): string {
   return path;
 }
 function absoluteHttpUrl(value: unknown, field: string): string {
-  const text: any = cleanString(value);
+  const text = cleanString(value);
   let url: any;
   try {
     url = new URL(text);
@@ -145,7 +145,7 @@ export async function loadLoonSourceCatalog(
 // Loon source parser and section/comment structure
 // Author: chance
 // Category: Converter / Source Parsing
-export const WAYX_SUPPORTED_SOURCE_SECTIONS: any = new Set([
+export const WAYX_SUPPORTED_SOURCE_SECTIONS = new Set([
   "Argument",
   "General",
   "Rule",
@@ -154,7 +154,7 @@ export const WAYX_SUPPORTED_SOURCE_SECTIONS: any = new Set([
   "MITM",
   "MitM",
 ]);
-export function normalizePluginSource(text: any): any {
+export function normalizePluginSource(text: any) {
   return String(text ?? "")
     .replace(/\r\n?/g, "\n")
     .replace(/^\uFEFF/, "");
@@ -175,15 +175,15 @@ export function parseLoonPlugin(text: any): any {
   }
   return { header, sections };
 }
-export function isSupportedSourceSection(name: any): any {
+export function isSupportedSourceSection(name: any) {
   return WAYX_SUPPORTED_SOURCE_SECTIONS.has(String(name ?? ""));
 }
 export function groupSourceSectionItems(lines: any = []): any {
   const items: any = [];
   let pending: any = [];
-  for (let sourceIndex: any = 0; sourceIndex < lines.length; sourceIndex++) {
-    const raw: any = String(lines[sourceIndex] ?? "");
-    const trimmed: any = raw.trim();
+  for (let sourceIndex = 0; sourceIndex < lines.length; sourceIndex++) {
+    const raw = String(lines[sourceIndex] ?? "");
+    const trimmed = raw.trim();
     if (
       !trimmed ||
       trimmed.startsWith("#") ||
@@ -219,15 +219,15 @@ export function groupSourceSectionItems(lines: any = []): any {
 export function cleanSourceComments(comments: any = []): any {
   return comments
     .map((value: any): any => value || "")
-    .map((value: any): any => (String(value).trim() ? String(value) : ""))
+    .map((value: any) => (String(value).trim() ? String(value) : ""))
     .filter(
-      (value: any, index: any, all: any): any =>
+      (value: any, index: any, all: any) =>
         !(value === "" && all[index - 1] === ""),
     );
 }
 export function sourceCommentText(raw: any): any {
-  const text: any = String(raw ?? "").trim();
-  const match: any = text.match(/^(?:#|;|\/\/)\s*(.*?)\s*$/);
+  const text = String(raw ?? "").trim();
+  const match = text.match(/^(?:#|;|\/\/)\s*(.*?)\s*$/);
   return match ? match[1].trim() : null;
 }
 
@@ -241,7 +241,7 @@ export function discoverSourceScriptUrls(
   source: any,
   { parsed = null }: any = {},
 ): any {
-  const text: any = String(source ?? "");
+  const text = String(source ?? "");
   const urls: any = new Set(
     // Modified: 2026-11-01 (chance). Disabled declarations remain dependencies, but documentation/commented examples are not executable script references.
     [
@@ -272,7 +272,7 @@ export async function inspectSourceScript(
   pluginSourceUrl: any,
   { fetchText = fetchOriginalText }: any = {},
 ): Promise<any> {
-  const originalUrl: any = resolveOriginalUrl(reference, pluginSourceUrl);
+  const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
   try {
     const normalized: any = normalizePluginSource(
       await fetchText(originalUrl),
@@ -364,7 +364,7 @@ async function readActionDependencies(
     try {
       byAction[index] = await read(action);
     } catch (error: any) {
-      const reason: any = String(error?.message || error).split("\n")[0];
+      const reason = String(error?.message || error).split("\n")[0];
       let sourceFile: any;
       try {
         sourceFile = spec(action)?.url;
@@ -405,7 +405,7 @@ export async function materializeMockFiles(
           action,
           index: ast.sourceActionIndices?.[index] ?? index,
         }))
-        .filter(({ action }: any): any =>
+        .filter(({ action }: any) =>
           /^(?:request|response)\.body\.mock_file$/.test(action.name),
         );
       if (!files.length) continue;
@@ -418,7 +418,7 @@ export async function materializeMockFiles(
         });
         if (plan.base64) {
           const body: any = await text(plan.url);
-          const compact: any = String(body).replace(/\s+/g, "");
+          const compact = String(body).replace(/\s+/g, "");
           if (
             !/^[A-Za-z0-9+/]*={0,2}$/.test(compact) ||
             compact.length % 4 === 1
@@ -466,11 +466,11 @@ export async function materializeMockFiles(
   return out;
 }
 function splitLegacyRewriteLine(line: any): any {
-  const source: any = String(line ?? "").trim();
-  const idx: any = source.search(/\s/);
+  const source = String(line ?? "").trim();
+  const idx = source.search(/\s/);
   if (idx < 0) return null;
-  const pattern: any = source.slice(0, idx).trim();
-  const action: any = source
+  const pattern = source.slice(0, idx).trim();
+  const action = source
     .slice(idx)
     .trim()
     .replace(/^\-\s+/, "");

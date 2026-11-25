@@ -27,7 +27,7 @@ import {
 // WayX Quantumult X mock-script renderer
 // Author: chance
 // Category: Converter / Quantumult X / Mock
-const QX_MOCK_MIME: any = Object.freeze({
+const QX_MOCK_MIME: Readonly<Record<string, string>> = Object.freeze({
   json: "application/json",
   text: "text/plain; charset=utf-8",
   css: "text/css; charset=utf-8",
@@ -42,7 +42,7 @@ const QX_MOCK_MIME: any = Object.freeze({
   mp4: "video/mp4",
   "form-data": "multipart/form-data",
 });
-const QX_MOCK_TEXT_TYPES: any = new Set([
+const QX_MOCK_TEXT_TYPES = new Set([
   "json",
   "text",
   "css",
@@ -50,7 +50,7 @@ const QX_MOCK_TEXT_TYPES: any = new Set([
   "javascript",
   "plain",
 ]);
-const REASON: any = Object.freeze({
+const REASON: Readonly<Record<number, string>> = Object.freeze({
   200: "OK",
   201: "Created",
   202: "Accepted",
@@ -156,7 +156,7 @@ function renderHeaderOps(
     : null;
   lines.push(...headerHelpers());
   for (const op of headerOps) {
-    const lowerName: any = String(op.name || "").toLowerCase();
+    const lowerName = String(op.name || "").toLowerCase();
     if (op.type === "add") {
       // A response mock is created from a known header set, so adding a new
       // absent header is lossless. Unknown/existing headers may require
@@ -195,8 +195,8 @@ export function renderQxMockScript(plan: any, options: any = {}): any {
       "Quantumult X request mock binary/bodyBytes output is not enabled without an official request-body example",
     );
   }
-  const hasText: any = typeof options.bodyText === "string";
-  const hasBytes: any =
+  const hasText = typeof options.bodyText === "string";
+  const hasBytes =
     typeof options.bodyBase64 === "string" && options.bodyBase64.length > 0;
   if (plan.binary || plan.base64) {
     if (!hasBytes) throw new Error("mock bytes are required");
@@ -251,7 +251,7 @@ export function renderQxMockFileScript(plan: any, options: any = {}): any {
 // WayX Surge request-body mock helper renderer
 // Author: chance
 // Category: Converter / Surge / Rewrite v2 / Mock
-const SURGE_MOCK_MIME: any = Object.freeze({
+const SURGE_MOCK_MIME: Readonly<Record<string, string>> = Object.freeze({
   json: "application/json",
   text: "text/plain; charset=utf-8",
   css: "text/css; charset=utf-8",
@@ -266,7 +266,7 @@ const SURGE_MOCK_MIME: any = Object.freeze({
   mp4: "video/mp4",
   "form-data": "multipart/form-data",
 });
-const SURGE_MOCK_TEXT_TYPES: any = new Set([
+const SURGE_MOCK_TEXT_TYPES = new Set([
   "json",
   "text",
   "css",
@@ -332,7 +332,7 @@ function surgeMockBase64Decoder(): any {
   ];
 }
 function validateBase64(text: any): any {
-  const compact: any = String(text || "").replace(/\s+/g, "");
+  const compact = String(text || "").replace(/\s+/g, "");
   if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length % 4 === 1) {
     throw new Error("mock Base64 body is invalid");
   }
@@ -362,10 +362,10 @@ export function renderSurgeRequestMockScript(
   const mime: any = SURGE_MOCK_MIME[contentType] || "application/octet-stream";
   const fileMode: any = action.name.endsWith("_file");
   const base64: any = boolValue(action.args[fileMode ? 2 : 2], false);
-  const binary: any = !SURGE_MOCK_TEXT_TYPES.has(contentType);
+  const binary = !SURGE_MOCK_TEXT_TYPES.has(contentType);
   let bodyText: any = null,
     bodyBase64: any = null,
-    sourceFile: any = "";
+    sourceFile = "";
   if (fileMode) {
     if (!materialized || materialized.error)
       throw new Error(materialized?.error || "mock_file was not materialized");
@@ -415,7 +415,7 @@ export function renderSurgeRequestMockScript(
 // WayX generated Quantumult X scripts for semantic Rewrite v2 actions
 // Author: chance
 // Category: Converter / Quantumult X / Rewrite v2
-const STATUS_TEXT: any = Object.freeze({
+const STATUS_TEXT: Readonly<Record<number, string>> = Object.freeze({
   200: "OK",
   201: "Created",
   202: "Accepted",
@@ -534,7 +534,7 @@ function qxConditionHeaderHelper(): any {
   ];
 }
 export function renderQxRedirectScript(ast: any, options: any = {}): any {
-  const fullCondition: any = options.conditionMode === "full";
+  const fullCondition = options.conditionMode === "full";
   const pair: any = fullCondition
     ? ((): any => {
         validateRewriteV2Ast(ast, { regexEngine: "javascript" });
@@ -588,7 +588,7 @@ export function renderQxRedirectScript(ast: any, options: any = {}): any {
     };
   }
   const urlCondition: any = redirectUrlComparison(ast);
-  const urlPattern: any = String(urlCondition.right.pattern);
+  const urlPattern = String(urlCondition.right.pattern);
   const replacement: any = redirectTemplatePlan(
     action.args[1],
     urlCondition.capture,
@@ -596,7 +596,7 @@ export function renderQxRedirectScript(ast: any, options: any = {}): any {
   const conditionExpr: any = compileComplexCondition(ast.condition, "qx");
   // Condition capture tables expose values, not match.index. Re-execute the
   // same target regex against the same URL to obtain the replacement range.
-  const matchExpr: any =
+  const matchExpr =
     "new RegExp(" +
     JSON.stringify(urlPattern) +
     "," +
@@ -634,7 +634,7 @@ export function renderQxRejectScript(ast: any, options: any = {}): any {
   validateRewriteV2Ast(ast, { regexEngine: "javascript" });
   if (ast.actions.length !== 1)
     throw new Error("reject script requires exactly one action");
-  const externalExact: any = options.conditionMode === "external-exact";
+  const externalExact = options.conditionMode === "external-exact";
   const condition: any = externalExact
     ? { pattern: null, notes: [] }
     : simpleUrlRewriteCondition(ast, { target: "qx" });
@@ -654,7 +654,7 @@ export function renderQxRejectScript(ast: any, options: any = {}): any {
   ) {
     throw new Error("reject status must be 100...599");
   }
-  let body: any = "",
+  let body = "",
     contentType: any = null;
   if (action.name === "reject") {
     if (action.args.length > 1) {
@@ -764,7 +764,7 @@ export function headerOpsForMock(ast: any, mockAction: any): any {
 }
 export function renderQxInlineMockScript(ast: any, options: any = {}): any {
   validateRewriteV2Ast(ast, { regexEngine: "javascript" });
-  const externalExact: any = options.conditionMode === "external-exact";
+  const externalExact = options.conditionMode === "external-exact";
   const condition: any = externalExact
     ? { pattern: null, notes: [] }
     : simpleUrlRewriteCondition(ast, { target: "qx" });
@@ -783,7 +783,7 @@ export function renderQxInlineMockScript(ast: any, options: any = {}): any {
   const body: any = fixedStringValue(mock.args[1]);
   if (contentType === null || body === null)
     throw new Error("inline mock content type/body must be fixed strings");
-  const isResponse: any = ast.phase === "response";
+  const isResponse = ast.phase === "response";
   const status: any = isResponse ? numberArg(mock.args[2], 200) : null;
   const base64: any = isResponse
     ? booleanArg(mock.args[3], false)
@@ -848,10 +848,10 @@ function complexRewriteFixed(node: any, label: any): any {
   return parts.map((p: any): any => p[1]).join("");
 }
 function captureGroupCount(pattern: any): any {
-  let count: any = 0,
-    escaped: any = false,
-    inClass: any = false;
-  for (let i: any = 0; i < pattern.length; i++) {
+  let count = 0,
+    escaped = false,
+    inClass = false;
+  for (let i = 0; i < pattern.length; i++) {
     const ch: any = pattern[i];
     if (escaped) {
       escaped = false;
@@ -1032,11 +1032,11 @@ function statements(
   for (const alias of captures.keys())
     if (argumentTable?.byId?.has(alias))
       throw new Error("capture alias duplicates plugin argument: " + alias);
-  let body: any = false,
-    headers: any = false,
-    json: any = false,
-    headerAdd: any = false,
-    dynamicPath: any = false;
+  let body = false,
+    headers = false,
+    json = false,
+    headerAdd = false,
+    dynamicPath = false;
   for (const [actionIndex, action] of ast.actions.entries()) {
     if (
       new RegExp(
@@ -1110,7 +1110,7 @@ function statements(
             guaranteed,
             argumentTable,
           );
-          const tail: any =
+          const tail =
             JSON.stringify(normalizeRegexBodyForTarget(args[1].pattern)) +
             ",v," +
             JSON.stringify(args[1].flags || "") +
@@ -1195,16 +1195,16 @@ function statements(
       if (operations === null)
         throw new Error("inline JQ is outside the fixed mutation subset");
       body = true;
-      const operationsData: any = JSON.stringify(JSON.stringify(operations));
+      const operationsData = JSON.stringify(JSON.stringify(operations));
       // The original top-level renderer stays byte-identical for existing
       // helpers. Nested paths require strict object traversal and creation.
-      const apply: any = operations.some((op: any): any => op.path)
+      const apply = operations.some((op: any): any => op.path)
         ? 'if(j===null){if(op.kind==="delete")continue;j={}}let parent=j;const path=op.path||[op.key];for(let i=0;i<path.length;i++){if(parent===null){break}if(typeof parent!=="object"||Array.isArray(parent))throw new Error("JQ object path requires object");const key=path[i];if(i===path.length-1){if(op.kind==="delete")delete parent[key];else Object.defineProperty(parent,key,{value:op.value,enumerable:true,writable:true,configurable:true});break}let child=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined;if(child==null){if(op.kind==="delete"){break}child={};Object.defineProperty(parent,key,{value:child,enumerable:true,writable:true,configurable:true})}parent=child}'
         : 'if(j===null){if(op.kind==="delete")continue;j={}}if(typeof j!=="object"||Array.isArray(j))throw new Error("JQ object key requires object");if(op.kind==="delete")delete j[op.key];else Object.defineProperty(j,op.key,{value:op.value,enumerable:true,writable:true,configurable:true})';
       // jq collects every del path before deleting any of them. Validate the
       // complete group against its input so an overlapping parent cannot hide
       // a scalar/array path error; commit only after the whole action succeeds.
-      const deleteMany: any = operations.some(
+      const deleteMany = operations.some(
         (op: any): any => op.kind === "delete-many",
       )
         ? 'if(op.kind==="delete-many"){for(const path of op.paths){let parent=j;for(const key of path){if(parent==null)break;if(typeof parent!=="object"||Array.isArray(parent))throw new Error("JQ object path requires object");parent=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined}}for(const path of op.paths){let parent=j;for(let i=0;i<path.length;i++){if(parent==null)break;const key=path[i];if(i===path.length-1){delete parent[key];break}parent=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined}}continue;}'
@@ -1237,13 +1237,13 @@ function statements(
         const fixed: any =
           args[0].type !== "variable" &&
           stringTemplateParts(args[0]).every((p: any): any => p[0] === "s");
-        const path: any = fixed
+        const path = fixed
           ? JSON.stringify(
               parseJsonKeyPath(complexRewriteFixed(args[0], "JSON key path")),
             )
           : null;
         if (!fixed) dynamicPath = true;
-        const helper: any = action.name.endsWith(".delete")
+        const helper = action.name.endsWith(".delete")
           ? "__wayxJsonDelete"
           : action.name.endsWith(".add")
             ? "__wayxJsonAdd"
@@ -1341,7 +1341,7 @@ function statements(
     );
   return { out, body, headers, json, headerAdd, dynamicPath };
 }
-const JSON_MUTATION_RUNTIME: any = [
+const JSON_MUTATION_RUNTIME = [
   'function __wayxJsonParent(root,path){let x=root;for(let i=0;i<path.length-1;i++){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,path[i]))return null;x=x[path[i]];}return x;}',
   'function __wayxJsonGet(root,path){let x=root;for(const k of path){if(x==null||typeof x!=="object"||!Object.prototype.hasOwnProperty.call(x,k))return undefined;x=x[k]}return x;}',
   'function __wayxJsonSet(root,path,value){let x=root;for(let i=0;i<path.length-1;i++){const k=path[i],next=path[i+1];if(x==null||typeof x!=="object")return;const cur=Object.prototype.hasOwnProperty.call(x,k)?x[k]:undefined;if(cur==null)Object.defineProperty(x,k,{value:typeof next==="number"?[]:{},enumerable:true,writable:true,configurable:true});else if(typeof cur!=="object")return;x=x[k]}if(x!=null&&typeof x==="object")Object.defineProperty(x,path[path.length-1],{value,enumerable:true,writable:true,configurable:true});}',
@@ -1402,8 +1402,8 @@ function renderRewriteScript(
     argumentTable,
     sharedRuntime: true,
   });
-  const source: any = ast.phase === "request" ? "$request" : "$response";
-  const doneValue: any =
+  const source = ast.phase === "request" ? "$request" : "$response";
+  const doneValue =
     plan.headers && plan.body
       ? "{headers:__wayxHeaders,body:__wayxBody}"
       : plan.headers
@@ -1489,7 +1489,7 @@ function renderRewriteScript(
     "}else{$done({});}",
     "",
   ].filter((line: any): any => line !== null);
-  const qxAction: any = plan.body
+  const qxAction = plan.body
     ? ast.phase === "request"
       ? "script-request-body"
       : "script-response-body"
@@ -1525,7 +1525,7 @@ export function renderSingleRewriteMutationScript(
     );
   }
   const name: any = ast.actions[0]?.name || "";
-  const supported: any = new RegExp(
+  const supported = new RegExp(
     "^" +
       ast.phase +
       "\\.(?:header\\.(?:" +

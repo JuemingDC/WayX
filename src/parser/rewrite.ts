@@ -37,8 +37,8 @@ import { surgeRewriteArgumentPayload } from "./script.ts";
 // WayX Loon Rewrite v2 tokenizer/parser/AST
 // Author: chance
 // Category: Converter / Rewrite v2
-const BT: any = String.fromCharCode(96),
-  PUN: any = "(),[].|";
+const BT = String.fromCharCode(96),
+  PUN = "(),[].|";
 function fail(s: any, i: any, m: any): any {
   throw new SyntaxError(
     m +
@@ -52,8 +52,8 @@ function fail(s: any, i: any, m: any): any {
   );
 }
 function dq(r: any): any {
-  let o: any = "";
-  for (let i: any = 1; i < r.length - 1; i++) {
+  let o = "";
+  for (let i = 1; i < r.length - 1; i++) {
     let c: any = r[i];
     if (c !== "\\") {
       o += c;
@@ -76,9 +76,9 @@ function dq(r: any): any {
   return o;
 }
 export function tokenizeRewriteV2(source: any): any {
-  const s: any = String(source ?? ""),
+  const s = String(source ?? ""),
     a: any = [];
-  let i: any = 0;
+  let i = 0;
   const add: any = (
     type: any,
     raw: any,
@@ -105,9 +105,9 @@ export function tokenizeRewriteV2(source: any): any {
     }
     if (c === "$" && s[i + 1] === "{") {
       i += 2;
-      let d: any = 1,
+      let d = 1,
         q: any = null,
-        e: any = false;
+        e = false;
       while (i < s.length && d) {
         c = s[i];
         if (q) {
@@ -133,8 +133,8 @@ export function tokenizeRewriteV2(source: any): any {
     }
     if (c === '"') {
       i++;
-      let e: any = false,
-        ok: any = false;
+      let e = false,
+        ok = false;
       while (i < s.length) {
         c = s[i++];
         if (e) {
@@ -157,7 +157,7 @@ export function tokenizeRewriteV2(source: any): any {
     }
     if (c === BT) {
       i++;
-      let ok: any = false;
+      let ok = false;
       while (i < s.length) {
         if (s[i] !== BT) {
           i++;
@@ -447,7 +447,7 @@ export function conditionToSource(n: any, p: any = 0): any {
   if (n.type === "group") return "(" + conditionToSource(n.expression) + ")";
   if (n.type === "logical") {
     let q: any = prec(n),
-      b: any =
+      b =
         conditionToSource(n.left, q) +
         " " +
         n.operator +
@@ -494,7 +494,7 @@ export function findRewriteComparisons(
 // Target-neutral Rewrite Semantic IR
 // Author: chance
 // Category: Converter / Rewrite / Semantic IR
-const LEGACY_REJECT_VARIANTS: any = new Map([
+const LEGACY_REJECT_VARIANTS = new Map([
   [
     "reject",
     {
@@ -554,9 +554,9 @@ const LEGACY_REJECT_VARIANTS: any = new Map([
 ]);
 function rewriteSourceTokens(input: any): any {
   const out: any = [];
-  let cur: any = "",
+  let cur = "",
     quote: any = null,
-    esc: any = false;
+    esc = false;
   for (const ch of String(input ?? "")) {
     if (esc) {
       cur += ch;
@@ -589,7 +589,7 @@ function rewriteSourceTokens(input: any): any {
   return out;
 }
 export function unquoteRewriteToken(token: any): any {
-  const t: any = String(token ?? "");
+  const t = String(token ?? "");
   if (
     (t.startsWith('"') && t.endsWith('"')) ||
     (t.startsWith("'") && t.endsWith("'"))
@@ -598,7 +598,7 @@ export function unquoteRewriteToken(token: any): any {
   }
   return t;
 }
-export const LOON_LEGACY_MOCK_OPTION_NAMES: any = new Set([
+export const LOON_LEGACY_MOCK_OPTION_NAMES = new Set([
   "data-type",
   "data",
   "status-code",
@@ -606,11 +606,11 @@ export const LOON_LEGACY_MOCK_OPTION_NAMES: any = new Set([
   "mock-data-is-base64",
 ]);
 function legacyMockOptionNames(rest: any): any {
-  const source: any = String(rest ?? "");
+  const source = String(rest ?? "");
   const out: any = [];
   let quote: any = null,
-    esc: any = false;
-  for (let i: any = 0; i < source.length; ) {
+    esc = false;
+  for (let i = 0; i < source.length; ) {
     const ch: any = source[i];
     if (quote) {
       if (esc) {
@@ -645,7 +645,7 @@ function legacyMockOptionNames(rest: any): any {
   return [...new Set(out)];
 }
 function parseLegacyMockData(rest: any): any {
-  const source: any = String(rest || "");
+  const source = String(rest || "");
   const quotedStart: any = source.search(/\bdata="/i);
   if (quotedStart >= 0) {
     const valueStart: any = source.indexOf('"', quotedStart) + 1;
@@ -668,18 +668,18 @@ function parseLegacyMockData(rest: any): any {
   return unquoted ? unquoted[1] : null;
 }
 function parseLegacyMock(rest: any): any {
-  const type: any =
+  const type =
     (String(rest).match(/\bdata-type=([^\s]+)/i) || [])[1] || "text";
-  const status: any = Number(
+  const status = Number(
     (String(rest).match(/\bstatus-code=(\d+)/i) || [])[1] || 200,
   );
-  const dataPath: any =
+  const dataPath =
     (String(rest).match(/\bdata-path=([^\s]+)/i) || [])[1] || null;
-  const base64: any = /\bmock-data-is-base64=(?:true|1)\b/i.test(String(rest));
+  const base64 = /\bmock-data-is-base64=(?:true|1)\b/i.test(String(rest));
   return { type, status, data: parseLegacyMockData(rest), dataPath, base64 };
 }
 export function classifyLegacyRewriteAction(action: any): any {
-  const raw: any = String(action ?? "").trim();
+  const raw = String(action ?? "").trim();
   const lower: any = raw.toLowerCase();
   if (LEGACY_REJECT_VARIANTS.has(lower)) {
     const semantic: any = LEGACY_REJECT_VARIANTS.get(lower);
@@ -785,7 +785,7 @@ export function isEmptyJsonJqIr(ir: any): any {
   const op: any = ir.operations[0];
   if (op?.kind !== "json" || op?.operation !== "jq") return false;
   if (ir.sourceSyntax === "legacy") {
-    const raw: any = String(op?.rest ?? "")
+    const raw = String(op?.rest ?? "")
       .replace(/[\u200B-\u200D\u2060\uFEFF]/gu, "")
       .trim();
     if (!raw) return true;
@@ -805,8 +805,8 @@ export function isEmptyLegacyJsonJqIr(ir: any): any {
   return ir?.sourceSyntax === "legacy" && isEmptyJsonJqIr(ir);
 }
 export function legacyRewriteToSemanticIr(pattern: any, action: any): any {
-  const sourcePattern: any = String(pattern ?? "").trim();
-  const sourceAction: any = String(action ?? "").trim();
+  const sourcePattern = String(pattern ?? "").trim();
+  const sourceAction = String(action ?? "").trim();
   const op: any = classifyLegacyRewriteAction(sourceAction);
   return {
     type: "rewrite-semantic-ir",
@@ -837,7 +837,7 @@ function scalarValue(node: any): any {
   return null;
 }
 function classifyRewriteV2Action(action: any, phase: any): any {
-  const name: any = String(action?.name || "");
+  const name = String(action?.name || "");
   if (/^reject(?:_|$)/.test(name)) {
     const variant: any =
       LEGACY_REJECT_VARIANTS.get(name.replace("_", "-"))?.variant ?? "generic";
@@ -954,7 +954,7 @@ export function legacyRewriteTokens(text: any): any {
 // WayX Loon Rewrite v2 official action registry
 // Author: chance
 // Category: Converter / Rewrite v2 / Action Registry
-const defs: any = [
+const defs = [
   ["url.replace", 1, 1, false],
   ["redirect", 2, 2, false],
   ["reject", 1, 2, false],
@@ -997,7 +997,7 @@ export function getRewriteV2ActionDefinition(name: any): any {
   return LOON_REWRITE_V2_ACTIONS.get(String(name ?? "")) || null;
 }
 function actionError(action: any, message: any): any {
-  const error: any = new Error(action.name + ": " + message);
+  const error = new Error(action.name + ": " + message) as Error & { code: string; action: string };
   error.code = "WAYX_REWRITE_V2_ACTION_INVALID";
   error.action = action.name;
   return error;
@@ -1013,7 +1013,7 @@ export function validateRewriteV2Action(action: any): any {
     );
   const count: any = action.args.length;
   if (count < def.minArgs || count > def.maxArgs) {
-    const expected: any =
+    const expected =
       def.minArgs === def.maxArgs
         ? String(def.minArgs)
         : def.minArgs + ".." + def.maxArgs;
@@ -1051,7 +1051,7 @@ export function validateRewriteV2Action(action: any): any {
   return def;
 }
 function conditionError(message: any): any {
-  const error: any = new Error(message);
+  const error = new Error(message) as Error & { code: string };
   error.code = "WAYX_REWRITE_V2_CONDITION_INVALID";
   return error;
 }
@@ -1066,7 +1066,7 @@ function validateCondition(node: any, phase: any): any {
   if (node.type !== "comparison" || node.left?.type !== "variable")
     throw conditionError("condition left side must be a variable");
   const name: any = node.left.name;
-  const header: any = /^(request|response)\.header\[['"].+['"]\]$/.test(name);
+  const header = /^(request|response)\.header\[['"].+['"]\]$/.test(name);
   const known: any =
     name === "url" ||
     name === "request.method" ||
@@ -1180,13 +1180,13 @@ export function rewriteIrDeclaration(ir: any): any {
 // Author: chance
 // Category: Converter / JQ
 export function parseJsonKeyPath(pathText: any): any {
-  const text: any = String(pathText ?? "");
+  const text = String(pathText ?? "");
   if (!text) throw new Error("JSON key path must not be empty");
   const parts: any = [];
-  let i: any = 0;
+  let i = 0;
   const decodeSingleQuoted: any = (value: any): any => {
-    let out: any = "";
-    for (let j: any = 1; j < value.length - 1; j++) {
+    let out = "";
+    for (let j = 1; j < value.length - 1; j++) {
       const ch: any = value[j];
       if (ch !== "\\") {
         out += ch;
@@ -1348,14 +1348,14 @@ export function stripJqComments(expr: any): any {
 // compiles the program without evaluating the author's filter on any JSON.
 const upstreamJqRepairCache: any = new Map();
 export function repairUpstreamJq(expr: any): any {
-  const original: any = String(expr);
+  const original = String(expr);
   if (upstreamJqRepairCache.has(original))
     return upstreamJqRepairCache.get(original);
-  let masked: any = "",
-    quoted: any = false,
-    escaped: any = false,
-    comment: any = false;
-  for (let i: any = 0; i < original.length; i++) {
+  let masked = "",
+    quoted = false,
+    escaped = false,
+    comment = false;
+  for (let i = 0; i < original.length; i++) {
     const ch: any = original[i];
     if (comment) {
       masked += ch === "\n" ? "\n" : " ";
@@ -1387,13 +1387,13 @@ export function repairUpstreamJq(expr: any): any {
   let result: any = { jq: original, changed: false };
   if (matches.length) {
     const compile: any = (program: any): any => {
-      const checked: any = spawnSync("jq", [program], {
+      const checked = spawnSync("jq", [program], {
         input: "",
         encoding: "utf8",
         timeout: 5000,
         maxBuffer: 1024 * 1024,
       });
-      if (checked.error || checked.signal || ![0, 3].includes(checked.status))
+      if (checked.error || checked.signal || (checked.status === null || ![0, 3].includes(checked.status)))
         throw new Error(
           "jq compiler unavailable or failed: " +
             String(checked.error?.message || checked.stderr || checked.signal),
@@ -1447,7 +1447,7 @@ export function quoteJq(expr: any): any {
 // WayX Loon Rewrite v2 file-dependency resolver
 // Author: chance
 // Category: Converter / Dependency / Rewrite v2
-const FILE_ACTIONS: any = Object.freeze({
+const FILE_ACTIONS: Readonly<Record<string, { inlineName?: string; pathIndex: number; kind: string }>> = Object.freeze({
   "request.json.jq_file": {
     inlineName: "request.json.jq",
     pathIndex: 0,
@@ -1461,7 +1461,7 @@ const FILE_ACTIONS: any = Object.freeze({
   "request.body.mock_file": { pathIndex: 1, kind: "mock" },
   "response.body.mock_file": { pathIndex: 1, kind: "mock" },
 });
-const TEXT_MOCK_TYPES: any = new Set([
+const TEXT_MOCK_TYPES = new Set([
   "json",
   "text",
   "css",
@@ -1488,15 +1488,15 @@ function dependencyLocation(
   actionName: any,
   pluginSourceUrl: any = "",
 ): any {
-  const value: any = String(ref ?? "").trim();
+  const value = String(ref ?? "").trim();
   if (!value)
     throw new Error(
       `${actionName}: file dependency must be a fixed non-empty string`,
     );
   let url: any = null;
-  let scope: any = "plugin-resource";
+  let scope = "plugin-resource";
   try {
-    const absolute: any = new URL(value);
+    const absolute = new URL(value);
     if (!/^https?:$/.test(absolute.protocol))
       throw new Error("unsupported protocol");
     url = absolute.href;
@@ -1511,7 +1511,7 @@ function dependencyLocation(
         reason: "relative plugin resource requires the plugin source URL",
       };
     }
-    const base: any = new URL(pluginSourceUrl);
+    const base = new URL(pluginSourceUrl);
     if (!/^https?:$/.test(base.protocol))
       throw new Error(`${actionName}: plugin source URL must be HTTP(S)`);
     url = new URL(value, base).href;
@@ -1519,7 +1519,7 @@ function dependencyLocation(
   return { ref: value, scope, url, resolvable: true };
 }
 function legacyJqPathRef(value: any): any {
-  const text: any = String(value ?? "").trim();
+  const text = String(value ?? "").trim();
   const match: any = text.match(/^jq-path\s*=\s*(.+)$/i);
   if (!match) return null;
   let ref: any = match[1].trim();
@@ -1560,7 +1560,7 @@ export function dependencySpecFromAction(
   if (def.kind === "jq") spec.inlineName = def.inlineName;
   if (def.kind === "mock") {
     const contentType: any = stringValue(action.args?.[0])?.toLowerCase() || "";
-    const base64Index: any = action.name === "request.body.mock_file" ? 2 : 3;
+    const base64Index = action.name === "request.body.mock_file" ? 2 : 3;
     const isBase64: any = boolValue(action.args?.[base64Index], false);
     spec.contentType = contentType;
     spec.base64 = isBase64;
@@ -1602,7 +1602,7 @@ export function legacyJqPathDependencySpecFromIr(
   if (op?.kind !== "json" || op?.operation !== "jq") return null;
   const ref: any = legacyJqPathRef(op.rest);
   if (!ref) return null;
-  const actionName: any =
+  const actionName =
     (op.phase || ir.phase || "response") + ".body.json.jq";
   const location: any = dependencyLocation(ref, actionName, pluginSourceUrl);
   return {
@@ -1617,7 +1617,7 @@ export function legacyJqPathDependencySpecFromIr(
 export function inlineResolvedLegacyJqPathIr(ir: any, content: any): any {
   const spec: any = legacyJqPathDependencySpecFromIr(ir);
   if (!spec) return { ir, changed: false, dependency: null };
-  const jq: any = String(content ?? "").trim();
+  const jq = String(content ?? "").trim();
   if (!jq) throw new Error("legacy jq-path dependency resolved to empty JQ");
   const phase: any = ir.operations[0].phase || ir.phase || "response";
   const operation: any = {
@@ -1841,12 +1841,12 @@ export function fixedJqOperations(action: any): any {
   }
   if (typeof text !== "string" || !text.trim()) return null;
   const pieces: any = [];
-  let start: any = 0,
-    quoted: any = false,
-    escaped: any = false,
-    depth: any = 0;
-  for (let i: any = 0; i < text.length; i++) {
-    const c: any = text[i];
+  let start = 0,
+    quoted = false,
+    escaped = false,
+    depth = 0;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
     if (quoted) {
       if (escaped) escaped = false;
       else if (c === "\\") escaped = true;
@@ -1864,9 +1864,9 @@ export function fixedJqOperations(action: any): any {
   }
   if (quoted || depth !== 0) return null;
   pieces.push(text.slice(start).trim());
-  const identifier: any = "[A-Za-z_][A-Za-z_0-9]*";
-  const bracket: any = String.raw`\[\s*"(?:[^"\\]|\\.)*"\s*\]`;
-  const pathPattern: any =
+  const identifier = "[A-Za-z_][A-Za-z_0-9]*";
+  const bracket = String.raw`\[\s*"(?:[^"\\]|\\.)*"\s*\]`;
+  const pathPattern =
     "\\.(?:" +
     identifier +
     "|" +
@@ -1959,7 +1959,7 @@ export function isTextRequestMockAction(action: any): any {
   );
 }
 export function supportsRewritePhaseActions(ast: any, target: any): any {
-  const mutations: any = new RegExp(
+  const mutations = new RegExp(
     "^" +
       ast.phase +
       "\\.(?:header\\.(?:" +
@@ -2041,7 +2041,7 @@ function nativeJsonPriorityPlan(ast: any, target: any): any {
   if (!mapped.ok) return null;
   // Modified: 2026-11-05 (chance). Both targets preserve source URL flags; omit the retired downgrade warning.
   const mapping: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name];
-  const line: any =
+  const line =
     target === "qx"
       ? matcher.pattern + " url " + mapping.qx + " " + quoteJq(mapped.jq)
       : mapping.surge + " " + matcher.pattern + " " + quoteJq(mapped.jq);
@@ -2099,13 +2099,13 @@ export function planRewriteFeatureHelper(ast: any, target: any, ctx: any): any {
         ? surgeRewriteArgumentPayload(refs, ctx.argumentTable)
         : { ok: true, value: null };
     if (!payload.ok) throw new Error(payload.reason);
-    const key: any = crypto
+    const key = crypto
       .createHash("sha1")
       .update("features\0" + target + "\0" + (ctx.sourceLine || ast.raw))
       .digest("hex")
       .slice(0, 10);
-    const filename: any = "features_" + target + "_" + key + ".js";
-    const url: any =
+    const filename = "features_" + target + "_" + key + ".js";
+    const url =
       (target === "qx" ? qxRewriteRawBase(ctx) : surgeRewriteRawBase(ctx)) +
       "/Script/" +
       ctx.id +
@@ -2115,7 +2115,7 @@ export function planRewriteFeatureHelper(ast: any, target: any, ctx: any): any {
     const prefix: any = narrowJq
       ? jqMatcher.pattern + " url "
       : qxRewriteMatcherPlan(ast).prefix;
-    const line: any =
+    const line =
       target === "qx"
         ? prefix + plan.qxAction + " " + url
         : "wayx_features_" +
@@ -2389,7 +2389,7 @@ function urlComparisonRegex(c: any): any {
   const parts: any = stringTemplateParts(c.right);
   if (parts.some(([kind]: any): any => kind !== "s")) return null;
   const value: any = parts.map(([, part]: any): any => part).join("");
-  const pattern: any =
+  const pattern =
     "^" +
     regexEscape(value).replace(
       /\s/g,
@@ -2540,7 +2540,7 @@ function fixedJsonOps(action: any): any {
   }
   const operation: any = name.split(".").at(-1);
   const entries: any = [];
-  for (let index: any = 0; index < paths.length; index++) {
+  for (let index = 0; index < paths.length; index++) {
     let key: any;
     try {
       key = fixedJsonKeyPath(paths[index], name);
@@ -2998,8 +2998,8 @@ export function surgeRejectRewritePlan(ast: any): any {
       notes: condition.notes,
     };
   }
-  let body: any = "";
-  let header: any = "";
+  let body = "";
+  let header = "";
   if (action.name === "reject_dict") {
     body = "{}";
     header = ' header="Content-Type:application/json"';
@@ -3088,7 +3088,7 @@ function surgeHeaderLine(pattern: any, action: any, args: any): any {
 }
 export function surgeHeaderRewritePlan(ast: any): any {
   validateRewriteV2Ast(ast);
-  const allowed: any = new Set([
+  const allowed = new Set([
     ast.phase + ".header.add",
     ast.phase + ".header.set",
     ast.phase + ".header.del",
@@ -3122,7 +3122,7 @@ export function surgeHeaderRewritePlan(ast: any): any {
     return unsupported(String(error.message || error));
   }
 }
-const MOCK_MIME: any = Object.freeze({
+const MOCK_MIME: Readonly<Record<string, string>> = Object.freeze({
   json: "application/json",
   text: "text/plain",
   css: "text/css",
@@ -3137,7 +3137,7 @@ const MOCK_MIME: any = Object.freeze({
   mp4: "video/mp4",
   "form-data": "multipart/form-data",
 });
-const MOCK_TEXT_TYPES: any = new Set([
+const MOCK_TEXT_TYPES = new Set([
   "json",
   "text",
   "css",
@@ -3160,7 +3160,7 @@ function intArg(node: any, fallback: any): any {
 function applyStaticHeaderAction(headers: any, action: any): any {
   const remove: any = (name: any): any => {
     const wanted: any = name.toLowerCase();
-    for (let i: any = headers.length - 1; i >= 0; i--) {
+    for (let i = headers.length - 1; i >= 0; i--) {
       if (headers[i][0].toLowerCase() === wanted) headers.splice(i, 1);
     }
   };
@@ -3178,7 +3178,7 @@ function applyStaticHeaderAction(headers: any, action: any): any {
       const replacement: any = fixedNoTemplate(args[2], "header replacement");
       if (regex?.type !== "regex")
         throw new Error("header.replace regex must be fixed");
-      const re: any = new RegExp(
+      const re = new RegExp(
         normalizeRegexBodyForTarget(regex.pattern),
         regex.flags || "",
       );
@@ -3256,8 +3256,8 @@ export function surgeInlineMockPlan(ast: any): any {
       .map((pair: any): any => pair[0] + ":" + pair[1])
       .join("|");
     const data: any = base64 ? compactBase64 : body;
-    const dataType: any = base64 ? "base64" : "text";
-    const line: any =
+    const dataType = base64 ? "base64" : "text";
+    const line =
       condition.pattern +
       " data-type=" +
       dataType +
@@ -3319,7 +3319,7 @@ export function surgeMockFilePlan(
       return unsupported(
         "unsupported Loon mock_file content type: " + spec.contentType,
       );
-    let dataType: any = "file";
+    let dataType = "file";
     let data: any = spec.url;
     if (spec.base64) {
       if (
@@ -3439,7 +3439,7 @@ export const REWRITE_MUTATION_MAPPINGS: any = Object.freeze(
 );
 // QX types are selected by behavior; lookup does not bypass argument validation.
 // Only actions without a verified target type retain null here.
-export const QX_REWRITE_PRIMITIVES: any = Object.freeze({
+export const QX_REWRITE_PRIMITIVES: Readonly<Record<string, string | Readonly<Record<number, string>> | null>> = Object.freeze({
   "url.replace": null,
   redirect: Object.freeze({ 302: "302", 307: "307" }),
   reject: Object.freeze({ 200: "reject-200", 404: "reject" }),
@@ -3514,7 +3514,7 @@ function regexEscape(value: any): any {
   return String(value).replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&");
 }
 function requestHeaderName(variableName: any): any {
-  const match: any = String(variableName || "").match(
+  const match = String(variableName || "").match(
     /^request\.header\[(['"])([^'"]+)\1\]$/,
   );
   if (!match) return null;
@@ -3533,7 +3533,7 @@ function headerNameRegex(name: any): any {
     .join("");
 }
 function requestHeaderLinePattern(name: any, value: any = null): any {
-  const field: any = "\\r\\n" + headerNameRegex(name) + ":[ \\t]*";
+  const field = "\\r\\n" + headerNameRegex(name) + ":[ \\t]*";
   if (value === null) return field + "[^\\r\\n]*(?:\\r\\n|$)";
   return field + regexEscape(value) + "[ \\t]*(?:\\r\\n|$)";
 }
@@ -3681,15 +3681,15 @@ function matcherFromPredicates(predicates: any): any {
   const url: any = selectUrlPredicate(predicates);
   const method: any = selectMethodPredicate(predicates);
   const header: any = selectHeaderPredicate(predicates);
-  const hasUrl: any = Boolean(url);
-  const hasHeaders: any = Boolean(method || header);
+  const hasUrl = Boolean(url);
+  const hasHeaders = Boolean(method || header);
   const urlPattern: any = hasUrl ? url.pattern : "^https?://";
   if (hasHeaders) {
     // Quantumult X url-and-header evaluates URL first and then one regex over
     // a serialized request-side string containing method, path and headers.
     // Header-regex source conditions remain in the helper; the native layer
     // only proves request-header presence for those cases.
-    const methodPattern: any = method
+    const methodPattern = method
       ? "^" + regexEscape(method.value) + "[ ]"
       : null;
     let headersPattern: any = header?.pattern || methodPattern;
@@ -3765,10 +3765,10 @@ function issue(pattern: any, action: any, code: any, reason: any): any {
 }
 function legacyShellTokens(input: any): any {
   const out: any = [];
-  let cur: any = "",
+  let cur = "",
     quote: any = null,
-    esc: any = false;
-  for (let i: any = 0; i < input.length; i++) {
+    esc = false;
+  for (let i = 0; i < input.length; i++) {
     const ch: any = input[i];
     if (esc) {
       cur += ch;
@@ -3801,7 +3801,7 @@ function legacyShellTokens(input: any): any {
   return out;
 }
 function unquote(token: any): any {
-  const t: any = String(token ?? "");
+  const t = String(token ?? "");
   if (
     (t.startsWith('"') && t.endsWith('"')) ||
     (t.startsWith("'") && t.endsWith("'"))
@@ -3822,7 +3822,7 @@ function jqAccess(pathText: any): any {
   return parts ? jqPathSelector(parts) : null;
 }
 function parseJsonValue(token: any): any {
-  const t: any = String(token).trim();
+  const t = String(token).trim();
   try {
     return JSON.parse(t);
   } catch {}
@@ -3860,10 +3860,10 @@ function compileJsonMutation(op: any, rest: any): any {
     if (!tokens.length || tokens.length % 2)
       return { ok: false, reason: "json-" + op + " requires path/value pairs" };
     const ops: any = [];
-    for (let i: any = 0; i < tokens.length; i += 2) {
+    for (let i = 0; i < tokens.length; i += 2) {
       const path: any = jqPath(unquote(tokens[i]));
       if (!path) return { ok: false, reason: "unsupported JSON path syntax" };
-      const value: any = JSON.stringify(parseJsonValue(tokens[i + 1]));
+      const value = JSON.stringify(parseJsonValue(tokens[i + 1]));
       if (op === "add") {
         ops.push(renderFixedPathAddJq(path, value));
       } else {
@@ -3920,10 +3920,10 @@ function legacyRegexNode(pattern: any): any {
   };
 }
 function legacyHeaderAst(pattern: any, parsed: any, tokens: any): any {
-  const width: any =
+  const width =
     parsed.op === "del" ? 1 : parsed.op === "replace-regex" ? 3 : 2;
   const actions: any = [];
-  for (let i: any = 0; i < tokens.length; i += width) {
+  for (let i = 0; i < tokens.length; i += width) {
     const args: any = tokens.slice(i, i + width).map(unquote);
     let suffix: any;
     let nodes: any;
@@ -3972,9 +3972,9 @@ function planHeader(
   ctx: any,
 ): any {
   const tokens: any = legacyShellTokens(parsed.rest);
-  const direction: any =
+  const direction =
     parsed.phase === "response" ? "http-response" : "http-request";
-  const width: any =
+  const width =
     parsed.op === "del" ? 1 : parsed.op === "replace-regex" ? 3 : 2;
   if (!tokens.length || tokens.length % width)
     return legacyRewriteReview(
@@ -3989,7 +3989,7 @@ function planHeader(
   ) {
     const targetPattern: any = normalizeUrlRegexForTarget(pattern);
     const pairs: any = [];
-    for (let i: any = 0; i < tokens.length; i += width) {
+    for (let i = 0; i < tokens.length; i += width) {
       const [name, value] = tokens.slice(i, i + width).map(unquote);
       if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) {
         if (parsed.phase === "response") break;
@@ -4002,7 +4002,7 @@ function planHeader(
       pairs.push([name, value]);
     }
     if (pairs.length === tokens.length / width) {
-      const token: any = parsed.phase + "-header";
+      const token = parsed.phase + "-header";
       const inserted: any = pairs
         .map(([name, value]: any): any => name + ": " + value + "$2")
         .join("");
@@ -4038,12 +4038,12 @@ function planHeader(
         category: ctx.category || "Rewrite / Legacy Header",
         sourceLine: pattern + " " + action,
       });
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("legacy-header\\0" + pattern + "\\0" + action)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "legacy_header_" + key + ".js";
+      const filename = "legacy_header_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       return {
         section: "rewrite",
@@ -4068,7 +4068,7 @@ function planHeader(
   }
   const targetPattern: any = normalizeUrlRegexForTarget(pattern);
   const lines: any = [];
-  for (let i: any = 0; i < tokens.length; i += width) {
+  for (let i = 0; i < tokens.length; i += width) {
     const args: any = tokens.slice(i, i + width).map(unquote);
     if (parsed.op === "replace-regex")
       args[1] = normalizeRegexBodyForTarget(args[1]);
@@ -4092,19 +4092,19 @@ function planBodyRegex(
       "body regex rewrite requires regex/replacement pairs",
     );
   const targetPattern: any = normalizeUrlRegexForTarget(pattern);
-  for (let i: any = 0; i < tokens.length; i += 2)
+  for (let i = 0; i < tokens.length; i += 2)
     tokens[i] = normalizeRegexBodyForTarget(tokens[i]);
   if (target === "qx") {
-    const verb: any =
+    const verb =
       parsed.phase === "request" ? "request-body" : "response-body";
     const lines: any = [];
-    for (let i: any = 0; i < tokens.length; i += 2)
+    for (let i = 0; i < tokens.length; i += 2)
       lines.push(
         `${targetPattern} url ${verb} ${tokens[i]} ${verb} ${tokens[i + 1]}`,
       );
     return { section: "rewrite", lines };
   }
-  const direction: any =
+  const direction =
     parsed.phase === "request" ? "http-request" : "http-response";
   return {
     section: "body",
@@ -4202,12 +4202,12 @@ function planMock(
         category: ctx.category || "Rewrite / Legacy Mock",
         sourceLine: pattern + " " + action,
       });
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("legacy-mock\\0" + pattern + "\\0" + action)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "legacy_mock_" + key + ".js";
+      const filename = "legacy_mock_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       return {
         section: "rewrite",
@@ -4238,12 +4238,12 @@ function planMock(
       category: ctx.category || "Rewrite / Legacy Mock",
       sourceLine: pattern + " " + action,
     });
-    const key: any = crypto
+    const key = crypto
       .createHash("sha1")
       .update("legacy-request-mock\\0" + pattern + "\\0" + action)
       .digest("hex")
       .slice(0, 10);
-    const filename: any = "legacy_request_mock_" + key + ".js";
+    const filename = "legacy_request_mock_" + key + ".js";
     ctx.generatedScripts.set(filename, plan.script);
     return {
       section: "script",
@@ -4359,14 +4359,14 @@ function qxRewriteSourceLine(ir: any, ctx: any): any {
   return String(ctx.sourceLine || ir?.source || "").trim();
 }
 function qxRewriteRawBase(ctx: any): any {
-  const base: any = String(ctx.rawBase || "").replace(/\/$/, "");
+  const base = String(ctx.rawBase || "").replace(/\/$/, "");
   if (!base)
     throw new Error(
       "Rewrite planner requires rawBase for generated helper URLs",
     );
   return base;
 }
-let qxRewriteHandlersRegistered: any = false;
+let qxRewriteHandlersRegistered = false;
 function ensureQxRewriteHandlers(): any {
   if (qxRewriteHandlersRegistered) return;
   qxRewriteHandlersRegistered = true;
@@ -4375,8 +4375,8 @@ function ensureQxRewriteHandlers(): any {
     targets: ["qx"],
     match: (ast: any): any => {
       if (ast.phase !== "response") return false;
-      const mockName: any = "response.body.mock";
-      const headerNames: any = new Set([
+      const mockName = "response.body.mock";
+      const headerNames = new Set([
         ast.phase + ".header.add",
         ast.phase + ".header.set",
         ast.phase + ".header.del",
@@ -4405,12 +4405,12 @@ function ensureQxRewriteHandlers(): any {
           category: ctx.category,
           sourceLine: ctx.sourceLine,
         });
-        const key: any = crypto
+        const key = crypto
           .createHash("sha1")
           .update("mock-inline\0" + ctx.sourceLine)
           .digest("hex")
           .slice(0, 10);
-        const filename: any = "mock_" + key + ".js";
+        const filename = "mock_" + key + ".js";
         ctx.generatedScripts.set(filename, plan.script);
         return {
           ok: true,
@@ -4512,7 +4512,7 @@ function qxNativeHeaderPlan(ast: any): any {
           return null;
         // Whole-header matching must stay inside one value. Boundary-sensitive,
         // newline-capable, lookaround and backreference patterns keep a helper.
-        const pattern: any = String(regex.pattern);
+        const pattern = String(regex.pattern);
         if (
           /[\^$]|\\[sSDWnr1-9xucpP0]|\(\?[^:]|\[\^|\[\[:/.test(pattern) ||
           (regex.flags?.includes("s") && pattern.includes("."))
@@ -4526,13 +4526,13 @@ function qxNativeHeaderPlan(ast: any): any {
           target: "qx",
         });
         if (!compiled.ok) return null;
-        const body: any = compiled.mappedFlags
+        const body = compiled.mappedFlags
           ? "(?" + compiled.mappedFlags + ":" + pattern + ")"
           : "(?:" + pattern + ")";
         const token: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
-        const search: any =
+        const search =
           "(?m)^((?i:" + field + "):[\\t\\x20]*[^\\r\\n]*?)(" + body + ")";
-        const value: any =
+        const value =
           "$1" +
           replacement.replace(
             /\$(\d+)/g,
@@ -4567,7 +4567,7 @@ function qxNativeHeaderPlan(ast: any): any {
         ? action.args[1].items
         : [action.args[1]];
     if (!names.length || names.length !== values.length) return null;
-    for (let i: any = 0; i < names.length; i++) {
+    for (let i = 0; i < names.length; i++) {
       const nameNode: any = names[i],
         valueNode: any = values[i];
       if (
@@ -4577,8 +4577,8 @@ function qxNativeHeaderPlan(ast: any): any {
         !["string", "raw-string"].includes(valueNode.type)
       )
         return null;
-      const name: any = String(nameNode.value),
-        value: any = String(valueNode.value);
+      const name = String(nameNode.value),
+        value = String(valueNode.value);
       if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) return null;
       pairs.push([name, value]);
     }
@@ -4588,7 +4588,7 @@ function qxNativeHeaderPlan(ast: any): any {
   // whole-header insertion without changing duplicate-header semantics or
   // source action order.
   const token: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
-  const headerPattern: any = "^([^\\r\\n]+)(\\r\\n)";
+  const headerPattern = "^([^\\r\\n]+)(\\r\\n)";
   const inserted: any = pairs
     .map(([name, value]: any): any => name + ": " + value + "$2")
     .join("");
@@ -4726,12 +4726,12 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         throw new Error("mock_file was not materialized during conversion");
       if (materialized.error) throw new Error(materialized.error);
       const headerOps: any = headerOpsForMock(ast, fileMock);
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("mock-file\0" + source)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "mock_file_" + key + ".js";
+      const filename = "mock_file_" + key + ".js";
       const script: any = renderQxMockFileScript(plan, {
         ...materialized,
         headerOps,
@@ -4771,12 +4771,12 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         category: ctx.category,
         sourceLine: source,
       });
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("mock-inline\0" + source)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "mock_" + key + ".js";
+      const filename = "mock_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       return {
         section: "rewrite",
@@ -4856,12 +4856,12 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
           category: ctx.category,
           sourceLine: source,
         });
-        const key: any = crypto
+        const key = crypto
           .createHash("sha1")
           .update("header-single\\0" + source)
           .digest("hex")
           .slice(0, 10);
-        const filename: any = "header_" + key + ".js";
+        const filename = "header_" + key + ".js";
         ctx.generatedScripts.set(filename, plan.script);
         return {
           section: "rewrite",
@@ -4882,12 +4882,12 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         category: ctx.category,
         sourceLine: source,
       });
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("header-single-complex\\0" + source)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "header_" + key + ".js";
+      const filename = "header_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       const matcher: any = qxRewriteMatcherPlan(ast);
       return {
@@ -4921,12 +4921,12 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         category: ctx.category,
         sourceLine: source,
       });
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("json-add-qx\\0" + source)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "json_add_qx_" + key + ".js";
+      const filename = "json_add_qx_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       const matcher: any = qxRewriteMatcherPlan(ast);
       return {
@@ -4959,12 +4959,12 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         category: ctx.category,
         sourceLine: source,
       });
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("body-single-complex\\0" + source)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "body_" + key + ".js";
+      const filename = "body_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       const matcher: any = qxRewriteMatcherPlan(ast);
       return {
@@ -5001,12 +5001,12 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         category: ctx.category,
         sourceLine: source,
       });
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("reject\0" + source)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "reject_" + key + ".js";
+      const filename = "reject_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       return {
         section: "rewrite",
@@ -5061,14 +5061,14 @@ function surgeRewriteSourceLine(ir: any, ctx: any): any {
   return String(ctx.sourceLine || ir?.source || "").trim();
 }
 function surgeRewriteRawBase(ctx: any): any {
-  const base: any = String(ctx.rawBase || "").replace(/\/$/, "");
+  const base = String(ctx.rawBase || "").replace(/\/$/, "");
   if (!base)
     throw new Error(
       "Rewrite planner requires rawBase for generated helper URLs",
     );
   return base;
 }
-let surgeRewriteHandlersRegistered: any = false;
+let surgeRewriteHandlersRegistered = false;
 function ensureSurgeRewriteHandlers(): any {
   if (surgeRewriteHandlersRegistered) return;
   surgeRewriteHandlersRegistered = true;
@@ -5092,12 +5092,12 @@ function ensureSurgeRewriteHandlers(): any {
           ? surgeRewriteArgumentPayload(ctx.argumentRefs, ctx.argumentTable)
           : { ok: true, value: null };
         if (!payload.ok) throw new Error(payload.reason);
-        const key: any = crypto
+        const key = crypto
           .createHash("sha1")
           .update("complex-mixed\0surge\0" + ctx.sourceLine)
           .digest("hex")
           .slice(0, 10);
-        const filename: any = "complex_surge_" + key + ".js";
+        const filename = "complex_surge_" + key + ".js";
         ctx.generatedScripts.set(filename, plan.script);
         return {
           ok: true,
@@ -5207,12 +5207,12 @@ export function planSurgeRewrite(ir: any, ctx: any = {}): any {
         category: ctx.category,
         sourceLine: source,
       });
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("surge-request-mock\0" + source)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "request_mock_" + key + ".js";
+      const filename = "request_mock_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       return {
         section: "script",
@@ -5297,12 +5297,12 @@ export function planSurgeRewrite(ir: any, ctx: any = {}): any {
         ? surgeRewriteArgumentPayload(argumentRefs, ctx.argumentTable)
         : { ok: true, value: null };
       if (!payload.ok) throw new Error(payload.reason);
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update("json-mutation-surge\\0" + source)
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "json_mutation_surge_" + key + ".js";
+      const filename = "json_mutation_surge_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       return {
         section: "script",

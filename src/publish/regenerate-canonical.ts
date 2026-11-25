@@ -36,11 +36,11 @@ import {
   readManagedTargetState,
   commitManagedConversion,
 } from "./workflow.ts";
-const ROOT: any = process.cwd();
-const MANIFEST: any = path.join(ROOT, ".github/sources/loon.json");
-const RAW_BASE: any = "https://raw.githubusercontent.com/JuemingDC/WayX/main";
-const mode: any = process.argv.includes("--write") ? "write" : "check";
-const manifest: any = await loadLoonSourceCatalog(MANIFEST);
+const ROOT = process.cwd();
+const MANIFEST = path.join(ROOT, ".github/sources/loon.json");
+const RAW_BASE = "https://raw.githubusercontent.com/JuemingDC/WayX/main";
+const mode = process.argv.includes("--write") ? "write" : "check";
+const manifest = await loadLoonSourceCatalog(MANIFEST);
 // Every Action converts the complete catalog. Recheck all successful entries;
 // isolated failures retain their prior baselines and Issue diagnostics.
 let selectedIds: any = null;
@@ -65,14 +65,14 @@ const staleEntries: any = [];
 const findings: any = [],
   verifiedPlugins: any = [],
   artifacts: any = {};
-let checked: any = 0;
+let checked = 0;
 const failures: any = createWorkflowFailureReporter({
   summaryLabel: "Canonical regeneration failures",
   detailFallback: "error",
   annotationFallback: "error",
 });
 // Modified: 2026-10-25 (chance). Canonical regeneration reuses dependencies across entries.
-const resources: any = createResourceSnapshot({
+const resources = createResourceSnapshot({
   directory: path.join(
     ROOT,
     ".github/monitor/.runtime/resources",
@@ -82,7 +82,7 @@ const resources: any = createResourceSnapshot({
 // Modified: 2026-10-29 (chance). Do not rematerialize frozen Kelee dependencies.
 // Modified: 2026-10-30 (chance). Canonical metadata uses the same original icon inputs.
 const icons = await loadIconIndex(ROOT, resources);
-const pauseKelee: any = await keleePaused(ROOT);
+const pauseKelee = await keleePaused(ROOT);
 const opaque = await opaqueEntries(ROOT);
 for (const entry of manifest) {
   if (opaque[entry.id]?.url === entry.source) continue;
@@ -90,8 +90,8 @@ for (const entry of manifest) {
   if (selectedIds && !selectedIds.has(entry.id)) continue;
   checked++;
   try {
-    const source: any = await readCatalogSource(ROOT, entry);
-    const targetState: any = await readManagedTargetState(ROOT, entry);
+    const source = await readCatalogSource(ROOT, entry);
+    const targetState = await readManagedTargetState(ROOT, entry);
     const oldQx: any = targetState.qx;
     const oldSurge: any = targetState.surge;
     const stamp: any =
@@ -112,13 +112,13 @@ for (const entry of manifest) {
     validateConvertedPlugin(entry, out, {
       surgeValidationOptions: { adblockScope: true },
     });
-    const targetDiffs: any = managedTargetDiffs(targetState, out);
+    const targetDiffs = managedTargetDiffs(targetState, out);
     const helperDiffs: any = await generatedScriptDiffs(
       ROOT,
       entry,
       out.generatedScripts,
     );
-    const differs: any = targetDiffs.length > 0 || helperDiffs.length > 0;
+    const differs = targetDiffs.length > 0 || helperDiffs.length > 0;
     if (!differs) {
       verifiedPlugins.push(entry.id);
       for (const [file, text] of [
@@ -133,7 +133,7 @@ for (const entry of manifest) {
     for (const target of targetDiffs)
       findings.push(
         await recordOutputMismatch(
-          targetState[target + "RelativePath"],
+          targetState[`${target}RelativePath` as const],
           out[target],
           targetState[target],
           entry.id,
@@ -142,7 +142,7 @@ for (const entry of manifest) {
     for (const name of helperDiffs) {
       const stale: any = name.startsWith("delete:"),
         filename: any = stale ? name.slice(7) : name;
-      const relative: any = "Script/" + entry.id + "/" + filename;
+      const relative = "Script/" + entry.id + "/" + filename;
       let actual: any = null;
       try {
         const file = path.join(ROOT, relative);

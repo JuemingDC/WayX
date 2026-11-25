@@ -16,13 +16,13 @@ import {
 // Loon Rule source parser / target-neutral AST
 // Author: chance
 // Category: Converter / Rule / AST
-export const LOON_LOGICAL_RULE_TYPES: any = new Set(["AND", "OR", "NOT"]);
+export const LOON_LOGICAL_RULE_TYPES = new Set(["AND", "OR", "NOT"]);
 export function splitTopLevelCsv(input: any): any {
   const out: any = [];
-  let buf: any = "",
+  let buf = "",
     quote: any = null,
-    esc: any = false,
-    depth: any = 0;
+    esc = false,
+    depth = 0;
   for (const ch of String(input ?? "")) {
     if (quote) {
       buf += ch;
@@ -62,8 +62,8 @@ export function splitTopLevelCsv(input: any): any {
   out.push(buf.trim());
   return out;
 }
-export function unquoteRuleField(value: any): any {
-  const s: any = String(value ?? "").trim();
+export function unquoteRuleField(value: any) {
+  const s = String(value ?? "").trim();
   if (
     (s.startsWith('"') && s.endsWith('"')) ||
     (s.startsWith("'") && s.endsWith("'"))
@@ -73,19 +73,19 @@ export function unquoteRuleField(value: any): any {
   return s;
 }
 export function splitLogicalSubrules(value: any): any {
-  const source: any = String(value ?? "").trim();
+  const source = String(value ?? "").trim();
   if (!source.startsWith("(") || !source.endsWith(")")) return null;
-  const inner: any = source.slice(1, -1).trim();
+  const inner = source.slice(1, -1).trim();
   const out: any = [];
-  let i: any = 0;
+  let i = 0;
   while (i < inner.length) {
     while (i < inner.length && /[\s,]/.test(inner[i])) i++;
     if (i >= inner.length) break;
     if (inner[i] !== "(") return null;
-    const start: any = ++i;
-    let depth: any = 1,
+    const start = ++i;
+    let depth = 1,
       quote: any = null,
-      esc: any = false;
+      esc = false;
     for (; i < inner.length; i++) {
       const ch: any = inner[i];
       if (quote) {
@@ -123,9 +123,9 @@ export function splitLogicalSubrules(value: any): any {
   }
   return out;
 }
-function parseParameter(raw: any): any {
-  const text: any = String(raw ?? "").trim();
-  const eq: any = text.indexOf("=");
+function parseParameter(raw: any) {
+  const text = String(raw ?? "").trim();
+  const eq = text.indexOf("=");
   if (eq < 0) return { raw: text, name: text.toLowerCase(), value: null };
   return {
     raw: text,
@@ -134,17 +134,17 @@ function parseParameter(raw: any): any {
   };
 }
 export function parseLoonRuleAst(line: any, { nested = false }: any = {}): any {
-  const source: any = String(line ?? "").trim();
-  const inline: any = source.match(/^(.*?)\s+\/\/\s*(.+)$/);
+  const source = String(line ?? "").trim();
+  const inline = source.match(/^(.*?)\s+\/\/\s*(.+)$/);
   const syntaxSource: any = inline ? inline[1].trim() : source;
   const inlineComment: any = inline ? inline[2].trim() : "";
   const parts: any = splitTopLevelCsv(syntaxSource);
-  const type: any = String(parts[0] ?? "")
+  const type = String(parts[0] ?? "")
     .trim()
     .toUpperCase();
   if (!type) return { ok: false, ast: null, reason: "missing-rule-type" };
-  const logical: any = LOON_LOGICAL_RULE_TYPES.has(type);
-  const policyRaw: any = nested ? null : String(parts[2] ?? "").trim();
+  const logical = LOON_LOGICAL_RULE_TYPES.has(type);
+  const policyRaw = nested ? null : String(parts[2] ?? "").trim();
   const parameterFields: any = nested ? parts.slice(2) : parts.slice(3);
   const params: any = parameterFields.filter(Boolean).map(parseParameter);
   const ast: any = {
@@ -183,7 +183,7 @@ export function walkRuleAst(
   ast: any,
   visitor: any,
   { depth = 0 }: any = {},
-): any {
+) {
   visitor(ast, { depth });
   for (const child of ast?.children ?? [])
     walkRuleAst(child, visitor, { depth: depth + 1 });
@@ -207,7 +207,7 @@ export function renderRuleAst(
       "(" +
       ast.children
         .map(
-          (child: any): any =>
+          (child: any) =>
             "(" + renderRuleAst(child, { valueRenderer }) + ")",
         )
         .join(",") +
@@ -228,7 +228,7 @@ export function renderRuleAst(
 // Category: Converter / Rule
 // Explicit null entries are known network-layer types without a QX filter
 // equivalent. URL-REGEX is handled through the same policy table's rewrite column.
-export const QX_RULE_TYPES: any = new Map([
+export const QX_RULE_TYPES = new Map([
   ["DOMAIN", "host"],
   ["DOMAIN-SUFFIX", "host-suffix"],
   ["DOMAIN-KEYWORD", "host-keyword"],
@@ -306,7 +306,7 @@ export const RULE_POLICY_MAPPINGS: any = new Map(
 );
 // User policy: exact WeChat DNS hosts use DIRECT in every converted target.
 // Apply at target planning so upstream source snapshots remain unchanged.
-const WAYX_DIRECT_DOMAINS: any = new Set([
+const WAYX_DIRECT_DOMAINS = new Set([
   "dns.weixin.qq.com",
   "dns.weixin.qq.com.cn",
 ]);
@@ -322,11 +322,11 @@ function applyWayxDomainPolicy(ast: any): any {
     policy: "DIRECT",
     policyRaw: "DIRECT",
     params: ast.params.filter(
-      (param: any): any => param.name !== "pre-matching",
+      (param: any) => param.name !== "pre-matching",
     ),
   };
 }
-export function planQxRuleAst(ast: any): any {
+export function planQxRuleAst(ast: any) {
   ast = applyWayxDomainPolicy(ast);
   const source: any = ast.source;
   if (ast.kind === "logical") {
@@ -350,7 +350,7 @@ export function planQxRuleAst(ast: any): any {
         reason: "wayx-url-regex-reject",
       };
   }
-  const qxType: any = QX_RULE_TYPES.get(type);
+  const qxType = QX_RULE_TYPES.get(type);
   if (!qxType || !QX_WAYX_FILTER_TYPES.has(qxType)) {
     return {
       kind: "comment",
@@ -378,20 +378,20 @@ export function planQxRuleAst(ast: any): any {
     reason: "native-filter",
   };
 }
-export const SURGE_RULE_TYPES: any = SURGE_WAYX_RULE_TYPES;
+export const SURGE_RULE_TYPES = SURGE_WAYX_RULE_TYPES;
 // Module [Rule] uses the same reviewed built-in policy registry as Surge Rule.
-export const SURGE_MODULE_POLICIES: any = SURGE_WAYX_RULE_BUILTIN_POLICIES;
+export const SURGE_MODULE_POLICIES = SURGE_WAYX_RULE_BUILTIN_POLICIES;
 function surgeValueRenderer(node: any): any {
   if (node.type !== "URL-REGEX") return node.valueRaw;
   return surgeRegexParameter(normalizeUrlRegexForTarget(node.value));
 }
-const SURGE_REJECT_MATCH_POLICIES: any = new Set([
+const SURGE_REJECT_MATCH_POLICIES = new Set([
   "REJECT",
   "REJECT-DROP",
   "REJECT-NO-DROP",
   "REJECT-TINYGIF",
 ]);
-const SURGE_EXTENDED_TYPES: any = new Set([
+const SURGE_EXTENDED_TYPES = new Set([
   "DOMAIN",
   "DOMAIN-SUFFIX",
   "DOMAIN-KEYWORD",
@@ -400,7 +400,7 @@ const SURGE_EXTENDED_TYPES: any = new Set([
   "RULE-SET",
   "URL-REGEX",
 ]);
-const SURGE_PRE_TYPES: any = new Set([
+const SURGE_PRE_TYPES = new Set([
   "DOMAIN",
   "DOMAIN-SUFFIX",
   "DOMAIN-KEYWORD",
@@ -432,11 +432,11 @@ function enhancedSurgeRuleAst(
   { preMatching = true }: any = {},
 ): any {
   const result: any = structuredClone(ast);
-  const add: any = (node: any, name: any): any => {
-    if (!node.params.some((p: any): any => p.name === name))
+  const add: any = (node: any, name: any) => {
+    if (!node.params.some((p: any) => p.name === name))
       node.params.push({ name, raw: name, value: null });
   };
-  walkRuleAst(result, (node: any): any => {
+  walkRuleAst(result, (node: any) => {
     if (SURGE_EXTENDED_TYPES.has(node.type)) add(node, "extended-matching");
   });
   if (
@@ -453,12 +453,12 @@ export function validateSurgeRuleAst(ast: any): any {
   function visit(node: any, logicalDepth: any = 0): any {
     types.push(node.type);
     if (
-      node.params.some((p: any): any => p.name === "extended-matching") &&
+      node.params.some((p: any) => p.name === "extended-matching") &&
       !SURGE_EXTENDED_TYPES.has(node.type)
     )
       return "extended-matching-unsupported-type:" + node.type;
     if (
-      node.params.some((p: any): any => p.name === "pre-matching") &&
+      node.params.some((p: any) => p.name === "pre-matching") &&
       (node.nested ||
         !SURGE_REJECT_MATCH_POLICIES.has(node.policy) ||
         !surgePreEligible(node, { allowRuleSet: true }))
@@ -522,10 +522,10 @@ export function planSurgeModuleRuleAst(
   // destination-IP predicates, including nested ones; preserve policies/order
   // and keep the caller's source AST unchanged. Do not duplicate existing flags.
   ast = structuredClone(ast);
-  walkRuleAst(ast, (node: any): any => {
+  walkRuleAst(ast, (node: any) => {
     if (
       ["IP-CIDR", "IP-CIDR6", "GEOIP", "IP-ASN"].includes(node.type) &&
-      !node.params.some((p: any): any => p.name === "no-resolve")
+      !node.params.some((p: any) => p.name === "no-resolve")
     )
       node.params.push({ name: "no-resolve", raw: "no-resolve", value: null });
   });
@@ -534,7 +534,7 @@ export function planSurgeModuleRuleAst(
   if (type === "URL-REGEX") {
     const pattern: any = normalizeUrlRegexForTarget(ast.value);
     const argumentsOut: any = RULE_POLICY_MAPPINGS.get(ast.policy)?.surgeMap;
-    const mapLocal: any = argumentsOut ? `${pattern} ${argumentsOut}` : null;
+    const mapLocal = argumentsOut ? `${pattern} ${argumentsOut}` : null;
     if (mapLocal) {
       return {
         kind: "map",
@@ -618,7 +618,7 @@ export function planSurgeModuleRuleAst(
     reason: "module-native-rule",
   };
 }
-function invalidRulePlan(source: any, reason: any, target: any): any {
+function invalidRulePlan(source: any, reason: any, target: any) {
   if (target === "qx") {
     return {
       kind: "comment",
@@ -644,7 +644,7 @@ function repairedRulePlan(
   options: any = undefined,
 ): any {
   const repaired: any = { ast: structuredClone(parsed.ast), changed: false };
-  walkRuleAst(repaired.ast, (node: any): any => {
+  walkRuleAst(repaired.ast, (node: any) => {
     if (node.type !== "URL-REGEX") return;
     const normalized: any = repairTargetRegexSyntax(node.value);
     node.value = normalized.pattern;
@@ -655,7 +655,7 @@ function repairedRulePlan(
       ? planQxRuleAst(repaired.ast)
       : planSurgeModuleRuleAst(repaired.ast, options);
   if (!repaired.changed || plan.kind === "comment") return plan;
-  const note: any = [
+  const note = [
     "# [WayX] Repaired invalid source regex quantifier whitespace for ICU compatibility.",
     "# Source declaration: " + source,
   ];
@@ -664,7 +664,7 @@ function repairedRulePlan(
     : { ...plan, lines: [...note, ...plan.lines] };
 }
 export function qxRule(line: any): any {
-  const source: any = String(line ?? "").trim();
+  const source = String(line ?? "").trim();
   const parsed: any = parseLoonRuleAst(source);
   if (!parsed.ok) return invalidRulePlan(source, parsed.reason, "qx");
   return repairedRulePlan(parsed, source, "qx");
@@ -677,7 +677,7 @@ export function surgeModuleRule(
     preMatching = true,
   }: any = {},
 ): any {
-  const source: any = String(line ?? "").trim();
+  const source = String(line ?? "").trim();
   const parsed: any = parseLoonRuleAst(source);
   if (!parsed.ok) return invalidRulePlan(source, parsed.reason, "surge");
   return repairedRulePlan(parsed, source, "surge", {

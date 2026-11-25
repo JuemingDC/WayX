@@ -10,12 +10,12 @@ import {
   writeValidationEvidence,
   buildReadmePlan,
 } from "../publish/workflow.ts";
-const ROOT: any = process.cwd();
-const manifest: any = await loadLoonSourceCatalog(
+const ROOT = process.cwd();
+const manifest = await loadLoonSourceCatalog(
   path.join(ROOT, ".github/sources/loon.json"),
 );
 const findings: any = [];
-const kelee: any = manifest.filter((entry: any): any =>
+const kelee = manifest.filter((entry: any) =>
   /https:\/\/kelee\.one\/Tool\/Loon\/Lpx\//.test(entry.source),
 );
 async function readRequired(rel: any, label: any): Promise<any> {
@@ -29,9 +29,9 @@ async function readRequired(rel: any, label: any): Promise<any> {
 const opaque = await opaqueEntries(ROOT);
 for (const entry of manifest) {
   if (opaque[entry.id]?.url === entry.source) continue;
-  const sourceRel: any = "Resource/Loon/" + entry.file;
-  const qxRel: any = "Adblock/Quantumult X/" + entry.qx;
-  const surgeRel: any = "Adblock/Surge/" + entry.surge;
+  const sourceRel = "Resource/Loon/" + entry.file;
+  const qxRel = "Adblock/Quantumult X/" + entry.qx;
+  const surgeRel = "Adblock/Surge/" + entry.surge;
   const [source, qx, surge] = await Promise.all([
     readRequired(sourceRel, entry.id + " source"),
     readRequired(qxRel, entry.id + " QX"),
@@ -72,7 +72,7 @@ for (const [base, field, suffix] of [
     recursive: true,
   })) {
     if (!rel.endsWith(suffix) || expected.has(rel)) continue;
-    const text: any = await fs.readFile(path.join(ROOT, base, rel), "utf8");
+    const text = await fs.readFile(path.join(ROOT, base, rel), "utf8");
     if (field === "file" || /^# Converted by:\s*chance\s*$/m.test(text))
       findings.push("Retired managed artifact remains: " + base + "/" + rel);
   }
@@ -123,13 +123,13 @@ if (snapshot) {
 }
 const readme: any = await readRequired("README.md", "README");
 if (readme) {
-  const expected: any = (await buildReadmePlan(ROOT)).get("README.md");
+  const expected = (await buildReadmePlan(ROOT)).get("README.md");
   if (readme !== expected)
     findings.push(
       "README source groups, collapsed sections or within-source catalog order differ from generated index",
     );
   for (const entry of kelee) {
-    const marker: any =
+    const marker =
       "Adblock/Quantumult%20X/" +
       encodeURIComponent(entry.qx).replace(/%2F/g, "/");
     let index: any = readme.indexOf(marker);

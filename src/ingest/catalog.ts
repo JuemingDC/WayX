@@ -419,7 +419,7 @@ export async function refreshCatalog(
         ? "https://telegram.me/GitCube/327?embed=1"
         : rucu6ListUrl,
     );
-    let payload: any = rucuFeed;
+    let payload = rucuFeed;
     try {
       payload = JSON.parse(rucuFeed!);
     } catch {}

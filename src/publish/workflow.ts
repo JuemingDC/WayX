@@ -22,15 +22,15 @@ import { quoteJq } from "../parser/rewrite.ts";
 import { validateQX,validateSurgeModule } from "../validation/output.ts";
 import { spawnSync } from "node:child_process";
 import { normalizePluginSource, parseLoonPlugin } from "../parser/input.ts";
-import type { SourceEntry } from "../domain/contracts.ts";
+import type { SourceEntry, ConversionOutput } from "../domain/contracts.ts";
 
 // Managed source/target/helper artifact I/O for WayX converter workflows.
 // Author: chance
 // Category: Converter / Managed Artifact I/O
-export const AD_BLOCK_ROOT: any = "Adblock";
-export const QX_ADBLOCK_DIR: any = "Adblock/Quantumult X";
-export const SURGE_ADBLOCK_DIR: any = "Adblock/Surge";
-export const BOXJS_SUBSCRIPTION: any = "Boxjs/QuantumultX/Chanceの订阅.json";
+export const AD_BLOCK_ROOT = "Adblock";
+export const QX_ADBLOCK_DIR = "Adblock/Quantumult X";
+export const SURGE_ADBLOCK_DIR = "Adblock/Surge";
+export const BOXJS_SUBSCRIPTION = "Boxjs/QuantumultX/Chanceの订阅.json";
 export function qxTargetPath(entry: Pick<SourceEntry, "qx">): string {
   if (!entry?.qx) throw new Error("manifest entry missing qx filename");
   return `${QX_ADBLOCK_DIR}/${entry.qx}`;
@@ -48,7 +48,7 @@ async function staleGeneratedHelpers(
   generatedScripts: any,
   { scriptDir = "Script" }: any = {},
 ): Promise<any> {
-  const dir: any = path.join(root, scriptDir, entry.id);
+  const dir = path.join(root, scriptDir, entry.id);
   let names: any = [];
   try {
     names = await fs.readdir(dir);
@@ -58,7 +58,7 @@ async function staleGeneratedHelpers(
   }
   return names
     .filter(
-      (name: any): any =>
+      (name: any) =>
         (isWayxGeneratedHelperFilename(name) || isWayxMapLocalPayloadFilename(name)) &&
         !generatedScripts.has(name),
     )
@@ -98,7 +98,7 @@ export function conversionStampFromText(
   // Modified: 2026-11-08 (chance). Prefer the managed update timestamp;
   // read the old label only to migrate existing publications without date churn.
   const value = String(text ?? "");
-  const match: any = value.match(/^# (?:Updated|Converted):[ \t]*([^\r\n]+)\r?\n# Converted by: chance(?:\r?\n|$)/m)
+  const match = value.match(/^# (?:Updated|Converted):[ \t]*([^\r\n]+)\r?\n# Converted by: chance(?:\r?\n|$)/m)
     ?? value.match(/^# Updated:[ \t]*([^\r\n]+)$/m)
     ?? value.match(/^# Converted:[ \t]*([^\r\n]+)$/m);
   if (!match) return null;
@@ -167,8 +167,8 @@ export async function syncManagedSource(
   entry: any,
   source: any,
   options: any = {},
-): Promise<any> {
-  const state: any = await inspectManagedSource(root, entry, source, options);
+) {
+  const state = await inspectManagedSource(root, entry, source, options);
   await writeManagedSource(state, source);
   return state;
 }
@@ -220,7 +220,7 @@ export async function generatedScriptDiffs(
 ): Promise<any> {
   const diffs: any = [];
   for (const [name, content] of generatedScripts) {
-    const file: any = path.join(root, scriptDir, entry.id, name);
+    const file = path.join(root, scriptDir, entry.id, name);
     if (!(await managedHelperMatches(file, content))) diffs.push(name);
   }
   for (const name of await staleGeneratedHelpers(
@@ -241,7 +241,7 @@ export async function syncGeneratedScripts(
 ): Promise<any> {
   const changed: any = [];
   for (const [name, content] of generatedScripts) {
-    const file: any = path.join(root, scriptDir, entry.id, name);
+    const file = path.join(root, scriptDir, entry.id, name);
     if (await managedHelperMatches(file, content)) continue;
     await fs.mkdir(path.dirname(file), { recursive: true });
     await fs.writeFile(file, content);
@@ -268,7 +268,7 @@ export async function commitManagedConversion(
   {
     sourceState = null,
     source = null,
-    onStage = (): any => {},
+    onStage = () => {},
     writeHelpers = syncGeneratedScripts,
     writeTargets = writeManagedTargets,
     writeSource = writeManagedSource,
@@ -310,15 +310,15 @@ export async function commitManagedConversion(
     return rollbackFiles(snapshot, error);
   }
 }
-export function managedTargetDiffs(state: any, out: any): any {
-  const changed: any = [];
+export function managedTargetDiffs(state: ManagedTargetState, out: Pick<ConversionOutput, "qx" | "surge">): ("qx" | "surge")[] {
+  const changed: ("qx" | "surge")[] = [];
   if (artifactContent(state.qx) !== artifactContent(out.qx)) changed.push("qx");
   if (artifactContent(state.surge) !== artifactContent(out.surge))
     changed.push("surge");
   return changed;
 }
 export async function writeManagedTargets(state: any, out: any): Promise<any> {
-  const changed: any = managedTargetDiffs(state, out);
+  const changed = managedTargetDiffs(state, out);
   if (changed.includes("qx")) {
     await fs.mkdir(path.dirname(state.qxPath), { recursive: true });
     await fs.writeFile(state.qxPath, out.qx);
@@ -331,7 +331,7 @@ export async function writeManagedTargets(state: any, out: any): Promise<any> {
 }
 // Modified: 2026-10-25 (chance). Import native QX resources without passing
 // through the Loon compiler. Keep upstream active text/order; backup publication later rebinds only script operands.
-const NATIVE_QX_MARKER: any = "# Managed by: WayX Native QX";
+const NATIVE_QX_MARKER = "# Managed by: WayX Native QX";
 // Modified: 2026-11-14 (chance). Restrict native repairs to exact known source
 // declarations; preserve originals and refuse unrelated malformed replacements.
 export function repairNativeQxSource(source: {url: string; text: string}): string {
@@ -355,7 +355,7 @@ export function repairNativeQxSource(source: {url: string; text: string}): strin
 export function mergeNativeQxSources(
   sources: any,
   { name, author, diagnostics = [] }: any = {},
-): any {
+) {
   const out: string[] = [
     "# Name: " + name, "# Updated: " + upstreamUpdateTime(sources.map((source: any) => source.rawText??source.text).join("\n")), "# Copied by: chance",
     "# Source Authors: " + (author ?? ""), "# Category: app", NATIVE_QX_MARKER, "",
@@ -511,7 +511,7 @@ async function prepareNativeQxSource(
   if (config.include && (!Array.isArray(config.include) || !config.include.length || config.include.some((p: any) => typeof p !== "string" || p.startsWith("/") || p.split("/").includes("..") || !p.endsWith(".snippet")))) throw Error("Invalid native QX include list");
   let commit:any,files:any[],discovery:any;
   const githubFiles=async()=>{
-  const api: any = "https://api.github.com/repos/" + config.repository;
+  const api = "https://api.github.com/repos/" + config.repository;
   commit = JSON.parse(
     await fetchText(api + "/commits/" + encodeURIComponent(config.ref)),
   ).sha;
@@ -574,7 +574,7 @@ async function prepareNativeQxSource(
     if(config.website&&!/\surl(?:-and-header)?\s/.test(text)&&/^\[(?:Script|URL Rewrite|Map Local)\]\s*$/m.test(text)){
       nativeSurge.push({...file,text,sourceUrl});continue;
     }
-    const stem: any = path.posix.basename(file.path, path.posix.extname(file.path)),
+    const stem = path.posix.basename(file.path, path.posix.extname(file.path)),
       key: any =
         config.aliases?.[stem] ||
         ((config.layout === "root" || config.directories)
@@ -608,7 +608,7 @@ async function prepareNativeQxSource(
     );
     if (rewrites.length > 1) {
       const preferred: any = config.preferred_versions?.[key];
-      const eligible: any = rewrites.filter((x: any): any => {
+      const eligible: any = rewrites.filter((x: any) => {
         if (preferred) return x.path === preferred;
         const authors: any = x.text
           .match(/^#!author\s*=\s*(.+)$/im)?.[1]
@@ -626,7 +626,7 @@ async function prepareNativeQxSource(
         continue;
       }
       sources = allSources.filter(
-        (x: any): any => !x.path.startsWith("rewrite/") || x === eligible[0],
+        (x: any) => !x.path.startsWith("rewrite/") || x === eligible[0],
       );
     }
     const name: any =
@@ -679,12 +679,12 @@ async function prepareNativeQxSource(
   if(discovery){discovery.sourceResources=groups.size+nativeSurge.length;discovery.nativeSurgeResources=nativeSurge.length;discovery.skipped=skipped;discovery.outputs=outputs.size;}
   return { outputs, commit, inputs, skipped, diagnostics,discovery };
 }
-export async function commitNativeQxSync(root: any, plan: any): Promise<any> {
+export async function commitNativeQxSync(root: any, plan: any) {
   if (!plan) return;
   // Modified: 2026-11-01 (chance). Compare final stable script references so unchanged native outputs retain their prior update stamps.
   const backups = await readJson(path.join(root,"Resource/Backup/index.json"),null);
   if (backups) for (const [file,text] of plan.outputs) plan.outputs.set(file,bindKnownBackups(text,backups,"https://raw.githubusercontent.com/JuemingDC/WayX/main",file));
-  const statePath: any = ".github/sources/native-qx-state.json";
+  const statePath = ".github/sources/native-qx-state.json";
   let prior: any = { outputs: [] };
   try {
     prior = JSON.parse(await fs.readFile(path.join(root, statePath), "utf8"));
@@ -740,32 +740,32 @@ export const README_CATEGORY_ORDER = Object.freeze([
   "Adblock",
   "Rule",
 ]);
-const RAW_BASE: any = "https://raw.githubusercontent.com/JuemingDC/WayX/main";
-const BLOB_BASE: any = "https://github.com/JuemingDC/WayX/blob/main";
-const QX_UNIVERSAL_BASE: any =
+const RAW_BASE = "https://raw.githubusercontent.com/JuemingDC/WayX/main";
+const BLOB_BASE = "https://github.com/JuemingDC/WayX/blob/main";
+const QX_UNIVERSAL_BASE =
   "https://quantumult.app/x/open-app/add-resource?remote-resource=";
-const SURGE_WEB_INSTALL_BASE: any = "https://surge.app/install-module?url=";
-const BOXJS_SUBSCRIBE_BASE: any = "https://boxjs.com/#/sub/add/";
-const STALE_WAYX_SCRIPT_RAW: any = `${RAW_BASE}/${["scr", "ipt"].join("")}/`;
-function normalizePlatformPart(value: any): any {
+const SURGE_WEB_INSTALL_BASE = "https://surge.app/install-module?url=";
+const BOXJS_SUBSCRIBE_BASE = "https://boxjs.com/#/sub/add/";
+const STALE_WAYX_SCRIPT_RAW = `${RAW_BASE}/${["scr", "ipt"].join("")}/`;
+function normalizePlatformPart(value: any) {
   return String(value ?? "")
     .toLowerCase()
     .replace(/[\s_-]+/g, "");
 }
-function encodeRepoPath(rel: any): any {
+function encodeRepoPath(rel: any) {
   return String(rel).split("/").map(encodeURIComponent).join("/");
 }
-export function rawRepoUrl(rel: any): any {
+export function rawRepoUrl(rel: any) {
   return `${RAW_BASE}/${encodeRepoPath(rel)}`;
 }
-export function blobRepoUrl(rel: any): any {
+export function blobRepoUrl(rel: any) {
   return `${BLOB_BASE}/${encodeRepoPath(rel)}`;
 }
 export function extractResourceName(text: any, fallback: any = ""): any {
-  const source: any = String(text ?? "");
-  const qx: any = source.match(/^#\s*name\s*:\s*(.+?)\s*$/im);
+  const source = String(text ?? "");
+  const qx = source.match(/^#\s*name\s*:\s*(.+?)\s*$/im);
   if (qx?.[1]) return qx[1].trim();
-  const surge: any = source.match(/^#!name\s*=\s*(.+?)\s*$/im);
+  const surge = source.match(/^#!name\s*=\s*(.+?)\s*$/im);
   if (surge?.[1]) return surge[1].trim();
   try {
     const json: any = JSON.parse(source);
@@ -774,25 +774,25 @@ export function extractResourceName(text: any, fallback: any = ""): any {
   } catch {}
   return String(fallback ?? "").trim();
 }
-export function qxAddResourceUrl(payload: any): any {
+export function qxAddResourceUrl(payload: any) {
   return QX_UNIVERSAL_BASE + encodeURIComponent(JSON.stringify(payload));
 }
-function safeTag(value: any): any {
+function safeTag(value: any) {
   return String(value ?? "")
     .replace(/,/g, "，")
     .trim();
 }
-function qxRemoteDescriptor(url: any, tag: any): any {
+function qxRemoteDescriptor(url: any, tag: any) {
   return `${url}, tag=${safeTag(tag)}, update-interval=${README_AUTO_UPDATE_INTERVAL}, enabled=true`;
 }
-export function surgeModuleInstallUrl(rel: any): any {
+export function surgeModuleInstallUrl(rel: any) {
   return SURGE_WEB_INSTALL_BASE + encodeURIComponent(rawRepoUrl(rel));
 }
-export function boxJsSubscribeUrl(rel: any): any {
+export function boxJsSubscribeUrl(rel: any) {
   return BOXJS_SUBSCRIBE_BASE + encodeURIComponent(rawRepoUrl(rel));
 }
 async function walkFiles(root: any, rel: any): Promise<any> {
-  const abs: any = path.join(root, rel);
+  const abs = path.join(root, rel);
   let entries: any;
   try {
     entries = await fs.readdir(abs, { withFileTypes: true });
@@ -805,7 +805,7 @@ async function walkFiles(root: any, rel: any): Promise<any> {
     a.name.localeCompare(b.name, "en"),
   )) {
     if (ent.name.startsWith(".")) continue;
-    const child: any = path.posix.join(rel.replaceAll(path.sep, "/"), ent.name);
+    const child = path.posix.join(rel.replaceAll(path.sep, "/"), ent.name);
     if (ent.isDirectory()) out.push(...(await walkFiles(root, child)));
     else if (ent.isFile()) out.push(child);
   }
@@ -819,8 +819,8 @@ function detectPlatform(rel: any): any {
   }
   return null;
 }
-function stemOf(rel: any): any {
-  const base: any = path.posix.basename(rel);
+function stemOf(rel: any) {
+  const base = path.posix.basename(rel);
   return base.replace(/\.[^.]+$/, "");
 }
 function rowKey(category: any, rel: any): any {
@@ -846,7 +846,7 @@ async function catalogRowMetadata(root: any, category: any): Promise<any> {
     throw new Error("README catalog order source must be an array");
   const order: any = new Map();
   const sources: any = new Map();
-  manifest.forEach((entry: any, index: any): any => {
+  manifest.forEach((entry: any, index: any) => {
     for (const field of ["qx", "surge"]) {
       const value: any = entry?.[field];
       if (typeof value !== "string" || !value.trim()) continue;
@@ -863,7 +863,7 @@ async function scanCategory(root: any, category: any): Promise<any> {
   const files: any = await walkFiles(root, dir);
   const rows: any = new Map();
   for (const rel of files) {
-    const ext: any = path.posix.extname(rel).toLowerCase();
+    const ext = path.posix.extname(rel).toLowerCase();
     if (category === "BoxJs" && ext !== ".json") continue;
     if (category === "Module" && ![".snippet", ".sgmodule"].includes(ext))
       continue;
@@ -886,7 +886,7 @@ async function scanCategory(root: any, category: any): Promise<any> {
             : null
         : null);
     if (!platform && category !== "BoxJs") continue;
-    const text: any = await fs.readFile(path.join(root, rel), "utf8");
+    const text = await fs.readFile(path.join(root, rel), "utf8");
     if (text.includes(STALE_WAYX_SCRIPT_RAW)) {
       throw new Error(
         `stale lowercase WayX Script raw URL in indexed resource: ${rel}`,
@@ -943,18 +943,18 @@ function qxInstallerForRule(item: any): any {
   };
   return qxAddResourceUrl(payload);
 }
-function markdownLink(label: any, url: any): any {
+function markdownLink(label: any, url: any) {
   return `[${label}](${url})`;
 }
-function resourceNameCell(row: any): any {
+function resourceNameCell(row: any) {
   const item: any = row.qx ?? row.surge;
   return item
     ? `**[${item.name}](${blobRepoUrl(item.rel)})**`
     : `**${row.key}**`;
 }
-function rowInstallCells(category: any, row: any): any {
-  let qx: any = "—";
-  let surge: any = "—";
+function rowInstallCells(category: any, row: any) {
+  let qx = "—";
+  let surge = "—";
   if (category === "BoxJs" && row.qx) {
     qx = markdownLink("一键添加", boxJsSubscribeUrl(row.qx.rel));
   } else if (row.qx && (category === "Module" || category === "Adblock")) {
@@ -965,7 +965,7 @@ function rowInstallCells(category: any, row: any): any {
   if (row.surge) {
     if (row.surge.ext === ".sgmodule") {
       surge = markdownLink("一键安装", surgeModuleInstallUrl(row.surge.rel));
-      const count: any = Number(
+      const count = Number(
         row.surge.text?.match(/^# Native QX review count: (\d+)$/m)?.[1] || 0,
       );
       if (count) surge += " · " + count + " 条待核对";
@@ -984,8 +984,8 @@ function adblockSource(row: any): any {
       .find(Boolean);
   if (!source) return "本地资源";
   try {
-    const url: any = new URL(source),
-      host: any = url.hostname.toLowerCase();
+    const url = new URL(source),
+      host = url.hostname.toLowerCase();
     // Modified: 2026-11-01 (chance). Label the upstream author consistently in the README.
     if (["github.com", "raw.githubusercontent.com"].includes(host) && url.pathname.split("/")[1] === "ddgksf2013") return "墨鱼";
     // Modified: 2026-11-01 (chance). Attribute the collection and standalone app to the registered upstream author.
@@ -1010,10 +1010,10 @@ function adblockSource(row: any): any {
     return "本地资源";
   }
 }
-function escapeHtml(value: any): any {
+function escapeHtml(value: any) {
   return String(value).replace(
     /[&<>"']/g,
-    (char: any): any =>
+    (char: any) =>
       (
         ({
           "&": "&amp;",
@@ -1030,8 +1030,8 @@ function renderTable(
   rows: any,
   heading: any = category,
   level: any = 2,
-): any {
-  const lines: any = [
+) {
+  const lines = [
     ...(heading === null ? [] : [`${"#".repeat(level)} ${heading}`, ""]),
     category === "Adblock" ? "| 编号 | Name | Quantumult X | Surge |" : "| Name | Quantumult X | Surge |",
     category === "Adblock" ? "| :--- | :--- | :---: | :---: |" : "| :--- | :---: | :---: |",
@@ -1045,11 +1045,11 @@ function renderTable(
 }
 // Modified: 2026-10-25 (chance). Group visible names by Latin/pinyin initial;
 // numeric and other names retain dedicated groups after A-Z.
-const nameCollator: any = new Intl.Collator("zh-Hans-CN-u-co-pinyin", {
+const nameCollator = new Intl.Collator("zh-Hans-CN-u-co-pinyin", {
   numeric: true,
   sensitivity: "base",
 });
-const initialBoundaries: any = [
+const initialBoundaries = [
   ["A", "阿"],
   ["B", "八"],
   ["C", "擦"],
@@ -1090,7 +1090,7 @@ function rowInitial(row: any): any {
   }
   return "其他";
 }
-function alphabetTables(category: any, rows: any, level: any = 4): any {
+function alphabetTables(category: any, rows: any, level: any = 4) {
   const groups: any = new Map();
   for (const row of rows) {
     const letter: any = rowInitial(row);
@@ -1098,7 +1098,7 @@ function alphabetTables(category: any, rows: any, level: any = 4): any {
     groups.get(letter).push(row);
   }
   return [...groups]
-    .sort(([a]: any, [b]: any): any => {
+    .sort(([a]: any, [b]: any) => {
       const rank: any = (x: any): any =>
         /^[A-Z]$/.test(x) ? x.charCodeAt(0) : x === "0–9" ? 100 : 101;
       return rank(a) - rank(b);
@@ -1118,7 +1118,7 @@ function alphabetTables(category: any, rows: any, level: any = 4): any {
     .join("\n\n");
 }
 // README grouping only: preserve the actual policies and install descriptors.
-function ruleGroup(row: any): any {
+function ruleGroup(row: any) {
   const actions: any = new Set();
   for (const line of (row.qx?.text || row.surge?.text || "").split("\n")) {
     if (!line.trim() || /^[#;]/.test(line.trim()) || line.startsWith("//"))
@@ -1159,7 +1159,7 @@ export async function buildReadmePlan(root = process.cwd()): Promise<Map<string,
         "## Adblock\n\n按拉取来源分组，点击展开；各来源内部按名称 A–Z 分栏，中文按拼音首字母，数字单列。\n\n" +
           [...groups]
             .map(
-              ([author, items]: any): any =>
+              ([author, items]: any) =>
                 "<details>\n<summary><strong>" +
                 escapeHtml(author) +
                 "</strong> · " +
@@ -1180,8 +1180,8 @@ export async function buildReadmePlan(root = process.cwd()): Promise<Map<string,
               renderTable(
                 category,
                 rows
-                  .filter((row: any): any => ruleGroup(row) === group)
-                  .sort((a: any, b: any): any =>
+                  .filter((row: any) => ruleGroup(row) === group)
+                  .sort((a: any, b: any) =>
                     nameCollator.compare(rowName(a), rowName(b)),
                   ),
                 group,
@@ -1192,7 +1192,7 @@ export async function buildReadmePlan(root = process.cwd()): Promise<Map<string,
       );
     else sections.push(renderTable(category, rows));
     // Modified: 2026-11-03 (chance). Fold category content and preserve nested source folds.
-    const heading: any = `## ${category}\n\n`;
+    const heading = `## ${category}\n\n`;
     const current: any = sections[sections.length - 1];
     if (!current.startsWith(heading)) throw new Error(`README heading mismatch: ${category}`);
     sections[sections.length - 1] =
@@ -1201,7 +1201,7 @@ export async function buildReadmePlan(root = process.cwd()): Promise<Map<string,
       current.slice(heading.length) +
       "\n\n</details>";
   }
-  const readme: any = [
+  const readme = [
     '<div align="center">',
     "",
     "# WayX",
@@ -1267,7 +1267,7 @@ function activeDeclarations(text: any): any {
   for (const [section, lines] of parsed.sections) {
     if (section === "Argument") continue;
     for (const raw of lines) {
-      const line: any = String(raw ?? "").trim();
+      const line = String(raw ?? "").trim();
       if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
       out.push({ section, line });
     }
@@ -1277,7 +1277,7 @@ function activeDeclarations(text: any): any {
 function multiset(items: any): any {
   const counts: any = new Map();
   for (const item of items) {
-    const key: any = item.section + "\0" + item.line;
+    const key = item.section + "\0" + item.line;
     counts.set(key, (counts.get(key) || 0) + 1);
   }
   return counts;
@@ -1292,7 +1292,7 @@ export function failureDeclarationContext(
   const counts: any = multiset(before);
   const changed: any = [];
   for (const item of after) {
-    const key: any = item.section + "\0" + item.line;
+    const key = item.section + "\0" + item.line;
     const count: any = counts.get(key) || 0;
     if (count) counts.set(key, count - 1);
     else changed.push(item);
@@ -1321,8 +1321,8 @@ export function buildSyncFailure({
   previousSource = null,
   fetchedSource = null,
 }: any): any {
-  const reason: any = String(error?.message || error || "unknown failure");
-  const detail: any = String(
+  const reason = String(error?.message || error || "unknown failure");
+  const detail = String(
     error?.stack || error?.message || error || "unknown failure",
   );
   const context: any = failureDeclarationContext(previousSource, fetchedSource);
@@ -1345,11 +1345,11 @@ export async function writeSyncFailureReport(
   root: any,
   failures: any,
   { runtimeDir = ".github/monitor/.runtime", summary = null }: any = {},
-): Promise<any> {
-  const dir: any = path.join(root, runtimeDir);
+) {
+  const dir = path.join(root, runtimeDir);
   await fs.mkdir(dir, { recursive: true });
-  const jsonPath: any = path.join(dir, "sync-failures.json");
-  const markdownPath: any = path.join(dir, "sync-failures.md");
+  const jsonPath = path.join(dir, "sync-failures.json");
+  const markdownPath = path.join(dir, "sync-failures.md");
   await fs.writeFile(
     jsonPath,
     JSON.stringify(
@@ -1358,7 +1358,7 @@ export async function writeSyncFailureReport(
       2,
     ) + "\n",
   );
-  const lines: any = [
+  const lines = [
     "# WayX Actions sync failures",
     "",
     `Total: ${failures.length}`,
@@ -1398,8 +1398,8 @@ export async function writeValidationEvidence(
   checked: any,
   findings: any,
   coverage: any = {},
-): Promise<any> {
-  const file: any = process.env.WAYX_CHECK_REPORT;
+) {
+  const file = process.env.WAYX_CHECK_REPORT;
   if (!file) return;
   await fs.mkdir(path.dirname(file), { recursive: true });
   await fs.writeFile(
@@ -1414,26 +1414,26 @@ export async function recordOutputMismatch(
   plugin: any = null,
 ): Promise<any> {
   const finding: any = outputMismatch(file, expected, actual, plugin);
-  const report: any = process.env.WAYX_CHECK_REPORT;
+  const report = process.env.WAYX_CHECK_REPORT;
   if (!finding || !report) return finding;
-  const dir: any = path.join(path.dirname(report), "output-differences");
+  const dir = path.join(path.dirname(report), "output-differences");
   await fs.mkdir(dir, { recursive: true });
-  const key: any = crypto
+  const key = crypto
     .createHash("sha256")
     .update(file)
     .digest("hex")
     .slice(0, 16);
-  const want: any = path.join(dir, key + ".expected"),
-    got: any = path.join(dir, key + ".actual"),
-    patch: any = path.join(dir, key + ".patch");
+  const want = path.join(dir, key + ".expected"),
+    got = path.join(dir, key + ".actual"),
+    patch = path.join(dir, key + ".patch");
   await fs.writeFile(want, artifactContent(expected) ?? "");
   await fs.writeFile(got, artifactContent(actual) ?? "");
-  const diff: any = spawnSync(
+  const diff = spawnSync(
     "git",
     ["diff", "--no-index", "--no-color", "--", want, got],
     { encoding: "utf8", maxBuffer: 16 * 1024 * 1024 },
   );
-  if (diff.error || ![0, 1].includes(diff.status))
+  if (diff.error || (diff.status === null || ![0, 1].includes(diff.status)))
     throw new Error(
       "Cannot record output difference: " +
         (diff.error?.message || diff.stderr),
@@ -1446,7 +1446,7 @@ export async function recordOutputMismatch(
   };
   return finding;
 }
-export function validationArtifactDigest(value: any): any {
+export function validationArtifactDigest(value: any) {
   const text: any = artifactContent(value);
   return text == null
     ? null
@@ -1473,9 +1473,9 @@ export function outputMismatch(
       actual: got == null ? "(absent)" : "Response body (" + got.length + " bytes)",
     };
   }
-  const a: any = String(want ?? "").split("\n"),
-    b: any = String(got ?? "").split("\n");
-  let first: any = 0;
+  const a = String(want ?? "").split("\n"),
+    b = String(got ?? "").split("\n");
+  let first = 0;
   while (first < Math.min(a.length, b.length) && a[first] === b[first]) first++;
   const digest: any = validationArtifactDigest;
   return {
@@ -1515,9 +1515,9 @@ export function formatWorkflowErrorAnnotation(
   entry: any,
   error: any,
   { annotationFallback = "message" }: any = {},
-): any {
+) {
   const title: any = entry?.id;
-  const message: any = String(
+  const message = String(
     annotationValue(error, annotationFallback),
   ).replaceAll("\n", "%0A");
   return `::error title=${title}::${message}`;
@@ -1529,13 +1529,13 @@ export function createWorkflowFailureReporter({
   writeError = console.error,
 }: any = {}): any {
   const failures: any = [];
-  function capture(entry: any, error: any): any {
+  function capture(entry: any, error: any) {
     failures.push(`${entry.id}: ${failureDetail(error, detailFallback)}`);
     writeError(
       formatWorkflowErrorAnnotation(entry, error, { annotationFallback }),
     );
   }
-  function report(): any {
+  function report() {
     if (!failures.length) return false;
     writeError(`\n${summaryLabel}:\n` + failures.join("\n\n"));
     return true;

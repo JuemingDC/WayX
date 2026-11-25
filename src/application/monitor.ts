@@ -276,7 +276,7 @@ export async function runMonitor(root = process.cwd()) {
     statePath = ".github/monitor/state.json",
     results: any[] = [],
     failures: any[] = [],
-    state: any = { version: 1, sources: {} };
+    state: { version: number; sources: Record<string, Record<string, unknown>> } = { version: 1, sources: {} };
   try {
     const cfg = await readJson<any>(
         path.join(root, ".github/monitor/sources.json"),

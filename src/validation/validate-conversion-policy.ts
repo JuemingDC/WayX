@@ -15,12 +15,12 @@ import {
 import { validateSurgeModule } from "./output.ts";
 import { validateConversionMetadata } from "./output.ts";
 import { loadLoonSourceCatalog } from "../parser/input.ts";
-const manifest: any = await loadLoonSourceCatalog(".github/sources/loon.json");
+const manifest = await loadLoonSourceCatalog(".github/sources/loon.json");
 const targets: any = manifest.flatMap((entry: any): any => [
   { entry, target: "qx", file: "Adblock/Quantumult X/" + entry.qx },
   { entry, target: "surge", file: "Adblock/Surge/" + entry.surge },
 ]);
-const changed: any = new Set([
+const changed = new Set([
   ...execFileSync("git", ["diff", "--name-only", "HEAD"], { encoding: "utf8" })
     .trim()
     .split("\n"),
@@ -32,11 +32,11 @@ const changed: any = new Set([
 ]);
 const selected: any = process.argv.includes("--all")
   ? targets
-  : targets.filter(({ file }: any): any => changed.has(file));
+  : targets.filter(({ file }: any) => changed.has(file));
 const errors: any = [];
 for (const { entry, target, file } of selected) {
   try {
-    const text: any = await fs.readFile(file, "utf8");
+    const text = await fs.readFile(file, "utf8");
     validateConversionMetadata(text, entry, target);
     if (target === "qx") validateQX(text, entry);
     else validateSurgeModule(text, entry);
@@ -50,7 +50,7 @@ for (const { entry, target, file } of selected) {
   }
 }
 // Routing collections share the same target validators as converted plugins.
-let routing: any = { outputs: {} };
+let routing = { outputs: {} };
 try {
   routing = JSON.parse(
     await fs.readFile(".github/sources/rules-state.json", "utf8"),
@@ -66,7 +66,7 @@ for (const file of Object.keys(routing.outputs || {})) {
       )
     )
       throw new Error("Invalid managed rule collection path");
-    const text: any = await fs.readFile(file, "utf8");
+    const text = await fs.readFile(file, "utf8");
     if (file.startsWith("Rule/QuantumultX/"))
       validateQxFilterList(text, { id: file }, { builtInPoliciesOnly: true });
     else if (file.endsWith(".dconf"))

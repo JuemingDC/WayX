@@ -70,11 +70,11 @@ export async function syncCatalogEntry(
   // Modified: 2026-10-29 (chance). Direct callers also honor source freeze.
   if ((await keleePaused(root)) && isKeleeSource(entry.source))
     return { id: entry.id, paused: true };
-  let stage: any = "read-current-source",
+  let stage = "read-current-source",
     previousSource: any = null,
     source: any = null,
     targetState: any = null;
-  const onStage: any = (value: any): any => {
+  const onStage: any = (value: any) => {
     stage = value;
   };
   let declarations: any = null;
@@ -274,10 +274,10 @@ export async function runCatalogSync({
     unchangedPlugins: any = [],
     retainedPlugins: any = [],
     deferredPlugins: any = [];
-  let publishable: any = true;
+  let publishable = true;
   // Modified: 2026-10-25 (chance). Finish acquisition for the complete catalog
   // and seal one shared snapshot before any target is generated or committed.
-  const resources: any = createResourceSnapshot({
+  const resources = createResourceSnapshot({
     directory: path.join(
       root,
       ".github/monitor/.runtime/resources",
@@ -294,7 +294,7 @@ export async function runCatalogSync({
   // Modified: 2026-10-30 (chance). Share one original icon snapshot with all emitters.
   const icons = await loadIconIndex(root, resources);
   const preparedEntries: any = [];
-  const capture: any = (entry: any, error: any): any => {
+  const capture: any = (entry: any, error: any) => {
     failures.capture(entry, error);
     structuredFailures.push(
       error.syncFailure || buildSyncFailure({ entry, stage: "sync", error }),
@@ -419,7 +419,7 @@ export async function runCatalogSync({
     );
   return { ...summary, failures: structuredFailures };
 }
-async function main(): Promise<any> {
+async function main() {
   const result: any = await runCatalogSync({ layout: true });
   if (process.env.GITHUB_OUTPUT)
     await fs.appendFile(
@@ -432,7 +432,7 @@ async function main(): Promise<any> {
     );
   if (!result.publishable) process.exitCode = 1;
 }
-const __wayxIsMain: any =
+const __wayxIsMain =
   process.argv[1] &&
   path.resolve(process.argv[1]) ===
     path.resolve(fileURLToPath(import.meta.url));

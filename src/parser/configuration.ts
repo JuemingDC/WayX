@@ -11,13 +11,13 @@ export function parseConfigurationDeclaration(
   line: any,
   { section = "MITM" }: any = {},
 ): any {
-  const source: any = String(line ?? "").trim();
-  const match: any = source.match(/^([\w-]+)\s*=\s*([\s\S]*)$/);
-  const domain: any =
+  const source = String(line ?? "").trim();
+  const match = source.match(/^([\w-]+)\s*=\s*([\s\S]*)$/);
+  const domain =
     String(section).toLowerCase() === "general" ? "general" : "mitm";
   const name: any = match?.[1]?.toLowerCase() ?? null;
   const value: any = match?.[2]?.trim() ?? null;
-  const hostnameList: any =
+  const hostnameList =
     name === (domain === "general" ? "real-ip" : "hostname");
   return Object.freeze({
     type: "configuration-semantic-ir",
@@ -36,7 +36,7 @@ export function parseConfigurationDeclaration(
     ),
   });
 }
-export function planConfiguration(ir: any, target: any): any {
+export function planConfiguration(ir: any, target: any) {
   if (ir?.type !== "configuration-semantic-ir")
     throw new TypeError("Expected Configuration Semantic IR");
   if (!["qx", "surge"].includes(target))

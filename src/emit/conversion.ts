@@ -105,8 +105,8 @@ function splitPatternAction(line: any): any {
   ];
 }
 function splitRuleInlineComment(line: any): any {
-  const source: any = String(line ?? "").trim();
-  const match: any = source.match(/^([\s\S]*?\S)\s+\/\/\s*(.+)$/);
+  const source = String(line ?? "").trim();
+  const match = source.match(/^([\s\S]*?\S)\s+\/\/\s*(.+)$/);
   if (!match) return { line: source, comment: null };
   return {
     line: match[1].trim(),
@@ -114,7 +114,7 @@ function splitRuleInlineComment(line: any): any {
   };
 }
 function rewriteErrorResult(line: any, error: any): any {
-  const reason: any = String(error?.message || error).split("\n")[0];
+  const reason = String(error?.message || error).split("\n")[0];
   if (error instanceof SyntaxError)
     return rewriteIssue(line, "unknown-rewrite-v2-syntax", reason);
   if (
@@ -250,7 +250,7 @@ function rewriteV2Action(line: any, target: any, ctx: any): any {
       if (plan.disabled || plan.omitted)
         return { section: "drop", reason: "script-disabled-or-omitted" };
       const notes: any = (plan.notes || []).map(
-        (n: any): any => "# [WayX] " + n,
+        (n: any) => "# [WayX] " + n,
       );
       return {
         section: target === "qx" ? plan.section || "rewrite" : "script",
@@ -289,7 +289,7 @@ function rewriteV2Action(line: any, target: any, ctx: any): any {
       const sourceLine: any = ast.sourceActionCount
         ? rewriteV2ToSource(resolved)
         : line;
-      const ir: any = rewriteV2AstToSemanticIr(resolved, {
+      const ir = rewriteV2AstToSemanticIr(resolved, {
         source: sourceLine,
       });
       if (isEmptyJsonJqIr(ir))
@@ -371,8 +371,8 @@ function planDisabledSurgeRewriteComments(comments: any, ctx: any): any {
   const passthrough: any = [];
   const routed: any = [];
   for (const raw of comments || []) {
-    const trimmed: any = String(raw ?? "").trim();
-    const match: any = trimmed.match(
+    const trimmed = String(raw ?? "").trim();
+    const match = trimmed.match(
       /^#\s*((?:request|response)\s+if\b[\s\S]+)$/,
     );
     if (!match || !isRewriteV2(match[1])) {
@@ -394,7 +394,7 @@ function planDisabledSurgeRewriteComments(comments: any, ctx: any): any {
       const lines: any = member.lines || [member.line];
       routed.push({
         section: member.section,
-        lines: [raw, ...lines.map((line: any): any => "# " + line)],
+        lines: [raw, ...lines.map((line: any) => "# " + line)],
       });
     }
   }
@@ -410,7 +410,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
     ...groupSourceSectionItems(plugin.sections.get("Script") || []),
     ...items.filter((x: any): any => isScriptV2(x.line)),
   ].filter((x: any): any => x.line);
-  const legacy: any = items.some((x: any): any => !isRewriteV2(x.line));
+  const legacy: any = items.some((x: any) => !isRewriteV2(x.line));
   // Keep native JSON/JQ declarations outside helper dispatchers. Original
   // Script/legacy owners also retain their existing phase contracts.
   const blockedV2: any = new Set();
@@ -427,7 +427,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
         const nativeJson: any =
           (ast.actions.length > 1 ||
             ast.actions[0]?.args.some(
-              (arg: any): any => arg.type === "array",
+              (arg: any) => arg.type === "array",
             )) &&
           simpleUrlRewriteCondition(ast).ok &&
           jsonPipelineToSafeNativeJq(ast).ok;
@@ -435,7 +435,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
           ast.sourceActionCount ||
           nativeJson ||
           ast.actions.every(
-            (a: any): any => a.name === ast.phase + ".json.jq",
+            (a: any) => a.name === ast.phase + ".json.jq",
           ) ||
           !supportsRewritePhaseActions(ast, target)
         )
@@ -448,7 +448,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
       (phase: any): any =>
         legacy ||
         blockedV2.has(phase) ||
-        scripts.some((x: any): any => {
+        scripts.some((x: any) => {
           try {
             const ir: any = parseScriptDeclaration(x.line);
             return (
@@ -489,11 +489,11 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
   for (const phase of ["request", "response"]) {
     if (jsonPhases.has(phase)) continue;
     const group: any = candidates.filter(
-      (x: any): any => x.ast.phase === phase,
+      (x: any) => x.ast.phase === phase,
     );
     // A broad guarded helper must share one phase owner even when only one
     // source entry matches this phase. Include native mutations in its order.
-    const helper: any = group.some((x: any): any =>
+    const helper: any = group.some((x: any) =>
       /script-(?:request|response)-(?:header|body)|type=http-/.test(
         x.mapped.line || "",
       ),
@@ -516,7 +516,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
       new Set(bodyMatchers.map((matcher: any): any => matcher.pattern)).size ===
         1 &&
       group.some((item: any): any =>
-        item.ast.actions.some((action: any): any =>
+        item.ast.actions.some((action: any) =>
           new RegExp(
             "^" + phase + "\\.(?:body\\.(?:replace|mock|mock_file)|json\\.)",
           ).test(action.name),
@@ -529,7 +529,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
         );
       if (group.length === 1 && !bodyOwner) continue;
       if (
-        group.some((x: any): any => !supportsRewritePhaseActions(x.ast, target))
+        group.some((x: any) => !supportsRewritePhaseActions(x.ast, target))
       )
         throw new Error(
           "phase dispatcher cannot compose native JQ/echo/URL/binary actions without a verified runtime adapter",
@@ -563,15 +563,15 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
         },
       );
       if (bodyOwner) plan.pattern = bodyMatchers[0].pattern;
-      const key: any = crypto
+      const key = crypto
         .createHash("sha1")
         .update(target + "\0" + group.map((x: any): any => x.line).join("\n"))
         .digest("hex")
         .slice(0, 10);
-      const filename: any = "phase_" + target + "_" + phase + "_" + key + ".js";
+      const filename = "phase_" + target + "_" + phase + "_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
-      const url: any = ctx.rawBase + "/Script/" + ctx.id + "/" + filename;
-      const mapped: any =
+      const url = ctx.rawBase + "/Script/" + ctx.id + "/" + filename;
+      const mapped =
         target === "qx"
           ? {
               section: "rewrite",
@@ -620,11 +620,11 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
               target === "qx"
                 ? item.mapped.line.replace(
                     /^(?:\^https\?:\/\/|\^) url /,
-                    (): any => pattern + " url ",
+                    () => pattern + " url ",
                   )
                 : item.mapped.line.replace(
                     /pattern=(?:\^https\?:\/\/|\^),/,
-                    (): any => "pattern=" + surgeRegexParameter(pattern) + ",",
+                    () => "pattern=" + surgeRegexParameter(pattern) + ",",
                   );
             result.set(item.sourceIndex, {
               ...item.mapped,
@@ -785,7 +785,7 @@ export function convertPlugin(
       .filter((item: any): any => item.line)
       .map((item: any): any => item.line);
     if (!active.length) continue;
-    const reason: any =
+    const reason =
       "# [WayX] ISSUE REQUIRED [unknown-source-section]: unsupported Loon source section [" +
       sectionName +
       "] is outside the current ad-block conversion grammar";
@@ -810,7 +810,7 @@ export function convertPlugin(
   const surgeArgumentTable: any = surgeArgumentPlan.table;
   const surgeProxyPolicyPlaceholder: any =
     surgeArgumentPlan.policyBinding?.placeholder || null;
-  let surgeNeedsLineRequirement: any = false;
+  let surgeNeedsLineRequirement = false;
   const upstreamRepairs: any = new Map();
   const qctx: any = {
     declarations,
@@ -843,7 +843,7 @@ export function convertPlugin(
     rawBase,
   };
   if (argumentAnalysis.undeclaredRefs.length) {
-    const refs: any = [
+    const refs = [
       ...new Set(
         argumentAnalysis.undeclaredRefs.map((ref: any): any => ref.id),
       ),
@@ -932,7 +932,7 @@ export function convertPlugin(
       !inline.line.includes(",") &&
       /^(?:\*\.)?(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$/i.test(inline.line)
     ) {
-      const note: any =
+      const note =
         "# [WayX] Known source limitation: bare hostname is not a documented Loon Rule declaration, so no target policy is inferred.";
       qxOutputDestination(qx, "filter").push(
         ...comments,
@@ -1096,7 +1096,7 @@ export function convertPlugin(
     }
   }
   const scriptSectionLines: any = plugin.sections.get("Script") || [];
-  let scriptIndex: any = 0;
+  let scriptIndex = 0;
   for (const item of groupSourceSectionItems(scriptSectionLines)) {
     const comments: any = cleanSourceComments(item.comments);
     if (!item.line) continue;
@@ -1125,7 +1125,7 @@ export function convertPlugin(
       continue;
     }
     let ir: any;
-    const sourceSyntax: any = isScriptV2(item.line) ? "v2" : "legacy";
+    const sourceSyntax = isScriptV2(item.line) ? "v2" : "legacy";
     try {
       ir = parseScriptDeclaration(item.line);
       if (!ir) {
@@ -1148,8 +1148,8 @@ export function convertPlugin(
         continue;
       }
     } catch (error: any) {
-      const reason: any = String(error?.message || error).split("\n")[0];
-      const note: any = `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`;
+      const reason = String(error?.message || error).split("\n")[0];
+      const note = `# [WayX] ISSUE REQUIRED [unknown-script-v2-syntax]: source declaration parse failed: ${reason}`;
       appendQxOutput(
         qx,
         "notes",
@@ -1249,7 +1249,7 @@ export function convertPlugin(
     }
   }
   const mitmLines: any = [...plugin.sections]
-    .filter(([name]: any): any => name === "MitM" || name === "MITM")
+    .filter(([name]: any) => name === "MitM" || name === "MITM")
     .flatMap(([, lines]: any): any => lines);
   for (const item of groupSourceSectionItems(mitmLines)) {
     const comments: any = cleanSourceComments(item.comments);
@@ -1265,7 +1265,7 @@ export function convertPlugin(
     surgeOutputDestination(sg, "mitm").push(...comments, sPlan.line);
   }
   for (const repair of upstreamRepairs.values()) {
-    const notes: any = [
+    const notes = [
       "# [WayX] 上游错误 / UPSTREAM ERROR CORRECTED [" +
         repair.kind +
         "]: inserted missing whitespace; original failed jq compilation, corrected program compiled successfully.",
@@ -1313,7 +1313,7 @@ export function convertPlugin(
 // Shared workflow-facing conversion execution primitives.
 // Author: chance
 // Category: Converter / Execution / Validation
-function notify(onStage: any, stage: any): any {
+function notify(onStage: any, stage: any) {
   if (typeof onStage === "function") onStage(stage);
 }
 // Modified: 2026-10-25 (chance). Acquisition prepares a source-bound context;
@@ -1460,14 +1460,14 @@ export function convertNativeQxToSurge(
       MITM: [],
     },
     diagnostics: any = [];
-  const issue: any = (line: any, reason: any): any => {
+  const issue: any = (line: any, reason: any) => {
     diagnostics.push({ source: line, reason });
     sections.Rule.push(
       "# [WayX] REVIEW REQUIRED: " + reason,
       "# Source declaration: " + line,
     );
   };
-  const types: any = {
+  const types: Record<string, string> = {
     host: "DOMAIN",
     "host-suffix": "DOMAIN-SUFFIX",
     "host-keyword": "DOMAIN-KEYWORD",
@@ -1480,7 +1480,7 @@ export function convertNativeQxToSurge(
   };
   // Modified: 2026-10-30 (chance). Preserve icon links in declaration comments.
   const iconMetadata: string[] = [];
-  let scriptIndex: any = 0;
+  let scriptIndex = 0;
   for (const raw of text.split("\n")) {
     let line: any = raw.trim();
     if (!line) continue;
@@ -1544,7 +1544,7 @@ export function convertNativeQxToSurge(
       continue;
     }
     if (["reject-200", "reject-dict", "reject-array"].includes(action)) {
-      const body: any =
+      const body =
         action === "reject-dict" ? "{}" : action === "reject-array" ? "[]" : "";
       sections["Map Local"].push(
         pattern +
@@ -1630,7 +1630,7 @@ export function convertNativeQxToSurge(
       // Modified: 2026-10-29 (chance). User requires original native Script
       // declarations for echo too, keeping original author URLs without API scans.
       // QX analyze-echo waits for the request body; ordinary echo does not.
-      const modes: any = {
+      const modes: Record<string, [string, boolean]> = {
         "request-header": ["request", false],
         "request-body": ["request", true],
         "response-header": ["response", false],
@@ -1659,7 +1659,7 @@ export function convertNativeQxToSurge(
       "No verified equivalent for QX action: " + action.split(/\s/)[0],
     );
   }
-  const header: any = [
+  const header = [
     ...(sections.Rule.some((line: any): any => line.includes("{{{PROXY}}}"))
       ? [
           "#!arguments=PROXY:PROXY",
@@ -1676,13 +1676,13 @@ export function convertNativeQxToSurge(
     "#!requirement=CORE_VERSION>=20",
     "# Native QX review count: " + diagnostics.length,
   ];
-  const out: any =
+  const out =
     header.join("\n") +
     "\n\n" +
     Object.entries(sections)
       .filter(([, lines]: any): any => lines.length)
       .map(
-        ([section, lines]: any): any =>
+        ([section, lines]: any) =>
           "[" + section + "]\n" + lines.join("\n"),
       )
       .join("\n\n") +

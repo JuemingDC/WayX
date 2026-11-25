@@ -6,7 +6,7 @@
 // WayX target-neutral source Regex semantics
 // Author: chance
 // Category: Converter / Core / Semantic Regex
-const SUPPORTED_FLAGS: any = /^[ims]*$/;
+const SUPPORTED_FLAGS = /^[ims]*$/;
 // Flags are suffix syntax, never characters inferred from the regex body.
 // Escapes and character classes own their slashes; grammar punctuation following
 // the closing delimiter belongs to the surrounding expression.
@@ -14,9 +14,9 @@ export function scanSourceRegexLiteral(text: any, start: any = 0): any {
   text = String(text);
   if (text[start] !== "/")
     throw new SyntaxError("Expected regex opening delimiter");
-  let escaped: any = false,
-    inClass: any = false,
-    close: any = -1;
+  let escaped = false,
+    inClass = false,
+    close = -1;
   for (let i: any = start + 1; i < text.length; i++) {
     const c: any = text[i];
     if (escaped) {
@@ -41,7 +41,7 @@ export function scanSourceRegexLiteral(text: any, start: any = 0): any {
     }
   }
   if (close < 0) throw new SyntaxError("Unterminated regex");
-  let end: any = close + 1;
+  let end = close + 1;
   while (end < text.length && /[A-Za-z]/.test(text[end])) end++;
   if (end < text.length && !/[\s(),\[\].|&=~]/.test(text[end]))
     throw new SyntaxError("Invalid regex suffix boundary");
@@ -64,17 +64,17 @@ function resolveConditionRegex(value: any): any {
     return null;
   }
 }
-function assertRegexNode(node: any): any {
+function assertRegexNode(node: any) {
   if (!node || node.type !== "regex")
     throw new TypeError("Expected Loon semantic Regex node");
-  const flags: any = String(node.flags || "");
+  const flags = String(node.flags || "");
   if (!SUPPORTED_FLAGS.test(flags))
     throw new Error("Unsupported Loon regex flag(s): " + flags);
   if (new Set(flags).size !== flags.length)
     throw new Error("Duplicate Loon regex flag(s): " + flags);
   return { source: String(node.pattern ?? ""), flags };
 }
-export function compileSourceRegex(node: any): any {
+export function compileSourceRegex(node: any) {
   const { source, flags } = assertRegexNode(node);
   return new RegExp(source, flags);
 }
@@ -96,14 +96,14 @@ export class SemanticEvaluationError extends Error {
 function cloneCaptures(captures: any): any {
   return new Map(captures);
 }
-function decodeHeaderName(value: any): any {
+function decodeHeaderName(value: any) {
   return String(value)
     .replace(/\\\\/g, "\\")
     .replace(/\\'/g, "'")
     .replace(/\\"/g, '"');
 }
 function headerVariable(name: any): any {
-  const match: any = String(name).match(
+  const match = String(name).match(
     /^(request|response)\.header\[(?:'((?:\\.|[^'])*)'|"((?:\\.|[^"])*)")\]$/,
   );
   if (!match) return null;
@@ -115,7 +115,7 @@ function headerVariable(name: any): any {
 function lookupHeader(headers: any, name: any): any {
   if (Array.isArray(headers)) {
     const item: any = headers.find(
-      (x: any): any =>
+      (x: any) =>
         String(x.field).toLowerCase() === String(name).toLowerCase(),
     );
     return item ? String(item.value ?? "") : null;
@@ -143,7 +143,7 @@ function argumentValue(context: any, name: any): any {
   return undefined;
 }
 function captureValue(captures: any, name: any): any {
-  const match: any = String(name).match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
+  const match = String(name).match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
   if (!match) return { found: false, value: undefined };
   const values: any = captures.get(match[1]);
   if (!values) return { found: true, value: undefined };
@@ -154,7 +154,7 @@ export function resolveSemanticVariable(
   context: any,
   captures: any = new Map(),
 ): any {
-  const key: any = String(name);
+  const key = String(name);
   if (key === "url") return context.url;
   if (key === "request.method")
     return context.request?.method ?? context.method;
@@ -181,14 +181,14 @@ export function stringTemplateParts(node: any): any {
   const raw: any = typeof node.raw === "string" && node.raw.startsWith('"');
   const text: any = raw ? node.raw.slice(1, -1) : String(node.value);
   const parts: any = [];
-  let literal: any = "";
-  const flush: any = (): any => {
+  let literal = "";
+  const flush: any = () => {
     if (literal) {
       parts.push(["s", literal]);
       literal = "";
     }
   };
-  for (let i: any = 0; i < text.length; i++) {
+  for (let i = 0; i < text.length; i++) {
     if (text[i] === "\\" && i + 1 < text.length) {
       if (text.slice(i + 1, i + 3) === "${") {
         literal += "${";
@@ -208,9 +208,9 @@ export function stringTemplateParts(node: any): any {
       }
     }
     if (text.slice(i, i + 2) === "${") {
-      let j: any = i + 2,
+      let j = i + 2,
         quote: any = null,
-        escaped: any = false;
+        escaped = false;
       for (; j < text.length; j++) {
         const c: any = text[j];
         if (quote) {
@@ -231,7 +231,7 @@ export function stringTemplateParts(node: any): any {
   return parts;
 }
 function expandSemanticString(node: any, context: any, captures: any): any {
-  let text: any = "";
+  let text = "";
   for (const [kind, value] of stringTemplateParts(node)) {
     const v: any =
       kind === "s" ? value : resolveSemanticVariable(value, context, captures);
@@ -341,7 +341,7 @@ export function evaluateCondition(
 // WayX equivalence-planning result contract
 // Author: chance
 // Category: Converter / Core / Equivalence Planning
-export const EQUIVALENCE_KINDS: any = Object.freeze({
+export const EQUIVALENCE_KINDS = Object.freeze({
   NATIVE: "native-equivalent",
   GUARDED: "guarded-helper",
   DISPATCHER: "phase-dispatcher",
@@ -400,7 +400,7 @@ export function phaseDispatcher({
   };
 }
 export function unsupported(reason: any, details: any = {}): any {
-  const message: any = String(reason || "").trim();
+  const message = String(reason || "").trim();
   if (!message) throw new Error("unsupported requires a non-empty reason");
   return { kind: EQUIVALENCE_KINDS.UNSUPPORTED, reason: message, details };
 }
@@ -442,20 +442,20 @@ export function differentialConditionOracle({
     throw new Error("differential oracle requires at least one context");
   }
   const cases: any = contexts.map((context: any, index: any): any => {
-    const sourceMatched: any = Boolean(
+    const sourceMatched = Boolean(
       evaluateCondition(condition, context).matched,
     );
     const targetMatched: any = targetMatch(targetModel(context), index);
-    let classification: any = "match";
+    let classification = "match";
     if (sourceMatched && !targetMatched) classification = "false-negative";
     else if (!sourceMatched && targetMatched) classification = "false-positive";
     return { index, sourceMatched, targetMatched, classification };
   });
   const falseNegatives: any = cases.filter(
-    (item: any): any => item.classification === "false-negative",
+    (item: any) => item.classification === "false-negative",
   );
   const falsePositives: any = cases.filter(
-    (item: any): any => item.classification === "false-positive",
+    (item: any) => item.classification === "false-positive",
   );
   return {
     target: String(target || "target"),
@@ -477,7 +477,7 @@ export function differentialConditionOracle({
 // Modified: 2026-10-26 (chance). Native flags follow target/field policy;
 // literal URL host separators follow the user-authorized tightening below.
 // Source AST and JavaScript helper regexes retain their original semantics.
-export function normalizeRegexBodyForTarget(pattern: any): any {
+export function normalizeRegexBodyForTarget(pattern: any) {
   // Historical name kept to avoid broad call-site churn. This is deliberately
   // an identity operation: no global \/ -> / or other regex-body rewriting.
   return String(pattern ?? "");
@@ -492,8 +492,8 @@ export function normalizeUrlRegexForTarget(pattern: any): any {
   );
   if (!prefix) return source;
   let out: any = source.slice(0, prefix[0].length),
-    classDepth: any = 0,
-    quoted: any = false;
+    classDepth = 0,
+    quoted = false;
   for (let i: any = prefix[0].length; i < source.length; i++) {
     const ch: any = source[i];
     if (quoted) {
@@ -515,7 +515,7 @@ export function normalizeUrlRegexForTarget(pattern: any): any {
     if (ch === "/" && !classDepth) return out + source.slice(i);
     if (ch === "[") classDepth++;
     if (ch === "]" && classDepth) classDepth--;
-    const separator: any =
+    const separator =
       ch === "." &&
       !classDepth &&
       /[A-Za-z0-9_)\]]/.test(source[i - 1] || "") &&
@@ -525,15 +525,15 @@ export function normalizeUrlRegexForTarget(pattern: any): any {
   return out;
 }
 // Shared target-regex syntax repair; domain planners retain source provenance.
-export function repairTargetRegexSyntax(pattern: any): any {
-  const source: any = String(pattern ?? "");
-  let value: any = "",
-    escaped: any = false,
-    classDepth: any = 0,
-    quoted: any = false,
-    changed: any = false;
-  for (let i: any = 0; i < source.length; i++) {
-    const ch: any = source[i];
+export function repairTargetRegexSyntax(pattern: any) {
+  const source = String(pattern ?? "");
+  let value = "",
+    escaped = false,
+    classDepth = 0,
+    quoted = false,
+    changed = false;
+  for (let i = 0; i < source.length; i++) {
+    const ch = source[i];
     if (quoted) {
       value += ch;
       if (ch === "\\" && source[i + 1] === "E") {
@@ -559,7 +559,7 @@ export function repairTargetRegexSyntax(pattern: any): any {
     }
     if (ch === "[") classDepth++;
     if (ch === "]" && classDepth) classDepth--;
-    const interval: any =
+    const interval =
       !classDepth && ch === "{"
         ? source.slice(i).match(/^\{(\d+),[ \t]+(\d+)\}/)
         : null;
@@ -572,15 +572,15 @@ export function repairTargetRegexSyntax(pattern: any): any {
   return { pattern: value, changed };
 }
 // Preserve regex backslashes when quoting a comma-separated Surge field.
-export function surgeRegexParameter(pattern: any): any {
-  const value: any = String(pattern ?? "");
+export function surgeRegexParameter(pattern: any) {
+  const value = String(pattern ?? "");
   return /[,\s"']/.test(value) ? '"' + value.replace(/"/g, '\\"') + '"' : value;
 }
 export function parseSurgeParameters(body: any, context: any = "Surge"): any {
   const fields: any = [];
-  let part: any = "",
+  let part = "",
     quote: any = null,
-    escaped: any = false;
+    escaped = false;
   for (const ch of body) {
     if (quote) {
       part += ch;
@@ -628,8 +628,8 @@ export function validateTargetRegex(
   pattern: any,
   label: any,
   { token = false }: any = {},
-): any {
-  const value: any = String(pattern ?? "");
+) {
+  const value = String(pattern ?? "");
   if (
     !value ||
     /[\r\n\0]/.test(value) ||
@@ -645,11 +645,11 @@ export function validateTargetRegex(
     targetRegexInventory.set(value, label);
     return;
   }
-  let escaped: any = false,
-    classDepth: any = 0,
-    nestedClass: any = false,
-    depth: any = 0;
-  const structural: any = value
+  let escaped = false,
+    classDepth = 0,
+    nestedClass = false,
+    depth = 0;
+  const structural = value
     .replace(/\\Q[\s\S]*?(?:\\E|$)/g, "literal")
     .replace(/\(\?#[^)]*\)/g, "");
   for (const ch of structural) {
@@ -681,7 +681,7 @@ export function validateTargetRegex(
   targetRegexInventory.set(value, label);
   if (nestedClass || /\\[pPQN]|\(\?>|(?:[*+?]|\})\+|\(\?[imsx-]+:/.test(value))
     return;
-  const portable: any = value
+  const portable = value
     .replace(/\(\?[imsx-]+\)/g, "")
     .replace(/\(\?#[^)]*\)/g, "");
   try {
@@ -737,16 +737,16 @@ export function compileRegexForTarget(
     subject === "url" || subject === "script"
       ? normalizeUrlRegexForTarget(regex.pattern)
       : normalizeRegexBodyForTarget(regex.pattern);
-  const flags: any = String(regex.flags || "");
+  const flags = String(regex.flags || "");
   assertRegexNode(regex);
   const capability: any = targetRegexCapability(target, subject);
-  const mappedFlags: any = [...capability.emitFlags]
-    .filter((flag: any): any => flags.includes(flag))
+  const mappedFlags = [...capability.emitFlags]
+    .filter((flag: any) => flags.includes(flag))
     .join("");
-  const omittedFlags: any = [...flags]
-    .filter((flag: any): any => !mappedFlags.includes(flag))
+  const omittedFlags = [...flags]
+    .filter((flag: any) => !mappedFlags.includes(flag))
     .join("");
-  const compatibilityUnverified: any =
+  const compatibilityUnverified =
     Boolean(flags) && capability.inlineFlags !== "verified";
   if (requireEquivalent && (omittedFlags || compatibilityUnverified))
     return {
@@ -769,7 +769,7 @@ export function compileRegexForTarget(
     mappedFlags || disableMultiline
       ? "(?" + mappedFlags + (disableMultiline ? "-m" : "") + ")"
       : "";
-  const targetPattern: any = prefix + pattern;
+  const targetPattern = prefix + pattern;
   return {
     ok: true,
     pattern: targetPattern,
@@ -788,7 +788,7 @@ export function compileRegexForTarget(
 // WayX converts Loon ad-block plugins only. The target capability gate is
 // intentionally limited to source-relevant Rule types, Rewrite actions and
 // MITM hostname. Full-profile routing/configuration features are out of scope.
-export const QX_WAYX_FILTER_TYPES: any = new Set([
+export const QX_WAYX_FILTER_TYPES = new Set([
   "host",
   "host-suffix",
   "host-keyword",
@@ -799,8 +799,8 @@ export const QX_WAYX_FILTER_TYPES: any = new Set([
   "ip-asn",
   "user-agent",
 ]);
-export const QX_WAYX_REWRITE_MATCHERS: any = new Set(["url", "url-and-header"]);
-export const QX_WAYX_SCRIPT_ACTIONS: any = new Set([
+export const QX_WAYX_REWRITE_MATCHERS = new Set(["url", "url-and-header"]);
+export const QX_WAYX_SCRIPT_ACTIONS = new Set([
   "script-request-header",
   "script-request-body",
   "script-response-header",
@@ -810,14 +810,14 @@ export const QX_WAYX_SCRIPT_ACTIONS: any = new Set([
 ]);
 // QX owns repeat-request backoff for native URL reject (0–5 s response delay).
 // Conversion and validation share these actions; do not emulate delay in JS.
-export const QX_WAYX_REJECT_ACTIONS: any = new Set([
+export const QX_WAYX_REJECT_ACTIONS = new Set([
   "reject",
   "reject-200",
   "reject-img",
   "reject-dict",
   "reject-array",
 ]);
-export const QX_WAYX_NATIVE_REWRITE_ACTIONS: any = new Set([
+export const QX_WAYX_NATIVE_REWRITE_ACTIONS = new Set([
   ...QX_WAYX_REJECT_ACTIONS,
   "302",
   "307",
@@ -830,14 +830,14 @@ export const QX_WAYX_NATIVE_REWRITE_ACTIONS: any = new Set([
   "echo-response",
   ...QX_WAYX_SCRIPT_ACTIONS,
 ]);
-export const QX_WAYX_SNIPPET_MITM_KEYS: any = new Set(["hostname"]);
+export const QX_WAYX_SNIPPET_MITM_KEYS = new Set(["hostname"]);
 
 // Surge official capability registry used by WayX validation
 // Author: chance
 // Category: Converter / Surge / Adblock Capability Gate
 // WayX converts Loon ad-block plugins only. This registry deliberately tracks
 // only source-relevant Rule types, Rewrite capabilities and MITM hostname.
-export const SURGE_WAYX_RULE_TYPES: any = new Set([
+export const SURGE_WAYX_RULE_TYPES = new Set([
   "DOMAIN",
   "DOMAIN-SUFFIX",
   "DOMAIN-KEYWORD",
@@ -867,7 +867,7 @@ export const SURGE_WAYX_RULE_TYPES: any = new Set([
   "SCRIPT",
   "RULE-SET",
 ]);
-export const SURGE_WAYX_RULE_BUILTIN_POLICIES: any = new Set([
+export const SURGE_WAYX_RULE_BUILTIN_POLICIES = new Set([
   "DIRECT",
   "REJECT",
   "REJECT-DROP",
@@ -878,52 +878,52 @@ export const SURGE_WAYX_RULE_BUILTIN_POLICIES: any = new Set([
   "HYBRID",
   "NO-HYBRID",
 ]);
-export const SURGE_WAYX_REWRITE_SECTIONS: any = new Set([
+export const SURGE_WAYX_REWRITE_SECTIONS = new Set([
   "URL Rewrite",
   "Header Rewrite",
   "Body Rewrite",
   "Map Local",
   "Script",
 ]);
-export const SURGE_WAYX_URL_REWRITE_TYPES: any = new Set([
+export const SURGE_WAYX_URL_REWRITE_TYPES = new Set([
   "header",
   "302",
   "307",
   "reject",
 ]);
-export const SURGE_WAYX_HEADER_REWRITE_ACTIONS: any = new Set([
+export const SURGE_WAYX_HEADER_REWRITE_ACTIONS = new Set([
   "header-add",
   "header-del",
   "header-replace",
   "header-replace-regex",
 ]);
-export const SURGE_WAYX_BODY_REWRITE_TYPES: any = new Set([
+export const SURGE_WAYX_BODY_REWRITE_TYPES = new Set([
   "http-request",
   "http-response",
   "http-request-jq",
   "http-response-jq",
 ]);
-export const SURGE_WAYX_MAP_LOCAL_DATA_TYPES: any = new Set([
+export const SURGE_WAYX_MAP_LOCAL_DATA_TYPES = new Set([
   "file",
   "text",
   "tiny-gif",
   "base64",
 ]);
-export const SURGE_WAYX_SCRIPT_TYPES: any = new Set([
+export const SURGE_WAYX_SCRIPT_TYPES = new Set([
   "http-request",
   "http-response",
   "cron",
   "event",
   "generic",
 ]);
-export const SURGE_WAYX_MITM_KEYS: any = new Set(["hostname"]);
-function targetRegexCompilerSource(): any {
+export const SURGE_WAYX_MITM_KEYS = new Set(["hostname"]);
+function targetRegexCompilerSource() {
   return compileSourceRegex.toString();
 }
 // 上游错误 / 转换失败案例：将 Loon 的 /pattern/flags 当作目标正则语法。
 // JavaScript helpers preserve regex bodies and i/m/s via RegExp(source, flags).
 // One policy covers literal and dynamic condition regexes in both targets.
-export function conditionRuntimeSource(): any {
+export function conditionRuntimeSource() {
   return (
     "const SUPPORTED_FLAGS=/^[ims]*$/;\n" +
     [
@@ -981,7 +981,7 @@ export function evaluateRewriteActions(
       throw new SemanticEvaluationError("missing action capture/variable");
     return text;
   };
-  const stringValue: any = (node: any): any => {
+  const stringValue: any = (node: any) => {
     const v: any = value(node);
     if (typeof v !== "string")
       throw new SemanticEvaluationError("action operand must be String");
@@ -1009,8 +1009,8 @@ export function evaluateRewriteActions(
         if (action.name.includes(".header.")) {
           const headers: any = (phase.headers ||= {});
           const name: any = stringValue(args[0]);
-          const keys: any = Object.keys(headers).filter(
-            (k: any): any => k.toLowerCase() === String(name).toLowerCase(),
+          const keys = Object.keys(headers).filter(
+            (k: any) => k.toLowerCase() === String(name).toLowerCase(),
           );
           if (operation === "set") {
             const replacement: any = stringValue(args[1]);
@@ -1034,7 +1034,7 @@ export function evaluateRewriteActions(
           ast.phase === "request" &&
           ["request.body.mock", "request.body.mock_file"].includes(action.name)
         ) {
-          const mime: any = {
+          const mime: Record<string, string> = {
             json: "application/json",
             text: "text/plain; charset=utf-8",
             css: "text/css; charset=utf-8",
@@ -1056,7 +1056,7 @@ export function evaluateRewriteActions(
               ? files.byAction[actionIndex]
               : null
             : ast.actions.filter(
-                  (a: any): any => a.name === "request.body.mock_file",
+                  (a: any) => a.name === "request.body.mock_file",
                 ).length === 1
               ? files
               : null;
@@ -1067,8 +1067,8 @@ export function evaluateRewriteActions(
           if (typeof body !== "string")
             throw new SemanticEvaluationError("missing text mock dependency");
           const headers: any = (phase.headers ||= {});
-          const keys: any = Object.keys(headers).filter(
-            (k: any): any => k.toLowerCase() === "content-type",
+          const keys = Object.keys(headers).filter(
+            (k: any) => k.toLowerCase() === "content-type",
           );
           for (const key of keys) delete headers[key];
           put(headers, keys[0] || "Content-Type", mime[type]);
@@ -1094,7 +1094,7 @@ export function evaluateRewriteActions(
           if (json === null || typeof json !== "object") continue;
           const path: any = parsePath(stringValue(args[0]));
           let parent: any = json;
-          for (let i: any = 0; i < path.length - 1; i++) {
+          for (let i = 0; i < path.length - 1; i++) {
             const key: any = path[i];
             if (parent == null || typeof parent !== "object") {
               parent = null;
@@ -1152,7 +1152,7 @@ export function replaceSourceRegex(
 ): any {
   const match: any = compileSourceRegex(node).exec(text);
   if (!match) return text;
-  const out: any = String(replacement).replace(
+  const out = String(replacement).replace(
     /\$(\d+)/g,
     (_: any, index: any): any => match[Number(index)] ?? "",
   );
@@ -1160,7 +1160,7 @@ export function replaceSourceRegex(
     text.slice(0, match.index) + out + text.slice(match.index + match[0].length)
   );
 }
-export function regexReplacementRuntimeSource(): any {
+export function regexReplacementRuntimeSource() {
   return (
     "const __wayxRegexReplace=(()=>{const SUPPORTED_FLAGS=/^[ims]*$/;" +
     [assertRegexNode, replaceSourceRegex]

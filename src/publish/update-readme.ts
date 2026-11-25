@@ -6,10 +6,10 @@ import {
   readmePlanDiff,
   writeReadmePlan,
 } from "./workflow.ts";
-const ROOT: any = process.cwd();
-const mode: any = process.argv.includes("--write") ? "write" : "check";
-const plan: any = await buildReadmePlan(ROOT);
-const diff: any = await readmePlanDiff(ROOT, plan);
+const ROOT = process.cwd();
+const mode = process.argv.includes("--write") ? "write" : "check";
+const plan = await buildReadmePlan(ROOT);
+const diff = await readmePlanDiff(ROOT, plan);
 if (mode === "write") {
   if (diff.length) await writeReadmePlan(ROOT, plan);
   console.log(
@@ -21,7 +21,7 @@ if (mode === "write") {
 } else {
   console.log("README/install index is current");
 }
-const __isMain: any =
+const __isMain =
   process.argv[1] &&
   path.resolve(process.argv[1]) ===
     path.resolve(fileURLToPath(import.meta.url));

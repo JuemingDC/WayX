@@ -14,10 +14,10 @@ import {
   surgeTargetPath,
   readManagedTargetState,
 } from "./workflow.ts";
-const ROOT: any = process.cwd();
-const SOURCE_CATALOG: any = path.join(ROOT, ".github", "sources", "loon.json");
-const MANUAL_ASSETS: any = path.join(ROOT, ".github", "manual-assets.json");
-const BASELINE: any = path.join(
+const ROOT = process.cwd();
+const SOURCE_CATALOG = path.join(ROOT, ".github", "sources", "loon.json");
+const MANUAL_ASSETS = path.join(ROOT, ".github", "manual-assets.json");
+const BASELINE = path.join(
   ROOT,
   ".github",
   "converter",
@@ -25,16 +25,16 @@ const BASELINE: any = path.join(
   "review-inventory-baseline.json",
 );
 function argValue(name: any, fallback: any): any {
-  const index: any = process.argv.indexOf(name);
+  const index = process.argv.indexOf(name);
   return index >= 0 && process.argv[index + 1]
     ? process.argv[index + 1]
     : fallback;
 }
-const OUT_DIR: any = path.resolve(
+const OUT_DIR = path.resolve(
   ROOT,
   argValue("--out-dir", ".github/monitor/.runtime"),
 );
-const normalize: any = (text: any): any =>
+const normalize: any = (text: any) =>
   String(text ?? "")
     .replace(/\r\n?/g, "\n")
     .replace(/^\uFEFF/, "");
@@ -48,15 +48,15 @@ async function readJson(file: any, fallback: any = null): Promise<any> {
     throw error;
   }
 }
-const rel: any = (file: any): any =>
+const rel: any = (file: any) =>
   path.relative(ROOT, file).split(path.sep).join("/");
-const isComment: any = (line: any): any =>
+const isComment: any = (line: any) =>
   /^(?:#|;|\/\/)/.test(String(line).trim());
 function sourceItems(text: any): any {
   const items: any = [];
   const argumentsList: any = [];
   let section: any = null;
-  let lineNumber: any = 0;
+  let lineNumber = 0;
   for (const raw of normalize(text).split("\n")) {
     lineNumber++;
     const trimmed: any = raw.trim();
@@ -72,8 +72,8 @@ function sourceItems(text: any): any {
   }
   return { items, arguments: argumentsList };
 }
-function markerKind(line: any): any {
-  const text: any = String(line || "");
+function markerKind(line: any) {
+  const text = String(line || "");
   if (/ISSUE REQUIRED/.test(text)) return "issue";
   if (/REVIEW REQUIRED/.test(text)) return "review";
   if (/Script disabled by source|disabled by source/i.test(text))
@@ -85,11 +85,11 @@ function markerKind(line: any): any {
 function declarationMarkers(text: any): any {
   const lines: any = normalize(text).split("\n");
   const out: any = [];
-  for (let i: any = 0; i < lines.length; i++) {
+  for (let i = 0; i < lines.length; i++) {
     const match: any = lines[i].trim().match(/^# Source declaration:\s*(.+)$/);
     if (!match) continue;
-    let context: any = "";
-    for (let j: any = i - 1; j >= Math.max(0, i - 5); j--) {
+    let context = "";
+    for (let j = i - 1; j >= Math.max(0, i - 5); j--) {
       const candidate: any = lines[j].trim();
       if (!candidate) continue;
       if (/^# \[WayX\]/.test(candidate)) context = candidate;
@@ -112,7 +112,7 @@ function inventoryMarkers(
 ): any {
   const out: any = [];
   const lines: any = normalize(text).split("\n");
-  for (let i: any = 0; i < lines.length; i++) {
+  for (let i = 0; i < lines.length; i++) {
     const t: any = lines[i].trim();
     const review: any = t.match(
       /^# \[WayX\]\s*([^:]*REVIEW REQUIRED):\s*(.*)$/,
@@ -121,8 +121,8 @@ function inventoryMarkers(
       /^# \[WayX\]\s*ISSUE REQUIRED \[([^\]]+)\]:\s*(.*)$/,
     );
     if (!review && !issue) continue;
-    let source: any = "";
-    for (let j: any = i + 1; j < Math.min(lines.length, i + 5); j++) {
+    let source = "";
+    for (let j = i + 1; j < Math.min(lines.length, i + 5); j++) {
       const m: any = lines[j].trim().match(/^# Source declaration:\s*(.+)$/);
       if (m) {
         source = m[1].trim();
@@ -168,10 +168,10 @@ function intentionalDrop(item: any): any {
     return "empty-json-jq";
   return null;
 }
-function activeTargetStats(text: any): any {
-  let activeLines: any = 0,
-    generatedHelperLines: any = 0,
-    sourceScriptLines: any = 0;
+function activeTargetStats(text: any) {
+  let activeLines = 0,
+    generatedHelperLines = 0,
+    sourceScriptLines = 0;
   for (const raw of normalize(text).split("\n")) {
     const t: any = raw.trim();
     if (!t || isComment(t) || /^\[[^\]]+\]$/.test(t) || /^#!/.test(t)) continue;
@@ -202,7 +202,7 @@ function multimap(markers: any): any {
 function popMarker(map: any, source: any): any {
   const list: any = map.get(source);
   if (!list?.length) return null;
-  const order: any = [
+  const order = [
     "issue",
     "review",
     "unsupported",
@@ -210,14 +210,14 @@ function popMarker(map: any, source: any): any {
     "commented",
   ];
   list.sort(
-    (a: any, b: any): any => order.indexOf(a.kind) - order.indexOf(b.kind),
+    (a: any, b: any) => order.indexOf(a.kind) - order.indexOf(b.kind),
   );
   return list.shift();
 }
 function reconcileTarget(items: any, targetText: any, verified: any): any {
   const markers: any = declarationMarkers(targetText);
   const markerMap: any = multimap(markers);
-  const counts: any = {
+  const counts: Record<string, number> = {
     converted: 0,
     review: 0,
     issue: 0,
@@ -245,7 +245,7 @@ function reconcileTarget(items: any, targetText: any, verified: any): any {
       });
       continue;
     }
-    const outcome: any = verified ? "converted" : "unverified";
+    const outcome = verified ? "converted" : "unverified";
     counts[outcome]++;
     details.push({ ...item, outcome });
   }
@@ -291,8 +291,8 @@ function summarizeMarkers(items: any): any {
   );
   return summary;
 }
-function markdownInventory(reviews: any, issues: any): any {
-  const lines: any = ["# WayX Review / Issue Inventory", ""];
+function markdownInventory(reviews: any, issues: any) {
+  const lines = ["# WayX Review / Issue Inventory", ""];
   for (const [title, list] of [
     ["Review", reviews],
     ["Issue", issues],
@@ -330,14 +330,14 @@ function markdownInventory(reviews: any, issues: any): any {
   }
   return lines.join("\n") + "\n";
 }
-function markdownReconciliation(report: any): any {
-  const lines: any = ["# WayX Source to Target Reconciliation", ""];
+function markdownReconciliation(report: any) {
+  const lines = ["# WayX Source to Target Reconciliation", ""];
   lines.push(
     "| Plugin | Source items | QX converted | QX comment/review/issue/drop | QX OK | Surge converted | Surge comment/review/issue/drop | Surge OK |",
   );
   lines.push("|---|---:|---:|---:|:---:|---:|---:|:---:|");
   for (const item of report.entries.filter(
-    (entry: any): any =>
+    (entry: any) =>
       !entry.opaque && (!entry.qx.reconciled || !entry.surge.reconciled),
   )) {
     const q: any = item.qx.counts,
@@ -400,7 +400,7 @@ try {
 if (
   baseline?.version !== 1 ||
   !["qx", "surge"].every(
-    (platform: any): any =>
+    (platform: any) =>
       Number.isSafeInteger(baseline?.review?.byPlatform?.[platform]) &&
       baseline.review.byPlatform[platform] >= 0,
   )
@@ -412,7 +412,7 @@ if (
   );
 }
 await fs.mkdir(OUT_DIR, { recursive: true });
-const catalog: any = await loadLoonSourceCatalog(SOURCE_CATALOG);
+const catalog = await loadLoonSourceCatalog(SOURCE_CATALOG);
 const manualConfig: any = await readJson(MANUAL_ASSETS, {
   version: 1,
   assets: [],
@@ -441,7 +441,7 @@ const sync: any = await readJson(
 const auditedPlugins = new Set(audit?.coverage.plugins ?? []);
 const verifiedPlugins: any = new Set(
   sync.publishable === true
-    ? (sync.convertedPlugins || []).filter((id: any): any =>
+    ? (sync.convertedPlugins || []).filter((id: any) =>
         auditedPlugins.has(id),
       )
     : [],
@@ -458,7 +458,7 @@ const retainedPlugins: any = new Set(
     ? (sync.retainedPlugins || []).filter(
         (id: any): any =>
           sync.failures?.some(
-            (failure: any): any => failure.plugin.id === id,
+            (failure: any) => failure.plugin.id === id,
           ) || pausedIds.has(id),
       )
     : [],
@@ -475,9 +475,9 @@ for (const entry of catalog) {
     });
     continue;
   }
-  const sourcePath: any = path.join(ROOT, "Resource", "Loon", entry.file);
-  const qxPath: any = path.join(ROOT, qxTargetPath(entry));
-  const surgePath: any = path.join(ROOT, surgeTargetPath(entry));
+  const sourcePath = path.join(ROOT, "Resource", "Loon", entry.file);
+  const qxPath = path.join(ROOT, qxTargetPath(entry));
+  const surgePath = path.join(ROOT, surgeTargetPath(entry));
   const [source, qx, surge] = await Promise.all([
     read(sourcePath),
     read(qxPath),
@@ -514,7 +514,7 @@ for (const entry of catalog) {
           .sort()
           .map((section: any): any => [
             section,
-            parsed.items.filter((x: any): any => x.section === section).length,
+            parsed.items.filter((x: any) => x.section === section).length,
           ]),
       ),
     },
@@ -536,16 +536,16 @@ for (const asset of manualConfig.assets || []) {
     ["surge", "surge"],
   ]) {
     if (!asset[key]) continue;
-    const file: any = path.join(ROOT, asset[key]);
+    const file = path.join(ROOT, asset[key]);
     inventory.push(
       ...inventoryMarkers(await read(file), rel(file), platform, "manual"),
     );
   }
 }
 const reviews: any = inventory.filter(
-  (item: any): any => item.kind === "review",
+  (item: any) => item.kind === "review",
 );
-const issues: any = inventory.filter((item: any): any => item.kind === "issue");
+const issues: any = inventory.filter((item: any) => item.kind === "issue");
 const reviewInventory: any = {
   version: 1,
   review: summarizeMarkers(reviews),
@@ -571,16 +571,16 @@ for (const platform of ["qx", "surge"]) {
         current,
     );
 }
-const reconciliationJson: any = path.join(
+const reconciliationJson = path.join(
   OUT_DIR,
   "conversion-reconciliation.json",
 );
-const reconciliationMd: any = path.join(
+const reconciliationMd = path.join(
   OUT_DIR,
   "conversion-reconciliation.md",
 );
-const reviewJson: any = path.join(OUT_DIR, "review-inventory.json");
-const reviewMd: any = path.join(OUT_DIR, "review-inventory.md");
+const reviewJson = path.join(OUT_DIR, "review-inventory.json");
+const reviewMd = path.join(OUT_DIR, "review-inventory.md");
 await Promise.all([
   fs.writeFile(
     reconciliationJson,
@@ -601,7 +601,7 @@ console.log(
     reviewInventory.issue.total,
 );
 const bad: any = reconciliation.entries.filter(
-  (entry: any): any =>
+  (entry: any) =>
     !entry.opaque &&
     !entry.retained &&
     (!entry.qx.reconciled || !entry.surge.reconciled),

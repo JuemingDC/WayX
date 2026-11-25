@@ -23,8 +23,8 @@ import {
 // Loon [Argument] parser and Surge module parameter conversion
 // Author: chance
 // Category: Converter / Argument / Surge Module
-function unquote(s: any): any {
-  const v: any = String(s ?? "").trim();
+function unquote(s: any) {
+  const v = String(s ?? "").trim();
   if (
     (v.startsWith('"') && v.endsWith('"')) ||
     (v.startsWith("'") && v.endsWith("'"))
@@ -35,11 +35,11 @@ function unquote(s: any): any {
 export function parseLoonArguments(lines: any = []): any {
   const args: any = [];
   for (const raw of lines) {
-    const line: any = String(raw).trim();
+    const line = String(raw).trim();
     if (!line || /^[#;\/]/.test(line)) continue;
-    const eq: any = line.indexOf("=");
+    const eq = line.indexOf("=");
     if (eq < 1) continue;
-    const id: any = line.slice(0, eq).trim();
+    const id = line.slice(0, eq).trim();
     const tokens: any = splitTopLevelCsv(line.slice(eq + 1));
     const kind: any = (tokens.shift() || "").trim().toLowerCase();
     const values: any = [];
@@ -49,13 +49,13 @@ export function parseLoonArguments(lines: any = []): any {
       if (m) options[m[1].toLowerCase()] = unquote(m[2]);
       else values.push(unquote(token));
     }
-    const valueType: any =
+    const valueType =
       kind === "switch"
         ? "boolean"
         : String(options.type || "").toLowerCase() === "number"
           ? "number"
           : "string";
-    const hasDefault: any = values.length > 0 || kind === "switch";
+    const hasDefault = values.length > 0 || kind === "switch";
     args.push({
       id,
       kind,
@@ -72,13 +72,13 @@ export function parseLoonArguments(lines: any = []): any {
   return args;
 }
 function surgeArgumentName(id: any): any {
-  const raw: any = String(id || "");
-  const safe: any = raw.replace(/[^A-Za-z0-9_]/g, "_");
+  const raw = String(id || "");
+  const safe = raw.replace(/[^A-Za-z0-9_]/g, "_");
   if (!safe || !/^[A-Za-z_]/.test(safe)) return "_" + safe;
   return safe;
 }
-function metadataDefaultValue(value: any, id: any): any {
-  const text: any = String(value ?? "");
+function metadataDefaultValue(value: any, id: any) {
+  const text = String(value ?? "");
   if (/[\r\n,]/.test(text)) {
     throw new Error(
       `Surge #!arguments default for ${id} contains an unsupported comma/newline delimiter`,
@@ -119,7 +119,7 @@ export function surgeArgumentMetadata(
     if (!entry.hasDefault) return entry.surgeName;
     return `${entry.surgeName}:${metadataDefaultValue(entry.defaultValue, entry.id)}`;
   });
-  const descriptions: any = table.entries.map((entry: any): any => {
+  const descriptions: any = table.entries.map((entry: any) => {
     const pieces: any = [entry.tag || entry.id];
     if (entry.kind === "select" && entry.values.length) {
       pieces.push("options=" + entry.values.join("|"));
@@ -134,8 +134,8 @@ export function surgeArgumentMetadata(
     const usedNames: any = new Set(
       table.entries.map((entry: any): any => entry.surgeName),
     );
-    let surgeName: any = "wayx_proxy_policy";
-    let suffix: any = 2;
+    let surgeName = "wayx_proxy_policy";
+    let suffix = 2;
     while (usedNames.has(surgeName))
       surgeName = `wayx_proxy_policy_${suffix++}`;
     // Bind a Rule policy through the official Module parameter mechanism,
@@ -152,7 +152,7 @@ export function surgeArgumentMetadata(
     };
   }
   if (!args.length) return { table, lines: [], policyBinding };
-  const lines: any = ["#!arguments=" + args.join(",")];
+  const lines = ["#!arguments=" + args.join(",")];
   if (descriptions.length)
     lines.push("#!arguments-desc=" + descriptions.join("\\n"));
   return { table, lines, policyBinding };
@@ -161,16 +161,16 @@ export function surgeArgumentPlaceholder(id: any, table: any): any {
   return table?.byId?.get(String(id))?.placeholder || null;
 }
 export function parseLegacyLoonPluginObjectRefs(source: any): any {
-  const raw: any = String(source || "").trim();
+  const raw = String(source || "").trim();
   if (!raw) return null;
-  const bracket: any = raw.match(/^\[([\s\S]*)\]$/);
+  const bracket = raw.match(/^\[([\s\S]*)\]$/);
   if (bracket) {
     const refs: any = [...bracket[1].matchAll(/\{([A-Za-z_][\w-]*)\}/g)].map(
       (match: any): any => match[1],
     );
     return refs.length ? refs : null;
   }
-  const compact: any = raw.match(
+  const compact = raw.match(
     /^\{([A-Za-z_][\w-]*(?:\s*,\s*[A-Za-z_][\w-]*)*)\}$/,
   );
   if (compact)
@@ -179,7 +179,7 @@ export function parseLegacyLoonPluginObjectRefs(source: any): any {
 }
 // 上游错误 / 转换失败案例：PluginObject is a nonempty, unique list of
 // plugin identifiers, not arbitrary JS data or runtime/capture variables.
-function validatePluginObjectRefs(refs: any): any {
+function validatePluginObjectRefs(refs: any) {
   if (!refs.length) throw new Error("plugin object argument cannot be empty");
   const seen: any = new Set();
   for (const id of refs) {
@@ -216,7 +216,7 @@ function scriptObjectBindings(
     argumentIds ?? (argumentTable ? new Set(argumentTable.byId.keys()) : null);
   if (declared !== null) {
     const ids: any = declared instanceof Set ? declared : new Set(declared);
-    const missing: any = refs.filter((id: any): any => !ids.has(id));
+    const missing: any = refs.filter((id: any) => !ids.has(id));
     if (missing.length)
       return unsupported(
         "undeclared plugin [Argument] object reference(s): " +
@@ -242,7 +242,7 @@ export function surgePluginObjectArgument(refs: any = [], table: any): any {
         reason: `Loon [Argument] ${id} has no default; PluginObject missing-value null cannot be represented losslessly by Surge module substitution`,
       };
     }
-    const key: any = JSON.stringify(entry.id);
+    const key = JSON.stringify(entry.id);
     const placeholder: any = entry.placeholder;
     if (entry.valueType === "string") {
       fields.push(`${key}:${JSON.stringify(placeholder)}`);
@@ -255,17 +255,17 @@ export function surgePluginObjectArgument(refs: any = [], table: any): any {
       };
     }
   }
-  const jsonTemplate: any = "{" + fields.join(",") + "}";
+  const jsonTemplate = "{" + fields.join(",") + "}";
   return { ok: true, value: JSON.stringify(jsonTemplate) };
 }
-export function surgeRewriteArgumentPayload(refs: any = [], table: any): any {
+export function surgeRewriteArgumentPayload(refs: any = [], table: any) {
   const unique: any = [...new Set(refs.map(String))];
   const fields: any = [];
   for (const id of unique) {
     const entry: any = table?.byId?.get(id);
     if (!entry)
       return { ok: false, reason: `undeclared Loon [Argument]: ${id}` };
-    const key: any = JSON.stringify(entry.id);
+    const key = JSON.stringify(entry.id);
     if (entry.valueType === "string") {
       fields.push(`${key}:${JSON.stringify(entry.placeholder)}`);
     } else if (entry.valueType === "number" || entry.valueType === "boolean") {
@@ -277,7 +277,7 @@ export function surgeRewriteArgumentPayload(refs: any = [], table: any): any {
       };
     }
   }
-  const template: any = "{" + fields.join(",") + "}";
+  const template = "{" + fields.join(",") + "}";
   return { ok: true, value: JSON.stringify(template) };
 }
 export function surgeDynamicOptionValue(id: any, table: any): any {
@@ -297,8 +297,8 @@ export function surgeEnableRequirement(id: any, table: any): any {
 // WayX Loon Script v2 parser / AST
 // Author: chance
 // Category: Converter / Script v2
-function fail(source: any, message: any): any {
-  const error: any = new SyntaxError(message + "\n" + source);
+function fail(source: any, message: any) {
+  const error = new SyntaxError(message + "\n" + source) as SyntaxError & { code: string };
   error.code = "WAYX_SCRIPT_V2_PARSE";
   throw error;
 }
@@ -307,8 +307,8 @@ function decodeQuoted(raw: any): any {
     try {
       return JSON.parse(raw);
     } catch {
-      let out: any = "";
-      for (let i: any = 1; i < raw.length - 1; i++) {
+      let out = "";
+      for (let i = 1; i < raw.length - 1; i++) {
         const ch: any = raw[i];
         if (ch !== "\\") {
           out += ch;
@@ -329,10 +329,10 @@ function decodeQuoted(raw: any): any {
 }
 function scanState(source: any, callback: any): any {
   let quote: any = null,
-    raw: any = false,
-    escape: any = false,
-    variableDepth: any = 0;
-  for (let i: any = 0; i < source.length; i++) {
+    raw = false,
+    escape = false,
+    variableDepth = 0;
+  for (let i = 0; i < source.length; i++) {
     const ch: any = source[i];
     if (raw) {
       if (ch === "`") {
@@ -396,11 +396,11 @@ function findThenScript(source: any): any {
   });
 }
 function findClosingParen(source: any, openIndex: any): any {
-  let depth: any = 1,
+  let depth = 1,
     quote: any = null,
-    raw: any = false,
-    escape: any = false,
-    variableDepth: any = 0;
+    raw = false,
+    escape = false,
+    variableDepth = 0;
   for (let i: any = openIndex + 1; i < source.length; i++) {
     const ch: any = source[i];
     if (raw) {
@@ -450,14 +450,14 @@ function findClosingParen(source: any, openIndex: any): any {
 }
 function scriptSplitTopLevelCsv(source: any): any {
   const out: any = [];
-  let start: any = 0,
+  let start = 0,
     quote: any = null,
-    raw: any = false,
-    escape: any = false;
-  let paren: any = 0,
-    brace: any = 0,
-    bracket: any = 0;
-  for (let i: any = 0; i < source.length; i++) {
+    raw = false,
+    escape = false;
+  let paren = 0,
+    brace = 0,
+    bracket = 0;
+  for (let i = 0; i < source.length; i++) {
     const ch: any = source[i];
     if (raw) {
       if (ch === "`") {
@@ -505,9 +505,9 @@ function scriptSplitTopLevelCsv(source: any): any {
   return out;
 }
 function parseValue(source: any): any {
-  const raw: any = String(source).trim();
+  const raw = String(source).trim();
   if (!raw) throw new Error("empty value");
-  const variable: any = raw.match(/^\$\{([^}]+)\}$/);
+  const variable = raw.match(/^\$\{([^}]+)\}$/);
   if (variable) return { type: "variable", name: variable[1], raw };
   if (
     (raw.startsWith('"') && raw.endsWith('"')) ||
@@ -528,11 +528,11 @@ function parseValue(source: any): any {
   if (/^-?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(raw))
     return { type: "number", value: Number(raw), raw };
   if (raw.startsWith("{") && raw.endsWith("}")) {
-    const inner: any = raw.slice(1, -1).trim();
+    const inner = raw.slice(1, -1).trim();
     const items: any = inner
       ? scriptSplitTopLevelCsv(inner).map(parseValue)
       : [];
-    if (items.some((item: any): any => item.type !== "variable")) {
+    if (items.some((item: any) => item.type !== "variable")) {
       throw new Error(
         "plugin object argument may only contain plugin parameter variables",
       );
@@ -542,7 +542,7 @@ function parseValue(source: any): any {
   }
   throw new Error("unsupported Script v2 value: " + raw);
 }
-const OPTION_FIELDS: any = Object.freeze({
+const OPTION_FIELDS: Readonly<Record<string, string[]>> = Object.freeze({
   enable: ["boolean", "variable"],
   tag: ["string", "raw-string"],
   img_url: ["string", "raw-string"],
@@ -561,20 +561,20 @@ function fixedScriptString(
   if (!node || !["string", "raw-string"].includes(node.type))
     throw new Error(label + " must be a fixed string");
   const parts: any = stringTemplateParts(node);
-  if (parts.some(([kind]: any): any => kind === "v"))
+  if (parts.some(([kind]: any) => kind === "v"))
     throw new Error(label + " does not accept variables or string templates");
   const value: any = parts.map(([, text]: any): any => text).join("");
   if (nonempty && !value)
     throw new Error(label + " must be a fixed non-empty string");
   return value;
 }
-function validateOptions(options: any, phase: any): any {
+function validateOptions(options: any, phase: any) {
   const seen: any = new Set();
   for (const option of options) {
     if (seen.has(option.name))
       throw new Error("duplicate Script v2 option: " + option.name);
     seen.add(option.name);
-    const allowed: any = OPTION_FIELDS[option.name];
+    const allowed = OPTION_FIELDS[option.name];
     if (!allowed) throw new Error("unknown Script v2 option: " + option.name);
     if (!allowed.includes(option.value.type))
       throw new Error(
@@ -592,7 +592,7 @@ function validateOptions(options: any, phase: any): any {
   }
   if (
     !["request", "response"].includes(phase) &&
-    options.some((x: any): any =>
+    options.some((x: any) =>
       ["requires_body", "binary_body_mode"].includes(x.name),
     )
   ) {
@@ -603,18 +603,18 @@ function validateOptions(options: any, phase: any): any {
 }
 // Shared lexical splitting preserves regex alternation, raw/JQ strings and options.
 export function splitScriptPipelineSources(source: any, {preserveJsonPipelines = false}: any = {}): any {
-  const text: any = String(source ?? "").trim();
+  const text = String(source ?? "").trim();
   const found: any = scanState(text, (i: any): any =>
     /^\s+then\s+/.test(text.slice(i))
-      ? { index: i, length: text.slice(i).match(/^\s+then\s+/)[0].length }
+      ? { index: i, length: text.slice(i).match(/^\s+then\s+/)![0].length }
       : undefined,
   );
   if (!found) return [text];
-  const tail: any = text.slice(found.index + found.length),
+  const tail = text.slice(found.index + found.length),
     segments: any = [];
-  let depth: any = 0,
-    start: any = 0;
-  scanState(tail, (i: any): any => {
+  let depth = 0,
+    start = 0;
+  scanState(tail, (i: any) => {
     if (tail[i] === "(" || tail[i] === "[") depth++;
     else if (tail[i] === ")" || tail[i] === "]") depth--;
     else if (
@@ -628,7 +628,7 @@ export function splitScriptPipelineSources(source: any, {preserveJsonPipelines =
     }
   });
   segments.push(tail.slice(start).trim());
-  if (segments.some((part: any): any => !part))
+  if (segments.some((part: any) => !part))
     throw new Error("Empty action in source pipeline");
   // Modified: 2026-11-15 (chance). Keep consecutive JSON/JQ actions together
   // when projecting a mixed Script declaration for target conversion.
@@ -642,18 +642,18 @@ export function splitScriptPipelineSources(source: any, {preserveJsonPipelines =
     previousJson = json;
   }
   return groups.map(
-    (part: any): any => text.slice(0, found.index) + " then " + part,
+    (part: any) => text.slice(0, found.index) + " then " + part,
   );
 }
 export function selectScriptPipelineSource(source: any): any {
   const members: any = splitScriptPipelineSources(source);
   return (
-    members.find((member: any): any => /\bthen\s+script\s*\(/.test(member)) ||
+    members.find((member: any) => /\bthen\s+script\s*\(/.test(member)) ||
     String(source ?? "").trim()
   );
 }
-export function isScriptV2(source: any): any {
-  const text: any = String(source ?? "").trim();
+export function isScriptV2(source: any) {
+  const text = String(source ?? "").trim();
   if (
     !/^(?:(?:request|response)\s+if\b|cron\s+|network-changed\b|generic\b)/.test(
       text,
@@ -761,7 +761,7 @@ export function parseScriptV2(source: any): any {
 }
 export function scriptOption(ast: any, name: any): any {
   return (
-    ast?.options?.find((option: any): any => option.name === name)?.value ??
+    ast?.options?.find((option: any) => option.name === name)?.value ??
     null
   );
 }
@@ -788,7 +788,7 @@ export function scriptV2DynamicOptionRefs(ast: any): any {
   }
   return out;
 }
-export function scriptV2ToSource(ast: any): any {
+export function scriptV2ToSource(ast: any) {
   if (!ast || ast.type !== "script")
     throw new TypeError("Expected Script v2 AST");
   const args: any = [
@@ -802,11 +802,11 @@ export function scriptV2ToSource(ast: any): any {
       args.push("{" + argument.items.map(valueToSource).join(", ") + "}");
     else args.push(valueToSource(argument));
   }
-  const withPart: any = ast.options.length
+  const withPart = ast.options.length
     ? " with " +
       ast.options
         .map(
-          (option: any): any => option.name + "=" + valueToSource(option.value),
+          (option: any) => option.name + "=" + valueToSource(option.value),
         )
         .join(", ")
     : "";
@@ -832,7 +832,7 @@ export {
 // Loon Legacy Script parser
 // Author: chance
 // Category: Converter / Script / Source Parsing
-export const LOON_LEGACY_SCRIPT_OPTION_NAMES: any = new Set([
+export const LOON_LEGACY_SCRIPT_OPTION_NAMES = new Set([
   "script-path",
   "tag",
   "requires-body",
@@ -845,8 +845,8 @@ export const LOON_LEGACY_SCRIPT_OPTION_NAMES: any = new Set([
   "debug",
 ]);
 export function parseLegacyScriptLine(source: any): any {
-  const raw: any = String(source ?? "").trim();
-  const match: any = raw.match(
+  const raw = String(source ?? "").trim();
+  const match = raw.match(
     /^(http-request|http-response)\s+(\S+)\s+(.+)$/i,
   );
   if (!match) return null;
@@ -872,10 +872,10 @@ export function parseLegacyScriptLine(source: any): any {
   }
   const scriptPath: any = options.get("script-path") || null;
   const tag: any = options.get("tag") || null;
-  const requiresBody: any = /^(?:true|1)$/i.test(
+  const requiresBody = /^(?:true|1)$/i.test(
     options.get("requires-body") || "",
   );
-  const binary: any = /^(?:true|1)$/i.test(
+  const binary = /^(?:true|1)$/i.test(
     options.get("binary-body-mode") || "",
   );
   const timeout: any = options.get("timeout") || null;
@@ -945,7 +945,7 @@ function baseIr({
 export function legacyScriptToSemanticIr(
   parsed: any,
   { source = parsed?.raw || "" }: any = {},
-): any {
+) {
   if (!parsed || parsed.syntax !== "loon-script-legacy")
     throw new TypeError("Expected parsed Legacy Script declaration");
   return baseIr({
@@ -993,7 +993,7 @@ export function parseScriptDeclaration(source: any): any {
 }
 export function scriptIrTag(ir: any): any {
   const tag: any = ir?.options?.find(
-    (option: any): any => option.name === "tag",
+    (option: any) => option.name === "tag",
   )?.value;
   return ir?.sourceSyntax === "legacy" ? tag : tag?.value;
 }
@@ -1024,7 +1024,7 @@ export function legacyScriptIrDeclaration(ir: any): any {
 // Category: Converter / Argument / Semantic Analysis
 function activeLines(lines: any = []): any {
   return lines
-    .map((raw: any): any => String(raw ?? "").trim())
+    .map((raw: any) => String(raw ?? "").trim())
     .filter(
       (line: any): any =>
         line &&
@@ -1050,8 +1050,8 @@ function collectVariableNames(node: any, out: any = new Set()): any {
   }
   return out;
 }
-function isBuiltInRuntimeVariable(name: any): any {
-  const value: any = String(name || "");
+function isBuiltInRuntimeVariable(name: any) {
+  const value = String(name || "");
   return (
     value === "url" ||
     value.startsWith("request.") ||
@@ -1070,10 +1070,10 @@ function declaredRefs(node: any, declaredIds: any): any {
 function pluginObjectRefs(ast: any): any {
   return scriptV2ArgumentRefs(ast);
 }
-function addUse(usage: any, id: any, use: any): any {
+function addUse(usage: any, id: any, use: any) {
   if (!usage.has(id)) usage.set(id, []);
   const list: any = usage.get(id);
-  const key: any = JSON.stringify([
+  const key = JSON.stringify([
     use.section,
     use.kind,
     use.option || "",
@@ -1081,7 +1081,7 @@ function addUse(usage: any, id: any, use: any): any {
   ]);
   if (
     !list.some(
-      (item: any): any =>
+      (item: any) =>
         JSON.stringify([
           item.section,
           item.kind,
@@ -1093,8 +1093,8 @@ function addUse(usage: any, id: any, use: any): any {
     list.push(use);
   }
 }
-function boundaryValue(line: any, key: any): any {
-  const re: any = new RegExp(
+function boundaryValue(line: any, key: any) {
+  const re = new RegExp(
     "(?:^|,)\\s*" +
       key +
       "\\s*=\\s*([\\s\\S]*?)(?=,\\s*[A-Za-z][A-Za-z0-9_-]*\\s*=|$)",
@@ -1104,7 +1104,7 @@ function boundaryValue(line: any, key: any): any {
 }
 function legacyRefs(value: any): any {
   const refs: any = new Set();
-  const source: any = String(value || "");
+  const source = String(value || "");
   for (const match of source.matchAll(/\$?\{([A-Za-z_][\w-]*)\}/g))
     refs.add(match[1]);
   return [...refs];
@@ -1134,14 +1134,14 @@ export function scriptV2PluginArgumentUsage(
   const objectRefs: any = pluginObjectRefs(ast);
   const dynamicOptions: any = scriptV2DynamicOptionRefs(ast);
   const undeclaredObjectRefs: any = objectRefs.filter(
-    (id: any): any => !declared.has(id),
+    (id: any) => !declared.has(id),
   );
   const undeclaredOptionRefs: any = dynamicOptions.filter(
-    (ref: any): any => !declared.has(ref.id),
+    (ref: any) => !declared.has(ref.id),
   );
   const undeclaredTriggerRefs: any = [...collectVariableNames(ast?.trigger)]
     .filter(
-      (id: any): any => !declared.has(id) && !isBuiltInRuntimeVariable(id),
+      (id: any) => !declared.has(id) && !isBuiltInRuntimeVariable(id),
     )
     .sort();
   return {
@@ -1279,7 +1279,7 @@ export function analyzePluginArgumentUsage({
     }
   }
   const policyBindings: any = activeLines(ruleLines)
-    .filter((line: any): any => /(?:^|,)\s*PROXY\s*(?:,|$)/i.test(line))
+    .filter((line: any) => /(?:^|,)\s*PROXY\s*(?:,|$)/i.test(line))
     .map((line: any): any => ({ policy: "PROXY", line }));
   return {
     declarations,
@@ -1305,8 +1305,8 @@ export function analyzePluginArgumentUsage({
 // Script action selection is based only on declaration semantics and inspected
 // source behavior. Script URL, plugin id, author and repository never select an
 // action.
-export function scriptBehaviorSignals(sourceText: any = ""): any {
-  const source: any = String(sourceText || "");
+export function scriptBehaviorSignals(sourceText: any = "") {
+  const source = String(sourceText || "");
   return {
     sourceAvailable: Boolean(source.trim()),
     readsRequestBody: /\$request\.(?:body|bodyBytes)\b/.test(source),
@@ -1321,7 +1321,7 @@ export function selectQxScriptAction({
   requiresBody = false,
   sourceText = "",
 }: any): any {
-  const p: any = String(phase)
+  const p = String(phase)
     .toLowerCase()
     .replace(/^http-/, "");
   if (!["request", "response"].includes(p))
@@ -1334,7 +1334,7 @@ export function selectQxScriptAction({
   // is only allowed to strengthen body-dependency detection; it must not
   // switch a declared request script into the echo-response family because
   // multi-platform helpers can contain inactive Surge/Loon response branches.
-  const needsBody: any = Boolean(
+  const needsBody = Boolean(
     requiresBody ||
       (p === "request" ? signals.readsRequestBody : signals.readsResponseBody),
   );
@@ -1407,7 +1407,7 @@ export function qxScriptArgumentUrl(scriptUrl: any, argument: any, table: any, n
     value = Object.fromEntries(fields);
     notes.push("Quantumult X PluginObject uses declared defaults; source-client saved settings are not synchronized.");
   } else if (legacy) {
-    const raw: any = String(argument);
+    const raw = String(argument);
     value = /^["']/.test(raw) ? decodeQuoted(raw) : raw;
   } else {
     if (!["string", "raw-string"].includes(argument.type) ||
@@ -1430,7 +1430,7 @@ export function qxScriptArgumentUrl(scriptUrl: any, argument: any, table: any, n
   notes.push("Source Script argument transported through Quantumult X URL fragment _wayx_argument.");
   return scriptUrl + (scriptUrl.includes("#") ? (scriptUrl.endsWith("#") ? "" : "&") : "#") + "_wayx_argument=" + payload;
 }
-function noteQxForcedEnable(ast: any, notes: any): any {
+function noteQxForcedEnable(ast: any, notes: any) {
   const enable: any = scriptOption(ast, "enable");
   if (enable?.type === "variable" || enable?.value === false)
     notes.push(
@@ -1717,7 +1717,7 @@ function dynamicScriptOptionBindings(
       return unsupported(
         "undeclared plugin [Argument] reference for " + name + ": " + id,
       );
-    const allowed: any =
+    const allowed =
       name === "timeout" ? ["number", "string"] : ["boolean"];
     if (!allowed.includes(entry.valueType))
       return unsupported(
@@ -1730,8 +1730,8 @@ function dynamicScriptOptionBindings(
           ")",
       );
     if (entry.hasDefault) {
-      const text: any = String(entry.defaultValue);
-      const valid: any =
+      const text = String(entry.defaultValue);
+      const valid =
         name === "timeout"
           ? /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(text) &&
             Number.isFinite(Number(text)) &&
@@ -1917,13 +1917,13 @@ export function planQxScript(ir: any, ctx: any = {}): any {
   if (!sc?.script?.path)
     return unsupported("Legacy Script declaration is missing script-path");
   const targetPattern: any = normalizeUrlRegexForTarget(sc.pattern);
-  const enableFixed: any = sc.enable
+  const enableFixed = sc.enable
     ? String(sc.enable).trim().toLowerCase()
     : "";
-  const enableDynamic: any =
+  const enableDynamic =
     Boolean(sc.enable) && !["true", "false", "1", "0"].includes(enableFixed);
-  const debugFixed: any = sc.debug ? String(sc.debug).trim().toLowerCase() : "";
-  const debugEnabled: any =
+  const debugFixed = sc.debug ? String(sc.debug).trim().toLowerCase() : "";
+  const debugEnabled =
     Boolean(sc.debug) && !["false", "0"].includes(debugFixed);
   const notes: any = [];
   scriptUrl = qxScriptArgumentUrl(scriptUrl, sc.argument, ctx.argumentTable, notes, true);
@@ -1996,10 +1996,10 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
   if (!sc?.script?.path)
     return unsupported("Legacy Script declaration is missing script-path");
   const targetPattern: any = normalizeUrlRegexForTarget(sc.pattern);
-  const enableFixed: any = sc.enable
+  const enableFixed = sc.enable
     ? String(sc.enable).trim().toLowerCase()
     : "";
-  const enableDynamic: any =
+  const enableDynamic =
     Boolean(sc.enable) && !["true", "false", "1", "0"].includes(enableFixed);
   if (enableFixed === "false" || enableFixed === "0") {
     return {
@@ -2008,9 +2008,9 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
       reason: "Loon Legacy Script enable=false",
     };
   }
-  let requirementPrefix: any = "";
+  let requirementPrefix = "";
   if (enableDynamic) {
-    const ref: any = String(sc.enable).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+    const ref = String(sc.enable).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
     const requirement: any = ref
       ? surgeEnableRequirement(ref[1], ctx.argumentTable)
       : null;
@@ -2022,7 +2022,7 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
     requirementPrefix = requirement + " ";
   }
   const notes: any = [];
-  const params: any = [
+  const params = [
     "type=" + sc.httpType,
     "pattern=" + surgeRegexParameter(targetPattern),
     "script-path=" + scriptUrl,
@@ -2033,7 +2033,7 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
   }
   if (sc.binaryBodyMode) params.push("binary-body-mode=true");
   if (sc.timeout) {
-    const timeoutRef: any = String(sc.timeout).match(
+    const timeoutRef = String(sc.timeout).match(
       /^\$?\{([A-Za-z_][\w-]*)\}$/,
     );
     if (timeoutRef) {
@@ -2065,7 +2065,7 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
     }
   }
   if (sc.debug) {
-    const ref: any = String(sc.debug).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
+    const ref = String(sc.debug).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
     if (ref)
       params.push(
         "debug=" + surgeDynamicOptionValue(ref[1], ctx.argumentTable),

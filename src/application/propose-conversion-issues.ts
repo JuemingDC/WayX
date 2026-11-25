@@ -28,19 +28,19 @@ import { ensureAdblockNumbers } from "./adblock-numbers.ts";
 import type { AdblockNumbers } from "./adblock-numbers.ts";
 import { groupedIssuePlans } from "../domain/issue-groups.ts";
 import { reconcileGroupedIssues } from "./grouped-issues.ts";
-const ROOT: any = process.cwd();
-const TARGET_DIRS: any = [
+const ROOT = process.cwd();
+const TARGET_DIRS = [
   path.join(ROOT, "Adblock", "Quantumult X"),
   path.join(ROOT, "Adblock", "Surge"),
 ];
-const runtimeDir: any = path.join(ROOT, ".github", "monitor", ".runtime");
-const summaryPath: any = path.join(runtimeDir, "conversion-issues.md");
-const dryRun: any = process.argv.includes("--dry-run");
-const repo: any = process.env.GITHUB_REPOSITORY || "";
-const REVIEW_RE: any = /^# \[WayX\]\s*([^:]*REVIEW REQUIRED):\s*(.*)$/;
-const ISSUE_RE: any = /^# \[WayX\]\s*ISSUE REQUIRED \[([^\]]+)\]:\s*(.*)$/;
-const SOURCE_RE: any = /^# Source declaration:\s*(.*)$/;
-function gh(args: any): any {
+const runtimeDir = path.join(ROOT, ".github", "monitor", ".runtime");
+const summaryPath = path.join(runtimeDir, "conversion-issues.md");
+const dryRun = process.argv.includes("--dry-run");
+const repo = process.env.GITHUB_REPOSITORY || "";
+const REVIEW_RE = /^# \[WayX\]\s*([^:]*REVIEW REQUIRED):\s*(.*)$/;
+const ISSUE_RE = /^# \[WayX\]\s*ISSUE REQUIRED \[([^\]]+)\]:\s*(.*)$/;
+const SOURCE_RE = /^# Source declaration:\s*(.*)$/;
+function gh(args: any) {
   return execFileSync("gh", args, {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
@@ -49,10 +49,10 @@ function gh(args: any): any {
     maxBuffer: 32 * 1024 * 1024,
   }).trim();
 }
-function fingerprint(parts: any): any {
+function fingerprint(parts: any) {
   return crypto
     .createHash("sha256")
-    .update(parts.map((x: any): any => String(x ?? "")).join("\0"))
+    .update(parts.map((x: any) => String(x ?? "")).join("\0"))
     .digest("hex")
     .slice(0, 16);
 }
@@ -67,12 +67,12 @@ async function readFailureReport(file: any, kind: any): Promise<any> {
       { cause: error },
     );
   }
-  const invalid: any = (reason: any): any => {
+  const invalid: any = (reason: any) => {
     throw new Error("Invalid failure report " + file + ": " + reason);
   };
-  const object: any = (value: any): any =>
+  const object: any = (value: any) =>
     value !== null && typeof value === "object" && !Array.isArray(value);
-  const text: any = (value: any): any =>
+  const text: any = (value: any) =>
     typeof value === "string" && value.trim().length > 0;
   if (
     !object(report) ||
@@ -123,18 +123,18 @@ async function targetFiles(): Promise<any> {
   return out.sort();
 }
 function extractTargetMarkers(text: any, file: any): any {
-  const lines: any = String(text ?? "")
+  const lines = String(text ?? "")
     .replace(/\r\n?/g, "\n")
     .split("\n");
   const out: any = [];
-  for (let i: any = 0; i < lines.length; i++) {
-    const value: any = lines[i].trim();
+  for (let i = 0; i < lines.length; i++) {
+    const value = lines[i].trim();
     const review: any = value.match(REVIEW_RE);
     const issue: any = value.match(ISSUE_RE);
     if (!review && !issue) continue;
-    let source: any = "";
-    for (let j: any = i + 1; j < Math.min(lines.length, i + 5); j++) {
-      const candidate: any = lines[j].trim();
+    let source = "";
+    for (let j = i + 1; j < Math.min(lines.length, i + 5); j++) {
+      const candidate = lines[j].trim();
       const match: any = candidate.match(SOURCE_RE);
       if (match) {
         source = match[1].trim();
@@ -173,7 +173,7 @@ async function sourceContextFor(
 ): Promise<any> {
   if (!entry) return { section: null, declarations: [] };
   try {
-    const text: any = await fs.readFile(
+    const text = await fs.readFile(
       path.join(ROOT, "Resource", "Loon", entry.file),
       "utf8",
     );
@@ -182,7 +182,7 @@ async function sourceContextFor(
     for (const [section, lines] of parsed.sections) {
       if (section === "Argument") continue;
       for (const raw of lines) {
-        const line: any = String(raw ?? "").trim();
+        const line = String(raw ?? "").trim();
         if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
         if (declaration && line === declaration)
           return { section, declarations: [{ section, line }] };
@@ -198,10 +198,10 @@ async function groupedTargetProblems(catalog: any): Promise<any> {
   const mapping: any = targetMap(catalog);
   const groups: any = new Map();
   for (const file of await targetFiles()) {
-    const relative: any = path.relative(ROOT, file).replaceAll(path.sep, "/");
+    const relative = path.relative(ROOT, file).replaceAll(path.sep, "/");
     const entry: any = mapping.get(relative);
     if (!entry) continue;
-    const text: any = await fs.readFile(file, "utf8");
+    const text = await fs.readFile(file, "utf8");
     for (const marker of extractTargetMarkers(text, relative)) {
       const key: any = fingerprint([
         entry.id,
@@ -224,7 +224,7 @@ async function groupedTargetProblems(catalog: any): Promise<any> {
       if (marker.reason) group.reasons.add(marker.reason);
       if (
         !group.locations.some(
-          (x: any): any => x.file === marker.file && x.line === marker.line,
+          (x: any) => x.file === marker.file && x.line === marker.line,
         )
       ) {
         group.locations.push({ file: marker.file, line: marker.line });
@@ -248,13 +248,13 @@ async function groupedTargetProblems(catalog: any): Promise<any> {
 function ruleBlock(section: any, declarations: any): any {
   if (!declarations?.length) return "(new upstream rule content unavailable)";
   return declarations
-    .map((item: any): any => {
+    .map((item: any) => {
       if (typeof item === "string") return item;
       return "[" + (item.section || section || "Source") + "] " + item.line;
     })
     .join("\n");
 }
-export function targetProblemIssueBody(group: any): any {
+export function targetProblemIssueBody(group: any) {
   const plugin: any = group.plugin;
   return [
     "## Related plugin",
@@ -269,7 +269,7 @@ export function targetProblemIssueBody(group: any): any {
     "",
     "- Type: " + group.kind,
     "- Code: " + group.code,
-    ...group.reasons.map((reason: any): any => "- " + reason),
+    ...group.reasons.map((reason: any) => "- " + reason),
     "",
     "## Corresponding source rule",
     "",
@@ -280,7 +280,7 @@ export function targetProblemIssueBody(group: any): any {
     "## Generated target locations",
     "",
     ...(group.locations.length
-      ? group.locations.map((x: any): any => "- " + x.file + ":" + x.line)
+      ? group.locations.map((x: any) => "- " + x.file + ":" + x.line)
       : ["- (none)"]),
     "",
     "## Automation behavior",
@@ -289,7 +289,7 @@ export function targetProblemIssueBody(group: any): any {
     "",
   ].join("\n");
 }
-export function syncFailureIssueBody(failure: any): any {
+export function syncFailureIssueBody(failure: any) {
   const plugin: any = failure.plugin;
   return [
     "## Related plugin",
@@ -323,7 +323,7 @@ export function syncFailureIssueBody(failure: any): any {
     "",
   ].join("\n");
 }
-export function targetProblemTitle(group: any): any {
+export function targetProblemTitle(group: any) {
   return (
     "[conversion-" +
     group.kind +
@@ -335,13 +335,13 @@ export function targetProblemTitle(group: any): any {
     group.code
   );
 }
-export function syncFailureTitle(failure: any): any {
+export function syncFailureTitle(failure: any) {
   const fp: any = fingerprint([
     failure.plugin.id,
     failure.stage,
     failure.reason,
     ...(failure.declarations || []).map(
-      (x: any): any => (x.section || "") + "\0" + x.line,
+      (x: any) => (x.section || "") + "\0" + x.line,
     ),
   ]);
   return (
@@ -421,8 +421,8 @@ export async function validationIssueCandidates(
   const report = await readValidationReport(root);
   const failures: any[] = [];
   for (const [stage, result] of Object.entries(report.stages)) {
-    const checks: any = result.checks.filter(
-      (check: any): any => check.status === "failed",
+    const checks = result.checks.filter(
+      (check: any) => check.status === "failed",
     );
     if (!result.complete)
       checks.push({
@@ -437,7 +437,7 @@ export async function validationIssueCandidates(
     if (
       result.outcome === "failure" &&
       !["issues", "gate", "publish"].includes(stage) &&
-      !failures.some((failure: any): any => failure.stage === stage)
+      !failures.some((failure: any) => failure.stage === stage)
     ) {
       failures.push({
         stage,
@@ -453,7 +453,7 @@ export async function validationIssueCandidates(
     }
   return { validationReport: report, validationFailures: failures };
 }
-export function validationFailureTitle(failure: any): any {
+export function validationFailureTitle(failure: any) {
   return (
     "[WayX validation] " +
     failure.stage +
@@ -462,10 +462,10 @@ export function validationFailureTitle(failure: any): any {
     "]"
   );
 }
-export function validationFailureIssueBody(failure: any): any {
-  const run: any = process.env.GITHUB_RUN_ID,
-    server: any = process.env.GITHUB_SERVER_URL || "https://github.com";
-  const lines: any = [
+export function validationFailureIssueBody(failure: any) {
+  const run = process.env.GITHUB_RUN_ID,
+    server = process.env.GITHUB_SERVER_URL || "https://github.com";
+  const lines = [
     "Automated checks found results that require review. Publication remains gated.",
     "",
     "- Stage: " + failure.stage,
@@ -500,18 +500,18 @@ export function validationFailureIssueBody(failure: any): any {
 }
 export function recoveredValidationIssues(report: any, issues: any): any {
   return issues.filter((issue: any): any => {
-    const match: any = String(issue.title ?? "").match(
+    const match = String(issue.title ?? "").match(
       /^\[WayX validation\] (\S+) \[([a-f0-9]{16})\]$/,
     );
     const result: any = match && report?.stages?.[match[1]];
     return (
       issue.state === "OPEN" &&
       issue.labels?.some(
-        (label: any): any => label.name === "validation-failure",
+        (label: any) => label.name === "validation-failure",
       ) &&
       result?.complete === true &&
       result.checks?.length > 0 &&
-      result.checks.every((check: any): any => check.status === "passed")
+      result.checks.every((check: any) => check.status === "passed")
     );
   });
 }
@@ -550,12 +550,12 @@ export async function ruleIssueCandidates(root: any = ROOT): Promise<any> {
   }
   return { ruleReport: report, ruleProblems: [...groups.values()] };
 }
-export function ruleProblemTitle(group: any): any {
+export function ruleProblemTitle(group: any) {
   return (
     "[WayX rules:" + group.fingerprint + "] " + group.source + " " + group.code
   );
 }
-export function ruleProblemBody(group: any): any {
+export function ruleProblemBody(group: any) {
   return [
     "Native rule aggregation quarantined declarations that cannot be emitted without changing matching semantics.",
     "- Source: " + group.source,
@@ -579,7 +579,7 @@ export function recoveredRuleIssues(
   return issues.filter(
     (issue: any): any =>
       issue.state === "OPEN" &&
-      issue.labels?.some((label: any): any => label.name === "rules-review") &&
+      issue.labels?.some((label: any) => label.name === "rules-review") &&
       /^\[WayX rules:[a-f0-9]{16}\] /.test(issue.title) &&
       !active.has(issue.title),
   );
@@ -603,7 +603,7 @@ export async function collectIssueCandidates({
   })) {
     if (
       !targetProblems.some(
-        (group: any): any =>
+        (group: any) =>
           group.plugin.id === problem.plugin.id &&
           group.source === problem.source,
       )
@@ -643,7 +643,7 @@ export async function collectIssueCandidates({
     ...rules,
   };
 }
-export function monitorFailureTitle(failure: any): any {
+export function monitorFailureTitle(failure: any) {
   const source: any = failure.source;
   return (
     "[WayX monitor] " +
@@ -659,7 +659,7 @@ export function monitorFailureTitle(failure: any): any {
     "]"
   );
 }
-export function monitorFailureIssueBody(failure: any): any {
+export function monitorFailureIssueBody(failure: any) {
   const source: any = failure.source;
   return [
     "Upstream monitoring failed; publication remains blocked until a complete run succeeds.",
@@ -688,24 +688,24 @@ export function recoveredMonitorIssues(report: any, issues: any): any {
   const recovered: any = new Set(
     report.results
       .filter(
-        (result: any): any =>
+        (result: any) =>
           result?.succeeded === true && typeof result.source?.id === "string",
       )
       .map((result: any): any => result.source.id),
   );
   const failed: any = new Set(
     report.results
-      .filter((result: any): any => result?.succeeded !== true)
+      .filter((result: any) => result?.succeeded !== true)
       .map((result: any): any => result?.source?.id),
   );
   return issues.filter((issue: any): any => {
-    const match: any = String(issue.title ?? "").match(
+    const match = String(issue.title ?? "").match(
       /^\[WayX monitor\] (\S+) \[([a-f0-9]{16})\]$/,
     );
     return (
       issue.state === "OPEN" &&
       issue.labels?.some(
-        (label: any): any => label.name === "upstream-monitor-failure",
+        (label: any) => label.name === "upstream-monitor-failure",
       ) &&
       match &&
       recovered.has(match[1]) &&
@@ -729,14 +729,14 @@ export function recoveredConversionIssues(
     );
   for (const problem of targetProblems) failed.add(problem.plugin.id);
   return issues.filter((issue: any): any => {
-    const match: any = String(issue.title ?? "").match(
+    const match = String(issue.title ?? "").match(
       /^\[conversion-(failure|unknown|review):[a-f0-9]{16}\] (\S+) /,
     );
     return (
       issue.state === "OPEN" &&
       match &&
       issue.labels?.some(
-        (label: any): any => label.name === "conversion-" + match[1],
+        (label: any) => label.name === "conversion-" + match[1],
       ) &&
       healthy.has(match[2]) &&
       !failed.has(match[2])
@@ -771,7 +771,7 @@ export function buildIssueGroupPlans(context: any, numbers: AdblockNumbers) {
       Object.values<any>(validationReport.stages ?? {}).length > 0 && Object.values<any>(validationReport.stages ?? {}).every(stage => stage.complete) },
   });
 }
-async function main(): Promise<any> {
+async function main() {
   const {
     targetProblems,
     syncFailures,
@@ -784,7 +784,7 @@ async function main(): Promise<any> {
     ruleProblems,
   } = await collectIssueCandidates();
   await fs.mkdir(runtimeDir, { recursive: true });
-  const lines: any = [
+  const lines = [
     "# WayX automated conversion issues",
     "",
     "- Source/target semantic problems: " + targetProblems.length,
@@ -808,7 +808,7 @@ async function main(): Promise<any> {
   for (const problem of ruleProblems)
     lines.push("- " + ruleProblemTitle(problem));
   await fs.writeFile(summaryPath, lines.join("\n") + "\n");
-  const output: any = process.env.GITHUB_OUTPUT;
+  const output = process.env.GITHUB_OUTPUT;
   if (output) {
     await fs.appendFile(
       output,
@@ -856,7 +856,7 @@ async function main(): Promise<any> {
   console.log(JSON.stringify({ categories: plans.length, ...result }));
 
 }
-const isMain: any =
+const isMain =
   process.argv[1] &&
   path.resolve(process.argv[1]) ===
     path.resolve(fileURLToPath(import.meta.url));
