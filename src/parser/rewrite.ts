@@ -1,5 +1,5 @@
 import { transformJqText } from "./jq-text.ts";
-import type { RewriteAst, RewriteSemanticIr, Phase, SyntaxNode, SourceAction } from "../domain/contracts.ts";
+import type { RewriteAst, RewriteSemanticIr, Phase, RewriteCondition, RewriteValue, SourceAction, LegacyRewriteOperation, V2RewriteOperation, LegacyRewriteIr, V2RewriteIr, RewriteOperation, RewriteOperationKind, ComparisonNode, ScriptValue } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -294,7 +294,7 @@ class Parser {
       raw: this.s,
     };
   }
-  or(): SyntaxNode {
+  or(): RewriteCondition {
     let l = this.and();
     while (this.is("operator", "||")) {
       this.next();
@@ -302,7 +302,7 @@ class Parser {
     }
     return l;
   }
-  and(): SyntaxNode {
+  and(): RewriteCondition {
     let l = this.primary();
     while (this.is("operator", "&&")) {
       this.next();
@@ -310,7 +310,7 @@ class Parser {
     }
     return l;
   }
-  primary(): SyntaxNode {
+  primary(): RewriteCondition {
     if (this.is("punct", "(")) {
       this.next();
       let e = this.or();
@@ -319,7 +319,7 @@ class Parser {
     }
     return this.cmp();
   }
-  cmp(): SyntaxNode {
+  cmp(): RewriteCondition {
     let left = this.val(false),
       o = this.need("operator", undefined, "Expected == or ~="),
       right = this.val(false),
@@ -336,7 +336,7 @@ class Parser {
         "Expected capture name",
       ).value;
     }
-    return { type: "comparison", operator: o.value, left, right, capture };
+    return { type: "comparison", operator: o.value as ComparisonNode["operator"], left, right, capture };
   }
   pipe(): SourceAction[] {
     let a = [this.action()];
@@ -357,7 +357,7 @@ class Parser {
           .value,
       );
     }
-    let args: SyntaxNode[] = [];
+    let args: RewriteValue[] = [];
     if (this.is("punct", "(")) {
       this.next();
       if (!this.is("punct", ")"))
@@ -370,7 +370,7 @@ class Parser {
     }
     return { type: "action", name: n.join("."), args };
   }
-  val(arr: boolean): SyntaxNode {
+  val(arr: boolean): RewriteValue {
     let x = this.p();
     if (arr && this.is("punct", "[")) return this.array();
     if (x.type === "variable") {
@@ -379,7 +379,7 @@ class Parser {
     }
     if (["string", "raw-string"].includes(x.type)) {
       this.next();
-      return { type: x.type, value: x.value, raw: x.raw };
+      return { type: x.type, value: x.value, raw: x.raw } as RewriteValue;
     }
     if (x.type === "regex") {
       this.next();
@@ -404,9 +404,9 @@ class Parser {
     }
     fail(this.s, x.start, "Expected value, got " + (x.raw || x.type));
   }
-  array(): SyntaxNode {
+  array(): RewriteValue {
     this.need("punct", "[");
-    let items: SyntaxNode[] = [];
+    let items: RewriteValue[] = [];
     if (!this.is("punct", "]"))
       for (;;) {
         if (this.is("punct", "["))
@@ -423,25 +423,25 @@ export function parseRewriteV2(s: string): RewriteAst {
   return new Parser(s).parse();
 }
 // Modified: 2026-11-15 (chance). Preserve source action indices independently of target pipeline grouping.
-export function selectRewritePipelineLayer(ast: any): any {
+export function selectRewritePipelineLayer(ast: RewriteAst): RewriteAst {
   if (ast.sourceActionIndices) return ast;
   if (ast.actions.length < 2) return ast;
   return {
     ...ast,
-    sourceActionIndices: ast.actions.map((_: any, index: any): any => index),
+    sourceActionIndices: ast.actions.map((_, index) => index),
     sourceActionCount: ast.actions.length,
   };
 }
 export function isRewriteV2(s: any) {
   return /^\s*(?:request|response)\s+if\b/.test(String(s ?? ""));
 }
-export function valueToSource(n: any): any {
+export function valueToSource(n: RewriteValue | ScriptValue): string {
   if (n.type === "array")
     return "[" + n.items.map(valueToSource).join(", ") + "]";
   if (n.raw != null) return n.raw;
   throw new TypeError("Unsupported value " + n.type);
 }
-function prec(n: any) {
+function prec(n: RewriteCondition) {
   return n.type === "logical"
     ? n.operator === "||"
       ? 1
@@ -450,7 +450,7 @@ function prec(n: any) {
       ? 4
       : 3;
 }
-export function conditionToSource(n: any, p: number = 0): string {
+export function conditionToSource(n: RewriteCondition, p: number = 0): string {
   if (n.type === "comparison")
     return (
       valueToSource(n.left) +
@@ -462,7 +462,7 @@ export function conditionToSource(n: any, p: number = 0): string {
     );
   if (n.type === "group") return "(" + conditionToSource(n.expression) + ")";
   if (n.type === "logical") {
-    let q: any = prec(n),
+    let q = prec(n),
       b =
         conditionToSource(n.left, q) +
         " " +
@@ -471,15 +471,15 @@ export function conditionToSource(n: any, p: number = 0): string {
         conditionToSource(n.right, q);
     return q < p ? "(" + b + ")" : b;
   }
-  throw new TypeError("Unsupported condition " + n.type);
+  throw new TypeError("Unsupported condition " + (n as { type: string }).type);
 }
-export function actionToSource(n: any): any {
+export function actionToSource(n: SourceAction): string {
   if (n.type !== "action") throw new TypeError("Unsupported action " + n.type);
   return n.args.length
     ? n.name + "(" + n.args.map(valueToSource).join(", ") + ")"
     : n.name;
 }
-export function rewriteV2ToSource(a: any) {
+export function rewriteV2ToSource(a: RewriteAst) {
   if (!a || a.type !== "rewrite")
     throw new TypeError("Expected Rewrite v2 AST");
   return (
@@ -491,10 +491,10 @@ export function rewriteV2ToSource(a: any) {
   );
 }
 export function findRewriteComparisons(
-  n: any,
-  p: any = () => true,
-  o: any = [],
-): any {
+  n: RewriteCondition | null | undefined,
+  p: (node: ComparisonNode) => boolean = () => true,
+  o: ComparisonNode[] = [],
+): ComparisonNode[] {
   if (!n) return o;
   if (n.type === "comparison") {
     if (p(n)) o.push(n);
@@ -694,7 +694,7 @@ function parseLegacyMock(rest: string): any {
   const base64 = /\bmock-data-is-base64=(?:true|1)\b/i.test(String(rest));
   return { type, status, data: parseLegacyMockData(rest), dataPath, base64 };
 }
-export function classifyLegacyRewriteAction(action: any): any {
+export function classifyLegacyRewriteAction(action: unknown): LegacyRewriteOperation {
   const raw = String(action ?? "").trim();
   const lower = raw.toLowerCase();
   if (LEGACY_REJECT_VARIANTS.has(lower)) {
@@ -742,7 +742,7 @@ export function classifyLegacyRewriteAction(action: any): any {
   if (match) {
     return {
       kind: "body-regex",
-      phase: match[1].toLowerCase(),
+      phase: match[1].toLowerCase() as Phase,
       operation: "replace",
       rest: match[2],
       raw,
@@ -754,7 +754,7 @@ export function classifyLegacyRewriteAction(action: any): any {
   if (match) {
     return {
       kind: "json",
-      phase: match[1].toLowerCase(),
+      phase: match[1].toLowerCase() as Phase,
       operation: match[2].toLowerCase(),
       rest: match[3],
       raw,
@@ -775,7 +775,7 @@ export function classifyLegacyRewriteAction(action: any): any {
     }
     return {
       kind: "mock",
-      phase: match[1].toLowerCase(),
+      phase: match[1].toLowerCase() as Phase,
       operation: "inline",
       optionNames,
       mock: parseLegacyMock(match[2]),
@@ -820,10 +820,10 @@ export function isEmptyJsonJqIr(ir: any) {
 export function isEmptyLegacyJsonJqIr(ir: any): any {
   return ir?.sourceSyntax === "legacy" && isEmptyJsonJqIr(ir);
 }
-export function legacyRewriteToSemanticIr(pattern: any, action: any): any {
+export function legacyRewriteToSemanticIr(pattern: unknown, action: unknown): LegacyRewriteIr {
   const sourcePattern = String(pattern ?? "").trim();
   const sourceAction = String(action ?? "").trim();
-  const op: any = classifyLegacyRewriteAction(sourceAction);
+  const op = classifyLegacyRewriteAction(sourceAction);
   return {
     type: "rewrite-semantic-ir",
     sourceSyntax: "legacy",
@@ -847,12 +847,12 @@ export function legacyRewriteToSemanticIr(pattern: any, action: any): any {
     },
   };
 }
-function scalarValue(node: any): any {
+function scalarValue(node: RewriteValue | undefined): string | number | boolean | null {
   if (!node) return null;
-  if (Object.hasOwn(node, "value")) return node.value;
+  if (Object.hasOwn(node, "value")) return (node as Extract<RewriteValue, { value: unknown }>).value;
   return null;
 }
-function classifyRewriteV2Action(action: any, phase: string): any {
+function classifyRewriteV2Action(action: SourceAction, phase: Phase): V2RewriteOperation {
   const name = String(action?.name || "");
   if (/^reject(?:_|$)/.test(name)) {
     const variant =
@@ -881,7 +881,7 @@ function classifyRewriteV2Action(action: any, phase: string): any {
   if (header) {
     return {
       kind: "header",
-      phase: header[1],
+      phase: header[1] as Phase,
       operation: header[2],
       actionName: name,
       sourceAction: action,
@@ -891,7 +891,7 @@ function classifyRewriteV2Action(action: any, phase: string): any {
   if (body) {
     return {
       kind: "body-regex",
-      phase: body[1],
+      phase: body[1] as Phase,
       operation: "replace",
       actionName: name,
       sourceAction: action,
@@ -903,7 +903,7 @@ function classifyRewriteV2Action(action: any, phase: string): any {
   if (json) {
     return {
       kind: "json",
-      phase: json[1],
+      phase: json[1] as Phase,
       operation: json[2],
       actionName: name,
       sourceAction: action,
@@ -913,7 +913,7 @@ function classifyRewriteV2Action(action: any, phase: string): any {
   if (mock) {
     return {
       kind: "mock",
-      phase: mock[1],
+      phase: mock[1] as Phase,
       operation: mock[2] === "mock_file" ? "file" : "inline",
       actionName: name,
       sourceAction: action,
@@ -929,10 +929,10 @@ function classifyRewriteV2Action(action: any, phase: string): any {
 export function rewriteV2AstToSemanticIr(
   ast: RewriteAst,
   { source = "" }: { source?: string } = {},
-): RewriteSemanticIr {
+): V2RewriteIr {
   if (!ast || ast.type !== "rewrite")
     throw new TypeError("Expected Rewrite v2 AST");
-  const operations: any = (ast.actions || []).map((action: any): any =>
+  const operations = (ast.actions || []).map((action) =>
     classifyRewriteV2Action(action, ast.phase),
   );
   return {
@@ -946,22 +946,22 @@ export function rewriteV2AstToSemanticIr(
     sourcePayload: { ast },
   };
 }
-export function singleRewriteOperation(ir: any): any {
+export function singleRewriteOperation(ir: RewriteSemanticIr | null | undefined): RewriteOperation | null {
   return ir?.operations?.length === 1 ? ir.operations[0] : null;
 }
-export function rewriteOperationKinds(ir: any): any {
-  return (ir?.operations || []).map((op: any): any => op.kind);
+export function rewriteOperationKinds(ir: RewriteSemanticIr | null | undefined): RewriteOperationKind[] {
+  return (ir?.operations || []).map((op) => op.kind);
 }
 export function isRewriteOperation(
-  ir: any,
-  kind: any,
-  { phase = null, operation = null, actionName = null }: any = {},
+  ir: RewriteSemanticIr | null | undefined,
+  kind: RewriteOperationKind,
+  { phase = null, operation = null, actionName = null }: { phase?: Phase | null; operation?: string | null; actionName?: string | null } = {},
 ) {
-  const op: any = singleRewriteOperation(ir);
+  const op = singleRewriteOperation(ir);
   if (!op || op.kind !== kind) return false;
   if (phase !== null && op.phase !== phase) return false;
   if (operation !== null && op.operation !== operation) return false;
-  if (actionName !== null && op.actionName !== actionName) return false;
+  if (actionName !== null && (op as V2RewriteOperation).actionName !== actionName) return false;
   return true;
 }
 export function legacyRewriteTokens(text: any): any {
@@ -970,7 +970,7 @@ export function legacyRewriteTokens(text: any): any {
 // WayX Loon Rewrite v2 official action registry
 // Author: chance
 // Category: Converter / Rewrite v2 / Action Registry
-const defs = [
+const defs: [string, number, number, boolean][] = [
   ["url.replace", 1, 1, false],
   ["redirect", 2, 2, false],
   ["reject", 1, 2, false],
@@ -1003,31 +1003,31 @@ const defs = [
   ["response.body.mock", 2, 4, false],
   ["response.body.mock_file", 2, 4, false],
 ];
-export const LOON_REWRITE_V2_ACTIONS: any = new Map(
-  defs.map(([name, minArgs, maxArgs, bulk]: any): any => [
+export const LOON_REWRITE_V2_ACTIONS = new Map(
+  defs.map(([name, minArgs, maxArgs, bulk]) => [
     name,
     Object.freeze({ name, minArgs, maxArgs, bulk }),
   ]),
 );
-export function getRewriteV2ActionDefinition(name: any): any {
+export function getRewriteV2ActionDefinition(name: unknown) {
   return LOON_REWRITE_V2_ACTIONS.get(String(name ?? "")) || null;
 }
-function actionError(action: any, message: string) {
+function actionError(action: SourceAction, message: string) {
   const error = new Error(action.name + ": " + message) as Error & { code: string; action: string };
   error.code = "WAYX_REWRITE_V2_ACTION_INVALID";
   error.action = action.name;
   return error;
 }
-export function validateRewriteV2Action(action: any): any {
+export function validateRewriteV2Action(action: SourceAction) {
   if (!action || action.type !== "action")
     throw new TypeError("Expected Rewrite v2 action AST node");
-  const def: any = getRewriteV2ActionDefinition(action.name);
+  const def = getRewriteV2ActionDefinition(action.name);
   if (!def)
     throw actionError(
       action,
       "action is not present in the current official Loon Rewrite v2 registry",
     );
-  const count: any = action.args.length;
+  const count = action.args.length;
   if (count < def.minArgs || count > def.maxArgs) {
     const expected =
       def.minArgs === def.maxArgs
@@ -1038,8 +1038,8 @@ export function validateRewriteV2Action(action: any): any {
       "expected " + expected + " argument(s), got " + count,
     );
   }
-  const arrays: any = action.args.filter(
-    (arg: any) => arg.type === "array",
+  const arrays = action.args.filter(
+    (arg) => arg.type === "array",
   );
   if (arrays.length) {
     if (!def.bulk)
@@ -1049,10 +1049,10 @@ export function validateRewriteV2Action(action: any): any {
       );
     if (arrays.length !== action.args.length)
       throw actionError(action, "bulk form must use arrays for every argument");
-    const lengths: any = new Set(
-      arrays.map((arg: any): any => arg.items.length),
+    const lengths = new Set(
+      arrays.map((arg) => arg.items.length),
     );
-    if (arrays.some((arg: any) => arg.items.length === 0))
+    if (arrays.some((arg) => arg.items.length === 0))
       throw actionError(action, "bulk arrays must not be empty");
     if (lengths.size !== 1)
       throw actionError(action, "bulk arrays must have equal lengths");
@@ -1071,7 +1071,7 @@ function conditionError(message: string) {
   error.code = "WAYX_REWRITE_V2_CONDITION_INVALID";
   return error;
 }
-function validateCondition(node: any, phase: any): any {
+function validateCondition(node: RewriteCondition, phase: Phase): void {
   if (!node) throw conditionError("missing Rewrite v2 condition");
   if (node.type === "group") return validateCondition(node.expression, phase);
   if (node.type === "logical") {
@@ -1081,7 +1081,7 @@ function validateCondition(node: any, phase: any): any {
   }
   if (node.type !== "comparison" || node.left?.type !== "variable")
     throw conditionError("condition left side must be a variable");
-  const name: any = node.left.name;
+  const name = node.left.name;
   const header = /^(request|response)\.header\[['"].+['"]\]$/.test(name);
   const known =
     name === "url" ||
@@ -1135,9 +1135,9 @@ function validateCondition(node: any, phase: any): any {
     );
 }
 export function validateRewriteV2Ast(
-  ast: any,
+  ast: RewriteAst,
   { regexEngine = "icu" }: { regexEngine?: "icu" | "javascript" } = {},
-): any {
+) {
   if (!ast || ast.type !== "rewrite")
     throw new TypeError("Expected Rewrite v2 AST root");
   const validateRegexes: any = (node: any) => {
@@ -1177,14 +1177,14 @@ export function validateRewriteV2Ast(
   return ast.actions.map(validateRewriteV2Action);
 }
 // Target adapters lower semantic fields, never provenance AST/source strings.
-export function rewriteIrDeclaration(ir: any): any {
+export function rewriteIrDeclaration(ir: RewriteSemanticIr) {
   if (ir?.type !== "rewrite-semantic-ir" || ir.sourceSyntax !== "v2")
     throw new TypeError("Expected Rewrite v2 Semantic IR");
   return {
     type: "rewrite",
     phase: ir.phase,
     condition: ir.condition,
-    actions: ir.operations.map((operation: any): any => operation.sourceAction),
+    actions: ir.operations.map((operation) => operation.sourceAction),
     raw: ir.source,
   };
 }

@@ -116,9 +116,9 @@ export async function prepareScriptApiAdapters(
         if (!ir?.script?.path || !["request", "response"].includes(ir.phase))
           continue;
         const url = key(new URL(ir.script.path, entry.source).href),
-          option = ir.options?.find((o: any) =>
+          option = ir.options?.find((o) =>
             /^(?:binary_body_mode|binary-body-mode)$/.test(o.name),
-          );
+          ) as { value?: { value?: unknown } } | undefined;
         const binaryKnown =
           !option ||
           typeof option.value?.value === "boolean" ||
@@ -171,14 +171,14 @@ export async function prepareScriptApiAdapters(
           argumentSchema = { kind: "string" };
         // Modified: 2026-11-02 (chance). Preserve original Loon body-read
         // provenance; runtime body conversion follows the original declaration.
-        const bodyOption = ir.options?.find((o: any) =>
+        const bodyOption = ir.options?.find((o) =>
           /^(?:requires_body|requires-body)$/.test(o.name),
-        );
+        ) as { value?: { value?: unknown } } | undefined;
         const responseBody =
           bodyOption?.value?.value === true ||
           /^(?:true|1)$/.test(String(bodyOption?.value ?? ""));
         const p = {
-          phase: ir.phase,
+          phase: ir.phase as "request" | "response",
           responseBody,
           binary,
           binaryKnown,

@@ -61,54 +61,228 @@ export interface FetchOptions {
 
 // Modified: 2026-10-30 (chance). Public semantic boundaries describe source
 // data explicitly; provenance is opaque and cannot supply target policy.
-export interface SyntaxNode {
-  type: string;
-  [field: string]: unknown;
-}
-export interface SourceAction {
-  type?: string;
+export interface VariableNode {
+  type: "variable";
   name: string;
-  args: SyntaxNode[];
-  [field: string]: unknown;
+  raw: string;
+  value?: never;
+}
+export interface StringNode {
+  type: "string" | "raw-string";
+  value: string;
+  raw: string;
+}
+export type ScalarNode =
+  | VariableNode
+  | StringNode
+  | { type: "number"; value: number; raw: string }
+  | { type: "boolean"; value: boolean; raw: string }
+  | { type: "null"; value: null; raw: string }
+  | { type: "regex"; pattern: string; flags: string; raw: string };
+export type RewriteValue =
+  | ScalarNode
+  | { type: "array"; items: RewriteValue[] };
+export type ComparisonNode = {
+  type: "comparison";
+  operator: "==" | "~=";
+  left: RewriteValue;
+  right: RewriteValue;
+  capture: string | null;
+};
+export type RewriteCondition =
+  | ComparisonNode
+  | { type: "group"; expression: RewriteCondition }
+  | {
+      type: "logical";
+      operator: "&&" | "||";
+      left: RewriteCondition;
+      right: RewriteCondition;
+    };
+export interface SourceAction {
+  type: "action";
+  name: string;
+  args: RewriteValue[];
 }
 export interface RewriteAst {
   type: "rewrite";
   syntax: "loon-rewrite-v2";
   phase: Phase;
-  condition: SyntaxNode;
+  condition: RewriteCondition;
   actions: SourceAction[];
   raw: string;
+  sourceActionIndices?: number[];
+  sourceActionCount?: number;
 }
-export interface RewriteOperation {
-  kind: string;
-  phase: Phase;
+export interface UrlRegexCondition {
+  type: "url-regex";
+  pattern: string;
+}
+export type RewriteOperationKind =
+  | "reject"
+  | "redirect"
+  | "url-rewrite"
+  | "header"
+  | "body-regex"
+  | "json"
+  | "mock"
+  | "action"
+  | "unknown";
+export interface LegacyMock {
+  type: string;
+  status: number;
+  data: string | null;
+  dataPath: string | null;
+  base64: boolean;
+}
+export type LegacyRewriteOperation = {
+  raw: string;
+  phase?: Phase;
   operation?: string;
+} & (
+  | { kind: "reject"; action: string; variant: string; status: number | null }
+  | {
+      kind: "redirect";
+      status: number;
+      target: string;
+      redirectMode: "absolute-location";
+    }
+  | { kind: "url-rewrite"; target: string; rewriteMode: "transparent-replace" }
+  | {
+      kind: "header" | "body-regex" | "json";
+      phase: Phase;
+      operation: string;
+      rest: string;
+    }
+  | {
+      kind: "mock";
+      phase: Phase;
+      operation: "inline";
+      optionNames: string[];
+      mock: LegacyMock;
+    }
+  | { kind: "unknown"; reason?: string }
+);
+export type V2RewriteOperation = {
   actionName: string;
   sourceAction: SourceAction;
-}
-export interface RewriteSemanticIr {
+  phase?: Phase;
+  operation?: string;
+} & (
+  | {
+      kind: "reject";
+      variant: string;
+      status: string | number | boolean | null;
+    }
+  | {
+      kind: "redirect";
+      status: string | number | boolean | null;
+      targetNode: RewriteValue | null;
+      redirectMode: "matched-range-template";
+    }
+  | {
+      kind: "header" | "body-regex" | "json" | "mock";
+      phase: Phase;
+      operation: string;
+    }
+  | { kind: "action"; phase: Phase }
+);
+export type RewriteOperation = LegacyRewriteOperation | V2RewriteOperation;
+interface RewriteIrBase {
   type: "rewrite-semantic-ir";
-  sourceSyntax: "v2" | "legacy";
   source: string;
   phase: Phase | null;
-  condition: SyntaxNode | null;
-  operations: RewriteOperation[];
   pipeline: boolean;
-  sourcePayload: unknown;
 }
-export interface ScriptSemanticIr {
+export type LegacyRewriteIr = RewriteIrBase & {
+  sourceSyntax: "legacy";
+  condition: UrlRegexCondition;
+  operations: LegacyRewriteOperation[];
+  sourcePayload: { pattern: string; action: string };
+};
+export type V2RewriteIr = RewriteIrBase & {
+  sourceSyntax: "v2";
+  condition: RewriteCondition | null;
+  operations: V2RewriteOperation[];
+  sourcePayload: { ast: RewriteAst };
+};
+export type RewriteSemanticIr = LegacyRewriteIr | V2RewriteIr;
+export type ScriptValue =
+  | Exclude<ScalarNode, { type: "regex" }>
+  | { type: "plugin-object"; items: VariableNode[]; raw: string; value?: never };
+export type ScriptArgument =
+  | StringNode
+  | Extract<ScriptValue, { type: "plugin-object" }>;
+export type ScriptPhase = Phase | "cron" | "network-changed" | "generic";
+export type ScriptTrigger =
+  | { type: "cron"; expression: ScriptValue; raw: string }
+  | { type: "event"; name: "network-changed"; raw: string }
+  | { type: "generic"; raw: string };
+export interface ScriptOption<T> {
+  type: "option";
+  name: string;
+  value: T;
+  raw: string;
+}
+export interface ScriptV2Ast {
+  type: "script";
+  syntax: "loon-script-v2";
+  phase: ScriptPhase;
+  condition: RewriteCondition | null;
+  trigger: ScriptTrigger | null;
+  script: {
+    path: string;
+    pathNode: StringNode;
+    argument: ScriptArgument | null;
+  };
+  options: ScriptOption<ScriptValue>[];
+  raw: string;
+}
+export interface LegacyScriptAst {
+  type: "script";
+  syntax: "loon-script-legacy";
+  phase: Phase;
+  httpType: string;
+  pattern: string;
+  script: { path: string | null };
+  options: ScriptOption<string>[];
+  optionMap: Map<string, string>;
+  tag: string | null;
+  requiresBody: boolean;
+  binaryBodyMode: boolean;
+  timeout: string | null;
+  maxSize: string | null;
+  argument: string | null;
+  enable: string | null;
+  debug: string | null;
+  raw: string;
+}
+interface ScriptIrBase<A, O, P> {
   readonly type: "script-semantic-ir";
-  readonly sourceSyntax: "v2" | "legacy";
   readonly source: string;
-  readonly phase: Phase | "cron";
-  readonly condition: SyntaxNode | null;
-  readonly trigger: SyntaxNode | null;
-  readonly pattern: string | null;
-  readonly script: { readonly path: string; readonly argument: unknown };
-  readonly argument: unknown;
-  readonly options: readonly { name: string; value: unknown }[];
-  readonly sourcePayload: unknown;
+  readonly script: { readonly path: string; readonly argument: A | null };
+  readonly argument: A | null;
+  readonly options: readonly Readonly<ScriptOption<O>>[];
+  readonly sourcePayload: P;
 }
+export type LegacyScriptIr = ScriptIrBase<string, string, LegacyScriptAst> & {
+  readonly sourceSyntax: "legacy";
+  readonly phase: Phase;
+  readonly condition: UrlRegexCondition;
+  readonly trigger: null;
+  readonly pattern: string;
+};
+export type V2ScriptIr = ScriptIrBase<
+  ScriptArgument,
+  ScriptValue,
+  ScriptV2Ast
+> & {
+  readonly sourceSyntax: "v2";
+  readonly phase: ScriptPhase;
+  readonly condition: RewriteCondition | null;
+  readonly trigger: ScriptTrigger | null;
+  readonly pattern: null;
+};
+export type ScriptSemanticIr = LegacyScriptIr | V2ScriptIr;
 export interface ConversionOutput {
   qx: string;
   surge: string;

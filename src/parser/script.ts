@@ -1,4 +1,4 @@
-import type { ScriptSemanticIr } from "../domain/contracts.ts";
+import type { ScriptSemanticIr, ScriptV2Ast, LegacyScriptAst, LegacyScriptIr, V2ScriptIr, ScriptPhase, ScriptTrigger, ScriptValue, ScriptArgument, ScriptOption, RewriteCondition, VariableNode, StringNode, Phase } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -297,12 +297,12 @@ export function surgeEnableRequirement(id: any, table: any): any {
 // WayX Loon Script v2 parser / AST
 // Author: chance
 // Category: Converter / Script v2
-function fail(source: any, message: any) {
+function fail(source: string, message: string): never {
   const error = new SyntaxError(message + "\n" + source) as SyntaxError & { code: string };
   error.code = "WAYX_SCRIPT_V2_PARSE";
   throw error;
 }
-function decodeQuoted(raw: string): any {
+function decodeQuoted(raw: string): string {
   if (raw.startsWith('"')) {
     try {
       return JSON.parse(raw);
@@ -327,13 +327,13 @@ function decodeQuoted(raw: string): any {
   if (raw.startsWith("'")) return raw.slice(1, -1);
   throw new Error("not quoted");
 }
-function scanState(source: any, callback: any): any {
-  let quote: any = null,
+function scanState<T>(source: string, callback: (index: number) => T | undefined): T | undefined {
+  let quote: string | null = null,
     raw = false,
     escape = false,
     variableDepth = 0;
   for (let i = 0; i < source.length; i++) {
-    const ch: any = source[i];
+    const ch = source[i];
     if (raw) {
       if (ch === "`") {
         if (source[i + 1] === "`") {
@@ -378,15 +378,15 @@ function scanState(source: any, callback: any): any {
       i = scanSourceRegexLiteral(source, i).end - 1;
       continue;
     }
-    const stop: any = callback(i);
+    const stop = callback(i);
     if (stop !== undefined) return stop;
   }
   return undefined;
 }
-function findThenScript(source: any): any {
-  return scanState(source, (i: any): any => {
-    const rest: any = source.slice(i);
-    const match: any = rest.match(/^\s+then\s+script\s*\(/);
+function findThenScript(source: string) {
+  return scanState(source, (i) => {
+    const rest = source.slice(i);
+    const match = rest.match(/^\s+then\s+script\s*\(/);
     if (match)
       return {
         index: i,
@@ -395,14 +395,14 @@ function findThenScript(source: any): any {
       };
   });
 }
-function findClosingParen(source: any, openIndex: any): any {
+function findClosingParen(source: string, openIndex: number): number {
   let depth = 1,
-    quote: any = null,
+    quote: string | null = null,
     raw = false,
     escape = false,
     variableDepth = 0;
-  for (let i: any = openIndex + 1; i < source.length; i++) {
-    const ch: any = source[i];
+  for (let i = openIndex + 1; i < source.length; i++) {
+    const ch = source[i];
     if (raw) {
       if (ch === "`") {
         if (source[i + 1] === "`") {
@@ -448,17 +448,17 @@ function findClosingParen(source: any, openIndex: any): any {
   }
   return -1;
 }
-function scriptSplitTopLevelCsv(source: any): any {
-  const out: any = [];
+function scriptSplitTopLevelCsv(source: string): string[] {
+  const out: string[] = [];
   let start = 0,
-    quote: any = null,
+    quote: string | null = null,
     raw = false,
     escape = false;
   let paren = 0,
     brace = 0,
     bracket = 0;
   for (let i = 0; i < source.length; i++) {
-    const ch: any = source[i];
+    const ch = source[i];
     if (raw) {
       if (ch === "`") {
         if (source[i + 1] === "`") {
@@ -500,11 +500,11 @@ function scriptSplitTopLevelCsv(source: any): any {
       start = i + 1;
     }
   }
-  const tail: any = source.slice(start).trim();
+  const tail = source.slice(start).trim();
   if (tail) out.push(tail);
   return out;
 }
-function parseValue(source: any): any {
+function parseValue(source: unknown): ScriptValue {
   const raw = String(source).trim();
   if (!raw) throw new Error("empty value");
   const variable = raw.match(/^\$\{([^}]+)\}$/);
@@ -529,16 +529,16 @@ function parseValue(source: any): any {
     return { type: "number", value: Number(raw), raw };
   if (raw.startsWith("{") && raw.endsWith("}")) {
     const inner = raw.slice(1, -1).trim();
-    const items: any = inner
+    const items = inner
       ? scriptSplitTopLevelCsv(inner).map(parseValue)
       : [];
-    if (items.some((item: any) => item.type !== "variable")) {
+    if (items.some((item) => item.type !== "variable")) {
       throw new Error(
         "plugin object argument may only contain plugin parameter variables",
       );
     }
-    validatePluginObjectRefs(items.map((item: any): any => item.name));
-    return { type: "plugin-object", items, raw };
+    validatePluginObjectRefs((items as VariableNode[]).map((item) => item.name));
+    return { type: "plugin-object", items, raw } as ScriptValue;
   }
   throw new Error("unsupported Script v2 value: " + raw);
 }
@@ -554,10 +554,10 @@ const OPTION_FIELDS: Readonly<Record<string, string[]>> = Object.freeze({
 // 上游错误 / 转换失败案例：String type alone does not prove a fixed
 // field. Preserve lexical template identity and decode escaped literals once.
 function fixedScriptString(
-  node: any,
-  label: any,
-  { nonempty = false }: any = {},
-): any {
+  node: ScriptValue | null | undefined,
+  label: string,
+  { nonempty = false }: { nonempty?: boolean } = {},
+): string {
   if (!node || !["string", "raw-string"].includes(node.type))
     throw new Error(label + " must be a fixed string");
   const parts: any = stringTemplateParts(node);
@@ -568,8 +568,8 @@ function fixedScriptString(
     throw new Error(label + " must be a fixed non-empty string");
   return value;
 }
-function validateOptions(options: any, phase: any) {
-  const seen: any = new Set();
+function validateOptions(options: ScriptOption<ScriptValue>[], phase: ScriptPhase) {
+  const seen = new Set<string>();
   for (const option of options) {
     if (seen.has(option.name))
       throw new Error("duplicate Script v2 option: " + option.name);
@@ -581,7 +581,7 @@ function validateOptions(options: any, phase: any) {
         option.name + ": invalid value type " + option.value.type,
       );
     if (["tag", "img_url"].includes(option.name))
-      option.value.value = fixedScriptString(option.value, option.name);
+      (option.value as StringNode).value = fixedScriptString(option.value, option.name);
     if (
       option.name === "timeout" &&
       option.value.type === "number" &&
@@ -592,7 +592,7 @@ function validateOptions(options: any, phase: any) {
   }
   if (
     !["request", "response"].includes(phase) &&
-    options.some((x: any) =>
+    options.some((x) =>
       ["requires_body", "binary_body_mode"].includes(x.name),
     )
   ) {
@@ -602,9 +602,9 @@ function validateOptions(options: any, phase: any) {
   }
 }
 // Shared lexical splitting preserves regex alternation, raw/JQ strings and options.
-export function splitScriptPipelineSources(source: any, {preserveJsonPipelines = false}: any = {}) {
+export function splitScriptPipelineSources(source: unknown, {preserveJsonPipelines = false}: {preserveJsonPipelines?: boolean} = {}) {
   const text = String(source ?? "").trim();
-  const found: any = scanState(text, (i: any): any =>
+  const found = scanState(text, (i) =>
     /^\s+then\s+/.test(text.slice(i))
       ? { index: i, length: text.slice(i).match(/^\s+then\s+/)![0].length }
       : undefined,
@@ -614,7 +614,7 @@ export function splitScriptPipelineSources(source: any, {preserveJsonPipelines =
     segments: string[] = [];
   let depth = 0,
     start = 0;
-  scanState(tail, (i: any) => {
+  scanState(tail, (i) => {
     if (tail[i] === "(" || tail[i] === "[") depth++;
     else if (tail[i] === ")" || tail[i] === "]") depth--;
     else if (
@@ -628,7 +628,7 @@ export function splitScriptPipelineSources(source: any, {preserveJsonPipelines =
     }
   });
   segments.push(tail.slice(start).trim());
-  if (segments.some((part: any) => !part))
+  if (segments.some((part) => !part))
     throw new Error("Empty action in source pipeline");
   // Modified: 2026-11-15 (chance). Keep consecutive JSON/JQ actions together
   // when projecting a mixed Script declaration for target conversion.
@@ -645,14 +645,14 @@ export function splitScriptPipelineSources(source: any, {preserveJsonPipelines =
     (part: string) => text.slice(0, found.index) + " then " + part,
   );
 }
-export function selectScriptPipelineSource(source: any): any {
-  const members: any = splitScriptPipelineSources(source);
+export function selectScriptPipelineSource(source: unknown): string {
+  const members = splitScriptPipelineSources(source);
   return (
-    members.find((member: any) => /\bthen\s+script\s*\(/.test(member)) ||
+    members.find((member) => /\bthen\s+script\s*\(/.test(member)) ||
     String(source ?? "").trim()
   );
 }
-export function isScriptV2(source: any) {
+export function isScriptV2(source: unknown) {
   const text = String(source ?? "").trim();
   if (
     !/^(?:(?:request|response)\s+if\b|cron\s+|network-changed\b|generic\b)/.test(
@@ -667,25 +667,25 @@ export function isScriptV2(source: any) {
     return /\bthen\s+script\s*\(/.test(text);
   }
 }
-export function parseScriptV2(source: any): any {
-  const raw: any = selectScriptPipelineSource(source);
-  const found: any = findThenScript(raw);
+export function parseScriptV2(source: unknown): ScriptV2Ast {
+  const raw = selectScriptPipelineSource(source);
+  const found = findThenScript(raw);
   if (!found) fail(raw, 'Expected "then script(...)"');
-  const triggerText: any = raw.slice(0, found.index).trim();
-  let phase: any;
-  let conditionAst: any = null;
-  let trigger: any = null;
-  const http: any = triggerText.match(/^(request|response)\s+if\s+([\s\S]+)$/);
+  const triggerText = raw.slice(0, found.index).trim();
+  let phase: ScriptPhase;
+  let conditionAst: RewriteCondition | null = null;
+  let trigger: ScriptTrigger | null = null;
+  const http = triggerText.match(/^(request|response)\s+if\s+([\s\S]+)$/);
   if (http) {
-    phase = http[1];
-    const conditionText: any = http[2].trim();
+    phase = http[1] as Phase;
+    const conditionText = http[2].trim();
     if (!conditionText) fail(raw, "Missing Script v2 condition");
     conditionAst = parseRewriteV2(
       phase + " if " + conditionText + " then reject(200)",
     ).condition;
   } else if (/^cron\s+/.test(triggerText)) {
     phase = "cron";
-    let expression: any;
+    let expression: ScriptValue;
     try {
       expression = parseValue(triggerText.replace(/^cron\s+/, ""));
     } catch (error: any) {
@@ -707,14 +707,14 @@ export function parseScriptV2(source: any): any {
   } else {
     fail(raw, "Unsupported Script v2 trigger");
   }
-  const close: any = findClosingParen(raw, found.callOpen);
+  const close = findClosingParen(raw, found.callOpen);
   if (close < 0) fail(raw, "Unterminated script(...) call");
-  const callArgs: any = scriptSplitTopLevelCsv(
+  const callArgs = scriptSplitTopLevelCsv(
     raw.slice(found.callOpen + 1, close),
   );
   if (callArgs.length < 1 || callArgs.length > 2)
     fail(raw, "script(...) expects path and optional argument");
-  const pathValue: any = parseValue(callArgs[0]);
+  const pathValue = parseValue(callArgs[0]) as StringNode;
   try {
     pathValue.value = fixedScriptString(pathValue, "script path", {
       nonempty: true,
@@ -722,24 +722,24 @@ export function parseScriptV2(source: any): any {
   } catch (error: any) {
     fail(raw, error.message);
   }
-  const argument: any = callArgs[1] ? parseValue(callArgs[1]) : null;
+  const argument = callArgs[1] ? parseValue(callArgs[1]) : null;
   if (
     argument &&
     !["string", "raw-string", "plugin-object"].includes(argument.type)
   ) {
     fail(raw, "script argument must be a String/raw String or plugin object");
   }
-  const tail: any = raw.slice(close + 1).trim();
-  const options: any = [];
+  const tail = raw.slice(close + 1).trim();
+  const options: ScriptOption<ScriptValue>[] = [];
   if (tail) {
     if (!/^with\s+/.test(tail))
       fail(raw, "Unexpected content after script(...)");
-    const optionText: any = tail.replace(/^with\s+/, "");
+    const optionText = tail.replace(/^with\s+/, "");
     for (const token of scriptSplitTopLevelCsv(optionText)) {
-      const eq: any = token.indexOf("=");
+      const eq = token.indexOf("=");
       if (eq < 1) fail(raw, "Invalid Script v2 option: " + token);
-      const name: any = token.slice(0, eq).trim();
-      const value: any = parseValue(token.slice(eq + 1));
+      const name = token.slice(0, eq).trim();
+      const value = parseValue(token.slice(eq + 1));
       options.push({ type: "option", name, value, raw: token });
     }
   }
@@ -757,31 +757,31 @@ export function parseScriptV2(source: any): any {
     script: { path: pathValue.value, pathNode: pathValue, argument },
     options,
     raw,
-  };
+  } as ScriptV2Ast;
 }
-export function scriptOption(ast: any, name: string): any {
+export function scriptOption(ast: Pick<ScriptV2Ast | V2ScriptIr, "options"> | null | undefined, name: string): ScriptValue | null {
   return (
-    ast?.options?.find((option: any) => option.name === name)?.value ??
+    ast?.options?.find((option) => option.name === name)?.value ??
     null
   );
 }
 export function scriptOptionBoolean(
-  ast: any,
+  ast: Pick<ScriptV2Ast | V2ScriptIr, "options"> | null | undefined,
   name: string,
   fallback: boolean = false,
-): any {
-  const value: any = scriptOption(ast, name);
+): boolean {
+  const value = scriptOption(ast, name);
   return value?.type === "boolean" ? value.value : fallback;
 }
-export function scriptV2ArgumentRefs(ast: any): any {
-  const arg: any = ast?.script?.argument;
+export function scriptV2ArgumentRefs(ast: Pick<ScriptV2Ast | V2ScriptIr, "script"> | null | undefined): string[] {
+  const arg = ast?.script?.argument;
   if (!arg) return [];
   if (arg.type === "plugin-object")
-    return arg.items.map((item: any): any => item.name);
+    return arg.items.map((item) => item.name);
   return [];
 }
-export function scriptV2DynamicOptionRefs(ast: any): any {
-  const out: any = [];
+export function scriptV2DynamicOptionRefs(ast: Pick<ScriptV2Ast | V2ScriptIr, "options"> | null | undefined): { option: string; id: string }[] {
+  const out: { option: string; id: string }[] = [];
   for (const option of ast?.options || []) {
     if (option.value?.type === "variable")
       out.push({ option: option.name, id: option.value.name });
@@ -844,23 +844,23 @@ export const LOON_LEGACY_SCRIPT_OPTION_NAMES = new Set([
   "enabled",
   "debug",
 ]);
-export function parseLegacyScriptLine(source: any): any {
+export function parseLegacyScriptLine(source: unknown): LegacyScriptAst | null {
   const raw = String(source ?? "").trim();
   const match = raw.match(
     /^(http-request|http-response)\s+(\S+)\s+(.+)$/i,
   );
   if (!match) return null;
   const type = match[1].toLowerCase();
-  const phase = type.replace(/^http-/, "");
+  const phase = type.replace(/^http-/, "") as Phase;
   const pattern = match[2];
   const rest = match[3];
-  const options: any = new Map();
-  const optionList: any = [];
+  const options = new Map<string, string>();
+  const optionList: ScriptOption<string>[] = [];
   for (const token of scriptSplitTopLevelCsv(rest)) {
-    const eq: any = token.indexOf("=");
+    const eq = token.indexOf("=");
     if (eq < 1) return null;
-    const name: any = token.slice(0, eq).trim().toLowerCase();
-    const value: any = token.slice(eq + 1).trim();
+    const name = token.slice(0, eq).trim().toLowerCase();
+    const value = token.slice(eq + 1).trim();
     if (
       !LOON_LEGACY_SCRIPT_OPTION_NAMES.has(name) ||
       options.has(name) ||
@@ -870,19 +870,19 @@ export function parseLegacyScriptLine(source: any): any {
     options.set(name, value);
     optionList.push({ type: "option", name, value, raw: token });
   }
-  const scriptPath: any = options.get("script-path") || null;
-  const tag: any = options.get("tag") || null;
+  const scriptPath = options.get("script-path") || null;
+  const tag = options.get("tag") || null;
   const requiresBody = /^(?:true|1)$/i.test(
     options.get("requires-body") || "",
   );
   const binary = /^(?:true|1)$/i.test(
     options.get("binary-body-mode") || "",
   );
-  const timeout: any = options.get("timeout") || null;
-  const maxSize: any = options.get("max-size") || null;
-  const argument: any = options.get("argument") || null;
-  const enable: any = options.get("enable") ?? options.get("enabled") ?? null;
-  const debug: any = options.get("debug") ?? null;
+  const timeout = options.get("timeout") || null;
+  const maxSize = options.get("max-size") || null;
+  const argument = options.get("argument") || null;
+  const enable = options.get("enable") ?? options.get("enabled") ?? null;
+  const debug = options.get("debug") ?? null;
   return {
     type: "script",
     syntax: "loon-script-legacy",
@@ -906,11 +906,15 @@ export function parseLegacyScriptLine(source: any): any {
 // Target-neutral Script Semantic IR
 // Author: chance
 // Category: Converter / Script / Semantic IR
-function freezeOptions(options: any): any {
+function freezeOptions<T>(options: ScriptOption<T>[]): readonly Readonly<ScriptOption<T>>[] {
   return Object.freeze(
-    (options || []).map((item: any): any => Object.freeze({ ...item })),
+    (options || []).map((item) => Object.freeze({ ...item })),
   );
 }
+type ScriptIrInput = { source: string; scriptPath: string | null } & (
+  | { sourceSyntax: "legacy"; phase: Phase; condition?: undefined; trigger?: undefined; pattern: string; argument: string | null; options: ScriptOption<string>[]; sourcePayload: LegacyScriptAst }
+  | { sourceSyntax: "v2"; phase: ScriptPhase; condition: RewriteCondition | null; trigger: ScriptTrigger | null; pattern?: undefined; argument: ScriptArgument | null; options: ScriptOption<ScriptValue>[]; sourcePayload: ScriptV2Ast }
+);
 function baseIr({
   sourceSyntax,
   source,
@@ -922,7 +926,7 @@ function baseIr({
   argument,
   options,
   sourcePayload,
-}: any): ScriptSemanticIr {
+}: ScriptIrInput): ScriptSemanticIr {
   return Object.freeze({
     type: "script-semantic-ir",
     sourceSyntax,
@@ -938,14 +942,14 @@ function baseIr({
       argument: argument ?? null,
     }),
     argument: argument ?? null,
-    options: freezeOptions(options),
+    options: freezeOptions<string | ScriptValue>(options),
     sourcePayload,
-  });
+  }) as ScriptSemanticIr;
 }
 export function legacyScriptToSemanticIr(
-  parsed: any,
-  { source = parsed?.raw || "" }: any = {},
-) {
+  parsed: LegacyScriptAst,
+  { source = parsed?.raw || "" }: { source?: string } = {},
+): LegacyScriptIr {
   if (!parsed || parsed.syntax !== "loon-script-legacy")
     throw new TypeError("Expected parsed Legacy Script declaration");
   return baseIr({
@@ -957,12 +961,12 @@ export function legacyScriptToSemanticIr(
     argument: parsed.argument,
     options: parsed.options,
     sourcePayload: parsed,
-  });
+  }) as LegacyScriptIr;
 }
 export function scriptV2AstToSemanticIr(
-  ast: any,
-  { source = ast?.raw || "" }: any = {},
-): ScriptSemanticIr {
+  ast: ScriptV2Ast,
+  { source = ast?.raw || "" }: { source?: string } = {},
+): V2ScriptIr {
   if (!ast || ast.type !== "script" || ast.syntax !== "loon-script-v2")
     throw new TypeError("Expected Script v2 AST");
   return baseIr({
@@ -975,33 +979,33 @@ export function scriptV2AstToSemanticIr(
     argument: ast.script?.argument || null,
     options: ast.options,
     sourcePayload: ast,
-  });
+  }) as V2ScriptIr;
 }
-export function scriptIrSourcePath(ir: any): any {
+export function scriptIrSourcePath(ir: ScriptSemanticIr): string {
   if (!ir || ir.type !== "script-semantic-ir")
     throw new TypeError("Expected Script Semantic IR");
   return ir.script.path;
 }
 // Unified source entry point; provenance is retained but never needed by planners.
-export function parseScriptDeclaration(source: any): any {
+export function parseScriptDeclaration(source: string): ScriptSemanticIr | null {
   if (isScriptV2(source))
     return scriptV2AstToSemanticIr(parseScriptV2(source), { source });
-  const parsed: any = parseLegacyScriptLine(source);
+  const parsed = parseLegacyScriptLine(source);
   return parsed?.script?.path
     ? legacyScriptToSemanticIr(parsed, { source })
     : null;
 }
-export function scriptIrTag(ir: any): any {
-  const tag: any = ir?.options?.find(
-    (option: any) => option.name === "tag",
+export function scriptIrTag(ir: ScriptSemanticIr | null | undefined): string | undefined {
+  const tag = ir?.options?.find(
+    (option) => option.name === "tag",
   )?.value;
-  return ir?.sourceSyntax === "legacy" ? tag : tag?.value;
+  return ir?.sourceSyntax === "legacy" ? tag as string | undefined : (tag as StringNode | undefined)?.value;
 }
-export function legacyScriptIrDeclaration(ir: any): any {
+export function legacyScriptIrDeclaration(ir: ScriptSemanticIr) {
   if (ir?.type !== "script-semantic-ir" || ir.sourceSyntax !== "legacy")
     throw new TypeError("Expected Legacy Script Semantic IR");
-  const options: any = new Map(
-    ir.options.map((option: any): any => [option.name, option.value]),
+  const options = new Map(
+    ir.options.map((option) => [option.name, option.value] as const),
   );
   return {
     phase: ir.phase,
@@ -1887,7 +1891,7 @@ export function scriptV2DeclarationGaps(ast: any): any {
   };
 }
 // Backward-compatible export name for callers that only inspect needs.
-export const scriptV2BridgeNeeds: any = scriptV2DeclarationGaps;
+export const scriptV2BridgeNeeds = scriptV2DeclarationGaps;
 // Quantumult X Source Script target planner
 // Author: chance
 // Category: Converter / Script / Quantumult X
