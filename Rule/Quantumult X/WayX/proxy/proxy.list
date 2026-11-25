@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-24 06:10:57 UTC
+# Updated: 2026-11-25 04:25:52 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34162
+# Rules: 34167
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -741,6 +741,7 @@ host,copilot-proxy.githubusercontent.com,ssid
 host,copilot-telemetry-service.githubusercontent.com,ssid
 host,copilot-telemetry.githubusercontent.com,ssid
 host,copilot-workspace.githubnext.com,ssid
+host,courses.myecnu.org,ssid
 host,crashlyticsreports-pa.googleapis.com,ssid
 host,crl.apple.com,ssid
 host,crl.globalsign.net,ssid
@@ -10198,6 +10199,7 @@ host-suffix,cablegatesearch.net,ssid
 host-suffix,cabletvdirectv.com,ssid
 host-suffix,cachefly.com,ssid
 host-suffix,cachefly.net,ssid
+host-suffix,cachix.org,ssid
 host-suffix,cacnw.com,ssid
 host-suffix,cactusvpn.com,ssid
 host-suffix,cad-mep.com,ssid
@@ -14093,10 +14095,12 @@ host-suffix,fastlane.ci,ssid
 host-suffix,fastlane.tools,ssid
 host-suffix,fastly-analytics.com,ssid
 host-suffix,fastly-edge.com,ssid
+host-suffix,fastly-insights.com,ssid
 host-suffix,fastly-terrarium.com,ssid
 host-suffix,fastly.com,ssid
 host-suffix,fastly.io,ssid
 host-suffix,fastly.net,ssid
+host-suffix,fastlydns.net,ssid
 host-suffix,fastlylabs.com,ssid
 host-suffix,fastlylb.net,ssid
 host-suffix,fastpic.ru,ssid
@@ -30914,6 +30918,7 @@ host-suffix,viu.com,ssid
 host-suffix,viu.tv,ssid
 host-suffix,vivaldi.com,ssid
 host-suffix,vivaxnxx.com,ssid
+host-suffix,vivox.com,ssid
 host-suffix,vivthomas.com,ssid
 host-suffix,vixen.com,ssid
 host-suffix,vixengroup.com,ssid

@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js",
-  "sourceSha256": "aba7dad0861824b66bb80981a1c72ef3ad31c0124ffa3ad134278bbc46d94a36",
+  "sourceSha256": "57a24d47e611947aadd417f2f2218e67d0a00e16fe1d77b476e0bca060825171",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "aba7dad0861824b66bb80981a1c72ef3ad31c0124ffa3ad134278bbc46d94a36",
+    "sha256": "57a24d47e611947aadd417f2f2218e67d0a00e16fe1d77b476e0bca060825171",
     "operations": [
       {
         "api": "require",
@@ -1617,8 +1617,8 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1309238,
-        "end": 1309248,
+        "start": 1309235,
+        "end": 1309245,
         "line": 1754,
         "column": 71,
         "members": [
@@ -1628,8 +1628,8 @@
       {
         "api": "$arguments",
         "access": "read",
-        "start": 1311493,
-        "end": 1311503,
+        "start": 1311490,
+        "end": 1311500,
         "line": 1758,
         "column": 144,
         "members": [
@@ -1639,8 +1639,8 @@
       {
         "api": "$options",
         "access": "read",
-        "start": 1338843,
-        "end": 1338851,
+        "start": 1338901,
+        "end": 1338909,
         "line": 1789,
         "column": 2506,
         "members": [
@@ -1650,8 +1650,8 @@
       {
         "api": "$options",
         "access": "read",
-        "start": 1348222,
-        "end": 1348230,
+        "start": 1348280,
+        "end": 1348288,
         "line": 1789,
         "column": 11885,
         "members": [
@@ -1670,7 +1670,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "aba7dad0861824b66bb80981a1c72ef3ad31c0124ffa3ad134278bbc46d94a36",
+        "analysisSourceSha256": "57a24d47e611947aadd417f2f2218e67d0a00e16fe1d77b476e0bca060825171",
         "operations": [
           {
             "id": "api:0",
@@ -5165,8 +5165,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1309238,
-              "end": 1309248,
+              "start": 1309235,
+              "end": 1309245,
               "line": 1754,
               "column": 71,
               "access": "read",
@@ -5189,8 +5189,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$arguments",
-              "start": 1311493,
-              "end": 1311503,
+              "start": 1311490,
+              "end": 1311500,
               "line": 1758,
               "column": 144,
               "access": "read",
@@ -5213,8 +5213,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$options",
-              "start": 1338843,
-              "end": 1338851,
+              "start": 1338901,
+              "end": 1338909,
               "line": 1789,
               "column": 2506,
               "access": "read",
@@ -5237,8 +5237,8 @@
             "kind": "unmapped",
             "source": {
               "api": "$options",
-              "start": 1348222,
-              "end": 1348230,
+              "start": 1348280,
+              "end": 1348288,
               "line": 1789,
               "column": 11885,
               "access": "read",

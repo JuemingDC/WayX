@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-11-24 06:10:57 UTC
+# Updated: 2026-11-25 04:25:52 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7269
+# Rules: 7272
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,ssid
@@ -663,6 +663,7 @@ host-suffix,dc1-lm-live2dazn.secure.footprint.net,ssid
 host-suffix,dc2-vodhls-perform.secure.footprint.net,ssid
 host-suffix,dca-ll-livedazn-dznlivejp.s.llnwi.net,ssid
 host-suffix,dca-ll-voddazn-dznvodjp.s.llnwi.net,ssid
+host-suffix,debian.map.fastlydns.net,ssid
 host-suffix,disney.my.sentry.io,ssid
 host-suffix,edge.api.brightcove.com,ssid
 host-suffix,espn.hb.omtrdc.net,ssid
@@ -2258,6 +2259,7 @@ host-suffix,c-ij.com,ssid
 host-suffix,c4assets.com,ssid
 host-suffix,cabconnect.org,ssid
 host-suffix,cabletvdirectv.com,ssid
+host-suffix,cachix.org,ssid
 host-suffix,cad-mep.com,ssid
 host-suffix,cadcamsystemsinc.com,ssid
 host-suffix,cadduct.com,ssid
@@ -6613,6 +6615,7 @@ host-suffix,visceralgames.com,ssid
 host-suffix,visual-arts.jp,ssid
 host-suffix,viu.com,ssid
 host-suffix,viu.tv,ssid
+host-suffix,vivox.com,ssid
 host-suffix,vk-analytics.ru,ssid
 host-suffix,vk-apps.com,ssid
 host-suffix,vk-apps.ru,ssid

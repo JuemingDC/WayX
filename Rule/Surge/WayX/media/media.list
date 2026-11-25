@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-11-24 06:10:57 UTC
+# Updated: 2026-11-25 04:25:52 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7269
+# Rules: 7272
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
@@ -663,6 +663,7 @@ DOMAIN-SUFFIX,dc1-lm-live2dazn.secure.footprint.net
 DOMAIN-SUFFIX,dc2-vodhls-perform.secure.footprint.net
 DOMAIN-SUFFIX,dca-ll-livedazn-dznlivejp.s.llnwi.net
 DOMAIN-SUFFIX,dca-ll-voddazn-dznvodjp.s.llnwi.net
+DOMAIN-SUFFIX,debian.map.fastlydns.net
 DOMAIN-SUFFIX,disney.my.sentry.io
 DOMAIN-SUFFIX,edge.api.brightcove.com
 DOMAIN-SUFFIX,espn.hb.omtrdc.net
@@ -2258,6 +2259,7 @@ DOMAIN-SUFFIX,c-ij.com
 DOMAIN-SUFFIX,c4assets.com
 DOMAIN-SUFFIX,cabconnect.org
 DOMAIN-SUFFIX,cabletvdirectv.com
+DOMAIN-SUFFIX,cachix.org
 DOMAIN-SUFFIX,cad-mep.com
 DOMAIN-SUFFIX,cadcamsystemsinc.com
 DOMAIN-SUFFIX,cadduct.com
@@ -6613,6 +6615,7 @@ DOMAIN-SUFFIX,visceralgames.com
 DOMAIN-SUFFIX,visual-arts.jp
 DOMAIN-SUFFIX,viu.com
 DOMAIN-SUFFIX,viu.tv
+DOMAIN-SUFFIX,vivox.com
 DOMAIN-SUFFIX,vk-analytics.ru
 DOMAIN-SUFFIX,vk-apps.com
 DOMAIN-SUFFIX,vk-apps.ru
