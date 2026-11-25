@@ -1,6 +1,7 @@
 // Modified: 2026-11-12 (chance). Assign persistent, never-recycled Adblock IDs;
 // both client variants share one identity, independent of sorting and layout.
 import path from "node:path";
+import type { SourceEntry } from "../domain/contracts.ts";
 import { readJson, listFiles, commitFiles } from "../publish/transaction.ts";
 
 export const ADBLOCK_NUMBERS_FILE = ".github/sources/adblock-numbers.json";
@@ -9,14 +10,29 @@ export type AdblockNumbers = {
   next: number;
   items: Record<string, { number: string; paths: string[] }>;
 };
+function validateAdblockNumbers(value: unknown): AdblockNumbers {
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    throw Error("Invalid Adblock number registry");
+  const state = value as Partial<AdblockNumbers>;
+  if (state.version !== 1 || !Number.isSafeInteger(state.next) || state.next! < 1 ||
+      !state.items || typeof state.items !== "object" || Array.isArray(state.items))
+    throw Error("Invalid Adblock number registry");
+  const used = new Set<string>();
+  for (const item of Object.values(state.items)) {
+    if (!item || typeof item !== "object" || typeof item.number !== "string" ||
+        !/^AD\d{4,}$/.test(item.number) || used.has(item.number) ||
+        !Number.isSafeInteger(Number(item.number.slice(2))) ||
+        !Array.isArray(item.paths) || item.paths.some(file => typeof file !== "string"))
+      throw Error("Invalid or duplicate Adblock number");
+    used.add(item.number);
+  }
+  return state as AdblockNumbers;
+}
 export function allocateAdblockNumbers(
   previous: AdblockNumbers,
   candidates: { id: string; paths: string[] }[],
 ): AdblockNumbers {
-  if (previous.version !== 1 || !Number.isSafeInteger(previous.next) || previous.next < 1)
-    throw Error("Invalid Adblock number registry");
-  const result = structuredClone(previous);
-  const used = new Set<string>();
+  const result = structuredClone(validateAdblockNumbers(previous));
   const owners = new Map<string, string>();
   for (const candidate of candidates)
     for (const file of candidate.paths) {
@@ -26,15 +42,15 @@ export function allocateAdblockNumbers(
     }
   let maximum = 0;
   for (const item of Object.values(result.items)) {
-    if (!/^AD\d{4,}$/.test(item.number) || used.has(item.number) || !Array.isArray(item.paths))
-      throw Error("Invalid or duplicate Adblock number");
-    used.add(item.number);
     maximum = Math.max(maximum, Number(item.number.slice(2)));
   }
   result.next = Math.max(result.next, maximum + 1);
+  if (!Number.isSafeInteger(result.next)) throw Error("Adblock number registry exhausted");
   for (const candidate of [...candidates].sort((a, b) => a.id.localeCompare(b.id, "en"))) {
     if (!candidate.id) throw Error("Adblock identity is required");
     const existing = result.items[candidate.id];
+    if (!existing && result.next >= Number.MAX_SAFE_INTEGER)
+      throw Error("Adblock number registry exhausted");
     const item = existing ?? { number: "AD" + String(result.next++).padStart(4, "0"), paths: [] };
     item.paths = [...new Set([...item.paths, ...candidate.paths])].sort();
     result.items[candidate.id] = item;
@@ -45,9 +61,10 @@ export function allocateAdblockNumbers(
   return result;
 }
 export async function loadAdblockNumbers(root: string): Promise<AdblockNumbers> {
-  return readJson(path.join(root, ADBLOCK_NUMBERS_FILE), { version: 1, next: 1, items: {} });
+  const value = await readJson<unknown>(path.join(root, ADBLOCK_NUMBERS_FILE), { version: 1, next: 1, items: {} });
+  return validateAdblockNumbers(value);
 }
-export function adblockIdentity(file: string, catalog: any[]): string {
+export function adblockIdentity(file: string, catalog: Pick<SourceEntry, "id" | "qx" | "surge">[]): string {
   const entry = catalog.find(e => file === "Adblock/Quantumult X/" + e.qx || file === "Adblock/Surge/" + e.surge);
   return entry?.id ?? path.posix.basename(file).replace(/\.(?:snippet|sgmodule)$/, "");
 }
@@ -64,9 +81,10 @@ export async function ensureAdblockNumbers(
   root: string,
   artifacts?: Record<string, string>,
   extra: { id: string; paths: string[] }[] = [],
+  { write = true }: { write?: boolean } = {},
 ): Promise<AdblockNumbers> {
-  const catalog = await readJson<any[]>(path.join(root, ".github/sources/loon.json"), []);
-  const layout = artifacts ?? (await readJson<any>(path.join(root, ".github/sources/layout-state.json"), {})).artifacts ?? {};
+  const catalog = await readJson<SourceEntry[]>(path.join(root, ".github/sources/loon.json"), []);
+  const layout = artifacts ?? (await readJson<{ artifacts?: Record<string, string> }>(path.join(root, ".github/sources/layout-state.json"), {})).artifacts ?? {};
   const reverse = new Map(Object.entries<string>(layout).map(([logical, published]) => [published, logical]));
   const candidates = catalog.map(e => ({ id: e.id, paths: [
     "Adblock/Quantumult X/" + e.qx, "Adblock/Surge/" + e.surge,
@@ -85,7 +103,7 @@ export async function ensureAdblockNumbers(
   }
   const previous = await loadAdblockNumbers(root);
   const result = allocateAdblockNumbers(previous, [...candidates, ...extra]);
-  if (JSON.stringify(result) !== JSON.stringify(previous))
+  if (write && JSON.stringify(result) !== JSON.stringify(previous))
     await commitFiles(root, new Map([[ADBLOCK_NUMBERS_FILE, JSON.stringify(result, null, 2) + "\n"]]));
   return result;
 }

@@ -26,6 +26,8 @@ assert.equal(adblockNumberForPath(reusedPath, "a.qx"), "AD0004");
 assert.equal(applyAdblockNumber(applyAdblockNumber("#!name=Demo\n", "AD0001"), "AD0001"), "#!name=Demo\n# WayX ID: AD0001\n");
 assert.equal(applyAdblockNumber("#!name=Demo", "AD0001"), "#!name=Demo\n# WayX ID: AD0001\n");
 assert.throws(() => allocateAdblockNumbers({ ...first, items: { ...first.items, C: { number: "AD0001", paths: [] } } }, []), /duplicate/);
+assert.throws(() => allocateAdblockNumbers({ ...first, items: null }, []), /Invalid Adblock number registry/);
+assert.throws(() => allocateAdblockNumbers({ ...first, items: { C: { number: "AD0005", paths: [42] } } }, []), /Invalid or duplicate/);
 
 function plans(fetch = ["AD0002", "AD0001", "AD0002"], other = true) {
   return groupedIssuePlans({

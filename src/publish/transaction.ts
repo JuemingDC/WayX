@@ -2,6 +2,7 @@
 // if any write fails; callers cannot escape the repository root.
 import fs from "node:fs/promises";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 export function safePath(root: string, relative: string): string {
   const base = path.resolve(root),
     file = path.resolve(base, relative);
@@ -29,16 +30,75 @@ export async function readJson<T>(file: string, fallback?: T): Promise<T> {
   }
   return JSON.parse(bytes.toString("utf8")) as T;
 }
+// Modified: 2026-11-25 (chance). Every owned file is restored independently;
+// a single rollback failure must not prevent restoration of the remaining files.
+export async function rollbackFiles(
+  snapshot: ReadonlyMap<string, Buffer | null>,
+  cause: unknown,
+  temporaryFiles: Iterable<string> = [],
+): Promise<never> {
+  const failures: unknown[] = [];
+  for (const file of temporaryFiles) {
+    try {
+      await fs.rm(file, { force: true });
+    } catch (error) {
+      failures.push(error);
+    }
+  }
+  for (const [file, bytes] of snapshot) {
+    try {
+      const current = await readOptional(file);
+      if (bytes === null) {
+        if (current !== null) await fs.rm(file, { force: true });
+      } else if (!current?.equals(bytes)) {
+        await fs.mkdir(path.dirname(file), { recursive: true });
+        await fs.writeFile(file, bytes);
+      }
+    } catch (error) {
+      failures.push(error);
+    }
+  }
+  if (failures.length) {
+    const error = new AggregateError([cause, ...failures], "Managed write and rollback failed", { cause });
+    throw Object.assign(error, {
+      rollbackSucceeded: false,
+      rollbackError: new AggregateError(failures, "Rollback failures"),
+    });
+  }
+  const error = cause instanceof Error ? cause : new Error(String(cause));
+  throw Object.assign(error, { rollbackSucceeded: true });
+}
+async function inspectManagedPath(root: string, file: string, checked: Set<string>) {
+  const base = path.resolve(root);
+  let current = base;
+  for (const component of path.relative(base, file).split(path.sep)) {
+    current = path.join(current, component);
+    if (checked.has(current)) continue;
+    try {
+      const info = await fs.lstat(current);
+      if (info.isSymbolicLink()) throw Error("Managed path contains a symbolic link: " + current);
+      if (info.isDirectory()) checked.add(current);
+    } catch (error: any) {
+      if (error.code === "ENOENT") break;
+      throw error;
+    }
+  }
+}
 export async function commitFiles(
   root: string,
   changes: Map<string, string | Uint8Array | null>,
 ): Promise<number> {
-  const old = new Map<string, Buffer | null>(),
-    plans = new Map<string, Buffer | null>();
+  const old = new Map<string, Buffer | null>();
+  const plans = new Map<string, Buffer | null>();
+  const resolved = new Set<string>();
+  const checkedDirectories = new Set<string>();
   for (const [relative, value] of changes) {
-    const file = safePath(root, relative),
-      before = await readOptional(file),
-      after = value === null ? null : Buffer.from(value);
+    const file = safePath(root, relative);
+    if (resolved.has(file)) throw Error("Duplicate managed path: " + relative);
+    resolved.add(file);
+    await inspectManagedPath(root, file, checkedDirectories);
+    const before = await readOptional(file);
+    const after = value === null ? null : Buffer.from(value);
     if (
       (before === null && after === null) ||
       (before && after && before.equals(after))
@@ -47,32 +107,24 @@ export async function commitFiles(
     old.set(file, before);
     plans.set(file, after);
   }
+  const attempted = new Map<string, Buffer | null>();
+  const temporaryFiles = new Set<string>();
   try {
     for (const [file, bytes] of plans) {
+      attempted.set(file, old.get(file)!);
       if (bytes === null) {
         await fs.rm(file, { force: true });
         continue;
       }
       await fs.mkdir(path.dirname(file), { recursive: true });
-      await fs.writeFile(file + ".wayx-tmp", bytes);
-      await fs.rename(file + ".wayx-tmp", file);
+      const temporary = path.join(path.dirname(file), "." + randomUUID() + ".wayx-tmp");
+      temporaryFiles.add(temporary);
+      await fs.writeFile(temporary, bytes, { flag: "wx" });
+      await fs.rename(temporary, file);
+      temporaryFiles.delete(temporary);
     }
-  } catch (error: any) {
-    try {
-      for (const [file, bytes] of old) {
-        await fs.rm(file + ".wayx-tmp", { force: true });
-        if (bytes === null) await fs.rm(file, { force: true });
-        else {
-          await fs.mkdir(path.dirname(file), { recursive: true });
-          await fs.writeFile(file, bytes);
-        }
-      }
-      error.rollbackSucceeded = true;
-    } catch (rollback) {
-      error.rollbackSucceeded = false;
-      error.rollbackError = rollback;
-    }
-    throw error;
+  } catch (error) {
+    return rollbackFiles(attempted, error, temporaryFiles);
   }
   return plans.size;
 }

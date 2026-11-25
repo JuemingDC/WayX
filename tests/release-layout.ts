@@ -91,7 +91,25 @@ try {
   await write("Resource/JQ/Demo/filter.jq", ".\n");
   for (const file of ["Adblock/Quantumult X/Demo.snippet", "Adblock/Surge/Demo.sgmodule"])
     await write(file, "# JQ File: " + raw + "Resource/JQ/Demo/filter.jq\n" + await fs.readFile(path.join(root, file), "utf8"));
+  const preview = await publishLayout(root, { write: false });
+  await assert.rejects(fs.stat(path.join(root, ".github/sources/adblock-numbers.json")), /ENOENT/);
+  await assert.rejects(fs.stat(path.join(root, ".github/sources/layout-state.json")), /ENOENT/);
+  assert.equal(await fs.readFile(path.join(root, "Resource/JQ/Demo/filter.jq"), "utf8"), ".\n");
+  const rename = fs.rename;
+  fs.rename = async (from, to) => {
+    if (String(to).endsWith("/.github/sources/layout-state.json"))
+      throw Error("injected layout publication failure");
+    return rename(from, to);
+  };
+  try {
+    await assert.rejects(publishLayout(root), error => error.rollbackSucceeded === true);
+  } finally {
+    fs.rename = rename;
+  }
+  await assert.rejects(fs.stat(path.join(root, ".github/sources/adblock-numbers.json")), /ENOENT/);
+  assert.equal(await fs.readFile(path.join(root, "Resource/JQ/Demo/filter.jq"), "utf8"), ".\n");
   const first = await publishLayout(root);
+  assert.deepEqual(first, preview);
   await assert.rejects(fs.stat(path.join(root, "Resource/JQ/Demo/filter.jq")), /ENOENT/);
   for (const file of [first.artifacts["Adblock/Quantumult X/Demo.snippet"], first.artifacts["Adblock/Surge/Demo.sgmodule"]])
     assert.doesNotMatch(await fs.readFile(path.join(root, file), "utf8"), /JQ File:|Resource\/JQ/);
@@ -146,6 +164,19 @@ try {
   assert.match(surgePublished, /^#!category=WayX\n#!arguments=CLIENT:Telegram\n#!arguments-desc=Client\n# WayX ID: AD0001\n# Author: chance$/m);
   assert.match(surgePublished, /timeout=10,max-size=-1/);
   assert.doesNotMatch(surgePublished, /timeout=20/);
+  const layoutFile = path.join(root, ".github/sources/layout-state.json");
+  const validLayout = await fs.readFile(layoutFile, "utf8");
+  await fs.writeFile(layoutFile, "null");
+  await assert.rejects(prepareWorkingLayout(root), /Invalid layout state/);
+  const malformed = JSON.parse(validLayout);
+  malformed.version = 2;
+  await fs.writeFile(layoutFile, JSON.stringify(malformed));
+  await assert.rejects(prepareWorkingLayout(root), /Invalid layout state/);
+  malformed.version = 1;
+  malformed.artifacts["Adblock/Quantumult X/Duplicate.snippet"] = first.artifacts["Adblock/Quantumult X/Demo.snippet"];
+  await fs.writeFile(layoutFile, JSON.stringify(malformed));
+  await assert.rejects(prepareWorkingLayout(root), /Duplicate layout target/);
+  await fs.writeFile(layoutFile, validLayout);
   await prepareWorkingLayout(root);
   assert.ok(
     (

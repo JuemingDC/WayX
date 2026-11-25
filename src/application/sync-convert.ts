@@ -1,7 +1,8 @@
 import { publishLayout } from "./release-layout.ts";
 import { refreshFrozenSurgeFlags } from "./surge-flags.ts";
 import { refreshFrozenQxFlags } from "./qx-flags.ts";
-import { readJson } from "../publish/transaction.ts";
+import { readJson, readOptional, commitFiles } from "../publish/transaction.ts";
+import type { SourceEntry } from "../domain/contracts.ts";
 import { refreshSourceBackups } from "./backups.ts";
 import { loadIconIndex } from "../ingest/icons.ts";
 import { backfillIcons } from "./icons.ts";
@@ -227,48 +228,28 @@ export async function syncCatalogEntry(
   }
 }
 async function deferCatalogEntries(
-  root: any,
-  manifest: any,
-  deferredPlugins: any,
-): Promise<any> {
+  root: string,
+  manifest: SourceEntry[],
+  deferredPlugins: string[],
+): Promise<void> {
   if (!deferredPlugins.length) return;
-  const deferred: any = new Set(deferredPlugins);
-  const catalog: any = path.join(root, ".github/sources/loon.json");
-  const snapshot: any = path.join(
-    root,
-    ".github/monitor/.runtime/kelee-catalog.json",
-  );
-  const originals: any = new Map();
-  for (const file of [catalog, snapshot])
-    try {
-      originals.set(file, await fs.readFile(file));
-    } catch (error: any) {
-      if (error.code !== "ENOENT") throw error;
-      originals.set(file, null);
-    }
-  try {
-    await fs.writeFile(
-      catalog,
-      JSON.stringify(
-        manifest.filter((entry: any): any => !deferred.has(entry.id)),
-        null,
-        2,
-      ) + "\n",
-    );
-    if (originals.get(snapshot)) {
-      const data: any = JSON.parse(originals.get(snapshot));
-      data.plugins = data.plugins
-        .filter((plugin: any): any => !deferred.has(plugin.id))
-        .map((plugin: any, order: any): any => ({ ...plugin, order }));
-      data.count = data.plugins.length;
-      await fs.writeFile(snapshot, JSON.stringify(data, null, 2) + "\n");
-    }
-  } catch (error: any) {
-    for (const [file, bytes] of originals)
-      if (bytes) await fs.writeFile(file, bytes);
-      else await fs.rm(file, { force: true });
-    throw error;
+  const deferred = new Set(deferredPlugins);
+  const catalog = ".github/sources/loon.json";
+  const snapshot = ".github/monitor/.runtime/kelee-catalog.json";
+  const changes = new Map<string, string>([
+    [catalog, JSON.stringify(manifest.filter(entry => !deferred.has(entry.id)), null, 2) + "\n"],
+  ]);
+  const bytes = await readOptional(path.join(root, snapshot));
+  if (bytes) {
+    const data = JSON.parse(bytes.toString("utf8"));
+    if (!Array.isArray(data.plugins)) throw Error("Invalid deferred catalog snapshot");
+    data.plugins = data.plugins
+      .filter((plugin: { id: string }) => !deferred.has(plugin.id))
+      .map((plugin: { id: string }, order: number) => ({ ...plugin, order }));
+    data.count = data.plugins.length;
+    changes.set(snapshot, JSON.stringify(data, null, 2) + "\n");
   }
+  await commitFiles(root, changes);
 }
 export async function runCatalogSync({
   layout = false,

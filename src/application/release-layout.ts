@@ -24,7 +24,7 @@ const digest = (s: string | Uint8Array) =>
   crypto.createHash("sha256").update(s).digest("hex");
 type Layout = {
   version: number;
-  phase: string;
+  phase: "working" | "published";
   artifacts: Record<string, string>;
   scripts: Record<string, { logical: string; owner: string }>;
 };
@@ -205,9 +205,45 @@ function uniqueScripts(text: string) {
     .join("\n");
 }
 
+function validateLayoutState(root: string, value: unknown): Layout {
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    throw Error("Invalid layout state");
+  const state = value as Partial<Layout>;
+  if (state.version !== 1 || !["working", "published"].includes(state.phase ?? "") ||
+      !state.artifacts || typeof state.artifacts !== "object" || Array.isArray(state.artifacts) ||
+      !state.scripts || typeof state.scripts !== "object" || Array.isArray(state.scripts))
+    throw Error("Invalid layout state");
+  const published = new Set<string>();
+  const validatePath = (file: unknown, prefix: RegExp): string => {
+    if (typeof file !== "string" || !prefix.test(file) || path.posix.normalize(file) !== file)
+      throw Error("Invalid layout path: " + String(file));
+    safePath(root, file);
+    return file;
+  };
+  const artifactPrefix = /^(?:Adblock|Module|Rule)\//;
+  for (const [logical, target] of Object.entries(state.artifacts)) {
+    validatePath(logical, artifactPrefix);
+    validatePath(target, artifactPrefix);
+    if (published.has(target)) throw Error("Duplicate layout target: " + target);
+    published.add(target);
+  }
+  for (const [target, record] of Object.entries(state.scripts)) {
+    validatePath(target, artifactPrefix);
+    if (!record || typeof record !== "object" || typeof record.owner !== "string" ||
+        !Object.hasOwn(state.artifacts, record.owner))
+      throw Error("Invalid layout script owner: " + target);
+    validatePath(record.logical, /^(?:Script|Resource\/Backup\/script)\//);
+    if (published.has(target)) throw Error("Duplicate layout target: " + target);
+    published.add(target);
+  }
+  return state as Layout;
+}
+
 export async function prepareWorkingLayout(root: string) {
-  const state = await readJson<Layout | null>(path.join(root, stateFile), null);
-  if (!state || state.phase !== "published") return;
+  const bytes = await readOptional(path.join(root, stateFile));
+  if (bytes === null) return;
+  const state = validateLayoutState(root, JSON.parse(bytes.toString("utf8")));
+  if (state.phase !== "published") return;
   const reverse: Record<string, string> = {};
   for (const [old, current] of Object.entries(state.artifacts))
     reverse[current] = old;
@@ -301,20 +337,23 @@ export async function publishLayout(
     scripts: {},
   };
   const content = new Map<string, string>();
+  const destinations = new Set<string>();
   for (const type of ["Adblock", "Module", "Rule"])
     for (const relative of await listFiles(path.join(root, type))) {
       if (!/\.(?:snippet|sgmodule|list|dconf)$/.test(relative)) continue;
       const file = type + "/" + relative,
         text = (await readOptional(safePath(root, file)))!.toString();
       const dest = destination(file, text, catalog, native);
-      if (Object.values(state.artifacts).includes(dest))
+      if (destinations.has(dest))
         throw Error("Application layout collision: " + dest);
+      destinations.add(dest);
       state.artifacts[file] = dest;
       content.set(file, text);
     }
   // Modified: 2026-11-12 (chance). Persist shared client IDs before final output
   // and issue generation, including frozen or retained Adblock declarations.
-  const adblockNumbers = await ensureAdblockNumbers(root, state.artifacts);
+  const adblockNumbers = await ensureAdblockNumbers(root, state.artifacts, [], { write: false });
+  changes.set(ADBLOCK_NUMBERS_FILE, JSON.stringify(adblockNumbers, null, 2) + "\n");
   const scriptCopies = new Map<string, Map<string, string>>();
   const occupied = new Map<string, string>();
   const adapterCopies: Record<string, any> = {};

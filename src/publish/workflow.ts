@@ -7,7 +7,7 @@ import {normalizeSurgeModuleHeader} from "../domain/surge-module-header.ts";
 import { upstreamUpdateTime } from "../domain/update-metadata.ts";
 import { QX_WAYX_REJECT_ACTIONS } from "../domain/core.ts";
 import { normalizeRemoteScriptEcho, bindKnownBackups } from "../parser/backup-references.ts";
-import { readJson, readOptional, commitFiles } from "./transaction.ts";
+import { readJson, readOptional, commitFiles, rollbackFiles } from "./transaction.ts";
 import { addAppIcon } from "../domain/icons.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript publish layer; preserve source behavior.
 // Consolidated: 2026-10-03
@@ -289,17 +289,8 @@ export async function commitManagedConversion(
       throw new Error("Generated helper filename must be local to its plugin");
     files.push(path.join(root, "Script", entry.id, name));
   }
-  const snapshot: any = new Map(
-    await Promise.all(
-      files.map(async (file: any): Promise<any> => {
-        try {
-          return [file, await fs.readFile(file)];
-        } catch (error: any) {
-          if (error.code === "ENOENT") return [file, null];
-          throw error;
-        }
-      }),
-    ),
+  const snapshot = new Map<string, Buffer | null>(
+    await Promise.all(files.map(async (file: string) => [file, await readOptional(file)] as const)),
   );
   try {
     onStage("write-generated-helpers");
@@ -315,36 +306,8 @@ export async function commitManagedConversion(
       await writeSource(sourceState, source);
     }
     return { helperChanges, targetChanges };
-  } catch (error: any) {
-    const rollbackErrors: any = [];
-    for (const [file, bytes] of snapshot)
-      try {
-        if (bytes === null) await fs.rm(file, { force: true });
-        else {
-          const current: any = await fs
-            .readFile(file)
-            .catch((failure: any): any => {
-              if (failure.code === "ENOENT") return null;
-              throw failure;
-            });
-          if (current?.equals(bytes)) continue;
-          await fs.mkdir(path.dirname(file), { recursive: true });
-          await fs.writeFile(file, bytes);
-        }
-      } catch (failure: any) {
-        rollbackErrors.push(failure);
-      }
-    if (rollbackErrors.length) {
-      const failure: any = new AggregateError(
-        [error, ...rollbackErrors],
-        "Managed conversion write and rollback failed",
-        { cause: error },
-      );
-      failure.rollbackSucceeded = false;
-      throw failure;
-    }
-    error.rollbackSucceeded = true;
-    throw error;
+  } catch (error) {
+    return rollbackFiles(snapshot, error);
   }
 }
 export function managedTargetDiffs(state: any, out: any): any {

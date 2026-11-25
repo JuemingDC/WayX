@@ -554,6 +554,8 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-11-01 | Triggers | Implementation/config/test/spec pushes, PR, manual, daily; generated commits do not retrigger |
 | 2026-11-17 | Order | Initialize logs only → PR/push contract tests → restore working layout/branch budget → catalog → routing/sync → backup/API/rebind/cleanup → final audit → monitor/reports/Issues → gates → publish |
 | 2026-11-01 | Same-repo test PR | Exact PR head + authorized existing test publication; external PR read-only artifacts/candidates |
+| 2026-11-25 | Publication state | Validate layout manifest version, owned mappings and target uniqueness; write Adblock IDs in the same layout transaction; read-only layout planning makes no writes |
+| 2026-11-25 | Rollback | Shared rollback attempts every touched file independently; use unique temporary files and reject ambiguous or symbolic-link-managed paths |
 | 2026-10-25 | Per-plugin transaction | Source/targets/helpers rollback together; failure retains valid old baseline, first failure deferred; other plugins continue |
 | 2026-10-25 | Hard gates | Rollback failure, missing/incomplete evidence, required monitor/Issue failure, unexpected remote head or dirty managed state blocks publication |
 | 2026-11-25 | Script syntax | Batch published program syntax checks in bounded groups; validate every selected file and report failing paths |

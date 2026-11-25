@@ -76,6 +76,29 @@ const acquisitionRoot=path.join(root,'rule-acquisition');await fs.mkdir(path.joi
  const rename=fs.rename;fs.rename=async(from,to)=>{if(String(to).endsWith('/transaction/two'))throw Error('injected rename failure');return rename(from,to);};
  try{await assert.rejects(commitFiles(root,new Map([['transaction/one','new'],['transaction/two','next']])),e=>e.rollbackSucceeded===true);}finally{fs.rename=rename;}
  assert.equal(await fs.readFile(path.join(root,'transaction/one'),'utf8'),'old');await assert.rejects(fs.stat(path.join(root,'transaction/two')));
+ // One failed restoration must not prevent the remaining files from being restored.
+ const transactionDir=path.join(root,'transaction');
+ await fs.writeFile(path.join(transactionDir,'another'),'another-old');
+ await fs.writeFile(path.join(transactionDir,'untouched'),'untouched-old');
+ const untouchedTime=new Date('2020-01-01T00:00:00Z');
+ await fs.utimes(path.join(transactionDir,'untouched'),untouchedTime,untouchedTime);
+ const writeFile=fs.writeFile;
+ fs.rename=async(from,to)=>{if(String(to).endsWith('/transaction/two'))throw Error('injected commit failure');return rename(from,to);};
+ fs.writeFile=async(file,data,options)=>{if(String(file).endsWith('/transaction/one'))throw Error('injected rollback failure');return writeFile(file,data,options);};
+ try{
+  await assert.rejects(commitFiles(root,new Map([['transaction/one','new'],['transaction/another','new'],['transaction/two','next'],['transaction/untouched','new']])),e=>e.rollbackSucceeded===false);
+ }finally{fs.rename=rename;fs.writeFile=writeFile;}
+ assert.equal(await fs.readFile(path.join(transactionDir,'another'),'utf8'),'another-old');
+ assert.equal((await fs.stat(path.join(transactionDir,'untouched'))).mtimeMs,untouchedTime.getTime());
+ assert.equal((await fs.readdir(transactionDir)).filter(file=>file.endsWith('.wayx-tmp')).length,0);
+ await fs.writeFile(path.join(transactionDir,'one'),'old');
+ await assert.rejects(commitFiles(root,new Map([['transaction/one','new'],['transaction/./one','duplicate']])),/Duplicate managed path/);
+ assert.equal(await fs.readFile(path.join(transactionDir,'one'),'utf8'),'old');
+ await fs.symlink(path.join(transactionDir,'one'),path.join(transactionDir,'linked'));
+ await assert.rejects(commitFiles(root,new Map([['transaction/linked','changed']])),/symbolic link/);
+ assert.equal(await fs.readFile(path.join(transactionDir,'one'),'utf8'),'old');
+
+
 
  const src={id:'http',kind:'http',url:'https://example.test/spec',save_as:'spec.txt'},settings={mirror_root:'mirror'};let sent:any;
  const response=async(_url:string,options:any)=>{sent=options;return {status:200,bytes:Buffer.from('original\r\n'),headers:new Headers({etag:'v1'}),finalUrl:src.url};};
