@@ -356,23 +356,23 @@ export async function summary() {
       "",
       ...(changed.length ? changed.map((name) => `- ${name}`) : ["No catalog sections changed."]),
     );
-    const scriptDirectories = ["Boxjs", "Module", "Adblock", "Rule"];
-    const scripts = [
+    const catalogDirectories = ["Boxjs", "Module", "Adblock", "Rule"];
+    const files = [
       run(
-        ["git", "diff", "--name-only", "-z", "--no-renames", baseline, "--", ...scriptDirectories],
+        ["git", "diff", "--name-only", "-z", "--no-renames", baseline, "--", ...catalogDirectories],
         true,
       ),
       run(
-        ["git", "ls-files", "--others", "--exclude-standard", "-z", "--", ...scriptDirectories],
+        ["git", "ls-files", "--others", "--exclude-standard", "-z", "--", ...catalogDirectories],
         true,
       ),
-    ].join("\0").split("\0").filter((file) => /\.js$/i.test(file));
-    if (scripts.length)
+    ].join("\0").split("\0").filter(Boolean);
+    if (files.length)
       lines.push(
         "",
-        "## Changed catalog scripts",
+        "## Changed published resources",
         "",
-        ...[...new Set(scripts)].sort().map((file) => `- \`${file}\``),
+        ...[...new Set(files)].sort().map((file) => `- \`${file}\``),
       );
   }
   if (result.failedGates?.length)

@@ -538,7 +538,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-10-30 | `catalog`, `rules`, `sync` | Discover → acquire/aggregate/convert once per run |
 | 2026-10-30 | `verify` | One final type/script/actual-output/ICU audit; no canonical regeneration |
 | 2026-10-30 | `monitor`, `reports`, `issues` | Official changes → evidence reconciliation → category Issues; read-only outside publication context |
-| 2026-10-30 | `gate`, `publish`, `summary` | Require machine evidence → checked transactional publication → changed README sections, JS changes under the catalog directories, and failed gates |
+| 2026-10-30 | `gate`, `publish`, `summary` | Require machine evidence → checked transactional publication → changed README sections, published file changes under the catalog directories, and failed gates |
 | 2026-10-30 | `regenerate` | Explicit developer canonical comparison only; never routine daily synchronization |
 | 2026-10-30 | `icons` | Metadata-only refresh of registered targets; no plugin/routing regeneration |
 
@@ -560,7 +560,8 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | 2026-11-24 | Monitor | Official document/repository changes only; reuse discovery bytes; compare normalized HTTP content hashes; store mirror and baseline atomically without HTTP validators or check timestamps |
 | 2026-10-25 | Incomplete comparisons | Download failure, truncated GitHub diff or non-forward history retains baseline + failure; no guessed capability expansion |
 | 2026-10-25 | Read-only PR | No Issues/mirror/state mutation; save candidates/artifacts only |
-| 2026-10-25 | Artifacts | Logs, snapshots, generated outputs, reports and candidates; 14-day retention; runtime logs not committed |
+| 2026-11-25 | GitHub diff display | Collapse acquisition archives, monitor mirrors and source state by default; show published catalog files including JS |
+| 2026-10-25 | Artifacts | Published catalog outputs only; 14-day retention; runtime logs remain in the Actions job and are not committed |
 
 ### 7.3 Stable IDs, Issues and README
 

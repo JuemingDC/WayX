@@ -85,7 +85,7 @@ try{
  try{await publish();assert.equal(git('status','--porcelain'),'');assert.equal(git('show','HEAD:Module/QuantumultX/fixture.snippet'),'new');assert.equal(git('show','HEAD:Module/Surge/fixture.sgmodule'),'new');assert.equal(git('ls-remote','origin','refs/heads/main').split(/\s+/)[0],git('rev-parse','HEAD'));
   const summaryFile=path.join(root,'summary.md');Object.assign(process.env,{GITHUB_STEP_SUMMARY:summaryFile,PUBLICATION:'pushed'});
   await summary();const report=await fs.readFile(summaryFile,'utf8');
-  assert.match(report,/## README changes\n\n- Module\n/);assert.match(report,/Module\/QuantumultX\/fixture\.js/);assert.doesNotMatch(report,/Adblock|fixture\.json|fixture-backup|fixture-internal/);
+  assert.match(report,/## README changes\n\n- Module\n/);assert.match(report,/Module\/QuantumultX\/fixture\.js/);assert.match(report,/Module\/QuantumultX\/fixture\.snippet/);assert.match(report,/Module\/Surge\/fixture\.sgmodule/);assert.doesNotMatch(report,/Adblock|fixture\.json|fixture-backup|fixture-internal/);
   await fs.writeFile(path.join(publicationRoot,'Module/QuantumultX/new.js'),'new');
   Object.assign(process.env,{EXPECTED_HEAD:git('rev-parse','HEAD'),PUBLICATION:'read-only'});
   await fs.writeFile(summaryFile,'');await summary();const candidate=await fs.readFile(summaryFile,'utf8');

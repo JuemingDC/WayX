@@ -168,7 +168,7 @@ jobs:
         run: node src/cli.ts summary
 
       # Modified: 2026-11-01 (chance). Include functional native Module outputs in the downloadable artifacts.
-      - name: Upload automation reports and generated outputs
+      - name: Upload published resources
         if: always()
         uses: actions/upload-artifact@v7.0.2
         with:
@@ -177,16 +177,11 @@ jobs:
           include-hidden-files: true
           retention-days: 14
           path: |
-            .github/monitor/.runtime/
-            .github/sources/loon.json
-            Resource/Loon/
-            Resource/Encrypted/
-            Resource/Backup/
+            Boxjs/
             Rule/
             Adblock/Quantumult X/
             Adblock/Surge/
             Module/
-            Script/
             README.md
 
       - name: Surface blocked or failed publication
