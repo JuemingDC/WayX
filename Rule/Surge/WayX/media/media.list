@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-11-25 07:01:01 UTC
+# Updated: 2026-11-25 15:13:53 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7272
+# Rules: 7283
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,cdn.globalsigncdn.com.cdn.cloudflare.net
@@ -4700,13 +4700,16 @@ DOMAIN-SUFFIX,meetsmartbook.com
 DOMAIN-SUFFIX,mega.io
 DOMAIN-SUFFIX,mega.nz
 DOMAIN-SUFFIX,megaad.nz
+DOMAIN-SUFFIX,megafon.cloud
 DOMAIN-SUFFIX,megafon.com
 DOMAIN-SUFFIX,megafon.ru
 DOMAIN-SUFFIX,megafonpro.ru
 DOMAIN-SUFFIX,megapay.nz
+DOMAIN-SUFFIX,megapbx.ru
 DOMAIN-SUFFIX,megaphone.fm
 DOMAIN-SUFFIX,megas4.com
 DOMAIN-SUFFIX,megasrv.de
+DOMAIN-SUFFIX,megatech-it.ru
 DOMAIN-SUFFIX,megogo.net
 DOMAIN-SUFFIX,melon.com
 DOMAIN-SUFFIX,memealerts.com
@@ -4729,6 +4732,7 @@ DOMAIN-SUFFIX,mfmf.club
 DOMAIN-SUFFIX,mgfn.ru
 DOMAIN-SUFFIX,mgo-images.com
 DOMAIN-SUFFIX,mgo.com
+DOMAIN-SUFFIX,mgts.ru
 DOMAIN-SUFFIX,mhgui.com
 DOMAIN-SUFFIX,michill.jp
 DOMAIN-SUFFIX,miitomo.com
@@ -4779,6 +4783,7 @@ DOMAIN-SUFFIX,mo.co
 DOMAIN-SUFFIX,mobatek.net
 DOMAIN-SUFFIX,mobile-icq.com
 DOMAIN-SUFFIX,mobileicq.com
+DOMAIN-SUFFIX,mobileid.ru
 DOMAIN-SUFFIX,mobilemarketo.com
 DOMAIN-SUFFIX,mochajs.org
 DOMAIN-SUFFIX,modernwarships.com
@@ -4876,6 +4881,7 @@ DOMAIN-SUFFIX,mubi.com
 DOMAIN-SUFFIX,mubicdn.net
 DOMAIN-SUFFIX,mudbox3d.com
 DOMAIN-SUFFIX,mudvod.tv
+DOMAIN-SUFFIX,multifon.ru
 DOMAIN-SUFFIX,multiplydiversity.com
 DOMAIN-SUFFIX,muscdn.com
 DOMAIN-SUFFIX,musical.ly
@@ -5198,6 +5204,7 @@ DOMAIN-SUFFIX,nytimg.com
 DOMAIN-SUFFIX,nytlog.com
 DOMAIN-SUFFIX,nytstyle.com
 DOMAIN-SUFFIX,o-uchi.ru
+DOMAIN-SUFFIX,o7.com
 DOMAIN-SUFFIX,oath.cloud
 DOMAIN-SUFFIX,oath.com
 DOMAIN-SUFFIX,objectarx.com
@@ -5252,6 +5259,7 @@ DOMAIN-SUFFIX,onemozilla.org
 DOMAIN-SUFFIX,oneteamconference.com
 DOMAIN-SUFFIX,onetrust.com
 DOMAIN-SUFFIX,onkakao.net
+DOMAIN-SUFFIX,onlime.ru
 DOMAIN-SUFFIX,onlinegamer.jp
 DOMAIN-SUFFIX,onlyfans.com
 DOMAIN-SUFFIX,op.gg
@@ -5742,6 +5750,7 @@ DOMAIN-SUFFIX,rockylinux.org
 DOMAIN-SUFFIX,roku.com
 DOMAIN-SUFFIX,rokutime.com
 DOMAIN-SUFFIX,rostaxi.org
+DOMAIN-SUFFIX,rostelecom-rb.ru
 DOMAIN-SUFFIX,rostelecom.ru
 DOMAIN-SUFFIX,route53.cn
 DOMAIN-SUFFIX,routerboard.com
@@ -6087,6 +6096,7 @@ DOMAIN-SUFFIX,spacemail.com
 DOMAIN-SUFFIX,spaceship.com
 DOMAIN-SUFFIX,spacex.com
 DOMAIN-SUFFIX,spcc-sp.com
+DOMAIN-SUFFIX,spd-mgts.ru
 DOMAIN-SUFFIX,spearhead.kr
 DOMAIN-SUFFIX,speeddreamride.com
 DOMAIN-SUFFIX,speedfantasybid.com
@@ -6929,6 +6939,7 @@ DOMAIN-SUFFIX,xn--80asgb.xn--p1ai
 DOMAIN-SUFFIX,xn--90absjljw3g.xn--p1ai
 DOMAIN-SUFFIX,xn--90aefb9d.xn--p1ai
 DOMAIN-SUFFIX,xn--d1acpjx3f.xn--p1ai
+DOMAIN-SUFFIX,xn--e1aapchhekkk.xn--p1ai
 DOMAIN-SUFFIX,xn--e1aigb.xn--p1ai
 DOMAIN-SUFFIX,xn--mts47c3w9b1qr.cn
 DOMAIN-SUFFIX,xn--mts47c3w9b1qr.net

@@ -1,11 +1,11 @@
 # Name: media
-# Updated: 2026-11-25 07:01:01 UTC
+# Updated: 2026-11-25 15:13:53 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, Sukka, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-communication.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-password-management.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://ruleset.skk.moe/List/ip/stream.conf ; https://ruleset.skk.moe/List/non_ip/stream.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 7272
+# Rules: 7283
 # Managed by: WayX Rule Aggregator
 
 host,cdn.globalsigncdn.com.cdn.cloudflare.net,ssid
@@ -4700,13 +4700,16 @@ host-suffix,meetsmartbook.com,ssid
 host-suffix,mega.io,ssid
 host-suffix,mega.nz,ssid
 host-suffix,megaad.nz,ssid
+host-suffix,megafon.cloud,ssid
 host-suffix,megafon.com,ssid
 host-suffix,megafon.ru,ssid
 host-suffix,megafonpro.ru,ssid
 host-suffix,megapay.nz,ssid
+host-suffix,megapbx.ru,ssid
 host-suffix,megaphone.fm,ssid
 host-suffix,megas4.com,ssid
 host-suffix,megasrv.de,ssid
+host-suffix,megatech-it.ru,ssid
 host-suffix,megogo.net,ssid
 host-suffix,melon.com,ssid
 host-suffix,memealerts.com,ssid
@@ -4729,6 +4732,7 @@ host-suffix,mfmf.club,ssid
 host-suffix,mgfn.ru,ssid
 host-suffix,mgo-images.com,ssid
 host-suffix,mgo.com,ssid
+host-suffix,mgts.ru,ssid
 host-suffix,mhgui.com,ssid
 host-suffix,michill.jp,ssid
 host-suffix,miitomo.com,ssid
@@ -4779,6 +4783,7 @@ host-suffix,mo.co,ssid
 host-suffix,mobatek.net,ssid
 host-suffix,mobile-icq.com,ssid
 host-suffix,mobileicq.com,ssid
+host-suffix,mobileid.ru,ssid
 host-suffix,mobilemarketo.com,ssid
 host-suffix,mochajs.org,ssid
 host-suffix,modernwarships.com,ssid
@@ -4876,6 +4881,7 @@ host-suffix,mubi.com,ssid
 host-suffix,mubicdn.net,ssid
 host-suffix,mudbox3d.com,ssid
 host-suffix,mudvod.tv,ssid
+host-suffix,multifon.ru,ssid
 host-suffix,multiplydiversity.com,ssid
 host-suffix,muscdn.com,ssid
 host-suffix,musical.ly,ssid
@@ -5198,6 +5204,7 @@ host-suffix,nytimg.com,ssid
 host-suffix,nytlog.com,ssid
 host-suffix,nytstyle.com,ssid
 host-suffix,o-uchi.ru,ssid
+host-suffix,o7.com,ssid
 host-suffix,oath.cloud,ssid
 host-suffix,oath.com,ssid
 host-suffix,objectarx.com,ssid
@@ -5252,6 +5259,7 @@ host-suffix,onemozilla.org,ssid
 host-suffix,oneteamconference.com,ssid
 host-suffix,onetrust.com,ssid
 host-suffix,onkakao.net,ssid
+host-suffix,onlime.ru,ssid
 host-suffix,onlinegamer.jp,ssid
 host-suffix,onlyfans.com,ssid
 host-suffix,op.gg,ssid
@@ -5742,6 +5750,7 @@ host-suffix,rockylinux.org,ssid
 host-suffix,roku.com,ssid
 host-suffix,rokutime.com,ssid
 host-suffix,rostaxi.org,ssid
+host-suffix,rostelecom-rb.ru,ssid
 host-suffix,rostelecom.ru,ssid
 host-suffix,route53.cn,ssid
 host-suffix,routerboard.com,ssid
@@ -6087,6 +6096,7 @@ host-suffix,spacemail.com,ssid
 host-suffix,spaceship.com,ssid
 host-suffix,spacex.com,ssid
 host-suffix,spcc-sp.com,ssid
+host-suffix,spd-mgts.ru,ssid
 host-suffix,spearhead.kr,ssid
 host-suffix,speeddreamride.com,ssid
 host-suffix,speedfantasybid.com,ssid
@@ -6929,6 +6939,7 @@ host-suffix,xn--80asgb.xn--p1ai,ssid
 host-suffix,xn--90absjljw3g.xn--p1ai,ssid
 host-suffix,xn--90aefb9d.xn--p1ai,ssid
 host-suffix,xn--d1acpjx3f.xn--p1ai,ssid
+host-suffix,xn--e1aapchhekkk.xn--p1ai,ssid
 host-suffix,xn--e1aigb.xn--p1ai,ssid
 host-suffix,xn--mts47c3w9b1qr.cn,ssid
 host-suffix,xn--mts47c3w9b1qr.net,ssid

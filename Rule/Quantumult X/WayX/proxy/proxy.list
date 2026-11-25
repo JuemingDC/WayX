@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-25 07:01:01 UTC
+# Updated: 2026-11-25 15:13:53 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34167
+# Rules: 34178
 # Managed by: WayX Rule Aggregator
 
 host,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net,ssid
@@ -21121,17 +21121,20 @@ host-suffix,megaad.nz,ssid
 host-suffix,megacamz.com,ssid
 host-suffix,megaeth.com,ssid
 host-suffix,megafilmporno.com,ssid
+host-suffix,megafon.cloud,ssid
 host-suffix,megafon.com,ssid
 host-suffix,megafon.ru,ssid
 host-suffix,megafonpro.ru,ssid
 host-suffix,megalodon.jp,ssid
 host-suffix,megapay.nz,ssid
+host-suffix,megapbx.ru,ssid
 host-suffix,megaphone.fm,ssid
 host-suffix,megapornfreehd.com,ssid
 host-suffix,megapornpics.com,ssid
 host-suffix,megaproxy.com,ssid
 host-suffix,megas4.com,ssid
 host-suffix,megasrv.de,ssid
+host-suffix,megatech-it.ru,ssid
 host-suffix,megatitsminka.com,ssid
 host-suffix,megogo.net,ssid
 host-suffix,megurineluka.com,ssid
@@ -21227,6 +21230,7 @@ host-suffix,mgo-images.com,ssid
 host-suffix,mgo.com,ssid
 host-suffix,mgoon.com,ssid
 host-suffix,mgstage.com,ssid
+host-suffix,mgts.ru,ssid
 host-suffix,mh4u.org,ssid
 host-suffix,mhcb.ru,ssid
 host-suffix,mhcbr.ru,ssid
@@ -21774,6 +21778,7 @@ host-suffix,mobile.de,ssid
 host-suffix,mobile01.com,ssid
 host-suffix,mobilefacebook.com,ssid
 host-suffix,mobileicq.com,ssid
+host-suffix,mobileid.ru,ssid
 host-suffix,mobileinternational.com,ssid
 host-suffix,mobilemarketo.com,ssid
 host-suffix,mobileme.dk,ssid
@@ -22258,6 +22263,7 @@ host-suffix,mulheresafoder.com,ssid
 host-suffix,mullvad.net,ssid
 host-suffix,mult34.com,ssid
 host-suffix,multicurrencycashpassport.com,ssid
+host-suffix,multifon.ru,ssid
 host-suffix,multiply.com,ssid
 host-suffix,multiplydiversity.com,ssid
 host-suffix,multporn.net,ssid
@@ -23400,6 +23406,7 @@ host-suffix,o365weve.com,ssid
 host-suffix,o3o.ca,ssid
 host-suffix,o3t.ru,ssid
 host-suffix,o3team.ru,ssid
+host-suffix,o7.com,ssid
 host-suffix,oaistatic.com,ssid
 host-suffix,oaistatsig.com,ssid
 host-suffix,oaiusercontent.com,ssid
@@ -23607,6 +23614,7 @@ host-suffix,onion.city,ssid
 host-suffix,onion.ly,ssid
 host-suffix,onionshare.org,ssid
 host-suffix,onkakao.net,ssid
+host-suffix,onlime.ru,ssid
 host-suffix,online-deals.net,ssid
 host-suffix,online-instagram.com,ssid
 host-suffix,onlineapplestore.com,ssid
@@ -26179,6 +26187,7 @@ host-suffix,rosemarydoll.com,ssid
 host-suffix,roshy.tv,ssid
 host-suffix,rossiyasegodnya.com,ssid
 host-suffix,rostaxi.org,ssid
+host-suffix,rostelecom-rb.ru,ssid
 host-suffix,rostelecom.ru,ssid
 host-suffix,rottentomatoes.com,ssid
 host-suffix,rou.video,ssid
@@ -27772,6 +27781,7 @@ host-suffix,spatial.io,ssid
 host-suffix,spb.com,ssid
 host-suffix,spbexchange.ru,ssid
 host-suffix,spcc-sp.com,ssid
+host-suffix,spd-mgts.ru,ssid
 host-suffix,speakerdeck.com,ssid
 host-suffix,spearhead.kr,ssid
 host-suffix,spec.org,ssid
@@ -32558,6 +32568,7 @@ host-suffix,xn--czrs0t4phtr3a.cn,ssid
 host-suffix,xn--d1abkf4ap.fun,ssid
 host-suffix,xn--d1acpjx3f.xn--p1ai,ssid
 host-suffix,xn--d4ty0ojsqzfd.com,ssid
+host-suffix,xn--e1aapchhekkk.xn--p1ai,ssid
 host-suffix,xn--e1adjldbbpv.xn--90ais,ssid
 host-suffix,xn--e1aigb.xn--p1ai,ssid
 host-suffix,xn--fiq80y.hk,ssid
