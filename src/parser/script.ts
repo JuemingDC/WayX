@@ -42,7 +42,7 @@ export function parseLoonArguments(lines: any = []): any {
     const id = line.slice(0, eq).trim();
     const tokens: any = splitTopLevelCsv(line.slice(eq + 1));
     const kind: any = (tokens.shift() || "").trim().toLowerCase();
-    const values: any = [];
+    const values: string[] = [];
     const options: any = {};
     for (const token of tokens) {
       const m: any = token.match(/^([A-Za-z_][\w-]*)\s*=\s*(.*)$/s);
@@ -71,7 +71,7 @@ export function parseLoonArguments(lines: any = []): any {
   }
   return args;
 }
-function surgeArgumentName(id: any): any {
+function surgeArgumentName(id: any) {
   const raw = String(id || "");
   const safe = raw.replace(/[^A-Za-z0-9_]/g, "_");
   if (!safe || !/^[A-Za-z_]/.test(safe)) return "_" + safe;
@@ -174,7 +174,7 @@ export function parseLegacyLoonPluginObjectRefs(source: any): any {
     /^\{([A-Za-z_][\w-]*(?:\s*,\s*[A-Za-z_][\w-]*)*)\}$/,
   );
   if (compact)
-    return compact[1].split(",").map((value: any): any => value.trim());
+    return compact[1].split(",").map((value: string) => value.trim());
   return null;
 }
 // 上游错误 / 转换失败案例：PluginObject is a nonempty, unique list of
@@ -231,7 +231,7 @@ export function surgePluginObjectArgument(refs: any = [], table: any): any {
   } catch (error: any) {
     return { ok: false, reason: error.message };
   }
-  const fields: any = [];
+  const fields: string[] = [];
   for (const id of refs) {
     const entry: any = table?.byId?.get(String(id));
     if (!entry)
@@ -260,7 +260,7 @@ export function surgePluginObjectArgument(refs: any = [], table: any): any {
 }
 export function surgeRewriteArgumentPayload(refs: any = [], table: any) {
   const unique: any = [...new Set(refs.map(String))];
-  const fields: any = [];
+  const fields: string[] = [];
   for (const id of unique) {
     const entry: any = table?.byId?.get(id);
     if (!entry)
@@ -302,19 +302,19 @@ function fail(source: any, message: any) {
   error.code = "WAYX_SCRIPT_V2_PARSE";
   throw error;
 }
-function decodeQuoted(raw: any): any {
+function decodeQuoted(raw: string): any {
   if (raw.startsWith('"')) {
     try {
       return JSON.parse(raw);
     } catch {
       let out = "";
       for (let i = 1; i < raw.length - 1; i++) {
-        const ch: any = raw[i];
+        const ch = raw[i];
         if (ch !== "\\") {
           out += ch;
           continue;
         }
-        const next: any = raw[++i];
+        const next = raw[++i];
         if (next === "n") out += "\n";
         else if (next === "r") out += "\r";
         else if (next === "t") out += "\t";
@@ -602,7 +602,7 @@ function validateOptions(options: any, phase: any) {
   }
 }
 // Shared lexical splitting preserves regex alternation, raw/JQ strings and options.
-export function splitScriptPipelineSources(source: any, {preserveJsonPipelines = false}: any = {}): any {
+export function splitScriptPipelineSources(source: any, {preserveJsonPipelines = false}: any = {}) {
   const text = String(source ?? "").trim();
   const found: any = scanState(text, (i: any): any =>
     /^\s+then\s+/.test(text.slice(i))
@@ -611,7 +611,7 @@ export function splitScriptPipelineSources(source: any, {preserveJsonPipelines =
   );
   if (!found) return [text];
   const tail = text.slice(found.index + found.length),
-    segments: any = [];
+    segments: string[] = [];
   let depth = 0,
     start = 0;
   scanState(tail, (i: any) => {
@@ -642,7 +642,7 @@ export function splitScriptPipelineSources(source: any, {preserveJsonPipelines =
     previousJson = json;
   }
   return groups.map(
-    (part: any) => text.slice(0, found.index) + " then " + part,
+    (part: string) => text.slice(0, found.index) + " then " + part,
   );
 }
 export function selectScriptPipelineSource(source: any): any {
@@ -759,7 +759,7 @@ export function parseScriptV2(source: any): any {
     raw,
   };
 }
-export function scriptOption(ast: any, name: any): any {
+export function scriptOption(ast: any, name: string): any {
   return (
     ast?.options?.find((option: any) => option.name === name)?.value ??
     null
@@ -767,8 +767,8 @@ export function scriptOption(ast: any, name: any): any {
 }
 export function scriptOptionBoolean(
   ast: any,
-  name: any,
-  fallback: any = false,
+  name: string,
+  fallback: boolean = false,
 ): any {
   const value: any = scriptOption(ast, name);
   return value?.type === "boolean" ? value.value : fallback;
@@ -850,10 +850,10 @@ export function parseLegacyScriptLine(source: any): any {
     /^(http-request|http-response)\s+(\S+)\s+(.+)$/i,
   );
   if (!match) return null;
-  const type: any = match[1].toLowerCase();
-  const phase: any = type.replace(/^http-/, "");
-  const pattern: any = match[2];
-  const rest: any = match[3];
+  const type = match[1].toLowerCase();
+  const phase = type.replace(/^http-/, "");
+  const pattern = match[2];
+  const rest = match[3];
   const options: any = new Map();
   const optionList: any = [];
   for (const token of scriptSplitTopLevelCsv(rest)) {
@@ -1093,7 +1093,7 @@ function addUse(usage: any, id: any, use: any) {
     list.push(use);
   }
 }
-function boundaryValue(line: any, key: any) {
+function boundaryValue(line: any, key: string) {
   const re = new RegExp(
     "(?:^|,)\\s*" +
       key +
@@ -1102,7 +1102,7 @@ function boundaryValue(line: any, key: any) {
   );
   return (String(line).match(re) || [])[1]?.trim() || "";
 }
-function legacyRefs(value: any): any {
+function legacyRefs(value: string): any {
   const refs: any = new Set();
   const source = String(value || "");
   for (const match of source.matchAll(/\$?\{([A-Za-z_][\w-]*)\}/g))
@@ -1247,7 +1247,7 @@ export function analyzePluginArgumentUsage({
       }
       continue;
     }
-    const argument: any = boundaryValue(line, "argument");
+    const argument = boundaryValue(line, "argument");
     for (const id of legacyRefs(argument)) {
       if (declaredIds.has(id))
         addUse(usage, id, { section: "Script", kind: "argument-object", line });
@@ -1259,7 +1259,7 @@ export function analyzePluginArgumentUsage({
           line,
         });
     }
-    const enable: any = boundaryValue(line, "enable");
+    const enable = boundaryValue(line, "enable");
     for (const id of legacyRefs(enable)) {
       if (declaredIds.has(id))
         addUse(usage, id, {
@@ -1305,7 +1305,7 @@ export function analyzePluginArgumentUsage({
 // Script action selection is based only on declaration semantics and inspected
 // source behavior. Script URL, plugin id, author and repository never select an
 // action.
-export function scriptBehaviorSignals(sourceText: any = "") {
+export function scriptBehaviorSignals(sourceText: string = "") {
   const source = String(sourceText || "");
   return {
     sourceAvailable: Boolean(source.trim()),
@@ -1320,13 +1320,13 @@ export function selectQxScriptAction({
   phase,
   requiresBody = false,
   sourceText = "",
-}: any): any {
+}: any) {
   const p = String(phase)
     .toLowerCase()
     .replace(/^http-/, "");
   if (!["request", "response"].includes(p))
     throw new Error(`Unsupported QX HTTP script phase: ${phase}`);
-  const signals: any = scriptBehaviorSignals(sourceText);
+  const signals = scriptBehaviorSignals(sourceText);
   // The Loon declaration phase is authoritative for native QX Script mapping.
   // QX's official sample and KOP-XIAO's resource parser both map
   // request/response + requires-body directly to the corresponding
@@ -1356,13 +1356,13 @@ export function selectQxScriptAction({
 function unsupported(reason: any): any {
   return { ok: false, reason };
 }
-function scriptUrlCondition(ast: any, target: any = "generic"): any {
+function scriptUrlCondition(ast: any, target: string = "generic"): any {
   return simpleUrlRewriteCondition(
     { type: "rewrite", condition: ast.condition },
     { target },
   );
 }
-function fixedOption(ast: any, name: any): any {
+function fixedOption(ast: any, name: string): any {
   const value: any = scriptOption(ast, name);
   if (!value) return null;
   if (["string", "raw-string", "number", "boolean"].includes(value.type))
@@ -1375,7 +1375,7 @@ function argumentDefault(id: any, table: any): any {
 }
 // Modified: 2026-11-17 (chance). Carry Loon arguments through QX's official
 // remote-script fragment transport; preserve original fragments and typed defaults.
-export function qxScriptArgumentUrl(scriptUrl: any, argument: any, table: any, notes: any, legacy: any = false): any {
+export function qxScriptArgumentUrl(scriptUrl: any, argument: any, table: any, notes: any, legacy: boolean = false): any {
   if (argument === null || argument === undefined || argument === "") return scriptUrl;
   let value: any;
   const refs: any = legacy ? parseLegacyLoonPluginObjectRefs(argument)
@@ -1496,7 +1496,7 @@ function qxCronExpression(ast: any, argumentTable: any, notes: any): any {
   return unsupported("unsupported Cron expression type for Quantumult X");
 }
 function qxTaskOptions(ast: any, notes: any): any {
-  const parts: any = [];
+  const parts: string[] = [];
   const tag: any = fixedOption(ast, "tag");
   const img: any = fixedOption(ast, "img_url");
   if (tag !== null && String(tag)) parts.push("tag=" + String(tag));
@@ -1517,7 +1517,7 @@ function qxNonHttpScriptV2Plan(
   ast: any,
   { scriptUrl, argumentTable = null }: any = {},
 ): any {
-  const notes: any = [];
+  const notes: string[] = [];
   scriptUrl = qxScriptArgumentUrl(scriptUrl, ast.script.argument, argumentTable, notes);
   const timeout: any = scriptOption(ast, "timeout");
   if (timeout)
@@ -1925,7 +1925,7 @@ export function planQxScript(ir: any, ctx: any = {}): any {
   const debugFixed = sc.debug ? String(sc.debug).trim().toLowerCase() : "";
   const debugEnabled =
     Boolean(sc.debug) && !["false", "0"].includes(debugFixed);
-  const notes: any = [];
+  const notes: string[] = [];
   scriptUrl = qxScriptArgumentUrl(scriptUrl, sc.argument, ctx.argumentTable, notes, true);
   if (enableDynamic) {
     notes.push(
@@ -2021,7 +2021,7 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
     }
     requirementPrefix = requirement + " ";
   }
-  const notes: any = [];
+  const notes: string[] = [];
   const params = [
     "type=" + sc.httpType,
     "pattern=" + surgeRegexParameter(targetPattern),

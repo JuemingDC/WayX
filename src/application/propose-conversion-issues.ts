@@ -56,7 +56,7 @@ function fingerprint(parts: any) {
     .digest("hex")
     .slice(0, 16);
 }
-async function readFailureReport(file: any, kind: any): Promise<any> {
+async function readFailureReport(file: string, kind: string): Promise<any> {
   let report: any;
   try {
     report = JSON.parse(await fs.readFile(file, "utf8"));
@@ -106,7 +106,7 @@ async function readFailureReport(file: any, kind: any): Promise<any> {
   return report;
 }
 async function targetFiles(): Promise<any> {
-  const out: any = [];
+  const out: string[] = [];
   for (const dir of TARGET_DIRS) {
     let entries: any = [];
     try {
@@ -122,20 +122,20 @@ async function targetFiles(): Promise<any> {
   }
   return out.sort();
 }
-function extractTargetMarkers(text: any, file: any): any {
+function extractTargetMarkers(text: string, file: string): any {
   const lines = String(text ?? "")
     .replace(/\r\n?/g, "\n")
     .split("\n");
   const out: any = [];
   for (let i = 0; i < lines.length; i++) {
     const value = lines[i].trim();
-    const review: any = value.match(REVIEW_RE);
-    const issue: any = value.match(ISSUE_RE);
+    const review = value.match(REVIEW_RE);
+    const issue = value.match(ISSUE_RE);
     if (!review && !issue) continue;
     let source = "";
     for (let j = i + 1; j < Math.min(lines.length, i + 5); j++) {
       const candidate = lines[j].trim();
-      const match: any = candidate.match(SOURCE_RE);
+      const match = candidate.match(SOURCE_RE);
       if (match) {
         source = match[1].trim();
         break;
@@ -149,8 +149,8 @@ function extractTargetMarkers(text: any, file: any): any {
     }
     out.push({
       kind: review ? "review" : "unknown",
-      code: review ? review[1].trim() : issue[1].trim(),
-      reason: (review ? review[2] : issue[2]).trim(),
+      code: review ? review[1].trim() : issue![1].trim(),
+      reason: (review ? review[2] : issue![2]).trim(),
       source,
       file,
       line: i + 1,
@@ -203,7 +203,7 @@ async function groupedTargetProblems(catalog: any): Promise<any> {
     if (!entry) continue;
     const text = await fs.readFile(file, "utf8");
     for (const marker of extractTargetMarkers(text, relative)) {
-      const key: any = fingerprint([
+      const key = fingerprint([
         entry.id,
         marker.kind,
         marker.code,
@@ -336,7 +336,7 @@ export function targetProblemTitle(group: any) {
   );
 }
 export function syncFailureTitle(failure: any) {
-  const fp: any = fingerprint([
+  const fp = fingerprint([
     failure.plugin.id,
     failure.stage,
     failure.reason,
@@ -415,7 +415,7 @@ async function sourceSemanticProblems(
   return out;
 }
 export async function validationIssueCandidates(
-  root: any = ROOT,
+  root: string = ROOT,
   stages: any = {},
 ): Promise<any> {
   const report = await readValidationReport(root);
@@ -515,7 +515,7 @@ export function recoveredValidationIssues(report: any, issues: any): any {
     );
   });
 }
-export async function ruleIssueCandidates(root: any = ROOT): Promise<any> {
+export async function ruleIssueCandidates(root: string = ROOT): Promise<any> {
   let report: any;
   try {
     report = JSON.parse(
@@ -538,7 +538,7 @@ export async function ruleIssueCandidates(root: any = ROOT): Promise<any> {
   for (const item of report.quarantined) {
     if (!item.source || !item.code || !item.declaration || !item.reason)
       throw new Error("Invalid quarantined source rule");
-    const key: any = fingerprint([item.source, item.code]);
+    const key = fingerprint([item.source, item.code]);
     if (!groups.has(key))
       groups.set(key, {
         fingerprint: key,

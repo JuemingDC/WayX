@@ -15,8 +15,8 @@ export function parseConfigurationDeclaration(
   const match = source.match(/^([\w-]+)\s*=\s*([\s\S]*)$/);
   const domain =
     String(section).toLowerCase() === "general" ? "general" : "mitm";
-  const name: any = match?.[1]?.toLowerCase() ?? null;
-  const value: any = match?.[2]?.trim() ?? null;
+  const name = match?.[1]?.toLowerCase() ?? null;
+  const value = match?.[2]?.trim() ?? null;
   const hostnameList =
     name === (domain === "general" ? "real-ip" : "hostname");
   return Object.freeze({
@@ -30,7 +30,7 @@ export function parseConfigurationDeclaration(
       hostnameList && value
         ? value
             .split(",")
-            .map((host: any): any => host.trim())
+            .map((host: string): any => host.trim())
             .filter(Boolean)
         : [],
     ),
@@ -86,6 +86,6 @@ export function planConfiguration(ir: any, target: any) {
       };
 }
 // Public compatibility API delegates to the sole source parser + IR adapter.
-export function planMitmLine(line: any, target: any): any {
+export function planMitmLine(line: any, target: any) {
   return planConfiguration(parseConfigurationDeclaration(line), target);
 }

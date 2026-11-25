@@ -72,16 +72,16 @@ const REASON: Readonly<Record<number, string>> = Object.freeze({
   503: "Service Unavailable",
   504: "Gateway Timeout",
 });
-export function qxMimeTypeForLoonMock(type: any = ""): any {
+export function qxMimeTypeForLoonMock(type: string = "") {
   return (
     QX_MOCK_MIME[String(type || "").toLowerCase()] || "application/octet-stream"
   );
 }
-export function qxMockTypeIsBinary(type: any = ""): any {
+export function qxMockTypeIsBinary(type: string = "") {
   return !QX_MOCK_TEXT_TYPES.has(String(type || "").toLowerCase());
 }
-function qxMockStatusLine(status: any = 200): any {
-  const code: any = Number.isInteger(status) ? status : 200;
+function qxMockStatusLine(status: number = 200) {
+  const code = Number.isInteger(status) ? status : 200;
   return `HTTP/1.1 ${code} ${REASON[code] || "WayX Mock"}`;
 }
 function meta({
@@ -89,7 +89,7 @@ function meta({
   category = "",
   sourceLine = "",
   sourceFile = "",
-}: any = {}): any {
+}: any = {}) {
   return [
     stamp ? `// Updated: ${stamp}` : null,
     "// Converted by: chance",
@@ -98,7 +98,7 @@ function meta({
     sourceFile ? `// Source file: ${sourceFile}` : null,
   ].filter(Boolean);
 }
-function qxMockBase64Decoder(): any {
+function qxMockBase64Decoder() {
   return [
     "function __wayxBase64ToArrayBuffer(input) {",
     '  const table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";',
@@ -120,7 +120,7 @@ function qxMockBase64Decoder(): any {
   ];
 }
 // Modified: 2026-11-03 (chance). Header helpers do not depend on operation metadata.
-function headerHelpers(): any {
+function headerHelpers() {
   return [
     regexReplacementRuntimeSource(),
     "function __wayxHeaderKey(headers, name) {",
@@ -145,11 +145,11 @@ function renderHeaderOps(
   lines: any,
   headerOps: any = [],
   { knownHeaderNames = null }: any = {},
-): any {
+) {
   if (!headerOps.length) return;
   const known: any = knownHeaderNames
     ? new Set(
-        [...knownHeaderNames].map((name: any): any =>
+        [...knownHeaderNames].map((name: any) =>
           String(name).toLowerCase(),
         ),
       )
@@ -274,12 +274,12 @@ const SURGE_MOCK_TEXT_TYPES = new Set([
   "javascript",
   "plain",
 ]);
-function fixedString(node: any, label: any): any {
+function fixedString(node: any, label: string) {
   if (!node || !["string", "raw-string"].includes(node.type))
     throw new Error(label + " must be a fixed string");
   return String(node.value);
 }
-function boolValue(node: any, fallback: any = false): any {
+function boolValue(node: any, fallback: boolean = false): any {
   if (!node) return fallback;
   if (node.type !== "boolean")
     throw new Error("mock Base64 flag must be Boolean");
@@ -311,7 +311,7 @@ function surgeMockMetadata({
   category = "",
   sourceLine = "",
   sourceFile = "",
-}: any = {}): any {
+}: any = {}) {
   return [
     stamp ? "// Updated: " + stamp : null,
     "// Converted by: chance",
@@ -320,7 +320,7 @@ function surgeMockMetadata({
     sourceFile ? "// Source file: " + sourceFile : null,
   ].filter(Boolean);
 }
-function surgeMockBase64Decoder(): any {
+function surgeMockBase64Decoder() {
   return [
     "function __wayxBase64ToUint8Array(input){",
     '  const table="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";',
@@ -331,7 +331,7 @@ function surgeMockBase64Decoder(): any {
     "}",
   ];
 }
-function validateBase64(text: any): any {
+function validateBase64(text: any) {
   const compact = String(text || "").replace(/\s+/g, "");
   if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact) || compact.length % 4 === 1) {
     throw new Error("mock Base64 body is invalid");
@@ -359,7 +359,7 @@ export function renderSurgeRequestMockScript(
     action.args[0],
     "mock content type",
   ).toLowerCase();
-  const mime: any = SURGE_MOCK_MIME[contentType] || "application/octet-stream";
+  const mime = SURGE_MOCK_MIME[contentType] || "application/octet-stream";
   const fileMode: any = action.name.endsWith("_file");
   const base64: any = boolValue(action.args[fileMode ? 2 : 2], false);
   const binary = !SURGE_MOCK_TEXT_TYPES.has(contentType);
@@ -437,14 +437,14 @@ const STATUS_TEXT: Readonly<Record<number, string>> = Object.freeze({
   503: "Service Unavailable",
   504: "Gateway Timeout",
 });
-function qxSemanticStatusLine(code: any): any {
+function qxSemanticStatusLine(code: any) {
   return "HTTP/1.1 " + code + " " + (STATUS_TEXT[code] || "WayX Response");
 }
 function qxSemanticMetadata({
   stamp = "",
   category = "",
   sourceLine = "",
-}: any = {}): any {
+}: any = {}) {
   return [
     stamp ? "// Updated: " + stamp : null,
     "// Converted by: chance",
@@ -454,7 +454,7 @@ function qxSemanticMetadata({
 }
 function oneAction(
   ast: any,
-  name: any,
+  name: string,
   { conditionMode = "simple-url" }: any = {},
 ): any {
   validateRewriteV2Ast(ast, { regexEngine: "javascript" });
@@ -473,8 +473,8 @@ function oneAction(
 // identity; missing optional captures must skip the action, not become "".
 function redirectTemplatePlan(node: any, capture: any): any {
   const parts: any = stringTemplateParts(node);
-  const indices: any = [];
-  const expression: any = parts.map(([kind, value]: any): any => {
+  const indices: number[] = [];
+  const expression: any = parts.map(([kind, value]: any) => {
     if (kind === "s") return JSON.stringify(value);
     const ref: any = value.match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
     if (!ref || !capture || ref[1] !== capture)
@@ -489,7 +489,7 @@ function redirectTemplatePlan(node: any, capture: any): any {
       '""' + (expression.length ? " + " + expression.join(" + ") : ""),
     missing: indices.length
       ? indices
-          .map((n: any): any => "__wayxMatch[" + n + "] === undefined")
+          .map((n: any) => "__wayxMatch[" + n + "] === undefined")
           .join(" || ")
       : "false",
   };
@@ -497,7 +497,7 @@ function redirectTemplatePlan(node: any, capture: any): any {
 function redirectUrlComparison(ast: any): any {
   const found: any = findRewriteComparisons(
     ast?.condition,
-    (node: any): any =>
+    (node: any) =>
       node?.type === "comparison" &&
       node.operator === "~=" &&
       node.left?.type === "variable" &&
@@ -522,7 +522,7 @@ function redirectUrlComparison(ast: any): any {
   rejectOr(ast.condition);
   return found[0];
 }
-function qxConditionHeaderHelper(): any {
+function qxConditionHeaderHelper() {
   return [
     "function __wayxHeader(phase,name){",
     '  const h=phase==="request"?$request.headers:$response.headers;',
@@ -654,8 +654,8 @@ export function renderQxRejectScript(ast: any, options: any = {}): any {
   ) {
     throw new Error("reject status must be 100...599");
   }
-  let body = "",
-    contentType: any = null;
+  let body: string | null = "",
+    contentType: string | null = null;
   if (action.name === "reject") {
     if (action.args.length > 1) {
       body = fixedStringValue(action.args[1]);
@@ -687,14 +687,14 @@ export function renderQxRejectScript(ast: any, options: any = {}): any {
   };
 }
 function expandAction(action: any): any {
-  if (!action.args.some((x: any): any => x.type === "array"))
+  if (!action.args.some((x: any) => x.type === "array"))
     return [action.args];
   const arrays: any = action.args.map((x: any): any => x.items);
   return arrays[0].map((_: any, index: any): any =>
     arrays.map((a: any): any => a[index]),
   );
 }
-function qxSemanticFixed(node: any, what: any): any {
+function qxSemanticFixed(node: any, what: string): any {
   const value: any = fixedStringValue(node);
   if (value === null) throw new Error(what + " must be a fixed string");
   if (/\$\{/.test(value))
@@ -703,13 +703,13 @@ function qxSemanticFixed(node: any, what: any): any {
     );
   return value;
 }
-function booleanArg(node: any, fallback: any = false): any {
+function booleanArg(node: any, fallback: boolean = false): any {
   if (!node) return fallback;
   if (node.type !== "boolean")
     throw new Error("mock Base64 flag must be Boolean");
   return node.value;
 }
-function numberArg(node: any, fallback: any = 200): any {
+function numberArg(node: any, fallback: number = 200): any {
   if (!node) return fallback;
   if (node.type !== "number" || !Number.isInteger(node.value))
     throw new Error("mock status must be an integer");
@@ -769,7 +769,7 @@ export function renderQxInlineMockScript(ast: any, options: any = {}): any {
     ? { pattern: null, notes: [] }
     : simpleUrlRewriteCondition(ast, { target: "qx" });
   if (!condition.ok && !externalExact) throw new Error(condition.reason);
-  const mocks: any = ast.actions.filter((a: any): any =>
+  const mocks: any = ast.actions.filter((a: any) =>
     /^(?:request|response)\.body\.mock$/.test(a.name),
   );
   if (mocks.length !== 1)
@@ -823,7 +823,7 @@ export function renderQxHeaderScript(ast: any, options: any = {}): any {
     );
   if (
     ast.actions.some(
-      (action: any): any =>
+      (action: any) =>
         !new RegExp("^" + ast.phase + "\\.header\\.(?:set|del|replace)$").test(
           action.name,
         ),
@@ -838,16 +838,16 @@ export function renderQxHeaderScript(ast: any, options: any = {}): any {
 // WayX generated scripts for mixed same-phase Rewrite v2 pipelines
 // Author: chance
 // Category: Converter / Rewrite v2 / Complex Helper
-function complexRewriteFixed(node: any, label: any): any {
+function complexRewriteFixed(node: any, label: string): any {
   if (!node || !["string", "raw-string"].includes(node.type)) {
     throw new Error(label + " must be a fixed string");
   }
   const parts: any = stringTemplateParts(node);
-  if (parts.some((p: any): any => p[0] === "v"))
+  if (parts.some((p: any) => p[0] === "v"))
     throw new Error(label + " must be a fixed string");
   return parts.map((p: any): any => p[1]).join("");
 }
-function captureGroupCount(pattern: any): any {
+function captureGroupCount(pattern: any) {
   let count = 0,
     escaped = false,
     inClass = false;
@@ -917,11 +917,11 @@ function guaranteedCaptures(node: any): any {
 }
 function capturedString(
   node: any,
-  label: any,
+  label: string,
   captures: any,
   guaranteed: any,
   argumentTable: any = null,
-): any {
+) {
   if (node?.type === "variable") {
     validateTemplateVariable(node.name, captures, guaranteed, argumentTable);
     return "__wayxStringValue(" + JSON.stringify(node.name) + ")";
@@ -932,7 +932,7 @@ function capturedString(
   for (const [kind, name] of parts)
     if (kind === "v")
       validateTemplateVariable(name, captures, guaranteed, argumentTable);
-  if (parts.every((p: any): any => p[0] === "s"))
+  if (parts.every((p: any) => p[0] === "s"))
     return JSON.stringify(parts.map((p: any): any => p[1]).join(""));
   return "__wayxTpl(" + JSON.stringify(parts) + ")";
 }
@@ -941,7 +941,7 @@ function validateTemplateVariable(
   captures: any,
   guaranteed: any,
   argumentTable: any,
-): any {
+) {
   if (
     ["url", "request.method", "response.status"].includes(name) ||
     /^(request|response)\.header\[(?:'[^']+'|"[^"]+")\]$/.test(name)
@@ -965,7 +965,7 @@ function validateTemplateVariable(
     throw new Error("unknown plugin argument interpolation: " + name);
 }
 function expand(action: any): any {
-  if (!action.args.some((arg: any): any => arg.type === "array"))
+  if (!action.args.some((arg: any) => arg.type === "array"))
     return [action.args];
   return action.args[0].items.map((_: any, i: any): any =>
     action.args.map((arg: any): any => arg.items[i]),
@@ -1016,7 +1016,7 @@ function mockFileDependency(ast: any, materialized: any, index: any): any {
       : null;
   // An old single-file object must never be reused for another file action.
   return ast.actions.filter(
-    (a: any): any => a.name === "request.body.mock_file",
+    (a: any) => a.name === "request.body.mock_file",
   ).length === 1
     ? materialized
     : null;
@@ -1026,7 +1026,7 @@ function statements(
   target: any,
   { argumentTable = null, mockMaterialized = null }: any = {},
 ): any {
-  const out: any = [];
+  const out: string[] = [];
   const captures: any = captureInfo(ast.condition);
   const guaranteed: any = guaranteedCaptures(ast.condition);
   for (const alias of captures.keys())
@@ -1054,7 +1054,7 @@ function statements(
         );
         const fixedName: any =
           args[0].type !== "variable" &&
-          stringTemplateParts(args[0]).every((p: any): any => p[0] === "s");
+          stringTemplateParts(args[0]).every((p: any) => p[0] === "s");
         if (action.name.endsWith(".add")) {
           if (target !== "surge")
             throw new Error(
@@ -1205,7 +1205,7 @@ function statements(
       // complete group against its input so an overlapping parent cannot hide
       // a scalar/array path error; commit only after the whole action succeeds.
       const deleteMany = operations.some(
-        (op: any): any => op.kind === "delete-many",
+        (op: any) => op.kind === "delete-many",
       )
         ? 'if(op.kind==="delete-many"){for(const path of op.paths){let parent=j;for(const key of path){if(parent==null)break;if(typeof parent!=="object"||Array.isArray(parent))throw new Error("JQ object path requires object");parent=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined}}for(const path of op.paths){let parent=j;for(let i=0;i<path.length;i++){if(parent==null)break;const key=path[i];if(i===path.length-1){delete parent[key];break}parent=Object.prototype.hasOwnProperty.call(parent,key)?parent[key]:undefined}}continue;}'
         : "";
@@ -1236,7 +1236,7 @@ function statements(
         );
         const fixed: any =
           args[0].type !== "variable" &&
-          stringTemplateParts(args[0]).every((p: any): any => p[0] === "s");
+          stringTemplateParts(args[0]).every((p: any) => p[0] === "s");
         const path = fixed
           ? JSON.stringify(
               parseJsonKeyPath(complexRewriteFixed(args[0], "JSON key path")),
@@ -1255,7 +1255,7 @@ function statements(
           value !== null &&
           args[1].type !== "variable" &&
           (args[1].type !== "string" ||
-            stringTemplateParts(args[1]).every((p: any): any => p[0] === "s"));
+            stringTemplateParts(args[1]).every((p: any) => p[0] === "s"));
         if (fixed)
           out.push(
             value === null
@@ -1379,11 +1379,11 @@ function renderRewriteScript(
           ? [node.name]
           : node.type === "string"
             ? stringTemplateParts(node)
-                .filter((p: any): any => p[0] === "v")
+                .filter((p: any) => p[0] === "v")
                 .map((p: any): any => p[1])
             : [];
       return (
-        names.some((name: any): any =>
+        names.some((name: any) =>
           /^(request|response)\.header\[/.test(name),
         ) ||
         Object.values(node).some((value: any): any =>
@@ -1417,7 +1417,7 @@ function renderRewriteScript(
     ...(mockMaterialized?.byAction
       ? Object.values(mockMaterialized.byAction)
           .filter((x: any): any => x.sourceFile)
-          .map((x: any): any => "// Source mock file: " + x.sourceFile)
+          .map((x: any) => "// Source mock file: " + x.sourceFile)
       : mockMaterialized?.sourceFile
         ? ["// Source mock file: " + mockMaterialized.sourceFile]
         : []),
@@ -1427,7 +1427,7 @@ function renderRewriteScript(
     ...(jqMaterialized?.byAction
       ? Object.values(jqMaterialized.byAction)
           .filter((x: any): any => x.sourceFile)
-          .map((x: any): any => "// Source JQ file: " + x.sourceFile)
+          .map((x: any) => "// Source JQ file: " + x.sourceFile)
       : jqMaterialized?.sourceFile
         ? ["// Source JQ file: " + jqMaterialized.sourceFile]
         : []),
@@ -1484,11 +1484,11 @@ function renderRewriteScript(
       ? null
       : "function __wayxKey(n){return Object.keys(__wayxHeaders).find(k=>k.toLowerCase()===String(n).toLowerCase());}",
     "if(" + condition + "){",
-    ...plan.out.map((line: any): any => "  " + line),
+    ...plan.out.map((line: any) => "  " + line),
     "  $done(" + doneValue + ");",
     "}else{$done({});}",
     "",
-  ].filter((line: any): any => line !== null);
+  ].filter((line: any) => line !== null);
   const qxAction = plan.body
     ? ast.phase === "request"
       ? "script-request-body"
@@ -1569,7 +1569,7 @@ export function renderRewritePhaseDispatcher(
 ): any {
   if (!declarations.length) throw new Error("empty Rewrite dispatcher");
   const phase: any = declarations[0].phase;
-  if (declarations.some((ast: any): any => ast.phase !== phase))
+  if (declarations.some((ast: any) => ast.phase !== phase))
     throw new Error("mixed dispatcher phases");
   const fullHeaderMode: any =
     options.target === "surge" &&

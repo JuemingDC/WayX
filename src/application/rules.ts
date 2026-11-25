@@ -288,7 +288,7 @@ export async function runRules(
   );
   await commitFiles(root, changes);
   console.log(
-    `Rule aggregation: files=${Object.keys(outputs).length}, rules=${Object.values(counts).reduce((a: any, b: any) => a + b, 0)}, quarantined=${report.quarantined.length}, ignored=${report.filtered.length}`,
+    `Rule aggregation: files=${Object.keys(outputs).length}, rules=${Object.values(counts).reduce((a: any, b: number) => a + b, 0)}, quarantined=${report.quarantined.length}, ignored=${report.filtered.length}`,
   );
   return report;
 }

@@ -17,8 +17,8 @@ import {
 // Author: chance
 // Category: Converter / Rule / AST
 export const LOON_LOGICAL_RULE_TYPES = new Set(["AND", "OR", "NOT"]);
-export function splitTopLevelCsv(input: any): any {
-  const out: any = [];
+export function splitTopLevelCsv(input: string): any {
+  const out: string[] = [];
   let buf = "",
     quote: any = null,
     esc = false,
@@ -76,7 +76,7 @@ export function splitLogicalSubrules(value: any): any {
   const source = String(value ?? "").trim();
   if (!source.startsWith("(") || !source.endsWith(")")) return null;
   const inner = source.slice(1, -1).trim();
-  const out: any = [];
+  const out: string[] = [];
   let i = 0;
   while (i < inner.length) {
     while (i < inner.length && /[\s,]/.test(inner[i])) i++;
@@ -87,7 +87,7 @@ export function splitLogicalSubrules(value: any): any {
       quote: any = null,
       esc = false;
     for (; i < inner.length; i++) {
-      const ch: any = inner[i];
+      const ch = inner[i];
       if (quote) {
         if (esc) {
           esc = false;
@@ -136,8 +136,8 @@ function parseParameter(raw: any) {
 export function parseLoonRuleAst(line: any, { nested = false }: any = {}): any {
   const source = String(line ?? "").trim();
   const inline = source.match(/^(.*?)\s+\/\/\s*(.+)$/);
-  const syntaxSource: any = inline ? inline[1].trim() : source;
-  const inlineComment: any = inline ? inline[2].trim() : "";
+  const syntaxSource = inline ? inline[1].trim() : source;
+  const inlineComment = inline ? inline[2].trim() : "";
   const parts: any = splitTopLevelCsv(syntaxSource);
   const type = String(parts[0] ?? "")
     .trim()
@@ -450,7 +450,7 @@ function enhancedSurgeRuleAst(
 }
 export function validateSurgeRuleAst(ast: any): any {
   const types: any = [];
-  function visit(node: any, logicalDepth: any = 0): any {
+  function visit(node: any, logicalDepth: number = 0): any {
     types.push(node.type);
     if (
       node.params.some((p: any) => p.name === "extended-matching") &&
@@ -467,7 +467,7 @@ export function validateSurgeRuleAst(ast: any): any {
     if (!SURGE_RULE_TYPES.has(node.type)) {
       return `unsupported-rule-type:${node.type}`;
     }
-    let nextLogicalDepth: any = logicalDepth;
+    let nextLogicalDepth = logicalDepth;
     if (node.kind === "logical") {
       nextLogicalDepth = logicalDepth + 1;
       if (nextLogicalDepth > 10) return "logical-nesting-depth-exceeds-10";
@@ -499,7 +499,7 @@ export function renderSurgeRuleAst(
   });
 }
 export function surgeRuleTypesInTree(
-  line: any,
+  line: string,
   { subrule = false }: any = {},
 ): any {
   const parsed: any = parseLoonRuleAst(line, { nested: subrule });
@@ -618,7 +618,7 @@ export function planSurgeModuleRuleAst(
     reason: "module-native-rule",
   };
 }
-function invalidRulePlan(source: any, reason: any, target: any) {
+function invalidRulePlan(source: string, reason: any, target: string) {
   if (target === "qx") {
     return {
       kind: "comment",
@@ -639,14 +639,14 @@ function invalidRulePlan(source: any, reason: any, target: any) {
 }
 function repairedRulePlan(
   parsed: any,
-  source: any,
-  target: any,
+  source: string,
+  target: string,
   options: any = undefined,
 ): any {
   const repaired: any = { ast: structuredClone(parsed.ast), changed: false };
   walkRuleAst(repaired.ast, (node: any) => {
     if (node.type !== "URL-REGEX") return;
-    const normalized: any = repairTargetRegexSyntax(node.value);
+    const normalized = repairTargetRegexSyntax(node.value);
     node.value = normalized.pattern;
     repaired.changed ||= normalized.changed;
   });

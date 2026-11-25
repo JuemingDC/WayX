@@ -10,15 +10,15 @@ const SUPPORTED_FLAGS = /^[ims]*$/;
 // Flags are suffix syntax, never characters inferred from the regex body.
 // Escapes and character classes own their slashes; grammar punctuation following
 // the closing delimiter belongs to the surrounding expression.
-export function scanSourceRegexLiteral(text: any, start: any = 0): any {
+export function scanSourceRegexLiteral(text: string, start: number = 0) {
   text = String(text);
   if (text[start] !== "/")
     throw new SyntaxError("Expected regex opening delimiter");
   let escaped = false,
     inClass = false,
     close = -1;
-  for (let i: any = start + 1; i < text.length; i++) {
-    const c: any = text[i];
+  for (let i = start + 1; i < text.length; i++) {
+    const c = text[i];
     if (escaped) {
       escaped = false;
       continue;
@@ -45,8 +45,8 @@ export function scanSourceRegexLiteral(text: any, start: any = 0): any {
   while (end < text.length && /[A-Za-z]/.test(text[end])) end++;
   if (end < text.length && !/[\s(),\[\].|&=~]/.test(text[end]))
     throw new SyntaxError("Invalid regex suffix boundary");
-  const node: any = {
-    type: "regex",
+  const node = {
+    type: "regex" as const,
     pattern: text.slice(start + 1, close),
     flags: text.slice(close + 1, end),
   };
@@ -58,7 +58,7 @@ function resolveConditionRegex(value: any): any {
     return value;
   if (typeof value !== "string" || !value.startsWith("/")) return null;
   try {
-    const regex: any = scanSourceRegexLiteral(value);
+    const regex = scanSourceRegexLiteral(value);
     return regex.end === value.length ? regex : null;
   } catch {
     return null;
@@ -88,7 +88,7 @@ export function execSourceRegex(node: any, value: any): any {
 // Author: chance
 // Category: Converter / Core / Condition Semantics
 export class SemanticEvaluationError extends Error {
-  constructor(message: any) {
+  constructor(message: string) {
     super(message);
     this.name = "SemanticEvaluationError";
   }
@@ -96,13 +96,13 @@ export class SemanticEvaluationError extends Error {
 function cloneCaptures(captures: any): any {
   return new Map(captures);
 }
-function decodeHeaderName(value: any) {
+function decodeHeaderName(value: string) {
   return String(value)
     .replace(/\\\\/g, "\\")
     .replace(/\\'/g, "'")
     .replace(/\\"/g, '"');
 }
-function headerVariable(name: any): any {
+function headerVariable(name: string): any {
   const match = String(name).match(
     /^(request|response)\.header\[(?:'((?:\\.|[^'])*)'|"((?:\\.|[^"])*)")\]$/,
   );
@@ -135,14 +135,14 @@ function lookupHeader(headers: any, name: any): any {
   }
   return null;
 }
-function argumentValue(context: any, name: any): any {
+function argumentValue(context: any, name: string): any {
   const args: any = context.arguments;
   if (args instanceof Map) return args.has(name) ? args.get(name) : undefined;
   if (args && Object.prototype.hasOwnProperty.call(args, name))
     return args[name];
   return undefined;
 }
-function captureValue(captures: any, name: any): any {
+function captureValue(captures: any, name: string): any {
   const match = String(name).match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
   if (!match) return { found: false, value: undefined };
   const values: any = captures.get(match[1]);
@@ -182,7 +182,7 @@ export function stringTemplateParts(node: any): any {
   const text: any = raw ? node.raw.slice(1, -1) : String(node.value);
   const parts: any = [];
   let literal = "";
-  const flush: any = () => {
+  const flush = () => {
     if (literal) {
       parts.push(["s", literal]);
       literal = "";
@@ -347,7 +347,7 @@ export const EQUIVALENCE_KINDS = Object.freeze({
   DISPATCHER: "phase-dispatcher",
   UNSUPPORTED: "unsupported",
 });
-function object(value: any, label: any): any {
+function object(value: any, label: string): any {
   if (!value || typeof value !== "object")
     throw new TypeError(label + " must be an object");
   return value;
@@ -404,7 +404,7 @@ export function unsupported(reason: any, details: any = {}): any {
   if (!message) throw new Error("unsupported requires a non-empty reason");
   return { kind: EQUIVALENCE_KINDS.UNSUPPORTED, reason: message, details };
 }
-function targetMatch(result: any, index: any): any {
+function targetMatch(result: any, index: number): any {
   if (typeof result === "boolean") return result;
   if (
     result &&
@@ -441,7 +441,7 @@ export function differentialConditionOracle({
   if (!Array.isArray(contexts) || contexts.length === 0) {
     throw new Error("differential oracle requires at least one context");
   }
-  const cases: any = contexts.map((context: any, index: any): any => {
+  const cases: any = contexts.map((context: any, index: number): any => {
     const sourceMatched = Boolean(
       evaluateCondition(condition, context).matched,
     );
@@ -486,16 +486,16 @@ export function normalizeRegexBodyForTarget(pattern: any) {
 // in both targets. Only URL authority dots between host labels are tightened;
 // preserve existing escapes, classes, wildcard operators and the entire path.
 export function normalizeUrlRegexForTarget(pattern: any): any {
-  const source: any = normalizeRegexBodyForTarget(pattern);
-  const prefix: any = source.match(
+  const source = normalizeRegexBodyForTarget(pattern);
+  const prefix = source.match(
     /^(?:\(\?[imsx-]+\))?\^?http(?:s|\(s\)|\(\?:s\))?\??:(?:\\?\/){2}/,
   );
   if (!prefix) return source;
-  let out: any = source.slice(0, prefix[0].length),
+  let out = source.slice(0, prefix[0].length),
     classDepth = 0,
     quoted = false;
   for (let i: any = prefix[0].length; i < source.length; i++) {
-    const ch: any = source[i];
+    const ch = source[i];
     if (quoted) {
       out += ch;
       if (ch === "\\" && source[i + 1] === "E") {
@@ -576,8 +576,8 @@ export function surgeRegexParameter(pattern: any) {
   const value = String(pattern ?? "");
   return /[,\s"']/.test(value) ? '"' + value.replace(/"/g, '\\"') + '"' : value;
 }
-export function parseSurgeParameters(body: any, context: any = "Surge"): any {
-  const fields: any = [];
+export function parseSurgeParameters(body: any, context: string = "Surge"): any {
+  const fields: string[] = [];
   let part = "",
     quote: any = null,
     escaped = false;
@@ -626,7 +626,7 @@ export function targetRegexValidationInventory(): any {
 }
 export function validateTargetRegex(
   pattern: any,
-  label: any,
+  label: string,
   { token = false }: any = {},
 ) {
   const value = String(pattern ?? "");
@@ -697,11 +697,11 @@ export function validateTargetRegex(
 // needs compensation for its default multiline mode.
 export const TARGET_REGEX_CAPABILITIES: any = Object.freeze(
   Object.fromEntries(
-    ["qx", "surge", "generic"].map((target: any): any => [
+    ["qx", "surge", "generic"].map((target: string): any => [
       target,
       Object.freeze(
         Object.fromEntries(
-          ["url", "body", "header", "script"].map((field: any): any => [
+          ["url", "body", "header", "script"].map((field: string) => [
             field,
             Object.freeze({
               inlineFlags: ["qx", "surge"].includes(target)
@@ -744,7 +744,7 @@ export function compileRegexForTarget(
     .filter((flag: any) => flags.includes(flag))
     .join("");
   const omittedFlags = [...flags]
-    .filter((flag: any) => !mappedFlags.includes(flag))
+    .filter((flag: string) => !mappedFlags.includes(flag))
     .join("");
   const compatibilityUnverified =
     Boolean(flags) && capability.inlineFlags !== "verified";
@@ -1010,7 +1010,7 @@ export function evaluateRewriteActions(
           const headers: any = (phase.headers ||= {});
           const name: any = stringValue(args[0]);
           const keys = Object.keys(headers).filter(
-            (k: any) => k.toLowerCase() === String(name).toLowerCase(),
+            (k: string) => k.toLowerCase() === String(name).toLowerCase(),
           );
           if (operation === "set") {
             const replacement: any = stringValue(args[1]);
@@ -1068,7 +1068,7 @@ export function evaluateRewriteActions(
             throw new SemanticEvaluationError("missing text mock dependency");
           const headers: any = (phase.headers ||= {});
           const keys = Object.keys(headers).filter(
-            (k: any) => k.toLowerCase() === "content-type",
+            (k: string) => k.toLowerCase() === "content-type",
           );
           for (const key of keys) delete headers[key];
           put(headers, keys[0] || "Content-Type", mime[type]);
@@ -1147,14 +1147,14 @@ export function evaluateRewriteActions(
 }
 export function replaceSourceRegex(
   node: any,
-  text: any,
+  text: string,
   replacement: any,
-): any {
-  const match: any = compileSourceRegex(node).exec(text);
+) {
+  const match = compileSourceRegex(node).exec(text);
   if (!match) return text;
   const out = String(replacement).replace(
     /\$(\d+)/g,
-    (_: any, index: any): any => match[Number(index)] ?? "",
+    (_: string, index: any) => match[Number(index)] ?? "",
   );
   return (
     text.slice(0, match.index) + out + text.slice(match.index + match[0].length)

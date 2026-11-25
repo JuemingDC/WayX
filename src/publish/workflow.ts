@@ -213,7 +213,7 @@ async function managedHelperMatches(file: string, content: string | Buffer) {
   }
 }
 export async function generatedScriptDiffs(
-  root: any,
+  root: string,
   entry: any,
   generatedScripts: any,
   { scriptDir = "Script" }: any = {},
@@ -261,7 +261,7 @@ export async function syncGeneratedScripts(
 // Modified: 2026-11-14 (chance). Restore the source/script/target transaction;
 // inline JQ needs no standalone file compiler or file publication writes.
 export async function commitManagedConversion(
-  root: any,
+  root: string,
   entry: any,
   state: any,
   out: any,
@@ -761,7 +761,7 @@ export function rawRepoUrl(rel: any) {
 export function blobRepoUrl(rel: any) {
   return `${BLOB_BASE}/${encodeRepoPath(rel)}`;
 }
-export function extractResourceName(text: any, fallback: any = ""): any {
+export function extractResourceName(text: string, fallback: string = ""): any {
   const source = String(text ?? "");
   const qx = source.match(/^#\s*name\s*:\s*(.+?)\s*$/im);
   if (qx?.[1]) return qx[1].trim();
@@ -782,7 +782,7 @@ function safeTag(value: any) {
     .replace(/,/g, "，")
     .trim();
 }
-function qxRemoteDescriptor(url: any, tag: any) {
+function qxRemoteDescriptor(url: string, tag: any) {
   return `${url}, tag=${safeTag(tag)}, update-interval=${README_AUTO_UPDATE_INTERVAL}, enabled=true`;
 }
 export function surgeModuleInstallUrl(rel: any) {
@@ -813,7 +813,7 @@ async function walkFiles(root: any, rel: any): Promise<any> {
 }
 function detectPlatform(rel: any): any {
   for (const part of String(rel).split("/")) {
-    const key: any = normalizePlatformPart(part);
+    const key = normalizePlatformPart(part);
     if (key === "quantumultx" || key === "quanx") return "qx";
     if (key === "surge") return "surge";
   }
@@ -823,14 +823,14 @@ function stemOf(rel: any) {
   const base = path.posix.basename(rel);
   return base.replace(/\.[^.]+$/, "");
 }
-function rowKey(category: any, rel: any): any {
+function rowKey(category: string, rel: any): any {
   const parts: any = rel.split("/");
   if (category === "Module")
     // Modified: 2026-11-01 (chance). Flat per-platform Module directories use the filename identity; do not collapse every app into one platform row.
     return parts.length === 2 || ["quantumultx", "surge"].includes(normalizePlatformPart(parts[1])) ? stemOf(rel) : parts[1] || stemOf(rel);
   return stemOf(rel);
 }
-async function catalogRowMetadata(root: any, category: any): Promise<any> {
+async function catalogRowMetadata(root: string, category: string): Promise<any> {
   const empty: any = (): any => ({ order: new Map(), sources: new Map() });
   if (category !== "Adblock") return empty();
   let manifest: any;
@@ -846,11 +846,11 @@ async function catalogRowMetadata(root: any, category: any): Promise<any> {
     throw new Error("README catalog order source must be an array");
   const order: any = new Map();
   const sources: any = new Map();
-  manifest.forEach((entry: any, index: any) => {
+  manifest.forEach((entry: any, index: number) => {
     for (const field of ["qx", "surge"]) {
       const value: any = entry?.[field];
       if (typeof value !== "string" || !value.trim()) continue;
-      const key: any = value.split("/").length >= 3 ? value.split("/").slice(0,2).join("/") : stemOf(value.trim());
+      const key = value.split("/").length >= 3 ? value.split("/").slice(0,2).join("/") : stemOf(value.trim());
       if (!order.has(key)) order.set(key, index);
       if (!sources.has(key) && typeof entry.source === "string")
         sources.set(key, entry.source);
@@ -858,8 +858,8 @@ async function catalogRowMetadata(root: any, category: any): Promise<any> {
   });
   return { order, sources };
 }
-async function scanCategory(root: any, category: any): Promise<any> {
-  const dir: any = category === "BoxJs" ? "Boxjs" : category;
+async function scanCategory(root: string, category: string): Promise<any> {
+  const dir = category === "BoxJs" ? "Boxjs" : category;
   const files: any = await walkFiles(root, dir);
   const rows: any = new Map();
   for (const rel of files) {
@@ -892,7 +892,7 @@ async function scanCategory(root: any, category: any): Promise<any> {
         `stale lowercase WayX Script raw URL in indexed resource: ${rel}`,
       );
     }
-    const fallback: any = stemOf(rel);
+    const fallback = stemOf(rel);
     const name: any = extractResourceName(text, fallback);
     const key: any = rel.split("/").length >= 5 ? rel.split("/")[2] + "/" + rel.split("/")[3] : rowKey(category, rel);
     const row: any = rows.get(key) ?? { key, qx: null, surge: null };
@@ -924,7 +924,7 @@ async function scanCategory(root: any, category: any): Promise<any> {
     return ar - br || a.key.localeCompare(b.key, "en");
   });
 }
-export function qxSnippetInstallUrl(item: any): any {
+export function qxSnippetInstallUrl(item: any) {
   if (!item?.rel || item.ext !== ".snippet") {
     throw new Error(
       "Quantumult X module/adblock install target must be a .snippet resource",
@@ -937,13 +937,13 @@ export function qxSnippetInstallUrl(item: any): any {
     rewrite_remote: [qxRemoteDescriptor(rawRepoUrl(item.rel), item.name)],
   });
 }
-function qxInstallerForRule(item: any): any {
-  const payload: any = {
+function qxInstallerForRule(item: any) {
+  const payload = {
     filter_remote: [qxRemoteDescriptor(rawRepoUrl(item.rel), item.name)],
   };
   return qxAddResourceUrl(payload);
 }
-function markdownLink(label: any, url: any) {
+function markdownLink(label: string, url: any) {
   return `[${label}](${url})`;
 }
 function resourceNameCell(row: any) {
@@ -973,7 +973,7 @@ function rowInstallCells(category: any, row: any) {
   }
   return { qx, surge };
 }
-function adblockSource(row: any): any {
+function adblockSource(row: any) {
   const source: any =
     row.catalogSource ||
     [row.qx, row.surge]
@@ -1013,7 +1013,7 @@ function adblockSource(row: any): any {
 function escapeHtml(value: any) {
   return String(value).replace(
     /[&<>"']/g,
-    (char: any) =>
+    (char: string) =>
       (
         ({
           "&": "&amp;",
@@ -1026,10 +1026,10 @@ function escapeHtml(value: any) {
   );
 }
 function renderTable(
-  category: any,
+  category: string,
   rows: any,
   heading: any = category,
-  level: any = 2,
+  level: number = 2,
 ) {
   const lines = [
     ...(heading === null ? [] : [`${"#".repeat(level)} ${heading}`, ""]),
@@ -1037,7 +1037,7 @@ function renderTable(
     category === "Adblock" ? "| :--- | :--- | :---: | :---: |" : "| :--- | :---: | :---: |",
   ];
   for (const row of rows) {
-    const cells: any = rowInstallCells(category, row);
+    const cells = rowInstallCells(category, row);
     lines.push(`| ${category === "Adblock" ? (row.number ?? "—") + " | " : ""}${resourceNameCell(row)} | ${cells.qx} | ${cells.surge} |`);
   }
   if (!rows.length) lines.push(category === "Adblock" ? "| — | — | — | — |" : "| — | — | — |");
@@ -1090,7 +1090,7 @@ function rowInitial(row: any): any {
   }
   return "其他";
 }
-function alphabetTables(category: any, rows: any, level: any = 4) {
+function alphabetTables(category: string, rows: any, level: number = 4) {
   const groups: any = new Map();
   for (const row of rows) {
     const letter: any = rowInitial(row);
@@ -1103,7 +1103,7 @@ function alphabetTables(category: any, rows: any, level: any = 4) {
         /^[A-Z]$/.test(x) ? x.charCodeAt(0) : x === "0–9" ? 100 : 101;
       return rank(a) - rank(b);
     })
-    .map(([letter, items]: any): any =>
+    .map(([letter, items]: any) =>
       renderTable(
         category,
         items.sort(
@@ -1145,7 +1145,7 @@ function ruleGroup(row: any) {
 }
 // Modified: 2026-10-27 (chance). Show Apple/Microsoft import order separately from resource-index display order.
 export async function buildReadmePlan(root = process.cwd()): Promise<Map<string, string>> {
-  const sections: any = [];
+  const sections: string[] = [];
   for (const category of README_CATEGORY_ORDER) {
     const rows: any = await scanCategory(root, category);
     if (category === "Adblock" && rows.length) {
@@ -1176,7 +1176,7 @@ export async function buildReadmePlan(root = process.cwd()): Promise<Map<string,
       sections.push(
         "## Rule\n\n按 Reject → Proxy → Direct 展示；这不是引用优先级。Apple 在 Surge 中按 apple_cn（DIRECT）→ apple_proxy（代理）引用；Microsoft 按 microsoft_direct（DIRECT）→ microsoft_proxy（代理）引用。混合策略资源导入时保留逐条策略。\n\n" +
           ["Reject", "Proxy", "Direct"]
-            .map((group: any): any =>
+            .map((group: string) =>
               renderTable(
                 category,
                 rows
@@ -1408,10 +1408,10 @@ export async function writeValidationEvidence(
   );
 }
 export async function recordOutputMismatch(
-  file: any,
+  file: string,
   expected: any,
   actual: any,
-  plugin: any = null,
+  plugin: string | null = null,
 ): Promise<any> {
   const finding: any = outputMismatch(file, expected, actual, plugin);
   const report = process.env.WAYX_CHECK_REPORT;
@@ -1453,7 +1453,7 @@ export function validationArtifactDigest(value: any) {
     : crypto.createHash("sha256").update(text).digest("hex");
 }
 export function outputMismatch(
-  file: any,
+  file: string,
   expected: any,
   actual: any,
   plugin: any = null,
@@ -1528,7 +1528,7 @@ export function createWorkflowFailureReporter({
   annotationFallback = "message",
   writeError = console.error,
 }: any = {}): any {
-  const failures: any = [];
+  const failures: string[] = [];
   function capture(entry: any, error: any) {
     failures.push(`${entry.id}: ${failureDetail(error, detailFallback)}`);
     writeError(

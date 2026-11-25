@@ -104,7 +104,7 @@ function splitPatternAction(line: any): any {
       .replace(/^\-\s+/, ""),
   ];
 }
-function splitRuleInlineComment(line: any): any {
+function splitRuleInlineComment(line: any) {
   const source = String(line ?? "").trim();
   const match = source.match(/^([\s\S]*?\S)\s+\/\/\s*(.+)$/);
   if (!match) return { line: source, comment: null };
@@ -379,7 +379,7 @@ function planDisabledSurgeRewriteComments(comments: any, ctx: any): any {
       passthrough.push(raw);
       continue;
     }
-    const sourceLine: any = match[1].trim();
+    const sourceLine = match[1].trim();
     const mapped: any = rewriteV2Action(sourceLine, "surge", {
       ...ctx,
       featureCompatibilityPhases: new Set(["request", "response"]),
@@ -400,7 +400,7 @@ function planDisabledSurgeRewriteComments(comments: any, ctx: any): any {
   }
   return { passthrough, routed };
 }
-function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
+function prepareRewriteDispatchers(plugin: any, target: string, ctx: any): any {
   const result: any = new Map();
   const items: any = groupSourceSectionItems(
     plugin.sections.get("Rewrite") || [],
@@ -408,7 +408,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
   const candidates: any = [];
   const scripts: any = [
     ...groupSourceSectionItems(plugin.sections.get("Script") || []),
-    ...items.filter((x: any): any => isScriptV2(x.line)),
+    ...items.filter((x: any) => isScriptV2(x.line)),
   ].filter((x: any): any => x.line);
   const legacy: any = items.some((x: any) => !isRewriteV2(x.line));
   // Keep native JSON/JQ declarations outside helper dispatchers. Original
@@ -445,7 +445,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
       }
   ctx.featureCompatibilityPhases = new Set(
     ["request", "response"].filter(
-      (phase: any): any =>
+      (phase: string): any =>
         legacy ||
         blockedV2.has(phase) ||
         scripts.some((x: any) => {
@@ -547,7 +547,7 @@ function prepareRewriteDispatchers(plugin: any, target: any, ctx: any): any {
           "phase dispatcher argument transport is not verified: " +
             refs.join(", "),
         );
-      const payload: any = refs.length
+      const payload: { ok: boolean; value?: string | null; reason?: string } = refs.length
         ? surgeRewriteArgumentPayload(refs, ctx.argumentTable)
         : { ok: true, value: null };
       if (!payload.ok) throw new Error(payload.reason);
@@ -759,7 +759,7 @@ function mergeQxJqRewrites(lines: string[], barriers: ReadonlySet<number>): stri
 
 export function convertPlugin(
   entry: any,
-  source: any,
+  source: string,
   {
     parsed = null,
     scriptMap = new Map(),
@@ -879,8 +879,8 @@ export function convertPlugin(
     const ir: any = parseConfigurationDeclaration(item.line, {
       section: "General",
     });
-    const qr: any = planConfiguration(ir, "qx");
-    const sr: any = planConfiguration(ir, "surge");
+    const qr = planConfiguration(ir, "qx");
+    const sr = planConfiguration(ir, "surge");
     appendQxOutput(qx, qr.section, ...comments, qr.line);
     appendSurgeOutput(sg, sr.section, ...comments, sr.line);
   }
@@ -1259,8 +1259,8 @@ export function convertPlugin(
       continue;
     }
     const ir: any = parseConfigurationDeclaration(item.line);
-    const qPlan: any = planConfiguration(ir, "qx");
-    const sPlan: any = planConfiguration(ir, "surge");
+    const qPlan = planConfiguration(ir, "qx");
+    const sPlan = planConfiguration(ir, "surge");
     qxOutputDestination(qx, "mitm").push(...comments, qPlan.line);
     surgeOutputDestination(sg, "mitm").push(...comments, sPlan.line);
   }
@@ -1313,7 +1313,7 @@ export function convertPlugin(
 // Shared workflow-facing conversion execution primitives.
 // Author: chance
 // Category: Converter / Execution / Validation
-function notify(onStage: any, stage: any) {
+function notify(onStage: any, stage: string) {
   if (typeof onStage === "function") onStage(stage);
 }
 // Modified: 2026-10-25 (chance). Acquisition prepares a source-bound context;
@@ -1377,7 +1377,7 @@ export async function materializeConversionRunContext(
 }
 export function convertPluginWithContext(
   entry: any,
-  source: any,
+  source: string,
   context: any,
   {
     stamp = "",
@@ -1443,7 +1443,7 @@ export function validateConvertedPlugin(
 // Modified: 2026-10-29 (chance). Native QX -> Surge lowering preserves source
 // policies/programs and original Script URLs; unsupported semantics stay diagnosed.
 export function convertNativeQxToSurge(
-  text: any,
+  text: string,
   { id = "native_qx" }: any = {},
 ): any {
   // Modified: 2026-11-02 (chance). Apply the authorized remote-script echo repair for standalone native conversion too.
@@ -1482,7 +1482,7 @@ export function convertNativeQxToSurge(
   const iconMetadata: string[] = [];
   let scriptIndex = 0;
   for (const raw of text.split("\n")) {
-    let line: any = raw.trim();
+    let line = raw.trim();
     if (!line) continue;
     // Modified: 2026-11-01 (chance). Preserve native author comments when lowering the separately checked QX input.
     if (/^(?:#|;|\/\/)/.test(line)) {

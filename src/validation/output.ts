@@ -38,10 +38,10 @@ import {
 // Category: Converter / Metadata
 export function parseSourceMetadataHeader(headerLines: any = []): any {
   const directives: any = new Map();
-  const comments: any = [];
+  const comments: string[] = [];
   for (const raw of headerLines) {
     const line = String(raw ?? "").trimEnd();
-    const match: any = line.trim().match(/^#!([^=]+)=(.*)$/);
+    const match = line.trim().match(/^#!([^=]+)=(.*)$/);
     if (match) {
       directives.set(match[1].trim().toLowerCase(), match[2].trim());
       continue;
@@ -62,12 +62,12 @@ const KNOWN_LABELS = new Map([
   ["system", "Platform"],
   ["system_version", "System Version"],
 ]);
-function targetText(value: any, target: any): any {
+function targetText(value: any, target: string): any {
   if (!value) return value;
   return String(value).replace(/\bLoon\b/g, target);
 }
-function metadataComments(directives: any, target: any): any {
-  const out: any = [];
+function metadataComments(directives: any, target: string): any {
+  const out: string[] = [];
   for (const [key, value] of directives) {
     if (!value) continue;
     // Modified: 2026-10-30 (chance). Never relabel or recompute the author URL hash.
@@ -84,7 +84,7 @@ function metadataComments(directives: any, target: any): any {
       key
         .replace(
           /(^|[-_])(\w)/g,
-          (_: any, __: any, c: any): any => " " + c.toUpperCase(),
+          (_: any, __: any, c: any) => " " + c.toUpperCase(),
         )
         .trim();
     out.push(`# ${label}: ${value}`);
@@ -92,7 +92,7 @@ function metadataComments(directives: any, target: any): any {
   return out;
 }
 function preservedComments(lines: any): any {
-  const out: any = [];
+  const out: string[] = [];
   for (const raw of lines) {
     const line = String(raw ?? "").trimEnd();
     if (!line.trim()) {
@@ -139,7 +139,7 @@ export function renderSurgeModuleHeader(
     argumentMetadata = [],
     needsLineRequirement = false,
   }: any = {},
-): any {
+) {
   const { directives, comments } = parseSourceMetadataHeader(headerLines);
   const name: any = directives.get("name") || entry.id;
   const desc: any = targetText(directives.get("desc") || entry.id, "Surge");
@@ -169,7 +169,7 @@ export function validateConversionMetadata(
   text: any,
   entry: any,
   target: any,
-): any {
+) {
   const common = [
     /^# (?:Updated|Converted):\s*.+$/m,
     /^# Converted by:\s*chance\s*$/m,
@@ -231,7 +231,7 @@ export function compactOutputLines(lines: any = []): any {
 // preserve all comments, policy differences and mutation/Script execution counts.
 export function uniqueRoutingLines(lines: any = []): any {
   const seen: any = new Set();
-  return lines.filter((raw: any): any => {
+  return lines.filter((raw: any) => {
     const line = String(raw ?? "").trim();
     if (!line || /^(?:#|;|\/\/)/.test(line)) return true;
     if (seen.has(line)) return false;
@@ -240,7 +240,7 @@ export function uniqueRoutingLines(lines: any = []): any {
   });
 }
 export function hasActiveOutputLines(lines: any = []): any {
-  return lines.some((raw: any): any => {
+  return lines.some((raw: any) => {
     const line = String(raw ?? "").trim();
     return (
       line &&
@@ -272,10 +272,10 @@ export function createQxOutputState(): any {
   };
 }
 export function qxOutputDestination(state: any, section: any): any {
-  const key: any = QX_DESTINATIONS.get(String(section || "").toLowerCase());
+  const key = QX_DESTINATIONS.get(String(section || "").toLowerCase());
   return key ? state[key] : null;
 }
-export function appendQxOutput(state: any, section: any, ...lines: any[]): any {
+export function appendQxOutput(state: any, section: string, ...lines: any[]) {
   const dest: any = qxOutputDestination(state, section);
   if (!dest) return false;
   dest.push(...lines);
@@ -350,14 +350,14 @@ export function createSurgeOutputState(): any {
   };
 }
 export function surgeOutputDestination(state: any, section: any): any {
-  const key: any = SURGE_DESTINATIONS.get(String(section || "").toLowerCase());
+  const key = SURGE_DESTINATIONS.get(String(section || "").toLowerCase());
   return key ? state[key] : null;
 }
 export function appendSurgeOutput(
   state: any,
-  section: any,
+  section: string,
   ...lines: any[]
-): any {
+) {
   const dest: any = surgeOutputDestination(state, section);
   if (!dest) return false;
   dest.push(...lines);
@@ -409,7 +409,7 @@ export function renderSurgeOutput({
 export function looksLikeCommentedSourceDeclaration(
   text: any,
   sectionKind: any,
-): any {
+) {
   const value = String(text || "").trim();
   if (!value) return false;
   if (sectionKind === "rule") {
@@ -475,7 +475,7 @@ export function attachQxInlineNote({
   eligible = true,
 }: any): any {
   const output: any = (lines || []).filter(
-    (line: any): any =>
+    (line: any) =>
       line !== undefined && line !== null && String(line).length,
   );
   const candidate: any = eligible
@@ -500,10 +500,10 @@ export function attachQxInlineNote({
 // Quantumult X snippet validator
 // Author: chance
 // Category: Converter / Quantumult X / Validation
-function stripQxLeadingNote(line: any, entry: any): any {
+function stripQxLeadingNote(line: any, entry: any) {
   const text = String(line ?? "").trim();
   if (!text.startsWith("{#")) return { line: text, note: null };
-  const match: any = text.match(/^\{#\s*(.*?)\s*#\}\s+(.+)$/);
+  const match = text.match(/^\{#\s*(.*?)\s*#\}\s+(.+)$/);
   if (!match || !match[1].trim() || !match[2].trim()) {
     throw new Error(
       `${entry.id}: malformed Quantumult X leading rule note: ${line}`,
@@ -537,12 +537,12 @@ function splitQxRewriteLine(line: any): any {
 function targetRegex(
   pattern: any,
   entry: any,
-  target: any,
-  token: any = true,
-): any {
+  target: string,
+  token: boolean = true,
+) {
   validateTargetRegex(pattern, entry.id + ": " + target, { token });
 }
-function validateQxRewriteAction(action: any, line: any, entry: any): any {
+function validateQxRewriteAction(action: any, line: any, entry: any) {
   if (QX_WAYX_REJECT_ACTIONS.has(action)) return;
   if (/^(?:302|307)\s+\S+$/.test(action)) return;
   if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
@@ -577,24 +577,24 @@ function validateQxRewriteAction(action: any, line: any, entry: any): any {
   const script: any = action.match(/^(script-[a-z-]+)\s+(\S+)$/);
   if (script && QX_WAYX_SCRIPT_ACTIONS.has(script[1])) return;
   const codepoints = [...String(action)]
-    .map((ch: any): any => ch.codePointAt(0).toString(16))
+    .map((ch: string) => ch.codePointAt(0)!.toString(16))
     .join(",");
   throw new Error(
     `${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}; codepoints=${codepoints}; line: ${line}`,
   );
 }
-function validateQxTaskLine(line: any, entry: any): any {
+function validateQxTaskLine(line: any, entry: any) {
   const source = String(line).trim();
-  const comma: any = source.indexOf(",");
-  const declaration: any = (
+  const comma = source.indexOf(",");
+  const declaration = (
     comma >= 0 ? source.slice(0, comma) : source
   ).trim();
-  const optionText: any = comma >= 0 ? source.slice(comma + 1).trim() : "";
-  const event: any = declaration.match(
+  const optionText = comma >= 0 ? source.slice(comma + 1).trim() : "";
+  const event = declaration.match(
     /^(event-network|event-interaction)\s+(\S+)$/,
   );
   if (!event) {
-    const tokens: any = declaration.split(/\s+/);
+    const tokens = declaration.split(/\s+/);
     if (tokens.length < 6) return false;
     const scriptUrl: any = tokens.at(-1);
     const cron: any = tokens.slice(0, -1);
@@ -603,13 +603,13 @@ function validateQxTaskLine(line: any, entry: any): any {
   }
   if (!optionText) return true;
   for (const raw of optionText.split(/,\s*/)) {
-    const eq: any = raw.indexOf("=");
+    const eq = raw.indexOf("=");
     if (eq < 1)
       throw new Error(
         `${entry.id}: malformed Quantumult X task option: ${line}`,
       );
-    const name: any = raw.slice(0, eq).trim().toLowerCase();
-    const value: any = raw.slice(eq + 1).trim();
+    const name = raw.slice(0, eq).trim().toLowerCase();
+    const value = raw.slice(eq + 1).trim();
     if (
       !["tag", "img-url", "enabled", "require-devices"].includes(name) ||
       !value
@@ -630,7 +630,7 @@ function validateQxExecutableLine(
   line: any,
   entry: any,
   section: any = null,
-): any {
+) {
   const noted: any = stripQxLeadingNote(line, entry);
   line = noted.line;
   // Modified: 2026-11-12 (chance). URL regexes may begin with query_key=;
@@ -706,7 +706,7 @@ function validateQxExecutableLine(
     }
     if (
       ["ip-cidr", "ip6-cidr", "geoip", "ip-asn"].includes(type) &&
-      fields.slice(3).some((x: any): any => x.toLowerCase() === "no-resolve")
+      fields.slice(3).some((x: any) => x.toLowerCase() === "no-resolve")
     ) {
       throw new Error(
         `${entry.id}: Quantumult X IP-class rules must remove no-resolve`,
@@ -718,10 +718,10 @@ function validateQxExecutableLine(
     `${entry.id}: unclassified active Quantumult X line: ${line}`,
   );
 }
-export function validateQX(text: any, entry: any): any {
+export function validateQX(text: any, entry: any) {
   const activeMetadata: any = text
     .split("\n")
-    .filter((line: any): any => /^#!(?!source=)/.test(line.trim()));
+    .filter((line: any) => /^#!(?!source=)/.test(line.trim()));
   if (activeMetadata.length) {
     throw new Error(
       `${entry.id}: Quantumult X snippet metadata must be plain comments, not active #! directives`,
@@ -729,7 +729,7 @@ export function validateQX(text: any, entry: any): any {
   }
   const activeSections: any = text
     .split("\n")
-    .filter((line: any): any =>
+    .filter((line: any) =>
       /^\[(filter_local|rewrite_local|task_local|mitm)\]$/i.test(line.trim()),
     );
   if (activeSections.length) {
@@ -789,7 +789,7 @@ export function validateQX(text: any, entry: any): any {
 // Author: chance
 // Category: Converter / Surge Module
 export function hasActiveSurgeLines(lines: any = []): any {
-  return lines.some((raw: any): any => {
+  return lines.some((raw: any) => {
     const line = String(raw).trim();
     return (
       line &&
@@ -800,11 +800,11 @@ export function hasActiveSurgeLines(lines: any = []): any {
   });
 }
 function validateSurgeRuleLine(
-  line: any,
+  line: string,
   entry: any,
   declaredArguments: any = new Set(),
-  profilePolicies: any = false,
-): any {
+  profilePolicies: boolean = false,
+) {
   const parts: any = splitTopLevelCsv(line);
   const typeTree: any = surgeRuleTypesInTree(line);
   if (!typeTree.ok) {
@@ -813,12 +813,12 @@ function validateSurgeRuleLine(
     );
   }
   const parsed: any = parseLoonRuleAst(line);
-  walkRuleAst(parsed.ast, (node: any): any => {
+  walkRuleAst(parsed.ast, (node: any) => {
     if (node.type === "URL-REGEX")
       targetRegex(node.value, entry, "Surge URL-REGEX", false);
   });
   const policyRaw = String(parts[2] || "");
-  const argumentPolicy: any = policyRaw.match(/^\{\{\{([A-Za-z0-9_]+)\}\}\}$/);
+  const argumentPolicy = policyRaw.match(/^\{\{\{([A-Za-z0-9_]+)\}\}\}$/);
   if (argumentPolicy) {
     if (!declaredArguments.has(argumentPolicy[1])) {
       throw new Error(
@@ -826,7 +826,7 @@ function validateSurgeRuleLine(
       );
     }
   } else if (!profilePolicies) {
-    const policy: any = policyRaw.toUpperCase();
+    const policy = policyRaw.toUpperCase();
     if (!SURGE_MODULE_POLICIES.has(policy)) {
       throw new Error(
         `${entry.id}: Surge module [Rule] policy is outside the WayX accepted Surge Rule built-in policy set or a declared {{{argument}}}: ${line}`,
@@ -841,10 +841,10 @@ function validateSurgeRuleLine(
 }
 // Native filter/rule-set resources use the same rule-line contracts as modules.
 export function validateQxFilterList(
-  text: any,
+  text: string,
   entry: any = { id: "filter-list" },
   { builtInPoliciesOnly = false }: any = {},
-): any {
+) {
   for (const raw of String(text).split("\n")) {
     const line = raw.trim();
     if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
@@ -864,9 +864,9 @@ export function validateQxFilterList(
   }
 }
 export function validateSurgeRuleSet(
-  text: any,
+  text: string,
   entry: any = { id: "rule-set" },
-): any {
+) {
   for (const raw of String(text).split("\n")) {
     const line = raw.trim();
     if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
@@ -876,7 +876,7 @@ export function validateSurgeRuleSet(
       parts
         .slice(2)
         .some(
-          (option: any): any =>
+          (option: any) =>
             !["no-resolve", "extended-matching"].includes(option),
         )
     )
@@ -890,9 +890,9 @@ export function validateSurgeRuleSet(
   }
 }
 export function validateSurgeRuleSection(
-  text: any,
+  text: string,
   entry: any = { id: "rule-section" },
-): any {
+) {
   let section: any = null;
   for (const raw of String(text).split("\n")) {
     const line = raw.trim();
@@ -914,8 +914,8 @@ export function validateSurgeModule(
   text: any,
   entry: any = { id: "module" },
   { uniqueScripts = false }: { uniqueScripts?: boolean } = {},
-): any {
-  const allowedSections: any = new Set([
+) {
+  const allowedSections = new Set([
     "General",
     "Rule",
     ...SURGE_WAYX_REWRITE_SECTIONS,
@@ -950,10 +950,10 @@ export function validateSurgeModule(
     let line = raw.trim();
     if (!line) continue;
     if (current === null) {
-      const args: any = line.match(/^#!arguments=(.+)$/i);
+      const args = line.match(/^#!arguments=(.+)$/i);
       if (args) {
         for (const item of args[1].split(",")) {
-          const name: any = item.split(":", 1)[0].trim();
+          const name = item.split(":", 1)[0].trim();
           if (!/^[A-Za-z0-9_]+$/.test(name)) {
             throw new Error(
               `${entry.id}: invalid Surge module argument name: ${name}`,
@@ -967,19 +967,19 @@ export function validateSurgeModule(
           declaredArguments.add(name);
         }
       }
-      const requirement: any = line.match(
+      const requirement = line.match(
         /^#!requirement=.*CORE_VERSION\s*>=\s*(\d+)/i,
       );
       if (requirement) moduleRequirementCore = Number(requirement[1]);
     }
-    const lineRequirement: any = line.match(
+    const lineRequirement = line.match(
       /^#!REQUIREMENT\s+(?:"(?:[^"\\]|\\.)*"|\S+)\s+(.+)$/,
     );
     if (lineRequirement) {
       hasLineRequirement = true;
       line = lineRequirement[1].trim();
     }
-    const section: any = line.match(/^\[([^\]]+)\]$/);
+    const section = line.match(/^\[([^\]]+)\]$/);
     if (section) {
       current = section[1];
       if (!allowedSections.has(current)) {
@@ -992,7 +992,7 @@ export function validateSurgeModule(
     if (line.startsWith("#!")) {
       if (
         current === null &&
-        allowedTopDirectives.some((re: any): any => re.test(line))
+        allowedTopDirectives.some((re: RegExp) => re.test(line))
       )
         continue;
       throw new Error(
@@ -1007,7 +1007,7 @@ export function validateSurgeModule(
       );
     }
     if (current === "General") {
-      const option: any = line.match(/^([^=]+?)\s*=\s*(.+)$/);
+      const option = line.match(/^([^=]+?)\s*=\s*(.+)$/);
       if (!option || option[1].trim() !== "always-real-ip") {
         throw new Error(
           `${entry.id}: unsupported Surge module [General] option: ${line}`,
@@ -1023,8 +1023,8 @@ export function validateSurgeModule(
       if (!/^\S+\s+\S+\s+\S+$/.test(line))
         throw new Error(entry.id + ": malformed Surge URL Rewrite: " + line);
       targetRegex(line.split(/\s+/)[0], entry, "Surge URL Rewrite");
-      const type: any = line.trim().split(/\s+/).at(-1);
-      if (!SURGE_WAYX_URL_REWRITE_TYPES.has(type)) {
+      const type = line.trim().split(/\s+/).at(-1);
+      if (!SURGE_WAYX_URL_REWRITE_TYPES.has(type!)) {
         throw new Error(`${entry.id}: invalid Surge URL Rewrite line: ${line}`);
       }
       if (type === "reject" && !/\s_\sreject$/.test(line)) {
@@ -1036,7 +1036,7 @@ export function validateSurgeModule(
     }
     if (current === "Header Rewrite") {
       targetRegex(line.split(/\s+/)[1], entry, "Surge Header Rewrite URL");
-      const match: any = line.match(
+      const match = line.match(
         /^http-(?:request|response)\s+\S+\s+(header-[a-z-]+)\b/,
       );
       if (!match || !SURGE_WAYX_HEADER_REWRITE_ACTIONS.has(match[1])) {
@@ -1049,7 +1049,7 @@ export function validateSurgeModule(
     if (current === "Body Rewrite") {
       targetRegex(line.split(/\s+/)[1], entry, "Surge Body Rewrite URL");
       hasBodyRewrite = true;
-      const type: any = line.trim().split(/\s+/, 1)[0];
+      const type = line.trim().split(/\s+/, 1)[0];
       if (!SURGE_WAYX_BODY_REWRITE_TYPES.has(type)) {
         throw new Error(
           `${entry.id}: invalid Surge Body Rewrite line: ${line}`,
@@ -1059,7 +1059,7 @@ export function validateSurgeModule(
     }
     if (current === "Map Local") {
       targetRegex(line.split(/\s+/)[0], entry, "Surge Map Local URL");
-      const dataType: any = line.match(/\bdata-type=([^\s]+)/)?.[1];
+      const dataType = line.match(/\bdata-type=([^\s]+)/)?.[1];
       if (!dataType || !SURGE_WAYX_MAP_LOCAL_DATA_TYPES.has(dataType)) {
         throw new Error(`${entry.id}: invalid Surge Map Local line: ${line}`);
       }
@@ -1067,7 +1067,7 @@ export function validateSurgeModule(
       continue;
     }
     if (current === "Script") {
-      const declaration: any = line.match(/^([^=]+?)\s*=\s*(.+)$/);
+      const declaration = line.match(/^([^=]+?)\s*=\s*(.+)$/);
       if (!declaration)
         throw new Error(
           `${entry.id}: invalid Surge [Script] declaration: ${line}`,
@@ -1076,7 +1076,7 @@ export function validateSurgeModule(
       if (uniqueScripts && scriptNames.has(scriptName))
         throw Error(entry.id + ": duplicate Surge script name: " + scriptName);
       scriptNames.add(scriptName);
-      const body: any = declaration[2];
+      const body = declaration[2];
       const params: any = parseSurgeParameters(
         body,
         entry.id + ": Surge Script",
@@ -1112,10 +1112,10 @@ export function validateSurgeModule(
       continue;
     }
     if (current === "MITM") {
-      const match: any = line.match(/^([^=]+?)\s*=\s*(.+)$/);
+      const match = line.match(/^([^=]+?)\s*=\s*(.+)$/);
       if (!match)
         throw new Error(`${entry.id}: invalid Surge MITM option: ${line}`);
-      const key: any = match[1].trim();
+      const key = match[1].trim();
       if (!SURGE_WAYX_MITM_KEYS.has(key)) {
         throw new Error(
           `${entry.id}: WayX ad-block Surge Module [MITM] only accepts hostname: ${line}`,

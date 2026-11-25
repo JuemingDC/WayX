@@ -160,11 +160,11 @@ export function normalizePluginSource(text: any) {
     .replace(/^\uFEFF/, "");
 }
 export function parseLoonPlugin(text: any): any {
-  const header: any = [];
+  const header: string[] = [];
   const sections: any = new Map();
   let current: any = null;
   for (const raw of normalizePluginSource(text).split("\n")) {
-    const match: any = raw.trim().match(/^\[([^\]]+)\]$/);
+    const match = raw.trim().match(/^\[([^\]]+)\]$/);
     if (match) {
       current = match[1];
       if (!sections.has(current)) sections.set(current, []);
@@ -201,7 +201,7 @@ export function groupSourceSectionItems(lines: any = []): any {
     const atomicJsonPipeline = projected.length > 1 &&
       projected.some(line => /\bthen\s+(?:request|response)\.json\./.test(line));
     const members = atomicJsonPipeline ? [trimmed] : projected;
-    members.forEach((line: any, index: any): any =>
+    members.forEach((line: string, index: number): any =>
       items.push({
         comments: index === 0 ? pending : [],
         line,
@@ -225,7 +225,7 @@ export function cleanSourceComments(comments: any = []): any {
         !(value === "" && all[index - 1] === ""),
     );
 }
-export function sourceCommentText(raw: any): any {
+export function sourceCommentText(raw: any) {
   const text = String(raw ?? "").trim();
   const match = text.match(/^(?:#|;|\/\/)\s*(.*?)\s*$/);
   return match ? match[1].trim() : null;
@@ -238,7 +238,7 @@ export function sourceCommentText(raw: any): any {
 // Author: chance
 // Category: Converter / Script / Materialization
 export function discoverSourceScriptUrls(
-  source: any,
+  source: string,
   { parsed = null }: any = {},
 ): any {
   const text = String(source ?? "");
@@ -269,12 +269,12 @@ export function discoverSourceScriptUrls(
 }
 export async function inspectSourceScript(
   reference: any,
-  pluginSourceUrl: any,
+  pluginSourceUrl: string,
   { fetchText = fetchOriginalText }: any = {},
 ): Promise<any> {
   const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
   try {
-    const normalized: any = normalizePluginSource(
+    const normalized = normalizePluginSource(
       await fetchText(originalUrl),
     ).replace(/\n*$/, "\n");
     return {
@@ -293,8 +293,8 @@ export async function inspectSourceScript(
   }
 }
 export async function materializeSourceScripts(
-  source: any,
-  pluginSourceUrl: any,
+  source: string,
+  pluginSourceUrl: string,
   { parsed = null, fetchText = fetchOriginalText }: any = {},
 ): Promise<any> {
   const scriptMap: any = new Map();
@@ -359,7 +359,7 @@ async function readActionDependencies(
 ): Promise<any> {
   if (single) return read(files[0].action);
   const byAction: any = {},
-    failures: any = [];
+    failures: string[] = [];
   for (const { action, index } of files)
     try {
       byAction[index] = await read(action);

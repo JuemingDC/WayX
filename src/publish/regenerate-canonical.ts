@@ -56,14 +56,14 @@ if (process.argv.includes("--successful-only")) {
   selectedIds = new Set(report.convertedPlugins);
   if (
     [...selectedIds].some(
-      (id: any): any => !manifest.some((entry: any): any => entry.id === id),
+      (id: any) => !manifest.some((entry: any) => entry.id === id),
     )
   )
     throw new Error("Unknown plugin in full conversion report");
 }
-const staleEntries: any = [];
+const staleEntries: string[] = [];
 const findings: any = [],
-  verifiedPlugins: any = [],
+  verifiedPlugins: string[] = [],
   artifacts: any = {};
 let checked = 0;
 const failures: any = createWorkflowFailureReporter({
@@ -92,8 +92,8 @@ for (const entry of manifest) {
   try {
     const source = await readCatalogSource(ROOT, entry);
     const targetState = await readManagedTargetState(ROOT, entry);
-    const oldQx: any = targetState.qx;
-    const oldSurge: any = targetState.surge;
+    const oldQx = targetState.qx;
+    const oldSurge = targetState.surge;
     const stamp: any =
       firstConversionStamp([oldQx, oldSurge], { trim: true }) ||
       nowConversionStamp();
@@ -126,7 +126,7 @@ for (const entry of manifest) {
         [targetState.qxRelativePath, oldQx],
         [targetState.surgeRelativePath, oldSurge],
       ])
-        artifacts[file] = validationArtifactDigest(text);
+        artifacts[file!] = validationArtifactDigest(text);
       continue;
     }
     staleEntries.push(entry.id);

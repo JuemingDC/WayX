@@ -1,5 +1,5 @@
 import { transformJqText } from "./jq-text.ts";
-import type { RewriteAst, RewriteSemanticIr } from "../domain/contracts.ts";
+import type { RewriteAst, RewriteSemanticIr, Phase, SyntaxNode, SourceAction } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -39,7 +39,7 @@ import { surgeRewriteArgumentPayload } from "./script.ts";
 // Category: Converter / Rewrite v2
 const BT = String.fromCharCode(96),
   PUN = "(),[].|";
-function fail(s: any, i: any, m: any): any {
+function fail(s: string, i: number, m: string): never {
   throw new SyntaxError(
     m +
       " at column " +
@@ -51,15 +51,15 @@ function fail(s: any, i: any, m: any): any {
       "^",
   );
 }
-function dq(r: any): any {
+function dq(r: string): string {
   let o = "";
   for (let i = 1; i < r.length - 1; i++) {
-    let c: any = r[i];
+    let c = r[i];
     if (c !== "\\") {
       o += c;
       continue;
     }
-    let n: any = r[++i];
+    let n = r[++i];
     o +=
       n === "n"
         ? "\n"
@@ -75,25 +75,41 @@ function dq(r: any): any {
   }
   return o;
 }
-export function tokenizeRewriteV2(source: any): any {
+type RewriteTokenValues = {
+  operator: string;
+  punct: string;
+  variable: string;
+  string: string;
+  "raw-string": string;
+  regex: { pattern: string; flags: string };
+  number: number;
+  identifier: string;
+  eof: null;
+};
+type RewriteTokenKind = keyof RewriteTokenValues;
+type RewriteTokenOf<K extends RewriteTokenKind> = {
+  type: K; raw: string; value: RewriteTokenValues[K]; start: number; end: number;
+};
+type RewriteToken = { [K in RewriteTokenKind]: RewriteTokenOf<K> }[RewriteTokenKind];
+export function tokenizeRewriteV2(source: string): RewriteToken[] {
   const s = String(source ?? ""),
-    a: any = [];
+    a: RewriteToken[] = [];
   let i = 0;
-  const add: any = (
-    type: any,
-    raw: any,
-    value: any = raw,
-    start: any = i,
-    end: any = i + raw.length,
-  ): any => a.push({ type, raw, value, start, end });
+  const add = <K extends RewriteTokenKind>(
+    type: K,
+    raw: string,
+    value: RewriteTokenValues[K] = raw as RewriteTokenValues[K],
+    start: number = i,
+    end = i + raw.length,
+  ) => a.push({ type, raw, value, start, end } as RewriteToken);
   while (i < s.length) {
-    let c: any = s[i];
+    let c = s[i];
     if (/\s/.test(c)) {
       i++;
       continue;
     }
-    let st: any = i,
-      t: any = s.slice(i, i + 2);
+    let st = i,
+      t = s.slice(i, i + 2);
     if (["&&", "||", "==", "~="].includes(t)) {
       add("operator", t, t, st, i + 2);
       i += 2;
@@ -106,7 +122,7 @@ export function tokenizeRewriteV2(source: any): any {
     if (c === "$" && s[i + 1] === "{") {
       i += 2;
       let d = 1,
-        q: any = null,
+        q: string | null = null,
         e = false;
       while (i < s.length && d) {
         c = s[i];
@@ -127,7 +143,7 @@ export function tokenizeRewriteV2(source: any): any {
         i++;
       }
       if (d) fail(s, st, "Unterminated variable");
-      let r: any = s.slice(st, i);
+      let r = s.slice(st, i);
       add("variable", r, r.slice(2, -1), st, i);
       continue;
     }
@@ -151,7 +167,7 @@ export function tokenizeRewriteV2(source: any): any {
         }
       }
       if (!ok) fail(s, st, "Unterminated string");
-      let r: any = s.slice(st, i);
+      let r = s.slice(st, i);
       add("string", r, dq(r), st, i);
       continue;
     }
@@ -172,7 +188,7 @@ export function tokenizeRewriteV2(source: any): any {
         break;
       }
       if (!ok) fail(s, st, "Unterminated raw string");
-      let r: any = s.slice(st, i);
+      let r = s.slice(st, i);
       add(
         "raw-string",
         r,
@@ -186,7 +202,7 @@ export function tokenizeRewriteV2(source: any): any {
       continue;
     }
     if (c === "/") {
-      let regex: any;
+      let regex: ReturnType<typeof scanSourceRegexLiteral>;
       try {
         regex = scanSourceRegexLiteral(s, st);
       } catch (error: any) {
@@ -202,11 +218,11 @@ export function tokenizeRewriteV2(source: any): any {
       );
       continue;
     }
-    let n: any = s
+    let n = s
       .slice(i)
       .match(/^-?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?/);
     if (n) {
-      let r: any = n[0];
+      let r = n[0];
       i += r.length;
       add("number", r, Number(r), st, i);
       continue;
@@ -214,7 +230,7 @@ export function tokenizeRewriteV2(source: any): any {
     if (/[A-Za-z_]/.test(c)) {
       i++;
       while (i < s.length && /[A-Za-z0-9_-]/.test(s[i])) i++;
-      let r: any = s.slice(st, i);
+      let r = s.slice(st, i);
       add("identifier", r, r, st, i);
       continue;
     }
@@ -225,49 +241,49 @@ export function tokenizeRewriteV2(source: any): any {
 }
 class Parser {
   s: string;
-  t: any[];
+  t: RewriteToken[];
   i: number;
-  constructor(s: any) {
+  constructor(s: string) {
     this.s = String(s ?? "");
     this.t = tokenizeRewriteV2(this.s);
     this.i = 0;
   }
-  p(n: any = 0): any {
+  p(n: number = 0): RewriteToken {
     return this.t[Math.min(this.i + n, this.t.length - 1)];
   }
-  is(t: any, v: any, n: any = 0): any {
-    let x: any = this.p(n);
+  is(t: RewriteTokenKind, v: RewriteTokenValues[RewriteTokenKind] | undefined, n: number = 0): boolean {
+    let x = this.p(n);
     return x.type === t && (v === undefined || x.value === v);
   }
-  kw(v: any): any {
+  kw(v: string): boolean {
     return this.is("identifier", v);
   }
-  next(): any {
+  next(): RewriteToken {
     return this.t[this.i++];
   }
-  need(t: any, v: any, m: any = undefined): any {
-    let x: any = this.p();
+  need<K extends RewriteTokenKind>(t: K, v: RewriteTokenValues[K] | undefined, m: string | undefined = undefined): RewriteTokenOf<K> {
+    let x = this.p();
     if (!this.is(t, v))
       fail(
         this.s,
         x.start,
         m || "Expected " + (v ?? t) + ", got " + (x.raw || x.type),
       );
-    return this.next();
+    return this.next() as RewriteTokenOf<K>;
   }
-  parse(): any {
-    let q: any = this.need(
+  parse(): RewriteAst {
+    let q = this.need(
         "identifier",
         undefined,
         "Expected request or response",
       ),
-      phase: any = q.value.toLowerCase();
+      phase = q.value.toLowerCase() as Phase;
     if (!["request", "response"].includes(phase))
       fail(this.s, q.start, "Unsupported rewrite phase " + q.raw);
     this.need("identifier", "if");
-    let condition: any = this.or();
+    let condition = this.or();
     this.need("identifier", "then");
-    let actions: any = this.pipe();
+    let actions = this.pipe();
     this.need("eof", undefined, "Unexpected trailing token");
     return {
       type: "rewrite",
@@ -278,36 +294,36 @@ class Parser {
       raw: this.s,
     };
   }
-  or(): any {
-    let l: any = this.and();
+  or(): SyntaxNode {
+    let l = this.and();
     while (this.is("operator", "||")) {
       this.next();
       l = { type: "logical", operator: "||", left: l, right: this.and() };
     }
     return l;
   }
-  and(): any {
-    let l: any = this.primary();
+  and(): SyntaxNode {
+    let l = this.primary();
     while (this.is("operator", "&&")) {
       this.next();
       l = { type: "logical", operator: "&&", left: l, right: this.primary() };
     }
     return l;
   }
-  primary(): any {
+  primary(): SyntaxNode {
     if (this.is("punct", "(")) {
       this.next();
-      let e: any = this.or();
+      let e = this.or();
       this.need("punct", ")", "Expected closing condition parenthesis");
       return { type: "group", expression: e };
     }
     return this.cmp();
   }
-  cmp(): any {
-    let left: any = this.val(false),
-      o: any = this.need("operator", undefined, "Expected == or ~="),
-      right: any = this.val(false),
-      capture: any = null;
+  cmp(): SyntaxNode {
+    let left = this.val(false),
+      o = this.need("operator", undefined, "Expected == or ~="),
+      right = this.val(false),
+      capture: string | null = null;
     if (!["==", "~="].includes(o.value))
       fail(this.s, o.start, "Unsupported comparison " + o.raw);
     if (this.kw("as")) {
@@ -322,16 +338,16 @@ class Parser {
     }
     return { type: "comparison", operator: o.value, left, right, capture };
   }
-  pipe(): any {
-    let a: any = [this.action()];
+  pipe(): SourceAction[] {
+    let a = [this.action()];
     while (this.is("punct", "|")) {
       this.next();
       a.push(this.action());
     }
     return a;
   }
-  action(): any {
-    let n: any = [
+  action(): SourceAction {
+    let n = [
       this.need("identifier", undefined, "Expected action name").value,
     ];
     while (this.is("punct", ".")) {
@@ -341,7 +357,7 @@ class Parser {
           .value,
       );
     }
-    let args: any = [];
+    let args: SyntaxNode[] = [];
     if (this.is("punct", "(")) {
       this.next();
       if (!this.is("punct", ")"))
@@ -354,8 +370,8 @@ class Parser {
     }
     return { type: "action", name: n.join("."), args };
   }
-  val(arr: any): any {
-    let x: any = this.p();
+  val(arr: boolean): SyntaxNode {
+    let x = this.p();
     if (arr && this.is("punct", "[")) return this.array();
     if (x.type === "variable") {
       this.next();
@@ -388,9 +404,9 @@ class Parser {
     }
     fail(this.s, x.start, "Expected value, got " + (x.raw || x.type));
   }
-  array(): any {
+  array(): SyntaxNode {
     this.need("punct", "[");
-    let items: any = [];
+    let items: SyntaxNode[] = [];
     if (!this.is("punct", "]"))
       for (;;) {
         if (this.is("punct", "["))
@@ -416,7 +432,7 @@ export function selectRewritePipelineLayer(ast: any): any {
     sourceActionCount: ast.actions.length,
   };
 }
-export function isRewriteV2(s: any): any {
+export function isRewriteV2(s: any) {
   return /^\s*(?:request|response)\s+if\b/.test(String(s ?? ""));
 }
 export function valueToSource(n: any): any {
@@ -425,7 +441,7 @@ export function valueToSource(n: any): any {
   if (n.raw != null) return n.raw;
   throw new TypeError("Unsupported value " + n.type);
 }
-function prec(n: any): any {
+function prec(n: any) {
   return n.type === "logical"
     ? n.operator === "||"
       ? 1
@@ -434,7 +450,7 @@ function prec(n: any): any {
       ? 4
       : 3;
 }
-export function conditionToSource(n: any, p: any = 0): any {
+export function conditionToSource(n: any, p: number = 0): string {
   if (n.type === "comparison")
     return (
       valueToSource(n.left) +
@@ -463,7 +479,7 @@ export function actionToSource(n: any): any {
     ? n.name + "(" + n.args.map(valueToSource).join(", ") + ")"
     : n.name;
 }
-export function rewriteV2ToSource(a: any): any {
+export function rewriteV2ToSource(a: any) {
   if (!a || a.type !== "rewrite")
     throw new TypeError("Expected Rewrite v2 AST");
   return (
@@ -476,7 +492,7 @@ export function rewriteV2ToSource(a: any): any {
 }
 export function findRewriteComparisons(
   n: any,
-  p: any = (): any => true,
+  p: any = () => true,
   o: any = [],
 ): any {
   if (!n) return o;
@@ -553,7 +569,7 @@ const LEGACY_REJECT_VARIANTS = new Map([
   ],
 ]);
 function rewriteSourceTokens(input: any): any {
-  const out: any = [];
+  const out: string[] = [];
   let cur = "",
     quote: any = null,
     esc = false;
@@ -588,7 +604,7 @@ function rewriteSourceTokens(input: any): any {
   if (cur) out.push(cur);
   return out;
 }
-export function unquoteRewriteToken(token: any): any {
+export function unquoteRewriteToken(token: any) {
   const t = String(token ?? "");
   if (
     (t.startsWith('"') && t.endsWith('"')) ||
@@ -605,13 +621,13 @@ export const LOON_LEGACY_MOCK_OPTION_NAMES = new Set([
   "data-path",
   "mock-data-is-base64",
 ]);
-function legacyMockOptionNames(rest: any): any {
+function legacyMockOptionNames(rest: string): any {
   const source = String(rest ?? "");
-  const out: any = [];
+  const out: string[] = [];
   let quote: any = null,
     esc = false;
   for (let i = 0; i < source.length; ) {
-    const ch: any = source[i];
+    const ch = source[i];
     if (quote) {
       if (esc) {
         esc = false;
@@ -633,7 +649,7 @@ function legacyMockOptionNames(rest: any): any {
       continue;
     }
     if (i === 0 || /\s/.test(source[i - 1])) {
-      const match: any = source.slice(i).match(/^([A-Za-z][A-Za-z0-9-]*)=/);
+      const match = source.slice(i).match(/^([A-Za-z][A-Za-z0-9-]*)=/);
       if (match) {
         out.push(match[1].toLowerCase());
         i += match[0].length;
@@ -644,17 +660,17 @@ function legacyMockOptionNames(rest: any): any {
   }
   return [...new Set(out)];
 }
-function parseLegacyMockData(rest: any): any {
+function parseLegacyMockData(rest: any) {
   const source = String(rest || "");
-  const quotedStart: any = source.search(/\bdata="/i);
+  const quotedStart = source.search(/\bdata="/i);
   if (quotedStart >= 0) {
-    const valueStart: any = source.indexOf('"', quotedStart) + 1;
-    const tail: any = source.slice(valueStart);
-    const marker: any = tail.match(
+    const valueStart = source.indexOf('"', quotedStart) + 1;
+    const tail = source.slice(valueStart);
+    const marker = tail.match(
       /"\s+(?=(?:status-code|data-path|mock-data-is-base64)=)/i,
     );
     const end: any = marker
-      ? valueStart + marker.index
+      ? valueStart + marker.index!
       : source.lastIndexOf('"');
     if (end >= valueStart) {
       return source
@@ -664,10 +680,10 @@ function parseLegacyMockData(rest: any): any {
         .replace(/\\\\/g, "\\");
     }
   }
-  const unquoted: any = source.match(/\bdata=([^\s]+)/i);
+  const unquoted = source.match(/\bdata=([^\s]+)/i);
   return unquoted ? unquoted[1] : null;
 }
-function parseLegacyMock(rest: any): any {
+function parseLegacyMock(rest: string): any {
   const type =
     (String(rest).match(/\bdata-type=([^\s]+)/i) || [])[1] || "text";
   const status = Number(
@@ -680,9 +696,9 @@ function parseLegacyMock(rest: any): any {
 }
 export function classifyLegacyRewriteAction(action: any): any {
   const raw = String(action ?? "").trim();
-  const lower: any = raw.toLowerCase();
+  const lower = raw.toLowerCase();
   if (LEGACY_REJECT_VARIANTS.has(lower)) {
-    const semantic: any = LEGACY_REJECT_VARIANTS.get(lower);
+    const semantic = LEGACY_REJECT_VARIANTS.get(lower)!;
     return {
       kind: "reject",
       action: lower,
@@ -691,7 +707,7 @@ export function classifyLegacyRewriteAction(action: any): any {
       raw,
     };
   }
-  let match: any = raw.match(/^(302|307)\s+(.+)$/i);
+  let match = raw.match(/^(302|307)\s+(.+)$/i);
   if (match) {
     return {
       kind: "redirect",
@@ -748,7 +764,7 @@ export function classifyLegacyRewriteAction(action: any): any {
   if (match) {
     const optionNames: any = legacyMockOptionNames(match[2]);
     const unknownOptions: any = optionNames.filter(
-      (name: any): any => !LOON_LEGACY_MOCK_OPTION_NAMES.has(name),
+      (name: any) => !LOON_LEGACY_MOCK_OPTION_NAMES.has(name),
     );
     if (unknownOptions.length) {
       return {
@@ -768,7 +784,7 @@ export function classifyLegacyRewriteAction(action: any): any {
   }
   return { kind: "unknown", raw };
 }
-export function isDiscardedLegacyJqPathIr(ir: any): any {
+export function isDiscardedLegacyJqPathIr(ir: any) {
   if (!ir || ir.type !== "rewrite-semantic-ir" || ir.sourceSyntax !== "legacy")
     return false;
   if (!Array.isArray(ir.operations) || ir.operations.length !== 1) return false;
@@ -779,7 +795,7 @@ export function isDiscardedLegacyJqPathIr(ir: any): any {
     /^jq-path\s*=/i.test(String(op?.rest || "").trim())
   );
 }
-export function isEmptyJsonJqIr(ir: any): any {
+export function isEmptyJsonJqIr(ir: any) {
   if (!ir || ir.type !== "rewrite-semantic-ir") return false;
   if (!Array.isArray(ir.operations) || ir.operations.length !== 1) return false;
   const op: any = ir.operations[0];
@@ -836,10 +852,10 @@ function scalarValue(node: any): any {
   if (Object.hasOwn(node, "value")) return node.value;
   return null;
 }
-function classifyRewriteV2Action(action: any, phase: any): any {
+function classifyRewriteV2Action(action: any, phase: string): any {
   const name = String(action?.name || "");
   if (/^reject(?:_|$)/.test(name)) {
-    const variant: any =
+    const variant =
       LEGACY_REJECT_VARIANTS.get(name.replace("_", "-"))?.variant ?? "generic";
     return {
       kind: "reject",
@@ -859,7 +875,7 @@ function classifyRewriteV2Action(action: any, phase: any): any {
       sourceAction: action,
     };
   }
-  const header: any = name.match(
+  const header = name.match(
     /^(request|response)\.header\.(add|set|del|replace)$/,
   );
   if (header) {
@@ -871,7 +887,7 @@ function classifyRewriteV2Action(action: any, phase: any): any {
       sourceAction: action,
     };
   }
-  const body: any = name.match(/^(request|response)\.body\.replace$/);
+  const body = name.match(/^(request|response)\.body\.replace$/);
   if (body) {
     return {
       kind: "body-regex",
@@ -881,7 +897,7 @@ function classifyRewriteV2Action(action: any, phase: any): any {
       sourceAction: action,
     };
   }
-  const json: any = name.match(
+  const json = name.match(
     /^(request|response)\.json\.(add|delete|replace|jq|jq_file)$/,
   );
   if (json) {
@@ -893,7 +909,7 @@ function classifyRewriteV2Action(action: any, phase: any): any {
       sourceAction: action,
     };
   }
-  const mock: any = name.match(/^(request|response)\.body\.(mock|mock_file)$/);
+  const mock = name.match(/^(request|response)\.body\.(mock|mock_file)$/);
   if (mock) {
     return {
       kind: "mock",
@@ -940,7 +956,7 @@ export function isRewriteOperation(
   ir: any,
   kind: any,
   { phase = null, operation = null, actionName = null }: any = {},
-): any {
+) {
   const op: any = singleRewriteOperation(ir);
   if (!op || op.kind !== kind) return false;
   if (phase !== null && op.phase !== phase) return false;
@@ -996,7 +1012,7 @@ export const LOON_REWRITE_V2_ACTIONS: any = new Map(
 export function getRewriteV2ActionDefinition(name: any): any {
   return LOON_REWRITE_V2_ACTIONS.get(String(name ?? "")) || null;
 }
-function actionError(action: any, message: any): any {
+function actionError(action: any, message: string) {
   const error = new Error(action.name + ": " + message) as Error & { code: string; action: string };
   error.code = "WAYX_REWRITE_V2_ACTION_INVALID";
   error.action = action.name;
@@ -1023,7 +1039,7 @@ export function validateRewriteV2Action(action: any): any {
     );
   }
   const arrays: any = action.args.filter(
-    (arg: any): any => arg.type === "array",
+    (arg: any) => arg.type === "array",
   );
   if (arrays.length) {
     if (!def.bulk)
@@ -1036,7 +1052,7 @@ export function validateRewriteV2Action(action: any): any {
     const lengths: any = new Set(
       arrays.map((arg: any): any => arg.items.length),
     );
-    if (arrays.some((arg: any): any => arg.items.length === 0))
+    if (arrays.some((arg: any) => arg.items.length === 0))
       throw actionError(action, "bulk arrays must not be empty");
     if (lengths.size !== 1)
       throw actionError(action, "bulk arrays must have equal lengths");
@@ -1050,7 +1066,7 @@ export function validateRewriteV2Action(action: any): any {
   }
   return def;
 }
-function conditionError(message: any): any {
+function conditionError(message: string) {
   const error = new Error(message) as Error & { code: string };
   error.code = "WAYX_REWRITE_V2_CONDITION_INVALID";
   return error;
@@ -1067,7 +1083,7 @@ function validateCondition(node: any, phase: any): any {
     throw conditionError("condition left side must be a variable");
   const name: any = node.left.name;
   const header = /^(request|response)\.header\[['"].+['"]\]$/.test(name);
-  const known: any =
+  const known =
     name === "url" ||
     name === "request.method" ||
     name === "response.status" ||
@@ -1124,7 +1140,7 @@ export function validateRewriteV2Ast(
 ): any {
   if (!ast || ast.type !== "rewrite")
     throw new TypeError("Expected Rewrite v2 AST root");
-  const validateRegexes: any = (node: any): any => {
+  const validateRegexes: any = (node: any) => {
     if (!node || typeof node !== "object") return;
     // Modified: 2026-11-16 (chance). Source regex validation uses ICU without
     // rewriting atomic groups; JS execution remains a separate helper boundary.
@@ -1140,7 +1156,7 @@ export function validateRewriteV2Ast(
         ? [node.name]
         : node.type === "string"
           ? stringTemplateParts(node)
-              .filter((p: any): any => p[0] === "v")
+              .filter((p: any) => p[0] === "v")
               .map((p: any): any => p[1])
           : [];
     if (
@@ -1184,7 +1200,7 @@ export function parseJsonKeyPath(pathText: any): any {
   if (!text) throw new Error("JSON key path must not be empty");
   const parts: any = [];
   let i = 0;
-  const decodeSingleQuoted: any = (value: any): any => {
+  const decodeSingleQuoted: any = (value: any) => {
     let out = "";
     for (let j = 1; j < value.length - 1; j++) {
       const ch: any = value[j];
@@ -1211,14 +1227,14 @@ export function parseJsonKeyPath(pathText: any): any {
       continue;
     }
     if (text[i] === "[") {
-      const rest: any = text.slice(i);
-      const numeric: any = rest.match(/^\[(\d+)\]/);
+      const rest = text.slice(i);
+      const numeric = rest.match(/^\[(\d+)\]/);
       if (numeric) {
         parts.push(Number(numeric[1]));
         i += numeric[0].length;
         continue;
       }
-      const quoted: any = rest.match(
+      const quoted = rest.match(
         /^\[((?:"(?:\\.|[^"\\])*")|(?:'(?:\\.|[^'\\])*'))\]/,
       );
       if (!quoted)
@@ -1237,7 +1253,7 @@ export function parseJsonKeyPath(pathText: any): any {
       i += quoted[0].length;
       continue;
     }
-    const bare: any = text.slice(i).match(/^[^.[\]]+/);
+    const bare = text.slice(i).match(/^[^.[\]]+/);
     if (!bare) throw new Error("invalid JSON key path: " + text);
     parts.push(bare[0]);
     i += bare[0].length;
@@ -1250,7 +1266,7 @@ function validateParts(parts: any): any {
     !Array.isArray(parts) ||
     !parts.length ||
     parts.some(
-      (part: any): any => typeof part !== "string" && !Number.isInteger(part),
+      (part: any) => typeof part !== "string" && !Number.isInteger(part),
     )
   ) {
     throw new Error(
@@ -1273,10 +1289,10 @@ export function planFixedPathDeleteJq(
     validateParts(Array.isArray(item) ? item : item?.parts),
   );
   const prefix: any = (a: any, b: any): any =>
-    a.length < b.length && a.every((part: any, i: any): any => part === b[i]);
+    a.length < b.length && a.every((part: any, i: any) => part === b[i]);
   const independent: any =
     parts.every((path: any): any =>
-      path.every((part: any): any => typeof part === "string"),
+      path.every((part: any) => typeof part === "string"),
     ) &&
     !parts.some((path: any, i: any): any =>
       parts.some(
@@ -1286,10 +1302,10 @@ export function planFixedPathDeleteJq(
     );
   if (independent) {
     const selectors: any = parts.map(
-      (path: any): any =>
+      (path: any) =>
         "." +
         path
-          .map((key: any, i: any): any =>
+          .map((key: any, i: any) =>
             /^[A-Za-z_][A-Za-z0-9_]*$/.test(key)
               ? (i ? "." : "") + key
               : "[" + JSON.stringify(key) + "]",
@@ -1339,7 +1355,7 @@ export function renderFixedJsonMutationJq(operation: any, entries: any): any {
   throw new Error("unsupported fixed JSON mutation: " + operation);
 }
 // Modified: 2026-11-14 (chance). jq comments respect interpolation and line continuation.
-export function stripJqComments(expr: any): any {
+export function stripJqComments(expr: any) {
   return transformJqText(String(expr));
 }
 // 上游错误：jq keyword whitespace lost after an identity selector.
@@ -1356,7 +1372,7 @@ export function repairUpstreamJq(expr: any): any {
     escaped = false,
     comment = false;
   for (let i = 0; i < original.length; i++) {
-    const ch: any = original[i];
+    const ch = original[i];
     if (comment) {
       masked += ch === "\n" ? "\n" : " ";
       if (ch === "\n") comment = false;
@@ -1381,12 +1397,12 @@ export function repairUpstreamJq(expr: any): any {
     }
     masked += ch;
   }
-  const matches: any = [
+  const matches = [
     ...masked.matchAll(/\belse\s*\.end\b(?=\s*(?:[;|)\],}]|$))/g),
   ];
-  let result: any = { jq: original, changed: false };
+  let result: { jq: string; changed: boolean; kind?: string; original?: string; diagnostic?: string } = { jq: original, changed: false };
   if (matches.length) {
-    const compile: any = (program: any): any => {
+    const compile: any = (program: any) => {
       const checked = spawnSync("jq", [program], {
         input: "",
         encoding: "utf8",
@@ -1405,9 +1421,9 @@ export function repairUpstreamJq(expr: any): any {
       before.status === 3 &&
       /syntax error|unterminated/i.test(before.stderr)
     ) {
-      let candidate: any = original;
+      let candidate = original;
       for (const match of matches.reverse()) {
-        const offset: any = match.index + match[0].lastIndexOf(".end") + 1;
+        const offset = match.index + match[0].lastIndexOf(".end") + 1;
         candidate = candidate.slice(0, offset) + " " + candidate.slice(offset);
       }
       const after: any = compile(candidate);
@@ -1431,16 +1447,16 @@ export function repairUpstreamJq(expr: any): any {
 }
 // Modified: 2026-11-14 (chance). Compact only jq code; preserve string data,
 // nested interpolation, token boundaries and official continued-comment behavior.
-export function minifyJq(expr: any): any {
+export function minifyJq(expr: string) {
   return transformJqText(String(expr), {compact: true});
 }
 export function minifyJqFile(expr: any): any {
   return minifyJq(String(expr).replace(/^\uFEFF/, ""));
 }
-export function normalizeJqForSingleQuotedConfig(expr: any): any {
+export function normalizeJqForSingleQuotedConfig(expr: any) {
   return transformJqText(String(expr), {quoteSafe: true});
 }
-export function quoteJq(expr: any): any {
+export function quoteJq(expr: any) {
   return `'${normalizeJqForSingleQuotedConfig(expr)}'`;
 }
 
@@ -1473,11 +1489,11 @@ function stringValue(node: any): any {
   if (!node || !["string", "raw-string"].includes(node.type)) return null;
   return String(node.value);
 }
-function boolValue(node: any, fallback: any = false): any {
+function boolValue(node: any, fallback: boolean = false): any {
   if (!node) return fallback;
   return node.type === "boolean" ? node.value : fallback;
 }
-function numberValue(node: any, fallback: any): any {
+function numberValue(node: any, fallback: number): any {
   if (!node) return fallback;
   return node.type === "number" && Number.isFinite(node.value)
     ? node.value
@@ -1486,7 +1502,7 @@ function numberValue(node: any, fallback: any): any {
 function dependencyLocation(
   ref: any,
   actionName: any,
-  pluginSourceUrl: any = "",
+  pluginSourceUrl: string = "",
 ): any {
   const value = String(ref ?? "").trim();
   if (!value)
@@ -1520,9 +1536,9 @@ function dependencyLocation(
 }
 function legacyJqPathRef(value: any): any {
   const text = String(value ?? "").trim();
-  const match: any = text.match(/^jq-path\s*=\s*(.+)$/i);
+  const match = text.match(/^jq-path\s*=\s*(.+)$/i);
   if (!match) return null;
-  let ref: any = match[1].trim();
+  let ref = match[1].trim();
   if (
     (ref.startsWith('"') && ref.endsWith('"')) ||
     (ref.startsWith("'") && ref.endsWith("'"))
@@ -1535,7 +1551,7 @@ export function dependencySpecFromAction(
   action: any,
   { pluginSourceUrl = "" }: any = {},
 ): any {
-  const def: any = FILE_ACTIONS[action?.name];
+  const def = FILE_ACTIONS[action?.name];
   if (!def) return null;
   const path: any = action.args?.[def.pathIndex];
   if (!["string", "raw-string"].includes(path?.type))
@@ -1543,7 +1559,7 @@ export function dependencySpecFromAction(
       `${action.name}: file dependency must be a fixed non-empty string`,
     );
   const parts: any = stringTemplateParts(path);
-  if (parts.some((p: any): any => p[0] === "v"))
+  if (parts.some((p: any) => p[0] === "v"))
     throw new Error(
       `${action.name}: dynamic file dependency paths are not materialized`,
     );
@@ -1703,35 +1719,35 @@ export { FILE_ACTIONS, TEXT_MOCK_TYPES };
 const families: any = Object.freeze([
   {
     id: "header-pipeline",
-    test: (a: any): any =>
+    test: (a: any) =>
       /^(request|response)\.header\.(add|set|del|replace)$/.test(a.name),
   },
   {
     id: "body-pipeline",
-    test: (a: any): any => /^(request|response)\.body\.replace$/.test(a.name),
+    test: (a: any) => /^(request|response)\.body\.replace$/.test(a.name),
   },
   {
     id: "json-pipeline",
-    test: (a: any): any =>
+    test: (a: any) =>
       /^(request|response)\.json\.(add|delete|replace)$/.test(a.name),
   },
   {
     id: "jq-pipeline",
-    test: (a: any): any =>
+    test: (a: any) =>
       /^(request|response)\.json\.(?:jq|jq_file)$/.test(a.name),
   },
   {
     id: "mock-pipeline",
-    test: (a: any): any =>
+    test: (a: any) =>
       /^(request|response)\.body\.(?:mock|mock_file)$/.test(a.name),
   },
   {
     id: "url-control-pipeline",
-    test: (a: any): any => a.name === "url.replace",
+    test: (a: any) => a.name === "url.replace",
   },
   {
     id: "synthetic-response-pipeline",
-    test: (a: any): any =>
+    test: (a: any) =>
       /^(?:redirect|reject|reject_img|reject_dict|reject_array|reject_video)$/.test(
         a.name,
       ),
@@ -1743,7 +1759,7 @@ export function classifyComplexRewrite(ast: any): any {
     (action: any): any =>
       families.find((f: any): any => f.test(action))?.id || null,
   );
-  if (matched.some((x: any): any => x === null))
+  if (matched.some((x: any) => x === null))
     return { ok: false, reason: "unregistered complex action family" };
   return {
     ok: true,
@@ -1757,7 +1773,7 @@ export function classifyComplexRewrite(ast: any): any {
 // compiler for scalar, batch and multi-action declarations.
 function rewriteFeatureProfile(ast: any): any {
   const features: any = new Set();
-  const visit: any = (node: any): any => {
+  const visit: any = (node: any) => {
     if (!node || typeof node !== "object") return;
     if (node.type === "regex" && node.flags) features.add("regex-flags");
     if (
@@ -1772,7 +1788,7 @@ function rewriteFeatureProfile(ast: any): any {
     if (node.type === "array") features.add("batch-arguments");
     if (node.type === "variable") features.add("runtime-values");
     if (node.type === "string") {
-      if (stringTemplateParts(node).some((p: any): any => p[0] === "v"))
+      if (stringTemplateParts(node).some((p: any) => p[0] === "v"))
         features.add("string-templates");
       if (/\\\$\{|\$0|\$&|\$\$/.test(node.raw || node.value))
         features.add("special-characters");
@@ -1786,19 +1802,19 @@ function rewriteFeatureProfile(ast: any): any {
   visit(ast);
   if (ast.actions.some(isTextRequestMockAction))
     features.add("request-text-mock");
-  if (ast.actions.some((a: any): any => fixedJqOperations(a) !== null))
+  if (ast.actions.some((a: any) => fixedJqOperations(a) !== null))
     features.add("fixed-jq-mutations");
   if (
     ast.actions.some(
       (a: any): any =>
         /\.json\.(?:add|replace)$/.test(a.name) &&
-        scalarItems(a.args[1]).some((v: any): any => v?.type === "raw-string"),
+        scalarItems(a.args[1]).some((v: any) => v?.type === "raw-string"),
     )
   )
     features.add("raw-json-value");
   if (ast.actions.length > 1) features.add("action-order");
   const mutations: any = ast.actions.every(
-    (a: any): any =>
+    (a: any) =>
       new RegExp(
         "^" +
           ast.phase +
@@ -1809,7 +1825,7 @@ function rewriteFeatureProfile(ast: any): any {
       fixedJqOperations(a) !== null,
   );
   const needsHelper: any =
-    (ast.actions.some((a: any): any => fixedJqOperations(a) !== null) &&
+    (ast.actions.some((a: any) => fixedJqOperations(a) !== null) &&
       (ast.actions.length > 1 ||
         ast.condition?.type !== "comparison" ||
         ast.condition.left?.name !== "url" ||
@@ -1820,8 +1836,8 @@ function rewriteFeatureProfile(ast: any): any {
       "string-templates",
       "special-characters",
       "raw-json-value",
-    ].some((f: any): any => features.has(f)) ||
-    ast.actions.some((a: any): any =>
+    ].some((f: string): any => features.has(f)) ||
+    ast.actions.some((a: any) =>
       JSON.stringify(a.args).includes('"type":"variable"'),
     );
   return { kinds: [...features].sort(), mutations, needsHelper };
@@ -1834,13 +1850,13 @@ export function fixedJqOperations(action: any): any {
   let text: any;
   try {
     const parts: any = stringTemplateParts(action.args[0]);
-    if (parts.some((p: any): any => p[0] !== "s")) return null;
+    if (parts.some((p: any) => p[0] !== "s")) return null;
     text = parts.map((p: any): any => p[1]).join("");
   } catch {
     return null;
   }
   if (typeof text !== "string" || !text.trim()) return null;
-  const pieces: any = [];
+  const pieces: string[] = [];
   let start = 0,
     quoted = false,
     escaped = false,
@@ -1920,7 +1936,7 @@ export function fixedJqOperations(action: any): any {
       else {
         const value: any = JSON.parse(m[2]);
         // JSON.parse silently rounds huge numeric literals. Keep them native.
-        const safe: any = (v: any): any =>
+        const safe: any = (v: any) =>
           typeof v === "number"
             ? Number.isFinite(v) &&
               (!Number.isInteger(v) || Number.isSafeInteger(v))
@@ -1938,12 +1954,12 @@ export function fixedJqOperations(action: any): any {
 }
 // Shared phase eligibility: only text request mocks enter the synchronous
 // mutation runtime. Binary/encoded bodies retain their existing adapters.
-export function isTextRequestMockAction(action: any): any {
+export function isTextRequestMockAction(action: any) {
   if (!/^request\.body\.mock(?:_file)?$/.test(action?.name || "")) return false;
   const type: any = action.args[0];
   if (!["string", "raw-string"].includes(type?.type)) return false;
   const parts: any = stringTemplateParts(type);
-  if (parts.some((p: any): any => p[0] === "v")) return false;
+  if (parts.some((p: any) => p[0] === "v")) return false;
   if (
     !["json", "text", "css", "html", "javascript", "plain"].includes(
       parts
@@ -1958,7 +1974,7 @@ export function isTextRequestMockAction(action: any): any {
     (action.args[2].type === "boolean" && action.args[2].value === false)
   );
 }
-export function supportsRewritePhaseActions(ast: any, target: any): any {
+export function supportsRewritePhaseActions(ast: any, target: string): any {
   const mutations = new RegExp(
     "^" +
       ast.phase +
@@ -1976,13 +1992,13 @@ export function supportsRewritePhaseActions(ast: any, target: any): any {
 // Native JQ is a target capability, not a reason to introduce an HTTP Script.
 // Author JQ actions in one source pipeline stay in one native rule;
 // filters run in source order using native jq error propagation.
-function nativeJqPriorityPlan(ast: any, target: any): any {
-  if (!ast.actions.every((a: any): any => a.name === ast.phase + ".json.jq"))
+function nativeJqPriorityPlan(ast: any, target: string): any {
+  if (!ast.actions.every((a: any) => a.name === ast.phase + ".json.jq"))
     return null;
   try {
     const filters: any = ast.actions.map((action: any): any => {
       const parts: any = stringTemplateParts(action.args[0]);
-      if (parts.some((p: any): any => p[0] !== "s"))
+      if (parts.some((p: any) => p[0] !== "s"))
         throw new Error("native JQ requires fixed source expression");
       return parts.map((p: any): any => p[1]).join("");
     });
@@ -1991,7 +2007,7 @@ function nativeJqPriorityPlan(ast: any, target: any): any {
     const jq: any =
       filters.length === 1
         ? filters[0]
-        : filters.map((filter: any): any => "(" + minifyJqFile(filter) + ")").join(" | ");
+        : filters.map((filter: any) => "(" + minifyJqFile(filter) + ")").join(" | ");
     const nativeAst: any = {
       ...ast,
       actions: [
@@ -2020,14 +2036,14 @@ function nativeJqPriorityPlan(ast: any, target: any): any {
   }
 }
 // Modified: 2026-11-15 (chance). Prefer one native jq rule for the entire source JSON/JQ pipeline.
-function nativeJsonPriorityPlan(ast: any, target: any): any {
+function nativeJsonPriorityPlan(ast: any, target: string): any {
   if (
     ast.actions.length === 1 &&
-    !ast.actions[0].args.some((arg: any): any => arg.type === "array")
+    !ast.actions[0].args.some((arg: any) => arg.type === "array")
   )
     return null;
   if (
-    !ast.actions.every((action: any): any =>
+    !ast.actions.every((action: any) =>
       new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq)$").test(
         action.name,
       ),
@@ -2075,7 +2091,7 @@ export function planRewriteFeatureHelper(ast: any, target: any, ctx: any): any {
     const narrowJq: any =
       jqCombination &&
       jqMatcher.ok &&
-      !rewriteFeatureProfile(ast).kinds.some((k: any): any =>
+      !rewriteFeatureProfile(ast).kinds.some((k: any) =>
         ["regex-flags", "dynamic-regex"].includes(k),
       );
     const options: any = {
@@ -2094,7 +2110,7 @@ export function planRewriteFeatureHelper(ast: any, target: any, ctx: any): any {
     const refs: any = ctx.argumentRefs || [];
     if (target === "qx" && refs.length)
       throw new Error("Quantumult X plugin argument transport is not verified");
-    const payload: any =
+    const payload: { ok: boolean; value?: string | null; reason?: string } =
       target === "surge" && refs.length
         ? surgeRewriteArgumentPayload(refs, ctx.argumentTable)
         : { ok: true, value: null };
@@ -2168,15 +2184,15 @@ export function compileComplexCondition(
   node: any,
   _target: any,
   { argumentTable = null, sharedRuntime = false }: any = {},
-): any {
-  for (const c of findRewriteComparisons(node, (): any => true)) {
+) {
+  for (const c of findRewriteComparisons(node, () => true)) {
     for (const value of [c.left, c.right]) {
       const names: any =
         value?.type === "variable"
           ? [value.name]
           : value?.type === "string"
             ? stringTemplateParts(value)
-                .filter((p: any): any => p[0] === "v")
+                .filter((p: any) => p[0] === "v")
                 .map((p: any): any => p[1])
             : [];
       for (const name of names) {
@@ -2207,7 +2223,7 @@ export function compileComplexCondition(
 // Author: chance
 // Category: Converter / Rewrite v2 / Complex Routing
 const handlers: any = [];
-export function registerComplexRewriteHandler(definition: any): any {
+export function registerComplexRewriteHandler(definition: any) {
   if (
     !definition ||
     !definition.id ||
@@ -2216,13 +2232,13 @@ export function registerComplexRewriteHandler(definition: any): any {
   ) {
     throw new TypeError("Invalid complex Rewrite handler");
   }
-  if (handlers.some((item: any): any => item.id === definition.id))
+  if (handlers.some((item: any) => item.id === definition.id))
     throw new Error("Duplicate complex Rewrite handler: " + definition.id);
   handlers.push(Object.freeze({ ...definition }));
 }
 export function planComplexRewrite(
   ast: any,
-  target: any,
+  target: string,
   context: any = {},
 ): any {
   if (!Array.isArray(ast?.actions) || !ast.actions.length) {
@@ -2387,13 +2403,13 @@ function urlComparisonRegex(c: any): any {
   if (c.operator !== "==" || !["string", "raw-string"].includes(c.right?.type))
     return null;
   const parts: any = stringTemplateParts(c.right);
-  if (parts.some(([kind]: any): any => kind !== "s")) return null;
+  if (parts.some(([kind]: any) => kind !== "s")) return null;
   const value: any = parts.map(([, part]: any): any => part).join("");
   const pattern =
     "^" +
     regexEscape(value).replace(
       /\s/g,
-      (ch: any): any => "\\u" + ch.charCodeAt(0).toString(16).padStart(4, "0"),
+      (ch: any) => "\\u" + ch.charCodeAt(0).toString(16).padStart(4, "0"),
     ) +
     "$";
   return { regex: { type: "regex", pattern, flags: "" }, capture: null };
@@ -2423,7 +2439,7 @@ function parseKeyPath(path: any): any {
 export function jqPathSelector(parts: any): any {
   validateParts(parts);
   return parts.reduce(
-    (out: any, part: any): any =>
+    (out: any, part: any) =>
       typeof part === "number"
         ? out + "[" + part + "]"
         : /^[A-Za-z_][A-Za-z0-9_]*$/.test(part)
@@ -2435,15 +2451,15 @@ export function jqPathSelector(parts: any): any {
 function pathSelector(path: any): any {
   return jqPathSelector(parseKeyPath(path));
 }
-export function renderFixedPathAddJq(parts: any, value: any): any {
+export function renderFixedPathAddJq(parts: any, value: any) {
   validateParts(parts);
   return "setpath(" + JSON.stringify(parts) + "; " + value + ")";
 }
-function anyToJq(node: any): any {
+function anyToJq(node: any) {
   if (!node) throw new Error("missing JSON value");
   if (node.type === "string") {
     const parts: any = stringTemplateParts(node);
-    if (parts.some((p: any): any => p[0] === "v"))
+    if (parts.some((p: any) => p[0] === "v"))
       throw new Error("JSON template requires a semantic feature helper");
     return JSON.stringify(parts.map((p: any): any => p[1]).join(""));
   }
@@ -2466,7 +2482,7 @@ function anyToJq(node: any): any {
 function qxQuote(value: any): any {
   return quoteJq(value);
 }
-export function renderFixedPathReplaceJq(parts: any, value: any): any {
+export function renderFixedPathReplaceJq(parts: any, value: any) {
   validateParts(parts);
   return "setpath(" + JSON.stringify(parts) + "; " + value + ")";
 }
@@ -2513,7 +2529,7 @@ function fixedJsonKeyPath(node: any, actionName: any): any {
   if (!["string", "raw-string"].includes(node?.type))
     throw new Error(actionName + ": key path must be a fixed string");
   const pieces: any = stringTemplateParts(node);
-  if (pieces.some((piece: any): any => piece[0] !== "s"))
+  if (pieces.some((piece: any) => piece[0] !== "s"))
     throw new Error(
       actionName + ": dynamic key path requires runtime transport",
     );
@@ -2570,7 +2586,7 @@ export function jsonPipelineToSafeNativeJq(ast: any): any {
   }
   if (
     ast.actions.some(
-      (action: any): any =>
+      (action: any) =>
         !new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq)$").test(
           action.name,
         ),
@@ -2637,7 +2653,7 @@ export function qxDirectRewritePlan(
     }
     const urlConditions: any = findRewriteComparisons(
       ast.condition,
-      (c: any): any => Boolean(urlComparisonRegex(c)),
+      (c: any) => Boolean(urlComparisonRegex(c)),
     );
     if (urlConditions.length !== 1)
       return unsupported(
@@ -2706,15 +2722,15 @@ export function qxDirectRewritePlan(
     action.name === "request.body.replace" ||
     action.name === "response.body.replace"
   ) {
-    if (action.args.some((node: any): any => node.type === "array")) {
+    if (action.args.some((node: any) => node.type === "array")) {
       const members: any = expandBulkAction(action).map((args: any): any =>
         qxDirectRewritePlan(
           { ...ast, actions: [{ ...action, args }] },
           { matcher },
         ),
       );
-      if (members.some((plan: any): any => !plan.ok))
-        return members.find((plan: any): any => !plan.ok);
+      if (members.some((plan: any) => !plan.ok))
+        return members.find((plan: any) => !plan.ok);
       const lines: any = members.flatMap(
         (plan: any): any => plan.lines || [plan.line],
       );
@@ -2799,12 +2815,12 @@ export function surgeDirectRewritePlan(ast: any): any {
     action.name === "request.body.replace" ||
     action.name === "response.body.replace"
   ) {
-    if (action.args.some((node: any): any => node.type === "array")) {
+    if (action.args.some((node: any) => node.type === "array")) {
       const members: any = expandBulkAction(action).map((args: any): any =>
         surgeDirectRewritePlan({ ...ast, actions: [{ ...action, args }] }),
       );
-      if (members.some((plan: any): any => !plan.ok))
-        return members.find((plan: any): any => !plan.ok);
+      if (members.some((plan: any) => !plan.ok))
+        return members.find((plan: any) => !plan.ok);
       const lines: any = members.flatMap(
         (plan: any): any => plan.lines || [plan.line],
       );
@@ -2849,7 +2865,7 @@ function loonTemplateToNativeUrl(
   node: any,
   capture: any,
   argumentTable: any = null,
-  target: any = "Surge",
+  target: string = "Surge",
 ): any {
   return stringTemplateParts(node)
     .map(([kind, value]: any): any => {
@@ -2946,7 +2962,7 @@ export function surgeRedirectRewritePlan(
     return unsupported(String(error.message || error));
   }
 }
-function mapLocalData(value: any): any {
+function mapLocalData(value: string) {
   return JSON.stringify(String(value));
 }
 export function surgeRejectRewritePlan(ast: any): any {
@@ -3027,7 +3043,7 @@ export function surgeRejectRewritePlan(ast: any): any {
     notes: condition.notes,
   };
 }
-function fixedNoTemplate(node: any, what: any): any {
+function fixedNoTemplate(node: any, what: string): any {
   const value: any = stringNode(node);
   if (value === null) throw new Error(what + " must be a fixed string");
   if (value.includes("$" + "{"))
@@ -3035,7 +3051,7 @@ function fixedNoTemplate(node: any, what: any): any {
   return value;
 }
 function expandBulkAction(action: any): any {
-  if (!action.args.some((arg: any): any => arg.type === "array"))
+  if (!action.args.some((arg: any) => arg.type === "array"))
     return [action.args];
   const arrays: any = action.args.map((arg: any): any => arg.items);
   return arrays[0].map((_: any, index: any): any =>
@@ -3047,7 +3063,7 @@ function surgeHeaderLine(pattern: any, action: any, args: any): any {
   const direction: any = mapping.surge;
   const name: any = fixedNoTemplate(args[0], "header name");
   if (/\s/.test(name)) throw new Error("header name contains whitespace");
-  return mapping.surgeActions.map((type: any): any => {
+  return mapping.surgeActions.map((type: any) => {
     if (type === "header-del")
       return direction + " " + pattern + " " + type + " " + name;
     if (type === "header-add") {
@@ -3096,7 +3112,7 @@ export function surgeHeaderRewritePlan(ast: any): any {
   ]);
   if (
     !ast.actions.length ||
-    ast.actions.some((action: any): any => !allowed.has(action.name))
+    ast.actions.some((action: any) => !allowed.has(action.name))
   ) {
     return unsupported(
       "Surge Header Rewrite requires same-phase header actions only",
@@ -3145,20 +3161,20 @@ const MOCK_TEXT_TYPES = new Set([
   "javascript",
   "plain",
 ]);
-function boolArg(node: any, fallback: any = false): any {
+function boolArg(node: any, fallback: boolean = false): any {
   if (!node) return fallback;
   if (node.type !== "boolean")
     throw new Error("mock Base64 flag must be Boolean");
   return node.value;
 }
-function intArg(node: any, fallback: any): any {
+function intArg(node: any, fallback: number): any {
   if (!node) return fallback;
   if (node.type !== "number" || !Number.isInteger(node.value))
     throw new Error("mock status must be an integer");
   return node.value;
 }
-function applyStaticHeaderAction(headers: any, action: any): any {
-  const remove: any = (name: any): any => {
+function applyStaticHeaderAction(headers: any, action: any) {
+  const remove: any = (name: any) => {
     const wanted: any = name.toLowerCase();
     for (let i = headers.length - 1; i >= 0; i--) {
       if (headers[i][0].toLowerCase() === wanted) headers.splice(i, 1);
@@ -3197,7 +3213,7 @@ export function surgeInlineMockPlan(ast: any): any {
   const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
   const mocks: any = ast.actions.filter(
-    (action: any): any => action.name === "response.body.mock",
+    (action: any) => action.name === "response.body.mock",
   );
   if (mocks.length !== 1)
     return unsupported(
@@ -3205,7 +3221,7 @@ export function surgeInlineMockPlan(ast: any): any {
     );
   if (
     ast.actions.some(
-      (action: any): any =>
+      (action: any) =>
         action !== mocks[0] &&
         !/^response\.header\.(?:add|set|del|replace)$/.test(action.name),
     )
@@ -3241,7 +3257,7 @@ export function surgeInlineMockPlan(ast: any): any {
     ) {
       return unsupported("invalid inline Base64 mock body");
     }
-    const headers: any = [["Content-Type", MOCK_MIME[type]]];
+    const headers = [["Content-Type", MOCK_MIME[type]]];
     for (const action of ast.actions) {
       if (action !== mock) applyStaticHeaderAction(headers, action);
     }
@@ -3252,8 +3268,8 @@ export function surgeInlineMockPlan(ast: any): any {
         );
       }
     }
-    const headerValue: any = headers
-      .map((pair: any): any => pair[0] + ":" + pair[1])
+    const headerValue = headers
+      .map((pair: string[]) => pair[0] + ":" + pair[1])
       .join("|");
     const data: any = base64 ? compactBase64 : body;
     const dataType = base64 ? "base64" : "text";
@@ -3289,7 +3305,7 @@ export function surgeMockFilePlan(
   const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
   const mocks: any = ast.actions.filter(
-    (action: any): any => action.name === "response.body.mock_file",
+    (action: any) => action.name === "response.body.mock_file",
   );
   if (mocks.length !== 1)
     return unsupported(
@@ -3297,7 +3313,7 @@ export function surgeMockFilePlan(
     );
   if (
     ast.actions.some(
-      (action: any): any =>
+      (action: any) =>
         action !== mocks[0] &&
         !/^response\.header\.(?:add|set|del|replace)$/.test(action.name),
     )
@@ -3335,7 +3351,7 @@ export function surgeMockFilePlan(
       dataType = "base64";
       data = materialized.bodyBase64;
     }
-    const headers: any = [["Content-Type", MOCK_MIME[spec.contentType]]];
+    const headers = [["Content-Type", MOCK_MIME[spec.contentType]]];
     for (const item of ast.actions) {
       if (item !== action) applyStaticHeaderAction(headers, item);
     }
@@ -3346,8 +3362,8 @@ export function surgeMockFilePlan(
         );
       }
     }
-    const headerValue: any = headers
-      .map((pair: any): any => pair[0] + ":" + pair[1])
+    const headerValue = headers
+      .map((pair: string[]) => pair[0] + ":" + pair[1])
       .join("|");
     if (publication) {
       if (materialized?.error) return unsupported(materialized.error);
@@ -3388,7 +3404,7 @@ export function surgeMockFilePlan(
     return unsupported(String(error?.message || error));
   }
 }
-export function fixedStringValue(node: any): any {
+export function fixedStringValue(node: any) {
   // Legacy redirect/mock renderers validate and expand their own templates.
   // Keep their public input contract; the feature planner selects the semantic
   // string compiler for mutation actions before native lowering.
@@ -3401,7 +3417,7 @@ export function fixedStringValue(node: any): any {
 // responsible for translating JSON paths, file JQ and whole-header patterns.
 export const REWRITE_MUTATION_MAPPINGS: any = Object.freeze(
   Object.fromEntries(
-    ["request", "response"].flatMap((phase: any): any => [
+    ["request", "response"].flatMap((phase: string): any => [
       ...[
         ["add", ["header-add"]],
         ["set", ["header-del", "header-add"]],
@@ -3417,7 +3433,7 @@ export const REWRITE_MUTATION_MAPPINGS: any = Object.freeze(
         }),
       ]),
       ...["add", "delete", "replace", "jq", "jq_file"].map(
-        (operation: any): any => [
+        (operation: string) => [
           phase + ".json." + operation,
           Object.freeze({
             qx: "jsonjq-" + phase + "-body",
@@ -3459,7 +3475,7 @@ export const QX_REWRITE_PRIMITIVES: Readonly<Record<string, string | Readonly<Re
 });
 export function qxPrimitiveForRewriteV2Action(action: any): any {
   validateRewriteV2Action(action);
-  const mapping: any = QX_REWRITE_PRIMITIVES[action.name];
+  const mapping = QX_REWRITE_PRIMITIVES[action.name];
   if (!mapping) return null;
   if (typeof mapping === "string") return mapping;
   // A custom reject body needs the existing semantic/script planner.
@@ -3473,7 +3489,7 @@ export function qxPrimitiveForRewriteV2Action(action: any): any {
 // Rewrite planner result helpers
 // Author: chance
 // Category: Converter / Rewrite / Planning
-export function rewriteReview(source: any, reason: any): any {
+export function rewriteReview(source: any, reason: any) {
   return {
     section: "comment",
     line:
@@ -3510,7 +3526,7 @@ function fixedString(node: any): any {
   if (!node || !["string", "raw-string"].includes(node.type)) return null;
   return String(node.value);
 }
-function regexEscape(value: any): any {
+function regexEscape(value: any) {
   return String(value).replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&");
 }
 function requestHeaderName(variableName: any): any {
@@ -3518,13 +3534,13 @@ function requestHeaderName(variableName: any): any {
     /^request\.header\[(['"])([^'"]+)\1\]$/,
   );
   if (!match) return null;
-  const name: any = match[2];
+  const name = match[2];
   if (!/^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(name)) return null;
   return name;
 }
-function headerNameRegex(name: any): any {
+function headerNameRegex(name: any) {
   return [...String(name)]
-    .map((ch: any): any => {
+    .map((ch: string): any => {
       if (/[A-Za-z]/.test(ch)) {
         return "[" + ch.toUpperCase() + ch.toLowerCase() + "]";
       }
@@ -3532,7 +3548,7 @@ function headerNameRegex(name: any): any {
     })
     .join("");
 }
-function requestHeaderLinePattern(name: any, value: any = null): any {
+function requestHeaderLinePattern(name: any, value: any = null) {
   const field = "\\r\\n" + headerNameRegex(name) + ":[ \\t]*";
   if (value === null) return field + "[^\\r\\n]*(?:\\r\\n|$)";
   return field + regexEscape(value) + "[ \\t]*(?:\\r\\n|$)";
@@ -3658,10 +3674,10 @@ function exactPredicates(node: any): any {
   if (!right.ok) return right;
   const merged: any = new Map([...left.predicates, ...right.predicates]);
   const urls: any = [...merged.values()].filter(
-    (item: any): any => item.kind === "url-regex",
+    (item: any) => item.kind === "url-regex",
   );
   const methods: any = [...merged.values()].filter(
-    (item: any): any => item.kind === "request-method-eq",
+    (item: any) => item.kind === "request-method-eq",
   );
   if (urls.length > 1)
     return {
@@ -3696,7 +3712,7 @@ function matcherFromPredicates(predicates: any): any {
     if (methodPattern && header) {
       headersPattern = methodPattern + "[\\s\\S]*" + header.pattern;
     }
-    const pushedDown: any = [];
+    const pushedDown: string[] = [];
     if (method) pushedDown.push("request.method");
     if (header)
       pushedDown.push("request.header[" + JSON.stringify(header.name) + "]");
@@ -3749,13 +3765,13 @@ export function qxRewriteMatcherPlan(ast: any): any {
 // Generic Loon legacy Rewrite classifier and target planner
 // Author: chance
 // Category: Converter / Legacy Rewrite
-function legacyRewriteReview(pattern: any, action: any, reason: any): any {
+function legacyRewriteReview(pattern: any, action: any, reason: any) {
   return {
     section: "comment",
     line: `# [WayX] REVIEW REQUIRED: ${reason}\n# Source declaration: ${pattern} ${action}`,
   };
 }
-function issue(pattern: any, action: any, code: any, reason: any): any {
+function issue(pattern: any, action: any, code: any, reason: string): any {
   return {
     section: "comment",
     line: `# [WayX] ISSUE REQUIRED [${code}]: ${reason}\n# Source declaration: ${pattern} ${action}`,
@@ -3764,7 +3780,7 @@ function issue(pattern: any, action: any, code: any, reason: any): any {
   };
 }
 function legacyShellTokens(input: any): any {
-  const out: any = [];
+  const out: string[] = [];
   let cur = "",
     quote: any = null,
     esc = false;
@@ -3800,7 +3816,7 @@ function legacyShellTokens(input: any): any {
   if (cur) out.push(cur);
   return out;
 }
-function unquote(token: any): any {
+function unquote(token: any) {
   const t = String(token ?? "");
   if (
     (t.startsWith('"') && t.endsWith('"')) ||
@@ -3844,7 +3860,7 @@ function compileJsonMutation(op: any, rest: any): any {
       parts: jqPath(path),
       access: jqAccess(path),
     }));
-    if (paths.some((path: any): any => !path.parts || !path.access))
+    if (paths.some((path: any) => !path.parts || !path.access))
       return { ok: false, reason: "unsupported JSON path syntax" };
     return {
       ok: true,
@@ -3859,7 +3875,7 @@ function compileJsonMutation(op: any, rest: any): any {
   if (op === "add" || op === "replace") {
     if (!tokens.length || tokens.length % 2)
       return { ok: false, reason: "json-" + op + " requires path/value pairs" };
-    const ops: any = [];
+    const ops: string[] = [];
     for (let i = 0; i < tokens.length; i += 2) {
       const path: any = jqPath(unquote(tokens[i]));
       if (!path) return { ok: false, reason: "unsupported JSON path syntax" };
@@ -3904,14 +3920,14 @@ export function classifyLegacyRewrite(action: any): any {
     return { kind: "url-rewrite", target: parsed.target };
   return { kind: "unknown", raw: parsed.raw };
 }
-function legacyStringNode(value: any): any {
+function legacyStringNode(value: any) {
   return {
     type: "string",
     value: String(value),
     raw: JSON.stringify(String(value)),
   };
 }
-function legacyRegexNode(pattern: any): any {
+function legacyRegexNode(pattern: any) {
   return {
     type: "regex",
     pattern: String(pattern),
@@ -4004,7 +4020,7 @@ function planHeader(
     if (pairs.length === tokens.length / width) {
       const token = parsed.phase + "-header";
       const inserted: any = pairs
-        .map(([name, value]: any): any => name + ": " + value + "$2")
+        .map(([name, value]: any) => name + ": " + value + "$2")
         .join("");
       return {
         section: "rewrite",
@@ -4067,7 +4083,7 @@ function planHeader(
     }
   }
   const targetPattern: any = normalizeUrlRegexForTarget(pattern);
-  const lines: any = [];
+  const lines: string[] = [];
   for (let i = 0; i < tokens.length; i += width) {
     const args: any = tokens.slice(i, i + width).map(unquote);
     if (parsed.op === "replace-regex")
@@ -4097,7 +4113,7 @@ function planBodyRegex(
   if (target === "qx") {
     const verb =
       parsed.phase === "request" ? "request-body" : "response-body";
-    const lines: any = [];
+    const lines: string[] = [];
     for (let i = 0; i < tokens.length; i += 2)
       lines.push(
         `${targetPattern} url ${verb} ${tokens[i]} ${verb} ${tokens[i + 1]}`,
@@ -4292,7 +4308,7 @@ export function planLegacyRewriteIr(ir: any, target: any, ctx: any = {}): any {
         section: "rewrite",
         line: `${targetPattern} url ${parsed.action}`,
       };
-    const mapping: any = LEGACY_REJECT_VARIANTS.get(parsed.action);
+    const mapping = LEGACY_REJECT_VARIANTS.get(parsed.action)!;
     return {
       section: mapping.surgeSection,
       line: `${targetPattern} ${mapping.surgeArguments}`,
@@ -4355,10 +4371,10 @@ export function planLegacyRewrite(
 // Quantumult X Rewrite target planner
 // Author: chance
 // Category: Converter / Rewrite / Quantumult X
-function qxRewriteSourceLine(ir: any, ctx: any): any {
+function qxRewriteSourceLine(ir: any, ctx: any) {
   return String(ctx.sourceLine || ir?.source || "").trim();
 }
-function qxRewriteRawBase(ctx: any): any {
+function qxRewriteRawBase(ctx: any) {
   const base = String(ctx.rawBase || "").replace(/\/$/, "");
   if (!base)
     throw new Error(
@@ -4367,7 +4383,7 @@ function qxRewriteRawBase(ctx: any): any {
   return base;
 }
 let qxRewriteHandlersRegistered = false;
-function ensureQxRewriteHandlers(): any {
+function ensureQxRewriteHandlers() {
   if (qxRewriteHandlersRegistered) return;
   qxRewriteHandlersRegistered = true;
   registerComplexRewriteHandler({
@@ -4383,17 +4399,17 @@ function ensureQxRewriteHandlers(): any {
         ast.phase + ".header.replace",
       ]);
       const mocks: any = ast.actions.filter(
-        (action: any): any => action.name === mockName,
+        (action: any) => action.name === mockName,
       );
       return (
         mocks.length === 1 &&
         ast.actions.every(
-          (action: any): any =>
+          (action: any) =>
             action.name === mockName || headerNames.has(action.name),
         )
       );
     },
-    plan: (ast: any, _target: any, ctx: any): any => {
+    plan: (ast: any, _target: any, ctx: any) => {
       try {
         const matcher: any = qxExactRewriteMatcherPlan(ast, {
           compatibility: true,
@@ -4452,7 +4468,7 @@ function qxNativeHeaderPlan(ast: any): any {
       });
       if (!matcher.ok) return null;
       const token: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx,
-        lines: any = [];
+        lines: string[] = [];
       for (const args of expandBulkAction(ast.actions[0])) {
         const name: any = fixedNoTemplate(args[0], "header name");
         if (!name || /[\s:\r\n]/.test(name)) return null;
@@ -4498,7 +4514,7 @@ function qxNativeHeaderPlan(ast: any): any {
         compatibility: true,
       });
       if (!matcher.ok) return null;
-      const lines: any = [];
+      const lines: string[] = [];
       for (const args of expandBulkAction(ast.actions[0])) {
         const name: any = fixedNoTemplate(args[0], "header name");
         const replacement: any = fixedNoTemplate(args[2], "header replacement");
@@ -4536,7 +4552,7 @@ function qxNativeHeaderPlan(ast: any): any {
           "$1" +
           replacement.replace(
             /\$(\d+)/g,
-            (_: any, number: any): any => "$" + (Number(number) + 2),
+            (_: any, number: any) => "$" + (Number(number) + 2),
           );
         if (/\$(?!\d)/.test(replacement)) return null;
         lines.push(
@@ -4550,13 +4566,13 @@ function qxNativeHeaderPlan(ast: any): any {
   }
   if (
     ast.actions.some(
-      (action: any): any => action.name !== ast.phase + ".header.add",
+      (action: any) => action.name !== ast.phase + ".header.add",
     )
   )
     return null;
   const matcher: any = qxExactRewriteMatcherPlan(ast, { compatibility: true });
   if (!matcher.ok) return null;
-  const pairs: any = [];
+  const pairs: string[][] = [];
   for (const action of ast.actions) {
     const names: any =
       action.args[0]?.type === "array"
@@ -4590,7 +4606,7 @@ function qxNativeHeaderPlan(ast: any): any {
   const token: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
   const headerPattern = "^([^\\r\\n]+)(\\r\\n)";
   const inserted: any = pairs
-    .map(([name, value]: any): any => name + ": " + value + "$2")
+    .map(([name, value]: any) => name + ": " + value + "$2")
     .join("");
   return {
     section: "rewrite",
@@ -4697,12 +4713,12 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         : rewriteReview(source, featurePlan.reason);
   }
   const fileMocks: any = ast.actions.filter(
-    (action: any): any => action.name === ast.phase + ".body.mock_file",
+    (action: any) => action.name === ast.phase + ".body.mock_file",
   );
   const fileMockPipeline: any =
     fileMocks.length === 1 &&
     ast.actions.every(
-      (action: any): any =>
+      (action: any) =>
         action === fileMocks[0] ||
         new RegExp(
           "^" + ast.phase + "\\.header\\.(?:add|set|del|replace)$",
@@ -5057,10 +5073,10 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
 // Surge Rewrite target planner
 // Author: chance
 // Category: Converter / Rewrite / Surge
-function surgeRewriteSourceLine(ir: any, ctx: any): any {
+function surgeRewriteSourceLine(ir: any, ctx: any) {
   return String(ctx.sourceLine || ir?.source || "").trim();
 }
-function surgeRewriteRawBase(ctx: any): any {
+function surgeRewriteRawBase(ctx: any) {
   const base = String(ctx.rawBase || "").replace(/\/$/, "");
   if (!base)
     throw new Error(
@@ -5069,7 +5085,7 @@ function surgeRewriteRawBase(ctx: any): any {
   return base;
 }
 let surgeRewriteHandlersRegistered = false;
-function ensureSurgeRewriteHandlers(): any {
+function ensureSurgeRewriteHandlers() {
   if (surgeRewriteHandlersRegistered) return;
   surgeRewriteHandlersRegistered = true;
   registerComplexRewriteHandler({
@@ -5079,7 +5095,7 @@ function ensureSurgeRewriteHandlers(): any {
       info.families.includes("mock-pipeline") &&
       (info.families.includes("body-pipeline") ||
         info.families.includes("json-pipeline")),
-    plan: (ast: any, _target: any, ctx: any): any => {
+    plan: (ast: any, _target: any, ctx: any) => {
       try {
         const plan: any = renderMixedRewriteScript(ast, {
           target: "surge",
@@ -5088,7 +5104,7 @@ function ensureSurgeRewriteHandlers(): any {
           sourceLine: ctx.sourceLine,
           argumentTable: ctx.argumentTable,
         });
-        const payload: any = ctx.argumentRefs?.length
+        const payload: { ok: boolean; value?: string | null; reason?: string } = ctx.argumentRefs?.length
           ? surgeRewriteArgumentPayload(ctx.argumentRefs, ctx.argumentTable)
           : { ok: true, value: null };
         if (!payload.ok) throw new Error(payload.reason);
@@ -5174,7 +5190,7 @@ export function planSurgeRewrite(ir: any, ctx: any = {}): any {
   }
   if (
     ir.operations.some(
-      (op: any): any =>
+      (op: any) =>
         op.kind === "mock" &&
         op.phase === "response" &&
         op.operation === "file",
@@ -5293,7 +5309,7 @@ export function planSurgeRewrite(ir: any, ctx: any = {}): any {
         sourceLine: source,
         argumentTable: ctx.argumentTable,
       });
-      const payload: any = argumentRefs.length
+      const payload: { ok: boolean; value?: string | null; reason?: string } = argumentRefs.length
         ? surgeRewriteArgumentPayload(argumentRefs, ctx.argumentTable)
         : { ok: true, value: null };
       if (!payload.ok) throw new Error(payload.reason);

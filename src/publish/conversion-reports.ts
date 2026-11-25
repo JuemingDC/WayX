@@ -24,7 +24,7 @@ const BASELINE = path.join(
   "fixtures",
   "review-inventory-baseline.json",
 );
-function argValue(name: any, fallback: any): any {
+function argValue(name: string, fallback: string) {
   const index = process.argv.indexOf(name);
   return index >= 0 && process.argv[index + 1]
     ? process.argv[index + 1]
@@ -40,7 +40,7 @@ const normalize: any = (text: any) =>
     .replace(/^\uFEFF/, "");
 const read: any = async (file: any): Promise<any> =>
   normalize(await fs.readFile(file, "utf8"));
-async function readJson(file: any, fallback: any = null): Promise<any> {
+async function readJson(file: string, fallback: any = null): Promise<any> {
   try {
     return JSON.parse(await fs.readFile(file, "utf8"));
   } catch (error: any) {
@@ -72,7 +72,7 @@ function sourceItems(text: any): any {
   }
   return { items, arguments: argumentsList };
 }
-function markerKind(line: any) {
+function markerKind(line: string) {
   const text = String(line || "");
   if (/ISSUE REQUIRED/.test(text)) return "issue";
   if (/REVIEW REQUIRED/.test(text)) return "review";
@@ -107,8 +107,8 @@ function declarationMarkers(text: any): any {
 function inventoryMarkers(
   text: any,
   file: any,
-  platform: any,
-  scope: any,
+  platform: string,
+  scope: string,
 ): any {
   const out: any = [];
   const lines: any = normalize(text).split("\n");
@@ -253,7 +253,7 @@ function reconcileTarget(items: any, targetText: any, verified: any): any {
   for (const list of markerMap.values())
     for (const marker of list) unmatchedTargetDeclarations.push(marker);
   const total: any = Object.values(counts).reduce(
-    (sum: any, value: any): any => sum + value,
+    (sum: any, value: number): any => sum + value,
     0,
   );
   return {
@@ -400,7 +400,7 @@ try {
 if (
   baseline?.version !== 1 ||
   !["qx", "surge"].every(
-    (platform: any) =>
+    (platform: string) =>
       Number.isSafeInteger(baseline?.review?.byPlatform?.[platform]) &&
       baseline.review.byPlatform[platform] >= 0,
   )

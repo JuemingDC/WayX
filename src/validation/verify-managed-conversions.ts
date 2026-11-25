@@ -14,11 +14,11 @@ const ROOT = process.cwd();
 const manifest = await loadLoonSourceCatalog(
   path.join(ROOT, ".github/sources/loon.json"),
 );
-const findings: any = [];
+const findings: string[] = [];
 const kelee = manifest.filter((entry: any) =>
   /https:\/\/kelee\.one\/Tool\/Loon\/Lpx\//.test(entry.source),
 );
-async function readRequired(rel: any, label: any): Promise<any> {
+async function readRequired(rel: string, label: string): Promise<any> {
   try {
     return await fs.readFile(path.join(ROOT, rel), "utf8");
   } catch (error: any) {

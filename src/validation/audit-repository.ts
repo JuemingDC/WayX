@@ -55,7 +55,7 @@ const routing = new Set(
       .outputs,
   ),
 );
-async function walk(dir: any): Promise<any> {
+async function walk(dir: string): Promise<any> {
   const out: any = [];
   for (const ent of await fs.readdir(dir, { withFileTypes: true })) {
     if (
@@ -264,7 +264,7 @@ const plugins: any = catalog
       "Resource/Loon/" + entry.file,
       qxTargetPath(entry),
       surgeTargetPath(entry),
-    ].every((file: any): any => artifacts[file]),
+    ].every((file: string): any => artifacts[file]),
   )
   .map((entry: any): any => entry.id);
 const opaque = await opaqueEntries(process.cwd());
