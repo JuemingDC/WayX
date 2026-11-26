@@ -242,6 +242,13 @@ http-response-jq ^https:\/\/api\.example\/v1 'setpath(["data","enabled"]; false)
 | 2026-11-03 | Different URL guarded reject | Require fixed literal host, no identical URL peer, no known same-host conflict; otherwise review; preserve first-match shadow risk |
 | 2026-11-03 | Overlap detection | Expand finite `^https?` / `^http?` prefixes, preserve alternation; `.+` may cross paths; unknown overlap stays review |
 
+### Remote Surge Map Local Refresh
+
+| Date | Parameter | WayX behavior |
+| --- | --- | --- |
+| 2026-11-26 | [`update-interval`](https://manual.nssurge.com/http/map-local.html#update-interval-optional-seconds-default-86400) | Optional seconds for remote `data-type=file` (including default file type), iOS 6.1.0+ / Mac 6.13.0+. Validate a single signed integer and preserve explicit values and rule order. |
+| 2026-11-26 | Defaults and shared URLs | Omitted or zero → Surge default 24 hours. Negative → disable automatic refresh. Same remote URL → Surge uses the first explicitly configured interval. Keep automatic conversion defaults and native URL references. |
+
 ## 4. Routing Rules and Aggregation
 
 ### 4.1 Rule Conversion
@@ -608,6 +615,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
+| 2026-11-26 | Surge resource refresh | Validate remote Map Local update intervals and preserve explicitly disabled native Script auto-updates in regression coverage. |
 | 2026-11-20 | jq source order, framing headers and HTTP Script V2 | A/B/A → three ordered rules; adjacent identical matchers stay separate; reject fixed Content-Length or Transfer-Encoding header mutations, including arrays; QX Script V2 emits HTTPS or local paths |
 | 2026-11-18 | HTTP exception compatibility, runtime policy 14 | Escaped synchronous error / returned rejected Promise → log + `$done({})` once before submission; author catches/native submission errors/non-HTTP triggers preserved; replace blanket no-passthrough rule |
 | 2026-11-18 | Remove Nexitally Rule inputs | Extra_CN_3 / Extra_Proxies / Extra_AI / Extra_Crypto / ApplePush → no registered source or mirror; existing Actions owns output regeneration |

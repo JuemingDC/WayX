@@ -476,6 +476,12 @@ for (const [from, to] of directions) {
     },
   });
   await new Promise((r) => setTimeout(r, 0));
+  // Modified: 2026-11-26 (chance). Check the native Surge call receives bytes,
+  // since preserving the byte values alone does not verify the transport type.
+  if (to === "surge") {
+    assert.ok(ArrayBuffer.isView(sent));
+    assert.equal(sent.byteLength, sliced.byteLength);
+  }
   assert.deepEqual(
     Array.from(sent instanceof ArrayBuffer ? new Uint8Array(sent) : sent),
     [1, 2],

@@ -568,7 +568,7 @@ const LEGACY_REJECT_VARIANTS = new Map([
     },
   ],
 ]);
-function rewriteSourceTokens(input: any): any {
+function rewriteSourceTokens(input: unknown): string[] {
   const out: string[] = [];
   let cur = "",
     quote: any = null,
@@ -964,7 +964,7 @@ export function isRewriteOperation(
   if (actionName !== null && (op as V2RewriteOperation).actionName !== actionName) return false;
   return true;
 }
-export function legacyRewriteTokens(text: any): any {
+export function legacyRewriteTokens(text: unknown): string[] {
   return rewriteSourceTokens(text).map(unquoteRewriteToken);
 }
 // WayX Loon Rewrite v2 official action registry

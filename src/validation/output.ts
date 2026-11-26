@@ -7,7 +7,11 @@ import { upstreamUpdateTime } from "../domain/update-metadata.ts";
 // Consolidated: 2026-10-03
 // Author: chance
 // Category: Converter / output
-import { isRewriteV2 } from "../parser/rewrite.ts";
+import {
+  isRewriteV2,
+  legacyRewriteTokens,
+  unquoteRewriteToken,
+} from "../parser/rewrite.ts";
 import { parseLegacyScriptLine } from "../parser/script.ts";
 import { cleanSourceComments, sourceCommentText } from "../parser/input.ts";
 import {
@@ -1068,9 +1072,32 @@ export function validateSurgeModule(
     }
     if (current === "Map Local") {
       targetRegex(line.split(/\s+/)[0], entry, "Surge Map Local URL");
-      const dataType = line.match(/\bdata-type=([^\s]+)/)?.[1];
-      if (!dataType || !SURGE_WAYX_MAP_LOCAL_DATA_TYPES.has(dataType)) {
+      // Modified: 2026-11-26 (chance). Read Map Local options outside quoted
+      // payloads and validate the refresh interval for remote files.
+      const fields = legacyRewriteTokens(line.slice(line.search(/\s|$/)));
+      const type = fields.find((field) => field.startsWith("data-type="));
+      const data = fields.find((field) => field.startsWith("data="));
+      const dataType = type?.slice("data-type=".length) ?? "file";
+      if (
+        !SURGE_WAYX_MAP_LOCAL_DATA_TYPES.has(dataType) ||
+        (!type && !data)
+      ) {
         throw new Error(`${entry.id}: invalid Surge Map Local line: ${line}`);
+      }
+      if (
+        dataType === "file" &&
+        data &&
+        /^https?:\/\//i.test(unquoteRewriteToken(data.slice("data=".length)))
+      ) {
+        const intervals = fields.filter((field) =>
+          /^update-interval(?:=|$)/.test(field),
+        );
+        if (
+          intervals.length > 1 ||
+          (intervals.length === 1 && !/^update-interval=-?\d+$/.test(intervals[0]))
+        ) {
+          throw new Error(`${entry.id}: invalid Surge Map Local update-interval: ${line}`);
+        }
       }
       if (dataType !== "file") hasInlineMapLocal = true;
       continue;

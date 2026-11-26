@@ -1779,6 +1779,20 @@ assert.deepEqual([...surgeOrder].sort((a,b)=>a-b),surgeOrder);
 assert.ok(sgText.indexOf('# module note') < sgText.indexOf('[Rule]'));
 assert.equal(sgText.endsWith('\n'),true);
 
+// Modified: 2026-11-26 (chance). Remote Map Local options are per declaration.
+const remoteMap = '^https://one\\.example data-type=file data="https://assets.example/mock"';
+const secondMap = remoteMap.replace("one", "two").replace(" data-type=file", "");
+const validateMap = (...rules: string[]) => validateSurgeModule(
+  `#!name=Map refresh\n#!desc=Fixture\n#!category=WayX\n[Map Local]\n${rules.join("\n")}\n`,
+  entry,
+);
+validateMap(remoteMap, remoteMap + ' update-interval=0');
+validateMap(remoteMap + ' update-interval=-1', secondMap + ' update-interval=3600');
+validateMap(remoteMap + ' header="X-Example: update-interval=invalid"');
+validateMap('^https://one\\.example data="fixture.txt" update-interval=ignored');
+assert.throws(() => validateMap(remoteMap + ' update-interval=abc'), /Map Local update-interval/);
+assert.throws(() => validateMap(remoteMap + ' update-interval=0 update-interval=3600'), /Map Local update-interval/);
+
 const sgSparse=createSurgeOutputState();
 appendSurgeOutput(sgSparse,'url','^https://old\\.example\\.com https://new.example.com 302');
 const sgSparseText=renderSurgeOutput({

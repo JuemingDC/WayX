@@ -6,7 +6,7 @@ import { normalizeSurgeModuleHeader } from "../src/domain/surge-module-header.ts
 const metadata = "#!arguments=CLIENT:Telegram\n#!arguments-desc=Select client\n";
 const comments = "# Author: PandaX & chance\n# Category: Redirect\n";
 const initial = "#!name=Telegram\n#!desc=Redirect\n";
-const body = '\n[Script]\nRedirect = type=http-request,argument=CLIENT={{{CLIENT}}},script-path=redirect.js\n';
+const body = '\n[Script]\nRedirect = type=http-request,argument=CLIENT={{{CLIENT}}},script-path=https://example.com/redirect.js,script-update-interval=-1\n';
 const interrupted = initial + comments + metadata + body;
 const expected = initial + metadata + comments + body;
 assert.equal(normalizeSurgeModuleHeader(interrupted), expected);
