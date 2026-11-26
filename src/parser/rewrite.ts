@@ -1,5 +1,5 @@
 import { transformJqText } from "./jq-text.ts";
-import type { RewriteAst, RewriteSemanticIr, Phase, RewriteCondition, RewriteValue, SourceAction, LegacyRewriteOperation, V2RewriteOperation, LegacyRewriteIr, V2RewriteIr, RewriteOperation, RewriteOperationKind, ComparisonNode, ScriptValue } from "../domain/contracts.ts";
+import type { RewriteAst, RewriteSemanticIr, Phase, RewriteCondition, RewriteValue, SourceAction, LegacyRewriteOperation, V2RewriteOperation, LegacyRewriteIr, V2RewriteIr, RewriteOperation, RewriteOperationKind, ComparisonNode, ScriptValue, RewritePlan, RewritePlannerOptions, ConversionTarget } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -1362,11 +1362,14 @@ export function stripJqComments(expr: any) {
 // Failed case: KuGou / Issue #162 / `else .end;` -> `else . end;`.
 // Valid field `.end` and quoted/comment text are never rewritten. Empty stdin
 // compiles the program without evaluating the author's filter on any JSON.
-const upstreamJqRepairCache: any = new Map();
-export function repairUpstreamJq(expr: any): any {
+type JqRepairResult =
+  | { jq: string; changed: false }
+  | { jq: string; changed: true; kind: string; original: string; diagnostic: string };
+const upstreamJqRepairCache = new Map<string, JqRepairResult>();
+export function repairUpstreamJq(expr: unknown): JqRepairResult {
   const original = String(expr);
   if (upstreamJqRepairCache.has(original))
-    return upstreamJqRepairCache.get(original);
+    return upstreamJqRepairCache.get(original)!;
   let masked = "",
     quoted = false,
     escaped = false,
@@ -1400,9 +1403,9 @@ export function repairUpstreamJq(expr: any): any {
   const matches = [
     ...masked.matchAll(/\belse\s*\.end\b(?=\s*(?:[;|)\],}]|$))/g),
   ];
-  let result: { jq: string; changed: boolean; kind?: string; original?: string; diagnostic?: string } = { jq: original, changed: false };
+  let result: JqRepairResult = { jq: original, changed: false };
   if (matches.length) {
-    const compile: any = (program: any) => {
+    const compile = (program: string) => {
       const checked = spawnSync("jq", [program], {
         input: "",
         encoding: "utf8",
@@ -1416,7 +1419,7 @@ export function repairUpstreamJq(expr: any): any {
         );
       return checked;
     };
-    const before: any = compile(original);
+    const before = compile(original);
     if (
       before.status === 3 &&
       /syntax error|unterminated/i.test(before.stderr)
@@ -1426,7 +1429,7 @@ export function repairUpstreamJq(expr: any): any {
         const offset = match.index + match[0].lastIndexOf(".end") + 1;
         candidate = candidate.slice(0, offset) + " " + candidate.slice(offset);
       }
-      const after: any = compile(candidate);
+      const after = compile(candidate);
       if (after.status === 0)
         result = {
           jq: candidate,
@@ -1436,7 +1439,7 @@ export function repairUpstreamJq(expr: any): any {
           diagnostic:
             before.stderr
               .split("\n")
-              .find((line: any): any => line.startsWith("jq: error:")) ||
+              .find((line) => line.startsWith("jq: error:")) ||
             "jq compile error",
         };
     }
@@ -2066,7 +2069,14 @@ function nativeJsonPriorityPlan(ast: any, target: string): any {
     line,
   };
 }
-export function planRewriteFeatureHelper(ast: any, target: any, ctx: any): any {
+type RewriteFeaturePlan =
+  | { ok: true; handler: "source-feature-collection"; section: "rewrite" | "script"; line: string }
+  | { ok: false; terminal: true; reason: string };
+export function planRewriteFeatureHelper(
+  ast: Pick<RewriteAst, "actions" | "condition" | "phase" | "raw" | "type">,
+  target: ConversionTarget,
+  ctx: RewritePlannerOptions,
+): RewriteFeaturePlan | null {
   if (!rewriteFeatureProfile(ast).mutations) return null;
   // QX object headers cannot preserve duplicates. Its historical native add
   // path remains governed by the existing compatibility/comment policy.
@@ -2100,8 +2110,8 @@ export function planRewriteFeatureHelper(ast: any, target: any, ctx: any): any {
       category: ctx.category,
       sourceLine: ctx.sourceLine,
       argumentTable: ctx.argumentTable,
-      mockMaterialized: ctx.mockFiles?.get(ctx.sourceLine),
-      jqMaterialized: ctx.jqFiles?.get(ctx.sourceLine),
+      mockMaterialized: ctx.mockFiles?.get(ctx.sourceLine!),
+      jqMaterialized: ctx.jqFiles?.get(ctx.sourceLine!),
     };
     const plan: any =
       ast.actions.length === 1
@@ -2259,7 +2269,7 @@ export function planComplexRewrite(
     };
   }
   if (["qx", "surge"].includes(target)) {
-    const featurePlan: any = planRewriteFeatureHelper(ast, target, context);
+    const featurePlan = planRewriteFeatureHelper(ast, target as ConversionTarget, context);
     if (featurePlan) return featurePlan;
   }
   for (const handler of handlers) {
@@ -3489,7 +3499,7 @@ export function qxPrimitiveForRewriteV2Action(action: any): any {
 // Rewrite planner result helpers
 // Author: chance
 // Category: Converter / Rewrite / Planning
-export function rewriteReview(source: any, reason: any) {
+export function rewriteReview(source: string, reason: unknown): RewritePlan {
   return {
     section: "comment",
     line:
@@ -3499,7 +3509,7 @@ export function rewriteReview(source: any, reason: any) {
       source,
   };
 }
-export function rewriteIssue(source: any, code: any, reason: any): any {
+export function rewriteIssue(source: string, code: string, reason: unknown): RewritePlan {
   return {
     section: "comment",
     line:
@@ -3765,7 +3775,7 @@ export function qxRewriteMatcherPlan(ast: any): any {
 // Generic Loon legacy Rewrite classifier and target planner
 // Author: chance
 // Category: Converter / Legacy Rewrite
-function legacyRewriteReview(pattern: any, action: any, reason: any) {
+function legacyRewriteReview(pattern: string, action: string, reason: unknown): { section: "comment"; line: string } {
   return {
     section: "comment",
     line: `# [WayX] REVIEW REQUIRED: ${reason}\n# Source declaration: ${pattern} ${action}`,
@@ -4287,7 +4297,7 @@ function planMock(
     );
   }
 }
-export function planLegacyRewriteIr(ir: any, target: any, ctx: any = {}): any {
+export function planLegacyRewriteIr(ir: LegacyRewriteIr, target: ConversionTarget, ctx: RewritePlannerOptions = {}): RewritePlan {
   if (
     !ir ||
     ir.type !== "rewrite-semantic-ir" ||
@@ -4295,12 +4305,12 @@ export function planLegacyRewriteIr(ir: any, target: any, ctx: any = {}): any {
   ) {
     throw new TypeError("Expected Legacy Rewrite Semantic IR");
   }
-  const pattern: any = ir.condition?.pattern ?? "";
-  const action: any = ir.operations[0]?.raw ?? "";
+  const pattern = ir.condition?.pattern ?? "";
+  const action = ir.operations[0]?.raw ?? "";
   if (isEmptyLegacyJsonJqIr(ir))
     return { section: "drop", reason: "empty-legacy-json-jq" };
-  const targetPattern: any = normalizeUrlRegexForTarget(pattern);
-  const operation: any = ir.operations[0];
+  const targetPattern = normalizeUrlRegexForTarget(pattern);
+  const operation = ir.operations[0];
   const parsed: any = classifyLegacyRewrite(action);
   if (operation.kind === "reject" && operation.variant !== "video") {
     if (target === "qx")
@@ -4310,7 +4320,7 @@ export function planLegacyRewriteIr(ir: any, target: any, ctx: any = {}): any {
       };
     const mapping = LEGACY_REJECT_VARIANTS.get(parsed.action)!;
     return {
-      section: mapping.surgeSection,
+      section: mapping.surgeSection as "url" | "map",
       line: `${targetPattern} ${mapping.surgeArguments}`,
     };
   }
@@ -4637,7 +4647,7 @@ function qxNativeJsonPipelinePlan(ast: any): any {
     line: matcher.prefix + token + " " + quoteJq(mapped.jq),
   };
 }
-export function planQxRewrite(ir: any, ctx: any = {}): any {
+export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions = {}): RewritePlan {
   if (!ir || ir.type !== "rewrite-semantic-ir")
     throw new TypeError("Expected Rewrite Semantic IR");
   if (ir.sourceSyntax === "legacy") return planLegacyRewriteIr(ir, "qx", ctx);
@@ -4702,7 +4712,7 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
       !ctx.featureCompatibilityPhases?.has(ast.phase)) ||
     ast.actions.some(isTextRequestMockAction)
   ) {
-    const featurePlan: any = planRewriteFeatureHelper(ast, "qx", {
+    const featurePlan = planRewriteFeatureHelper(ast, "qx", {
       ...ctx,
       sourceLine: source,
       argumentRefs,
@@ -4755,7 +4765,7 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         category: ctx.category,
         sourceLine: source,
       });
-      ctx.generatedScripts.set(filename, script);
+      ctx.generatedScripts!.set(filename, script);
       return {
         section: "rewrite",
         line:
@@ -4793,7 +4803,7 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         .digest("hex")
         .slice(0, 10);
       const filename = "mock_" + key + ".js";
-      ctx.generatedScripts.set(filename, plan.script);
+      ctx.generatedScripts!.set(filename, plan.script);
       return {
         section: "rewrite",
         line:
@@ -4878,7 +4888,7 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
           .digest("hex")
           .slice(0, 10);
         const filename = "header_" + key + ".js";
-        ctx.generatedScripts.set(filename, plan.script);
+        ctx.generatedScripts!.set(filename, plan.script);
         return {
           section: "rewrite",
           line:
@@ -4904,7 +4914,7 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         .digest("hex")
         .slice(0, 10);
       const filename = "header_" + key + ".js";
-      ctx.generatedScripts.set(filename, plan.script);
+      ctx.generatedScripts!.set(filename, plan.script);
       const matcher: any = qxRewriteMatcherPlan(ast);
       return {
         section: "rewrite",
@@ -4943,7 +4953,7 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         .digest("hex")
         .slice(0, 10);
       const filename = "json_add_qx_" + key + ".js";
-      ctx.generatedScripts.set(filename, plan.script);
+      ctx.generatedScripts!.set(filename, plan.script);
       const matcher: any = qxRewriteMatcherPlan(ast);
       return {
         section: "rewrite",
@@ -4981,7 +4991,7 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         .digest("hex")
         .slice(0, 10);
       const filename = "body_" + key + ".js";
-      ctx.generatedScripts.set(filename, plan.script);
+      ctx.generatedScripts!.set(filename, plan.script);
       const matcher: any = qxRewriteMatcherPlan(ast);
       return {
         section: "rewrite",
@@ -5023,7 +5033,7 @@ export function planQxRewrite(ir: any, ctx: any = {}): any {
         .digest("hex")
         .slice(0, 10);
       const filename = "reject_" + key + ".js";
-      ctx.generatedScripts.set(filename, plan.script);
+      ctx.generatedScripts!.set(filename, plan.script);
       return {
         section: "rewrite",
         line:
@@ -5114,7 +5124,7 @@ function ensureSurgeRewriteHandlers() {
           .digest("hex")
           .slice(0, 10);
         const filename = "complex_surge_" + key + ".js";
-        ctx.generatedScripts.set(filename, plan.script);
+        ctx.generatedScripts!.set(filename, plan.script);
         return {
           ok: true,
           section: "script",
@@ -5145,7 +5155,7 @@ function ensureSurgeRewriteHandlers() {
     },
   });
 }
-export function planSurgeRewrite(ir: any, ctx: any = {}): any {
+export function planSurgeRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions = {}): RewritePlan {
   if (!ir || ir.type !== "rewrite-semantic-ir")
     throw new TypeError("Expected Rewrite Semantic IR");
   if (ir.sourceSyntax === "legacy")
@@ -5178,7 +5188,7 @@ export function planSurgeRewrite(ir: any, ctx: any = {}): any {
       !ctx.featureCompatibilityPhases?.has(ast.phase)) ||
     ast.actions.some(isTextRequestMockAction)
   ) {
-    const featurePlan: any = planRewriteFeatureHelper(ast, "surge", {
+    const featurePlan = planRewriteFeatureHelper(ast, "surge", {
       ...ctx,
       sourceLine: source,
       argumentRefs,
@@ -5229,7 +5239,7 @@ export function planSurgeRewrite(ir: any, ctx: any = {}): any {
         .digest("hex")
         .slice(0, 10);
       const filename = "request_mock_" + key + ".js";
-      ctx.generatedScripts.set(filename, plan.script);
+      ctx.generatedScripts!.set(filename, plan.script);
       return {
         section: "script",
         line:
@@ -5319,7 +5329,7 @@ export function planSurgeRewrite(ir: any, ctx: any = {}): any {
         .digest("hex")
         .slice(0, 10);
       const filename = "json_mutation_surge_" + key + ".js";
-      ctx.generatedScripts.set(filename, plan.script);
+      ctx.generatedScripts!.set(filename, plan.script);
       return {
         section: "script",
         line:

@@ -380,3 +380,54 @@ export interface CatalogMetadata {
   tag: unknown;
   date: unknown;
 }
+
+// Modified: 2026-11-26 (chance). Track target output and split source members through Rewrite planning.
+export type RewriteOutputSection =
+  | "rewrite"
+  | "url"
+  | "header"
+  | "body"
+  | "map"
+  | "script"
+  | "comment";
+export interface RewriteLinePlan {
+  section: RewriteOutputSection;
+  line?: string;
+  lines?: string[];
+  reason?: string;
+  issue?: boolean;
+  issueCode?: string;
+  qxInlineNoteEligible?: boolean;
+  ok?: boolean;
+  members?: never;
+}
+export type RewritePlan =
+  | RewriteLinePlan
+  | {
+      section: "drop";
+      reason: string;
+      line?: never;
+      lines?: never;
+      members?: never;
+    }
+  | {
+      section: "split";
+      members: RewritePlan[];
+      line?: never;
+      lines?: never;
+    };
+
+export interface RewritePlannerOptions {
+  sourceLine?: string;
+  sourceUrl?: string;
+  rawBase?: string;
+  stamp?: string;
+  category?: string;
+  id?: string;
+  argumentRefs?: string[];
+  argumentTable?: SurgeArgumentTable | null;
+  generatedScripts?: ConversionOutput["generatedScripts"];
+  mockFiles?: ConversionContext["mockFiles"];
+  jqFiles?: ConversionContext["jqFiles"];
+  featureCompatibilityPhases?: ReadonlySet<string>;
+}

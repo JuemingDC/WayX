@@ -11,7 +11,7 @@ import { disjointUrls } from "../domain/qx-header.ts";
 import crypto from "node:crypto";
 import path from "node:path";
 import { createResourceSnapshot } from "../ingest/resources.ts";
-import type { SourceEntry, ConversionOutput, ConversionContext, ConversionStage, ConversionStageListener, ConversionTarget, ParsedPlugin, PreparedRewriteDeclaration, SourceScriptRecord, RewriteDependencyRecord, FetchOptions, SurgeArgumentTable } from "../domain/contracts.ts";
+import type { SourceEntry, ConversionOutput, ConversionContext, ConversionStage, ConversionStageListener, ConversionTarget, ParsedPlugin, PreparedRewriteDeclaration, SourceScriptRecord, RewriteDependencyRecord, FetchOptions, SurgeArgumentTable, RewritePlan, RewriteLinePlan, RewritePlannerOptions, RewriteAst, SourceAction, LegacyRewriteIr, SourceSectionItem } from "../domain/contracts.ts";
 import {
   surgeRegexParameter,
   normalizeUrlRegexForTarget,
@@ -93,8 +93,8 @@ import {
 // Pure Loon → Quantumult X / Surge conversion pipeline
 // Author: chance
 // Category: Converter / Pipeline
-function splitPatternAction(line: any): any {
-  const idx: any = line.search(/\s/);
+function splitPatternAction(line: string): [string, string] {
+  const idx = line.search(/\s/);
   if (idx < 0) return [line.trim(), ""];
   return [
     line.slice(0, idx).trim(),
@@ -104,7 +104,7 @@ function splitPatternAction(line: any): any {
       .replace(/^\-\s+/, ""),
   ];
 }
-function splitRuleInlineComment(line: any) {
+function splitRuleInlineComment(line: unknown) {
   const source = String(line ?? "").trim();
   const match = source.match(/^([\s\S]*?\S)\s+\/\/\s*(.+)$/);
   if (!match) return { line: source, comment: null };
@@ -113,7 +113,7 @@ function splitRuleInlineComment(line: any) {
     comment: "# " + match[2].trim(),
   };
 }
-function rewriteErrorResult(line: any, error: any): any {
+function rewriteErrorResult(line: string, error: { message?: unknown; code?: string } | null | undefined): RewritePlan {
   const reason = String(error?.message || error).split("\n")[0];
   if (error instanceof SyntaxError)
     return rewriteIssue(line, "unknown-rewrite-v2-syntax", reason);
@@ -134,7 +134,7 @@ function rewriteErrorResult(line: any, error: any): any {
 // Normalize file actions before both target planning and phase eligibility.
 // A dependency is tied to its absolute source action index, never shared as
 // the old single-action object across a multi-action declaration.
-interface PlannerContext extends Pick<ConversionContext, "declarations" | "scriptMap" | "mockFiles" | "jqFiles" | "sourceUrl"> {
+interface PlannerContext extends Omit<RewritePlannerOptions, "mockFiles" | "jqFiles" | "sourceUrl">, Pick<ConversionContext, "declarations" | "scriptMap" | "mockFiles" | "jqFiles" | "sourceUrl"> {
   upstreamRepairs: Map<string, { kind: string; original: string; sourceLine: string }>;
   id: string;
   generatedScripts: ConversionOutput["generatedScripts"];
@@ -146,8 +146,8 @@ interface PlannerContext extends Pick<ConversionContext, "declarations" | "scrip
   splitPipelineAction?: boolean;
   featureCompatibilityPhases?: Set<string>;
 }
-function correctedUpstreamJq(jq: unknown, line: string, ctx: PlannerContext): any {
-  const result: any = repairUpstreamJq(jq);
+function correctedUpstreamJq(jq: unknown, line: string, ctx: PlannerContext) {
+  const result = repairUpstreamJq(jq);
   if (result.changed)
     ctx.upstreamRepairs?.set(line + "\0" + result.original, {
       ...result,
@@ -155,20 +155,20 @@ function correctedUpstreamJq(jq: unknown, line: string, ctx: PlannerContext): an
     });
   return result;
 }
-function resolveRewriteJqDependencies(ast: any, line: string, ctx: PlannerContext): any {
+function resolveRewriteJqDependencies(ast: RewriteAst, line: string, ctx: PlannerContext): RewriteAst {
   ast = selectRewritePipelineLayer(ast);
-  const actions: any = ast.actions.map(
-    (action: any, selectedIndex: any): any => {
-      const index: any =
+  const actions = ast.actions.map(
+    (action, selectedIndex): SourceAction => {
+      const index =
         ast.sourceActionIndices?.[selectedIndex] ?? selectedIndex;
       const spec: any = jqDependencySpecFromAction(action, {
         pluginSourceUrl: ctx.sourceUrl,
       });
-      let resolved: any = action;
+      let resolved = action;
       if (spec) {
-        const files: any = ctx.jqFiles?.get(line);
+        const files = ctx.jqFiles?.get(line);
         if (files?.error && !files.byAction) throw new Error(files.error);
-        const materialized: any = files?.byAction
+        const materialized = files?.byAction
           ? Object.prototype.hasOwnProperty.call(files.byAction, index)
             ? files.byAction[index]
             : null
@@ -191,15 +191,15 @@ function resolveRewriteJqDependencies(ast: any, line: string, ctx: PlannerContex
           pluginSourceUrl: ctx.sourceUrl,
         }).action;
       }
-      const node: any = resolved.args?.[0];
+      const node = resolved.args?.[0];
       if (
         /^(?:request|response)\.json\.jq$/.test(resolved.name) &&
         ["string", "raw-string"].includes(node?.type)
       ) {
-        const repairLine: any = ast.sourceActionCount
+        const repairLine = ast.sourceActionCount
           ? rewriteV2ToSource({ ...ast, actions: [action] })
           : line;
-        const repaired: any = correctedUpstreamJq(node.value, repairLine, ctx);
+        const repaired = correctedUpstreamJq((node as { value: string }).value, repairLine, ctx);
         if (repaired.changed)
           resolved = {
             ...resolved,
@@ -216,33 +216,33 @@ function resolveRewriteJqDependencies(ast: any, line: string, ctx: PlannerContex
       return resolved;
     },
   );
-  const result: any = { ...ast, actions };
+  const result = { ...ast, actions };
   validateRewriteV2Ast(result);
   return result;
 }
 // Modified: 2026-11-20 (chance). Keep JSON actions within their source declaration.
-function isJsonRewriteAction(action: any): boolean {
+function isJsonRewriteAction(action: SourceAction): boolean {
   return /^(?:request|response)\.json\.(?:add|delete|replace|jq|jq_file)$/.test(action.name);
 }
-function rewriteV2Action(line: string, target: ConversionTarget, ctx: PlannerContext): any {
+function rewriteV2Action(line: string, target: ConversionTarget, ctx: PlannerContext): RewritePlan | null {
   if (!isRewriteV2(line)) return null;
   if (isScriptV2(line)) {
-    const members: any = splitScriptPipelineSources(line);
+    const members = splitScriptPipelineSources(line);
     if (members.some((member: string) => /\bthen\s+(?:request|response)\.json\./.test(member)))
       return rewriteReview(line, "JSON/JQ and a source Script cannot be represented by one equivalent target rule");
     if (members.length > 1)
       return {
         section: "split",
-        members: members.map((member: any): any =>
+        members: members.map((member) =>
           rewriteV2Action(member, target, {
             ...ctx,
             splitPipelineAction: true,
-          }),
+          })!,
         ),
       };
     try {
-      const ir: any = parseScriptDeclaration(line),
-        record: any = ctx.scriptMap?.get(ir.script.path);
+      const ir = parseScriptDeclaration(line)!,
+        record = ctx.scriptMap?.get(ir.script.path);
       const plan: any = (target === "qx" ? planQxScript : planSurgeScript)(ir, {
         scriptUrl: record?.[target] || ir.script.path,
         sourceText: record?.source || "",
@@ -273,7 +273,7 @@ function rewriteV2Action(line: string, target: ConversionTarget, ctx: PlannerCon
       return rewriteErrorResult(line, error);
     }
   }
-  let ast: any;
+  let ast: RewriteAst;
   try {
     ast = preparedRewriteAst(ctx.declarations, line);
     if (ctx.splitPipelineAction && !ast.sourceActionCount)
@@ -282,7 +282,7 @@ function rewriteV2Action(line: string, target: ConversionTarget, ctx: PlannerCon
   } catch (error: any) {
     return rewriteErrorResult(line, error);
   }
-  const planner: any =
+  const planner =
     target === "qx"
       ? planQxRewrite
       : target === "surge"
@@ -294,11 +294,11 @@ function rewriteV2Action(line: string, target: ConversionTarget, ctx: PlannerCon
       "unknown-rewrite-target",
       "unsupported Rewrite target planner: " + target,
     );
-  const plan: any = (member: any): any => {
-    const selectedLine: any = member === ast ? line : rewriteV2ToSource(member);
+  const plan = (member: RewriteAst): RewritePlan => {
+    const selectedLine = member === ast ? line : rewriteV2ToSource(member);
     try {
-      const resolved: any = resolveRewriteJqDependencies(member, line, ctx);
-      const sourceLine: any = ast.sourceActionCount
+      const resolved = resolveRewriteJqDependencies(member, line, ctx);
+      const sourceLine = ast.sourceActionCount
         ? rewriteV2ToSource(resolved)
         : line;
       const ir = rewriteV2AstToSemanticIr(resolved, {
@@ -311,7 +311,7 @@ function rewriteV2Action(line: string, target: ConversionTarget, ctx: PlannerCon
         ctx.argumentIds || [],
       ).all;
       if (!ast.sourceActionCount && resolved.actions.length > 1) {
-        const helper: any = planRewriteFeatureHelper(resolved, target, {
+        const helper = planRewriteFeatureHelper(resolved, target, {
           ...ctx,
           sourceLine,
           argumentRefs: refs,
@@ -326,14 +326,14 @@ function rewriteV2Action(line: string, target: ConversionTarget, ctx: PlannerCon
             sourceLine,
         };
       }
-      const native: any =
+      const native =
         simpleUrlRewriteCondition(resolved).ok &&
         jsonPipelineToSafeNativeJq(resolved).ok;
-      const mock: any = ctx.mockFiles?.get(line);
-      const projectedMock: any = mock?.byAction
+      const mock = ctx.mockFiles?.get(line);
+      const projectedMock = mock?.byAction
         ? mock.byAction[member.sourceActionIndices?.[0] ?? 0]
         : mock;
-      const mockFiles: any = new Map(ctx.mockFiles || []);
+      const mockFiles = new Map(ctx.mockFiles || []);
       if (projectedMock) mockFiles.set(sourceLine, projectedMock);
       return planner(ir, {
         ...ctx,
@@ -368,20 +368,20 @@ function rewriteV2Action(line: string, target: ConversionTarget, ctx: PlannerCon
       return rewriteReview(line, String(error?.message || error).split("\n")[0]);
     }
   }
-  const members: any[] = [];
+  const members: RewriteAst[] = [];
   for (let index = 0; index < ast.actions.length; index++) {
     const action = ast.actions[index];
     members.push({
       ...ast,
       actions: [action],
-      sourceActionIndices: [ast.sourceActionIndices[index]],
+      sourceActionIndices: [ast.sourceActionIndices![index]],
     });
   }
   return {section: "split", members: members.map(plan)};
 }
-function planDisabledSurgeRewriteComments(comments: string[], ctx: PlannerContext): any {
-  const passthrough: any = [];
-  const routed: any = [];
+function planDisabledSurgeRewriteComments(comments: string[], ctx: PlannerContext) {
+  const passthrough: string[] = [];
+  const routed: { section: string; lines: string[] }[] = [];
   for (const raw of comments || []) {
     const trimmed = String(raw ?? "").trim();
     const match = trimmed.match(
@@ -392,7 +392,7 @@ function planDisabledSurgeRewriteComments(comments: string[], ctx: PlannerContex
       continue;
     }
     const sourceLine = match[1].trim();
-    const mapped: any = rewriteV2Action(sourceLine, "surge", {
+    const mapped = rewriteV2Action(sourceLine, "surge", {
       ...ctx,
       featureCompatibilityPhases: new Set(["request", "response"]),
     });
@@ -403,43 +403,43 @@ function planDisabledSurgeRewriteComments(comments: string[], ctx: PlannerContex
     if (mapped.section === "drop") continue;
     for (const member of mapped.members || [mapped]) {
       if (member.section === "drop") continue;
-      const lines: any = member.lines || [member.line];
+      const lines = member.lines || [member.line];
       routed.push({
         section: member.section,
-        lines: [raw, ...lines.map((line: any) => "# " + line)],
+        lines: [raw, ...lines.map((line) => "# " + line)],
       });
     }
   }
   return { passthrough, routed };
 }
-function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarget, ctx: PlannerContext): any {
-  const result: any = new Map();
-  const items: any = groupSourceSectionItems(
+function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarget, ctx: PlannerContext): Map<number, RewritePlan> {
+  const result = new Map<number, RewritePlan>();
+  const items = groupSourceSectionItems(
     plugin.sections.get("Rewrite") || [],
-  ).filter((x: any): any => x.line);
-  const candidates: any = [];
-  const scripts: any = [
+  ).filter((x) => x.line) as (SourceSectionItem & { line: string })[];
+  const candidates: { line: string; sourceIndex: number; ast: RewriteAst; mapped: RewriteLinePlan }[] = [];
+  const scripts = [
     ...groupSourceSectionItems(plugin.sections.get("Script") || []),
-    ...items.filter((x: any) => isScriptV2(x.line)),
-  ].filter((x: any): any => x.line);
-  const legacy: any = items.some((x: any) => !isRewriteV2(x.line));
+    ...items.filter((x) => isScriptV2(x.line)),
+  ].filter((x) => x.line) as (SourceSectionItem & { line: string })[];
+  const legacy = items.some((x) => !isRewriteV2(x.line));
   // Keep native JSON/JQ declarations outside helper dispatchers. Original
   // Script/legacy owners also retain their existing phase contracts.
-  const blockedV2: any = new Set();
+  const blockedV2 = new Set<string>();
   const jsonPhases = new Set<string>();
   for (const item of items)
     if (isRewriteV2(item.line) && !isScriptV2(item.line))
       try {
-        const ast: any = resolveRewriteJqDependencies(
+        const ast = resolveRewriteJqDependencies(
           preparedRewriteAst(ctx.declarations, item.line),
           item.line,
           ctx,
         );
         if (ast.actions.some(isJsonRewriteAction)) jsonPhases.add(ast.phase);
-        const nativeJson: any =
+        const nativeJson =
           (ast.actions.length > 1 ||
             ast.actions[0]?.args.some(
-              (arg: any) => arg.type === "array",
+              (arg) => arg.type === "array",
             )) &&
           simpleUrlRewriteCondition(ast).ok &&
           jsonPipelineToSafeNativeJq(ast).ok;
@@ -447,7 +447,7 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
           ast.sourceActionCount ||
           nativeJson ||
           ast.actions.every(
-            (a: any) => a.name === ast.phase + ".json.jq",
+            (a) => a.name === ast.phase + ".json.jq",
           ) ||
           !supportsRewritePhaseActions(ast, target)
         )
@@ -457,10 +457,10 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
       }
   ctx.featureCompatibilityPhases = new Set(
     ["request", "response"].filter(
-      (phase: string): any =>
+      (phase) =>
         legacy ||
         blockedV2.has(phase) ||
-        scripts.some((x: any) => {
+        scripts.some((x) => {
           try {
             const ir: any = parseScriptDeclaration(x.line);
             return (
@@ -478,14 +478,14 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
     if (!isRewriteV2(item.line) || isScriptV2(item.line) || item.pipelineMember)
       continue;
     try {
-      const ast: any = resolveRewriteJqDependencies(
+      const ast = resolveRewriteJqDependencies(
         preparedRewriteAst(ctx.declarations, item.line),
         item.line,
         ctx,
       );
       validateRewriteV2Ast(ast);
       if (ast.actions.some(isJsonRewriteAction)) continue;
-      const mapped: any = rewriteV2Action(item.line, target, ctx);
+      const mapped = rewriteV2Action(item.line, target, ctx)!;
       if (mapped.section === "split") continue;
       if (mapped.section !== "comment" && mapped.section !== "drop")
         candidates.push({
@@ -500,24 +500,24 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
   }
   for (const phase of ["request", "response"]) {
     if (jsonPhases.has(phase)) continue;
-    const group: any = candidates.filter(
-      (x: any) => x.ast.phase === phase,
+    const group = candidates.filter(
+      (x) => x.ast.phase === phase,
     );
     // A broad guarded helper must share one phase owner even when only one
     // source entry matches this phase. Include native mutations in its order.
-    const helper: any = group.some((x: any) =>
+    const helper = group.some((x) =>
       /script-(?:request|response)-(?:header|body)|type=http-/.test(
         x.mapped.line || "",
       ),
     );
     if (!helper) continue;
-    const external: any = ctx.featureCompatibilityPhases.has(phase);
+    const external = ctx.featureCompatibilityPhases.has(phase);
     // Loon disables the same-phase author Script when a Body Rewrite matches.
     // A narrow owner can preserve that relation without executing remote code.
-    const bodyMatchers: any = group.map((item: any): any =>
+    const bodyMatchers = group.map((item) =>
       simpleUrlRewriteCondition(item.ast, { target }),
     );
-    const bodyOwner: any =
+    const bodyOwner =
       external &&
       !legacy &&
       !blockedV2.has(phase) &&
@@ -527,8 +527,8 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
       ) &&
       new Set(bodyMatchers.map((matcher: any): any => matcher.pattern)).size ===
         1 &&
-      group.some((item: any): any =>
-        item.ast.actions.some((action: any) =>
+      group.some((item) =>
+        item.ast.actions.some((action) =>
           new RegExp(
             "^" + phase + "\\.(?:body\\.(?:replace|mock|mock_file)|json\\.)",
           ).test(action.name),
@@ -541,15 +541,15 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
         );
       if (group.length === 1 && !bodyOwner) continue;
       if (
-        group.some((x: any) => !supportsRewritePhaseActions(x.ast, target))
+        group.some((x) => !supportsRewritePhaseActions(x.ast, target))
       )
         throw new Error(
           "phase dispatcher cannot compose native JQ/echo/URL/binary actions without a verified runtime adapter",
         );
-      const refs: any = [
+      const refs: string[] = [
         ...new Set(
           group.flatMap(
-            (x: any): any =>
+            (x) =>
               rewriteV2PluginArgumentRefs(x.ast, ctx.argumentIds || []).all,
           ),
         ),
@@ -564,7 +564,7 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
         : { ok: true, value: null };
       if (!payload.ok) throw new Error(payload.reason);
       const plan: any = renderRewritePhaseDispatcher(
-        group.map((x: any): any => x.ast),
+        group.map((x) => x.ast),
         {
           target,
           stamp: ctx.stamp,
@@ -577,13 +577,13 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
       if (bodyOwner) plan.pattern = bodyMatchers[0].pattern;
       const key = crypto
         .createHash("sha1")
-        .update(target + "\0" + group.map((x: any): any => x.line).join("\n"))
+        .update(target + "\0" + group.map((x) => x.line).join("\n"))
         .digest("hex")
         .slice(0, 10);
       const filename = "phase_" + target + "_" + phase + "_" + key + ".js";
       ctx.generatedScripts.set(filename, plan.script);
       const url = ctx.rawBase + "/Script/" + ctx.id + "/" + filename;
-      const mapped =
+      const mapped: RewritePlan =
         target === "qx"
           ? {
               section: "rewrite",
@@ -606,7 +606,7 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
                 (plan.fullHeaderMode ? ",full-header-mode=true" : "") +
                 (payload.value ? ",argument=" + payload.value : ""),
             };
-      group.forEach((item: any, index: any): any =>
+      group.forEach((item, index) =>
         result.set(
           item.sourceIndex,
           index === 0
@@ -623,18 +623,18 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
             item.mapped.line || "",
           )
         ) {
-          const ast: any = item.ast;
+          const ast = item.ast;
           // Modified: 2026-11-01 (chance). Preserve flags in retained Surge prefilters.
           const narrow: any = simpleUrlRewriteCondition(ast, { target });
           if (narrow.ok) {
             const pattern: any = narrow.pattern;
             const line: any =
               target === "qx"
-                ? item.mapped.line.replace(
+                ? item.mapped.line!.replace(
                     /^(?:\^https\?:\/\/|\^) url /,
                     () => pattern + " url ",
                   )
-                : item.mapped.line.replace(
+                : item.mapped.line!.replace(
                     /pattern=(?:\^https\?:\/\/|\^),/,
                     () => "pattern=" + surgeRegexParameter(pattern) + ",",
                   );
@@ -668,8 +668,8 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
     for (const item of group)
       if (
         result.has(item.sourceIndex) &&
-        !(result.get(item.sourceIndex).line || "").includes(
-          item.mapped.line?.split("/").pop(),
+        !(result.get(item.sourceIndex)!.line || "").includes(
+          item.mapped.line?.split("/").pop()!,
         )
       ) {
         for (const [filename] of ctx.generatedScripts)
@@ -679,7 +679,7 @@ function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarge
   }
   return result;
 }
-function sanitizeName(value: any): any {
+function sanitizeName(value: string | null | undefined): string {
   return (
     (value || "script")
       .replace(/[=,\r\n]/g, "_")
@@ -898,7 +898,7 @@ export function convertPlugin(
       surgeOutputDestination(sg, "general").push(...comments);
       continue;
     }
-    const ir: any = parseConfigurationDeclaration(item.line, {
+    const ir = parseConfigurationDeclaration(item.line, {
       section: "General",
     });
     const qr = planConfiguration(ir, "qx");
@@ -942,11 +942,11 @@ export function convertPlugin(
       });
       qxRewriteOutputDestination(qx, qr.section).push(
         ...comments,
-        ...(qr.lines || [qr.line]),
+        ...(qr.lines || [qr.line!]),
       );
       surgeRewriteOutputDestination(sg, sr.section).push(
         ...comments,
-        ...(sr.lines || [sr.line]),
+        ...(sr.lines || [sr.line!]),
       );
       continue;
     }
@@ -986,8 +986,8 @@ export function convertPlugin(
     });
     surgeRuleOutputDestination(sg, sr.section).push(...comments, ...sr.lines);
   }
-  const qxDispatchers: any = prepareRewriteDispatchers(plugin, "qx", qctx);
-  const surgeDispatchers: any = prepareRewriteDispatchers(
+  const qxDispatchers = prepareRewriteDispatchers(plugin, "qx", qctx);
+  const surgeDispatchers = prepareRewriteDispatchers(
     plugin,
     "surge",
     sctx,
@@ -1009,14 +1009,14 @@ export function convertPlugin(
       ).push(...routed.lines);
     }
     if (!item.line) continue;
-    let qr: any =
+    let qr =
       qxDispatchers.get(item.sourceIndex) ||
       rewriteV2Action(
         item.line,
         "qx",
         item.pipelineMember ? { ...qctx, splitPipelineAction: true } : qctx,
       );
-    let sr: any =
+    let sr =
       surgeDispatchers.get(item.sourceIndex) ||
       rewriteV2Action(
         item.line,
@@ -1025,7 +1025,7 @@ export function convertPlugin(
       );
     if (!qr || !sr) {
       const [pattern, action] = splitPatternAction(item.line);
-      let ir: any = declarations.get(item.line)?.ir
+      let ir: LegacyRewriteIr = declarations.get(item.line)?.ir
         ? structuredClone(declarations.get(item.line)!.ir!)
         : legacyRewriteToSemanticIr(pattern, action);
       if (isEmptyJsonJqIr(ir)) {
@@ -1036,9 +1036,9 @@ export function convertPlugin(
         pluginSourceUrl: entry.source,
       });
       if (jqSpec) {
-        const materialized: any = jqFiles.get(item.line);
+        const materialized = jqFiles.get(item.line);
         if (!materialized || materialized.error) {
-          const reason: any =
+          const reason =
             materialized?.error ||
             "JQ dependency was not materialized during conversion";
           if (!qr) qr = rewriteReview(item.line, reason);
@@ -1047,7 +1047,7 @@ export function convertPlugin(
           ir = inlineResolvedLegacyJqPathIr(ir, materialized.content).ir;
         }
       }
-      const operation: any = ir.operations?.[0];
+      const operation = ir.operations?.[0];
       if (
         ir.operations?.length === 1 &&
         operation.kind === "json" &&
@@ -1055,7 +1055,7 @@ export function convertPlugin(
         !qr &&
         !sr
       ) {
-        const repaired: any = correctedUpstreamJq(
+        const repaired = correctedUpstreamJq(
           unquoteRewriteToken(operation.rest),
           item.line,
           qctx,
@@ -1083,8 +1083,8 @@ export function convertPlugin(
       if (!qr) qr = planQxRewrite(ir, { ...qctx, sourceLine: item.line });
       if (!sr) sr = planSurgeRewrite(ir, { ...sctx, sourceLine: item.line });
     }
-    const qmembers: any = qr.members || [qr],
-      smembers: any = sr.members || [sr];
+    const qmembers = qr.members || [qr],
+      smembers = sr.members || [sr];
     for (const [index, qr] of qmembers.entries()) {
       const qdest: any = qxRewriteOutputDestination(qx, qr.section);
       if (qr.section === "comment") qxJqBarriers.add(qx.rewrite.length);
@@ -1095,14 +1095,14 @@ export function convertPlugin(
           sectionLines: rewriteSectionLines,
           item: index === 0 ? item : { ...item, comments: [] },
           sectionKind: "rewrite",
-          lines: qr.lines || [qr.line],
+          lines: qr.lines || [qr.line!],
           eligible: qr.qxInlineNoteEligible !== false,
         });
         qdest.push(...qxRendered.comments, ...qxRendered.lines);
       } else {
         qdest.push(
           ...(index === 0 ? comments : []),
-          ...(qr.lines || [qr.line]),
+          ...(qr.lines || [qr.line!]),
         );
       }
     }
@@ -1113,7 +1113,7 @@ export function convertPlugin(
       else
         sdest.push(
           ...(index === 0 ? surgeComments : []),
-          ...(sr.lines || [sr.line]),
+          ...(sr.lines || [sr.line!]),
         );
     }
   }
@@ -1125,7 +1125,7 @@ export function convertPlugin(
     if (isRewriteV2(item.line) && (!isScriptV2(item.line) || item.atomicJsonPipeline)) {
       for (const target of ["qx", "surge"] as ConversionTarget[]) {
         const ctx = target === "qx" ? qctx : sctx;
-        const result: any = rewriteV2Action(
+        const result = rewriteV2Action(
           item.line,
           target,
           item.pipelineMember ? { ...ctx, splitPipelineAction: true } : ctx,
@@ -1280,7 +1280,7 @@ export function convertPlugin(
       surgeOutputDestination(sg, "mitm").push(...comments);
       continue;
     }
-    const ir: any = parseConfigurationDeclaration(item.line);
+    const ir = parseConfigurationDeclaration(item.line);
     const qPlan = planConfiguration(ir, "qx");
     const sPlan = planConfiguration(ir, "surge");
     qxOutputDestination(qx, "mitm").push(...comments, qPlan.line);

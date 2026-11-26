@@ -1,3 +1,4 @@
+import type { ConversionTarget } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -7,18 +8,27 @@
 // Updated: 2026-10-03
 // Author: chance
 // Category: Converter / Configuration / Semantic IR
+// Modified: 2026-11-26 (chance). Share the configuration IR and target output types.
+interface ConfigurationIr {
+  readonly type: "configuration-semantic-ir";
+  readonly domain: "general" | "mitm";
+  readonly source: string;
+  readonly name: string | null;
+  readonly value: string | null;
+  readonly operation: "hostname-list" | "unknown";
+  readonly hosts: readonly string[];
+}
 export function parseConfigurationDeclaration(
-  line: any,
-  { section = "MITM" }: any = {},
-): any {
+  line: unknown,
+  { section = "MITM" }: { section?: string } = {},
+): ConfigurationIr {
   const source = String(line ?? "").trim();
   const match = source.match(/^([\w-]+)\s*=\s*([\s\S]*)$/);
   const domain =
     String(section).toLowerCase() === "general" ? "general" : "mitm";
   const name = match?.[1]?.toLowerCase() ?? null;
   const value = match?.[2]?.trim() ?? null;
-  const hostnameList =
-    name === (domain === "general" ? "real-ip" : "hostname");
+  const hostnameList = name === (domain === "general" ? "real-ip" : "hostname");
   return Object.freeze({
     type: "configuration-semantic-ir",
     domain,
@@ -30,13 +40,16 @@ export function parseConfigurationDeclaration(
       hostnameList && value
         ? value
             .split(",")
-            .map((host: string): any => host.trim())
+            .map((host) => host.trim())
             .filter(Boolean)
         : [],
     ),
   });
 }
-export function planConfiguration(ir: any, target: any) {
+export function planConfiguration(
+  ir: ConfigurationIr,
+  target: ConversionTarget,
+): { section: "general" | "mitm" | "notes"; line: string } {
   if (ir?.type !== "configuration-semantic-ir")
     throw new TypeError("Expected Configuration Semantic IR");
   if (!["qx", "surge"].includes(target))
@@ -86,6 +99,6 @@ export function planConfiguration(ir: any, target: any) {
       };
 }
 // Public compatibility API delegates to the sole source parser + IR adapter.
-export function planMitmLine(line: any, target: any) {
+export function planMitmLine(line: unknown, target: ConversionTarget) {
   return planConfiguration(parseConfigurationDeclaration(line), target);
 }
