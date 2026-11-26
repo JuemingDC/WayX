@@ -18,8 +18,8 @@
     "Rule/Quantumult X/WayX/media/media.list": "f6fdf0ee1d9edd968d5766e6725f1b0eae53dcbf97dd3440376dd9f84c338bbd",
     "Rule/Quantumult X/WayX/cn/cn.list": "2d3cf5eb57df98e444344808ca33779158acbf284e7ce1da3bcedc195b589300",
     "Rule/Quantumult X/WayX/proxy/proxy.list": "45c74ee8de53f2a415dcb161250150a3b3acd1301e033f259383e0493bb2a262",
-    "Rule/Quantumult X/WayX/adblock/adblock.list": "f976d3486dca3c673fc42c4c00a000cb6bd63e8b6fc16686fd0d9b43cbdecae7",
-    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": "30a32fcd3702825865f1463aff71c82526ef52d214451642a4bef55e9cf14764",
+    "Rule/Quantumult X/WayX/adblock/adblock.list": "35d7e2162df94bc210ca13505a388e2388d06ff2cf6b2d75a169e5a5dc5489c1",
+    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": "c2a8ffa38af92c6541518465e49435e604eb3488795a075071274faa47b4ffb2",
     "Rule/Surge/WayX/google/google.list": "912e0c6188e8ba45b52e86b262bb46ce9f2c31cb29b0cbe28a13f04e5482eaa9",
     "Rule/Surge/WayX/youtube/youtube.list": "1f5a9d6d4d357d6b2c8f012f624ff96eb05d525bc83557144bb78f48f3dde038",
     "Rule/Surge/WayX/ai/ai.list": "b73cc6d3c7e154f5a823b3e88822fd48942b7b3e2ae5f66e39cb1ba6913e5d77",
@@ -40,8 +40,8 @@
     "Rule/Surge/WayX/media/media.list": "555fee3730e1d7af0281f0d05eb9f1a8dbce2b543b75b70f1d54290fe2365104",
     "Rule/Surge/WayX/cn/cn.list": "ff3827f355145943779e288452a743c6a5aefc58220109c46c128e5863738b6f",
     "Rule/Surge/WayX/proxy/proxy.list": "364504ac2c4bca40eb161a5c9355ae20b1bd6c2c9f6a32f068fb2e7c5227458e",
-    "Rule/Surge/WayX/adblock/adblock.list": "b4e9a4b444519523c6b268bbf9fb47c3c7730bf832a73920f357135a70d496ef",
-    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": "b95453b19d49026b5a75450d172c3e1b5c8cfb19e53fcf46911409c07ea9e0ff",
+    "Rule/Surge/WayX/adblock/adblock.list": "8fcab5d7184541179a27ad84313b31787693f6ddbc3b63e0cb833b081a34df00",
+    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": "f82fbaff456e3dfb01a7e86f87155f6a840dbcf66b09279025671b120771fe3c",
     "Rule/Quantumult X/WayX/filterfix/filterfix.list": "bc2f4b0be6d4d4f0a9c490b2f4e3259cabeda3ae6cd729a4c7d32d76fc1edffd",
     "Rule/Surge/WayX/filterfix/filterfix.dconf": "ba43f26b47a1eb7f9b8659d65da7c41e5a9639f23a6a8b20b673c559359befeb"
   },
@@ -63,8 +63,8 @@
     "Rule/Quantumult X/WayX/media/media.list": 7283,
     "Rule/Quantumult X/WayX/cn/cn.list": 128196,
     "Rule/Quantumult X/WayX/proxy/proxy.list": 34178,
-    "Rule/Quantumult X/WayX/adblock/adblock.list": 303168,
-    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": 152067,
+    "Rule/Quantumult X/WayX/adblock/adblock.list": 301755,
+    "Rule/Quantumult X/WayX/adblock_extra/adblock_extra.list": 152191,
     "Rule/Surge/WayX/google/google.list": 897,
     "Rule/Surge/WayX/youtube/youtube.list": 182,
     "Rule/Surge/WayX/ai/ai.list": 705,
@@ -85,8 +85,8 @@
     "Rule/Surge/WayX/media/media.list": 7283,
     "Rule/Surge/WayX/cn/cn.list": 128196,
     "Rule/Surge/WayX/proxy/proxy.list": 34178,
-    "Rule/Surge/WayX/adblock/adblock.list": 303168,
-    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": 152067,
+    "Rule/Surge/WayX/adblock/adblock.list": 301755,
+    "Rule/Surge/WayX/adblock_extra/adblock_extra.list": 152191,
     "Rule/Quantumult X/WayX/filterfix/filterfix.list": 63,
     "Rule/Surge/WayX/filterfix/filterfix.dconf": 63
   },
@@ -140,7 +140,7 @@
       "max_age_days": 7,
       "timeout": 8,
       "fetched_url": "https://ruleset.skk.moe/List/domainset/reject.conf",
-      "sha256": "42fa81ea0490d43dd0987cc5e4ed8b748c7c740cae62331e633c82d8b7e5473e"
+      "sha256": "22830f3503d3432946e3bc4d8f152b109b9437d1857b2a2ac73493a498cf42a9"
     },
     {
       "id": "mihomo-proxy",
@@ -339,7 +339,7 @@
       "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/light-onlydomains.txt",
-      "sha256": "79eb40a6074455651c68bffaf04418a137b47c6d89dc5c80a811c3b69f84992d"
+      "sha256": "f1d55d53c4099ecb184ab6230484b9ff49f38081903b14e6f6b32b604d8d685d"
     },
     {
       "id": "awavenue-ads",
@@ -361,7 +361,7 @@
       "url": "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-surge.txt",
       "license": "MIT",
       "fetched_url": "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-surge.txt",
-      "sha256": "ca861f460fca2f01bdaddb0fd193445996af505ea6cda020b8c5d3644d947e21"
+      "sha256": "5d725e7aaba378e6c3849508f4b61206c546e54bb2e1abe11c88eaf1ec30a938"
     },
     {
       "id": "sukka-media-non_ip",
@@ -517,7 +517,7 @@
       "url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt",
       "license": "GPL-3.0",
       "fetched_url": "https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt",
-      "sha256": "9a91d79a0d5bdf2741896f848008395f98b02eba78a391059b5b4d7ad5e173d8"
+      "sha256": "6f87f70eb74e2fed7148cf6be5ba8fa6228a87d937572ec8cab4bb3384221fa8"
     },
     {
       "id": "gaoyifan-cn",

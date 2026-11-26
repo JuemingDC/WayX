@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/freshippo.js",
-  "sourceSha256": "edf71faccbca61b153bbce98f56b75e27313883cf520e5e315f6ba15ed52360d",
+  "sourceSha256": "b2a3315778443206bab90d40c3cfd7d90c4e726eee64aa65d7df3141865eef3e",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "edf71faccbca61b153bbce98f56b75e27313883cf520e5e315f6ba15ed52360d",
+    "sha256": "b2a3315778443206bab90d40c3cfd7d90c4e726eee64aa65d7df3141865eef3e",
     "operations": [
       {
         "api": "$request.url",
@@ -59,9 +59,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 1926,
-        "end": 1935,
-        "line": 73,
+        "start": 2572,
+        "end": 2581,
+        "line": 93,
         "column": 3,
         "members": [
           "$done"
@@ -70,9 +70,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 1939,
-        "end": 1973,
-        "line": 75,
+        "start": 2585,
+        "end": 2619,
+        "line": 95,
         "column": 1,
         "members": [
           "$done"
@@ -90,7 +90,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "edf71faccbca61b153bbce98f56b75e27313883cf520e5e315f6ba15ed52360d",
+        "analysisSourceSha256": "b2a3315778443206bab90d40c3cfd7d90c4e726eee64aa65d7df3141865eef3e",
         "operations": [
           {
             "id": "api:0",
@@ -200,9 +200,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 1926,
-              "end": 1935,
-              "line": 73,
+              "start": 2572,
+              "end": 2581,
+              "line": 93,
               "column": 3,
               "access": "call",
               "memberPath": []
@@ -224,9 +224,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 1939,
-              "end": 1973,
-              "line": 75,
+              "start": 2585,
+              "end": 2619,
+              "line": 95,
               "column": 1,
               "access": "call",
               "memberPath": []
