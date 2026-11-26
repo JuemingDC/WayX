@@ -6,6 +6,7 @@ import {
   backupObject,
   sourceKey,
   type BackupObject,
+  type BackupIndex,
 } from "../ingest/resources.ts";
 import { disableUnavailableDeclarations } from "../domain/source-health.ts";
 import { prepareQxHeaderRewrites } from "./qx-header.ts";
@@ -34,13 +35,6 @@ const RAW_BASE = "https://raw.githubusercontent.com/JuemingDC/WayX/main";
 const INDEX = "Resource/Backup/index.json";
 const digest = (value: string | Uint8Array) =>
   crypto.createHash("sha256").update(value).digest("hex");
-type BackupIndex = {
-  version: number;
-  objects: Record<string, BackupObject>;
-  latest: Record<string, string>;
-  adapters?: Record<string, any>;
-  bindings?: Record<string, any>;
-};
 export async function refreshSourceBackups(
   root: string,
   {
@@ -63,7 +57,7 @@ export async function refreshSourceBackups(
   const pauseKelee = await keleePaused(root);
   const disabledSources = new Set<string>();
   const failures: any[] = [],
-    sources: any[] = [],
+    sources: BackupObject[] = [],
     pending = new Map<string, Promise<BackupObject | null>>();
   const usedScripts = new Set<string>(),
     requested = new Set<string>(),

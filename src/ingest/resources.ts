@@ -470,6 +470,26 @@ export type BackupObject = {
   author?: string;
   category?: string;
 };
+export interface BackupAdapterRecord {
+  path: string;
+  logicalPath?: string;
+  sourceUrl: string;
+  sha256: string;
+  sourceSha256?: string;
+  from: string;
+  targetClient?: string;
+  targets?: string[];
+  directionPolicyVersion?: number;
+}
+export interface BackupApiPlanRecord { path: string; sha256: string; sourceSha256: string }
+export interface BackupIndex {
+  version: number;
+  objects: Record<string, BackupObject>;
+  latest: Record<string, string>;
+  adapters?: Record<string, BackupAdapterRecord>;
+  bindings?: Record<string, Record<string, { path: string; binary?: boolean; echo?: boolean }>>;
+  apiPlans?: Record<string, BackupApiPlanRecord>;
+}
 export function sourceKey(value: string): string {
   const url = new URL(value);
   url.hash = "";

@@ -362,3 +362,21 @@ export interface SurgeArgumentTable {
   entries: SurgeArgumentEntry[];
   byId: Map<string, SurgeArgumentEntry>;
 }
+
+export type ManagedFileChanges = Map<string, string | Uint8Array | null>;
+export interface ValidationFinding {
+  file: string;
+  line: number;
+  code: string;
+  text: string;
+}
+export interface CatalogMetadata {
+  order: number;
+  source: string;
+  file: string;
+  id: string;
+  name: unknown;
+  desc: unknown;
+  tag: unknown;
+  date: unknown;
+}

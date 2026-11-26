@@ -1,3 +1,4 @@
+import type { ManagedFileChanges } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Stage every byte and restore all owned files
 // if any write fails; callers cannot escape the repository root.
 import fs from "node:fs/promises";
@@ -86,7 +87,7 @@ async function inspectManagedPath(root: string, file: string, checked: Set<strin
 }
 export async function commitFiles(
   root: string,
-  changes: Map<string, string | Uint8Array | null>,
+  changes: ManagedFileChanges,
 ): Promise<number> {
   const old = new Map<string, Buffer | null>();
   const plans = new Map<string, Buffer | null>();

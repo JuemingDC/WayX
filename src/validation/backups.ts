@@ -1,3 +1,5 @@
+import type { ValidationFinding } from "../domain/contracts.ts";
+import type { BackupIndex } from "../ingest/resources.ts";
 // Modified: 2026-11-01 (chance). Validate exact upstream checksums and local closure independently of generated JavaScript syntax.
 import path from "node:path";
 import crypto from "node:crypto";
@@ -17,10 +19,10 @@ import {
 } from "../parser/universal-script.ts";
 import { scriptReferences } from "../parser/backup-references.ts";
 export async function validateSourceBackups(root: string) {
-  const findings: any[] = [];
+  const findings: ValidationFinding[] = [];
   const add = (file: string, code: string, text: string) =>
     findings.push({ file, line: 1, code, text });
-  const index = await readJson<any>(
+  const index = await readJson<BackupIndex | null>(
     path.join(root, "Resource/Backup/index.json"),
     null,
   );
@@ -40,7 +42,7 @@ export async function validateSourceBackups(root: string) {
     );
     return findings;
   }
-  for (const [file, record] of Object.entries<any>(index.objects)) {
+  for (const [file, record] of Object.entries(index.objects)) {
     try {
       if (
         file !== record.path ||
@@ -65,7 +67,7 @@ export async function validateSourceBackups(root: string) {
   }
   // Modified: 2026-11-02 (chance). Semantic sidecars are bound to exact raw
   // sources and source-specific directions; metadata cannot silently go stale.
-  for (const [url, record] of Object.entries<any>(index.apiPlans ?? {})) {
+  for (const [url, record] of Object.entries(index.apiPlans ?? {})) {
     try {
       const expected =
         "Resource/Backup/script-api/" +
@@ -119,7 +121,7 @@ export async function validateSourceBackups(root: string) {
     }
   }
   // Modified: 2026-11-01 (chance). Universal source-named adblock programs and retained legacy adapter bytes are audited separately from raw evidence.
-  for (const [file, record] of Object.entries<any>(index.adapters ?? {})) {
+  for (const [file, record] of Object.entries(index.adapters ?? {})) {
     try {
       if (
         !/^(?:Script\/Api\/(?:qx|loon|surge|egern)-to-(?:qx|loon|surge|egern)\/[a-f0-9]{64}\.js|Script\/Adblock\/[a-zA-Z0-9_.-]+-[a-f0-9]{12}\/(?:qx\/|surge\/)?[\p{L}\p{N}_.-]+|(?:Adblock|Module|Rule)\/(?:Quantumult X|Surge)\/[^/]+\/[^/]+\/[^/]+\.js)$/u.test(
@@ -137,7 +139,7 @@ export async function validateSourceBackups(root: string) {
             JSON.stringify(
               record.targetClient
                 ? [record.targetClient]
-                : scriptTargetsForSource(record.from),
+                : scriptTargetsForSource(record.from as "loon" | "qx" ),
             ) &&
             // Modified: 2026-11-02 (chance). Previously published programs
             // remain verifiable until Actions replaces their legacy metadata.
@@ -163,11 +165,11 @@ export async function validateSourceBackups(root: string) {
   }
   // Modified: 2026-11-13 (chance). Published native QX scripts must match the
   // comment-cleaned archive; raw-object checks above still require exact bytes.
-  const layout = await readJson<any>(
+  const layout = await readJson<{ phase?: string; scripts: Record<string, {logical: string}> }>(
     path.join(root, ".github/sources/layout-state.json"),
     { scripts: {} },
   );
-  for (const [file, entry] of Object.entries<any>(
+  for (const [file, entry] of Object.entries(
     layout.phase === "published" ? layout.scripts : {},
   )) {
     if (
@@ -187,7 +189,7 @@ export async function validateSourceBackups(root: string) {
         "Native QX script differs from the comment-cleaned archived source",
       );
   }
-  for (const [url, file] of Object.entries<any>(index.latest))
+  for (const [url, file] of Object.entries(index.latest))
     if (index.objects[file]?.url !== url)
       add("Resource/Backup/index.json", "backup-source-index", url);
   for (const directory of ["Adblock", "Module"])

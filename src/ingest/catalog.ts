@@ -15,7 +15,7 @@ import {
   commitFiles,
   safePath,
 } from "../publish/transaction.ts";
-import type { SourceEntry } from "../domain/contracts.ts";
+import type { SourceEntry, CatalogMetadata } from "../domain/contracts.ts";
 export const DEFAULT_LIST_URL = "https://hub.kelee.one/list.json";
 export const DEFAULT_RUCU6_LIST_URL = "https://t.me/GitCube/327";
 const retired = new Set([
@@ -90,7 +90,7 @@ export function buildCatalog(
   payload: any,
   previous: SourceEntry[],
   staticEntries: SourceEntry[],
-): [SourceEntry[], any[]] {
+): [SourceEntry[], CatalogMetadata[]] {
   const fixed = staticEntries.filter((e) => !retired.has(identity(e.source))),
     lists = Array.isArray(payload) ? payload : payload?.lists;
   if (!Array.isArray(lists))
@@ -103,13 +103,13 @@ export function buildCatalog(
         .map((e) => [identity(e.source), e]),
     ),
     used = Object.fromEntries(
-      ["id", "file", "qx", "surge"].map((f) => [
+      (["id", "file", "qx", "surge"] as const).map((f) => [
         f,
-        new Set(fixed.map((e) => (e as any)[f])),
+        new Set(fixed.map((e) => e[f])),
       ]),
     ) as Record<string, Set<string>>;
   const entries: SourceEntry[] = [],
-    metadata: any[] = [],
+    metadata: CatalogMetadata[] = [],
     seen = new Set<string>();
   for (const item of lists) {
     const source = extractLpxUrl(item);
@@ -122,14 +122,14 @@ export function buildCatalog(
     let old = prior.get(identity(source));
     if (
       old &&
-      ["id", "file", "qx", "surge"].some((f) => used[f].has((old as any)[f]))
+      (["id", "file", "qx", "surge"] as const).some((f) => used[f].has(old![f]))
     )
       old = undefined;
     let entry: SourceEntry;
     if (old) {
       entry = { ...old, source, category };
-      for (const f of ["id", "file", "qx", "surge"])
-        used[f].add((entry as any)[f]);
+      for (const f of ["id", "file", "qx", "surge"] as const)
+        used[f].add(entry[f]);
     } else {
       const relative = used.file.has(file) ? "Kelee/" + file : file;
       used.file.add(relative);

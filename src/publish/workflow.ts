@@ -22,7 +22,7 @@ import { quoteJq } from "../parser/rewrite.ts";
 import { validateQX,validateSurgeModule } from "../validation/output.ts";
 import { spawnSync } from "node:child_process";
 import { normalizePluginSource, parseLoonPlugin } from "../parser/input.ts";
-import type { SourceEntry, ConversionOutput } from "../domain/contracts.ts";
+import type { SourceEntry, ConversionOutput, ConversionTarget } from "../domain/contracts.ts";
 
 // Managed source/target/helper artifact I/O for WayX converter workflows.
 // Author: chance
@@ -43,13 +43,13 @@ export function surgeTargetPath(entry: Pick<SourceEntry, "surge">): string {
 import { isWayxGeneratedHelperFilename, isWayxMapLocalPayloadFilename } from "../domain/generated-scripts.ts";
 export { isWayxGeneratedHelperFilename } from "../domain/generated-scripts.ts";
 async function staleGeneratedHelpers(
-  root: any,
-  entry: any,
-  generatedScripts: any,
-  { scriptDir = "Script" }: any = {},
-): Promise<any> {
+  root: string,
+  entry: Pick<SourceEntry, "id">,
+  generatedScripts: ConversionOutput["generatedScripts"],
+  { scriptDir = "Script" }: { scriptDir?: string } = {},
+): Promise<string[]> {
   const dir = path.join(root, scriptDir, entry.id);
-  let names: any = [];
+  let names: string[] = [];
   try {
     names = await fs.readdir(dir);
   } catch (error: any) {
@@ -58,7 +58,7 @@ async function staleGeneratedHelpers(
   }
   return names
     .filter(
-      (name: any) =>
+      (name) =>
         (isWayxGeneratedHelperFilename(name) || isWayxMapLocalPayloadFilename(name)) &&
         !generatedScripts.has(name),
     )
@@ -116,7 +116,7 @@ export function firstConversionStamp(
 }
 // Modified: 2026-11-08 (chance). Ignore update dates for content comparisons;
 // each artifact changes its own update time only when its content changes.
-function artifactContent(text: any): any {
+function artifactContent(text: string | Buffer | null | undefined): string | Buffer | null | undefined {
   if (text == null || Buffer.isBuffer(text)) return text;
   return String(text).replace(/^(#|\/\/) (?:Updated|Converted):[^\n]*/gm, "$1 Updated:");
 }
@@ -163,10 +163,10 @@ export async function writeManagedSource(
   return true;
 }
 export async function syncManagedSource(
-  root: any,
-  entry: any,
-  source: any,
-  options: any = {},
+  root: string,
+  entry: Pick<SourceEntry, "file">,
+  source: string,
+  options: { resourceDir?: string } = {},
 ) {
   const state = await inspectManagedSource(root, entry, source, options);
   await writeManagedSource(state, source);
@@ -214,11 +214,11 @@ async function managedHelperMatches(file: string, content: string | Buffer) {
 }
 export async function generatedScriptDiffs(
   root: string,
-  entry: any,
-  generatedScripts: any,
-  { scriptDir = "Script" }: any = {},
-): Promise<any> {
-  const diffs: any = [];
+  entry: Pick<SourceEntry, "id">,
+  generatedScripts: ConversionOutput["generatedScripts"],
+  { scriptDir = "Script" }: { scriptDir?: string } = {},
+): Promise<string[]> {
+  const diffs: string[] = [];
   for (const [name, content] of generatedScripts) {
     const file = path.join(root, scriptDir, entry.id, name);
     if (!(await managedHelperMatches(file, content))) diffs.push(name);
@@ -234,12 +234,12 @@ export async function generatedScriptDiffs(
   return diffs;
 }
 export async function syncGeneratedScripts(
-  root: any,
-  entry: any,
-  generatedScripts: any,
-  { scriptDir = "Script" }: any = {},
-): Promise<any> {
-  const changed: any = [];
+  root: string,
+  entry: Pick<SourceEntry, "id">,
+  generatedScripts: ConversionOutput["generatedScripts"],
+  { scriptDir = "Script" }: { scriptDir?: string } = {},
+): Promise<string[]> {
+  const changed: string[] = [];
   for (const [name, content] of generatedScripts) {
     const file = path.join(root, scriptDir, entry.id, name);
     if (await managedHelperMatches(file, content)) continue;
@@ -262,9 +262,9 @@ export async function syncGeneratedScripts(
 // inline JQ needs no standalone file compiler or file publication writes.
 export async function commitManagedConversion(
   root: string,
-  entry: any,
-  state: any,
-  out: any,
+  entry: Pick<SourceEntry, "id">,
+  state: ManagedTargetState,
+  out: ConversionOutput,
   {
     sourceState = null,
     source = null,
@@ -272,14 +272,21 @@ export async function commitManagedConversion(
     writeHelpers = syncGeneratedScripts,
     writeTargets = writeManagedTargets,
     writeSource = writeManagedSource,
-  }: any = {},
-): Promise<any> {
-  const stale: any = await staleGeneratedHelpers(
+  }: {
+    sourceState?: ManagedSourceState | null;
+    source?: string | null;
+    onStage?: (stage: "write-generated-helpers" | "write-targets" | "write-source") => void;
+    writeHelpers?: typeof syncGeneratedScripts;
+    writeTargets?: typeof writeManagedTargets;
+    writeSource?: typeof writeManagedSource;
+  } = {},
+): Promise<{ helperChanges: string[]; targetChanges: ConversionTarget[] }> {
+  const stale = await staleGeneratedHelpers(
     root,
     entry,
     out.generatedScripts,
   );
-  const files: any = [
+  const files = [
     state.qxPath,
     state.surgePath,
     ...(sourceState ? [sourceState.sourcePath] : []),
@@ -294,16 +301,16 @@ export async function commitManagedConversion(
   );
   try {
     onStage("write-generated-helpers");
-    const helperChanges: any = await writeHelpers(
+    const helperChanges = await writeHelpers(
       root,
       entry,
       out.generatedScripts,
     );
     onStage("write-targets");
-    const targetChanges: any = await writeTargets(state, out);
+    const targetChanges = await writeTargets(state, out);
     if (sourceState) {
       onStage("write-source");
-      await writeSource(sourceState, source);
+      await writeSource(sourceState, source!);
     }
     return { helperChanges, targetChanges };
   } catch (error) {
@@ -317,7 +324,7 @@ export function managedTargetDiffs(state: ManagedTargetState, out: Pick<Conversi
     changed.push("surge");
   return changed;
 }
-export async function writeManagedTargets(state: any, out: any): Promise<any> {
+export async function writeManagedTargets(state: ManagedTargetState, out: Pick<ConversionOutput, "qx" | "surge">): Promise<ConversionTarget[]> {
   const changed = managedTargetDiffs(state, out);
   if (changed.includes("qx")) {
     await fs.mkdir(path.dirname(state.qxPath), { recursive: true });
@@ -1260,10 +1267,11 @@ export async function writeReadmePlan(
 // Scheduled upstream conversion failure reporting.
 // Author: chance
 // Category: Converter / Automation / Failure Report
-function activeDeclarations(text: any): any {
+interface SourceDeclaration { section: string; line: string }
+function activeDeclarations(text: unknown): SourceDeclaration[] {
   if (!text) return [];
-  const parsed: any = parseLoonPlugin(text);
-  const out: any = [];
+  const parsed = parseLoonPlugin(text);
+  const out: SourceDeclaration[] = [];
   for (const [section, lines] of parsed.sections) {
     if (section === "Argument") continue;
     for (const raw of lines) {
@@ -1274,8 +1282,8 @@ function activeDeclarations(text: any): any {
   }
   return out;
 }
-function multiset(items: any): any {
-  const counts: any = new Map();
+function multiset(items: SourceDeclaration[]): Map<string, number> {
+  const counts = new Map<string, number>();
   for (const item of items) {
     const key = item.section + "\0" + item.line;
     counts.set(key, (counts.get(key) || 0) + 1);
@@ -1283,17 +1291,17 @@ function multiset(items: any): any {
   return counts;
 }
 export function failureDeclarationContext(
-  previous: any,
-  current: any,
-  { limit = 40 }: any = {},
-): any {
-  const before: any = activeDeclarations(previous);
-  const after: any = activeDeclarations(current);
-  const counts: any = multiset(before);
-  const changed: any = [];
+  previous: unknown,
+  current: unknown,
+  { limit = 40 }: { limit?: number } = {},
+): { kind: string; items: SourceDeclaration[] } {
+  const before = activeDeclarations(previous);
+  const after = activeDeclarations(current);
+  const counts = multiset(before);
+  const changed: SourceDeclaration[] = [];
   for (const item of after) {
     const key = item.section + "\0" + item.line;
-    const count: any = counts.get(key) || 0;
+    const count = counts.get(key) || 0;
     if (count) counts.set(key, count - 1);
     else changed.push(item);
   }
@@ -1325,7 +1333,7 @@ export function buildSyncFailure({
   const detail = String(
     error?.stack || error?.message || error || "unknown failure",
   );
-  const context: any = failureDeclarationContext(previousSource, fetchedSource);
+  const context = failureDeclarationContext(previousSource, fetchedSource);
   return {
     plugin: {
       id: entry.id,
@@ -1395,9 +1403,9 @@ export async function writeSyncFailureReport(
 // Shared machine evidence for existing validation commands. Successful outputs
 // remain counts; mismatches retain bounded actual/expected excerpts and hashes.
 export async function writeValidationEvidence(
-  checked: any,
-  findings: any,
-  coverage: any = {},
+  checked: number,
+  findings: readonly unknown[],
+  coverage: { regexPatterns?: number; plugins?: string[]; artifacts?: Record<string, string>; complete?: boolean } = {},
 ) {
   const file = process.env.WAYX_CHECK_REPORT;
   if (!file) return;
@@ -1446,20 +1454,20 @@ export async function recordOutputMismatch(
   };
   return finding;
 }
-export function validationArtifactDigest(value: any) {
-  const text: any = artifactContent(value);
+export function validationArtifactDigest(value: string | Buffer | null | undefined) {
+  const text = artifactContent(value);
   return text == null
     ? null
     : crypto.createHash("sha256").update(text).digest("hex");
 }
 export function outputMismatch(
   file: string,
-  expected: any,
-  actual: any,
-  plugin: any = null,
-): any {
-  const want: any = artifactContent(expected),
-    got: any = artifactContent(actual);
+  expected: string | Buffer | null | undefined,
+  actual: string | Buffer | null | undefined,
+  plugin: string | null = null,
+) {
+  const want = artifactContent(expected),
+    got = artifactContent(actual);
   if (want === got || (Buffer.isBuffer(want) && Buffer.isBuffer(got) && want.equals(got)))
     return null;
   if (Buffer.isBuffer(want) || Buffer.isBuffer(got)) {
@@ -1477,7 +1485,7 @@ export function outputMismatch(
     b = String(got ?? "").split("\n");
   let first = 0;
   while (first < Math.min(a.length, b.length) && a[first] === b[first]) first++;
-  const digest: any = validationArtifactDigest;
+  const digest = validationArtifactDigest;
   return {
     code: "output-mismatch",
     file,

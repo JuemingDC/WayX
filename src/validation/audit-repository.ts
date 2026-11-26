@@ -1,3 +1,4 @@
+import type { SourceEntry, ConversionTarget, ValidationFinding } from "../domain/contracts.ts";
 import { readJson } from "../publish/transaction.ts";
 import { validateSourceBackups } from "./backups.ts";
 import { opaqueEntries } from "../ingest/resources.ts";
@@ -23,19 +24,19 @@ import {
 import { parseLoonPlugin } from "../parser/input.ts";
 import { validateSurgeModule } from "./output.ts";
 const ROOT = process.cwd();
-const findings: any = [];
+const findings: ValidationFinding[] = [];
 const validated = { qx: 0, surge: 0, loon: 0 };
-const artifacts: any = {};
-const catalog: any = JSON.parse(
+const artifacts: Record<string, string> = {};
+const catalog: SourceEntry[] = JSON.parse(
   await fs.readFile(".github/sources/loon.json", "utf8"),
 );
 // Modified: 2026-11-05 (chance). Native QX copies retain valid BOM/line endings and source comments.
-const layout = await readJson<any>(
+const layout = await readJson<{ scripts: Record<string, {logical: string}> }>(
   path.join(ROOT, ".github/sources/layout-state.json"),
   { scripts: {} },
 );
 const nativeCopies = new Set(
-  Object.entries<any>(layout.scripts)
+  Object.entries(layout.scripts)
     .filter(
       ([file, r]) =>
         file.includes("/Quantumult X/") &&
@@ -43,8 +44,8 @@ const nativeCopies = new Set(
     )
     .map(([file]) => file),
 );
-const managed: any = new Map(
-  catalog.flatMap((entry: any): any => [
+const managed = new Map<string, {entry: SourceEntry; target: ConversionTarget}>(
+  catalog.flatMap((entry): [string, {entry: SourceEntry; target: ConversionTarget}][] => [
     [qxTargetPath(entry), { entry, target: "qx" }],
     [surgeTargetPath(entry), { entry, target: "surge" }],
   ]),
@@ -55,8 +56,8 @@ const routing = new Set(
       .outputs,
   ),
 );
-async function walk(dir: string): Promise<any> {
-  const out: any = [];
+async function walk(dir: string): Promise<string[]> {
+  const out: string[] = [];
   for (const ent of await fs.readdir(dir, { withFileTypes: true })) {
     if (
       ent.name === ".git" ||
@@ -70,22 +71,22 @@ async function walk(dir: string): Promise<any> {
   }
   return out;
 }
-const rel: any = (p: any) =>
+const rel = (p: string) =>
   path.relative(ROOT, p).split(path.sep).join("/");
-const add: any = (file: any, line: any, code: any, text: any): any =>
+const add = (file: string, line: number, code: string, text: unknown) =>
   findings.push({
     file: rel(file),
     line,
     code,
     text: String(text).slice(0, 240),
   });
-const active: any = (line: any): any => {
-  const t: any = line.trim();
+const active = (line: string) => {
+  const t = line.trim();
   return t && !t.startsWith("#") && !t.startsWith(";") && !t.startsWith("//");
 };
-const files: any = await walk(ROOT);
+const files = await walk(ROOT);
 for (const file of files) {
-  const rp: any = rel(file);
+  const rp = rel(file);
   // Modified: 2026-11-01 (chance). Upstream archives retain BOM/CRLF/binary bytes; validate their checksums and reference closure separately, not as generated source code.
   if (rp.startsWith("Resource/Backup/")) continue;
   if (
@@ -95,7 +96,7 @@ for (const file of files) {
     )
   )
     continue;
-  let text: any;
+  let text: string;
   try {
     text = await fs.readFile(file, "utf8");
   } catch {
@@ -110,10 +111,10 @@ for (const file of files) {
     /\r/.test(text)
   )
     add(file, 1, "crlf", "CR/CRLF newline present");
-  const lines: any = text.split("\n");
-  artifacts[rp] = validationArtifactDigest(text);
+  const lines = text.split("\n");
+  artifacts[rp] = validationArtifactDigest(text)!;
   if (managed.has(rp)) {
-    const { entry, target } = managed.get(rp);
+    const { entry, target } = managed.get(rp)!;
     try {
       // Modified: 2026-11-08 (chance). Publication must finish the managed timestamp migration.
       if (/^# Converted:[^\r\n]*\r?\n# Converted by: chance(?:\r?\n|$)/m.test(text))
@@ -138,7 +139,7 @@ for (const file of files) {
       add(file, 1, "qx-validator", error?.message || error);
     }
     for (let i = 0; i < lines.length; i++) {
-      const t: any = lines[i].trim();
+      const t = lines[i].trim();
       if (/^#!(?!source=)/.test(t)) add(file, i + 1, "qx-active-metadata", t);
       if (/^#\s*Category:.*\bLoon\b/i.test(t))
         add(file, i + 1, "source-platform-category", t);
@@ -181,7 +182,7 @@ for (const file of files) {
       }
     }
     for (let i = 0; i < lines.length; i++) {
-      const t: any = lines[i].trim();
+      const t = lines[i].trim();
       if (
         /^#!(?:author|icon|date|loon_version|homepage|tag|openurl|system_version|raw-url|tg-channel)\s*=/i.test(
           t,
@@ -227,7 +228,7 @@ for (const file of files) {
   }
   if (/^Script\/.+\.js$/.test(rp)) {
     for (let i = 0; i < lines.length; i++) {
-      const t: any = lines[i].trim();
+      const t = lines[i].trim();
       // Adaptation markers are generator metadata/comments. Generated mock
       // helpers may legitimately embed arbitrary upstream JS/HTML text in
       // string literals, so payload content must not be audited as helper code.

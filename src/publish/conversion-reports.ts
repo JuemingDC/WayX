@@ -34,11 +34,11 @@ const OUT_DIR = path.resolve(
   ROOT,
   argValue("--out-dir", ".github/monitor/.runtime"),
 );
-const normalize: any = (text: any) =>
+const normalize = (text: unknown) =>
   String(text ?? "")
     .replace(/\r\n?/g, "\n")
     .replace(/^\uFEFF/, "");
-const read: any = async (file: any): Promise<any> =>
+const read = async (file: string): Promise<string> =>
   normalize(await fs.readFile(file, "utf8"));
 async function readJson(file: string, fallback: any = null): Promise<any> {
   try {
@@ -48,31 +48,35 @@ async function readJson(file: string, fallback: any = null): Promise<any> {
     throw error;
   }
 }
-const rel: any = (file: any) =>
+const rel = (file: string) =>
   path.relative(ROOT, file).split(path.sep).join("/");
-const isComment: any = (line: any) =>
+const isComment = (line: unknown) =>
   /^(?:#|;|\/\/)/.test(String(line).trim());
-function sourceItems(text: any): any {
-  const items: any = [];
-  const argumentsList: any = [];
-  let section: any = null;
+interface ReportSourceItem { section: string; line: string; lineNumber: number }
+type MarkerKind = "issue" | "review" | "unsupported" | "disabled" | "commented";
+interface DeclarationMarker { source: string; kind: MarkerKind; marker: string; line: number }
+interface InventoryMarker { kind: "review" | "issue"; code: string | null; family: string; reason: string; source: string; file: string; line: number; platform: string; scope: string }
+function sourceItems(text: unknown): { items: ReportSourceItem[]; arguments: ReportSourceItem[] } {
+  const items: ReportSourceItem[] = [];
+  const argumentsList: ReportSourceItem[] = [];
+  let section: string | null = null;
   let lineNumber = 0;
   for (const raw of normalize(text).split("\n")) {
     lineNumber++;
-    const trimmed: any = raw.trim();
-    const header: any = trimmed.match(/^\[([^\]]+)\]$/);
+    const trimmed = raw.trim();
+    const header = trimmed.match(/^\[([^\]]+)\]$/);
     if (header) {
       section = header[1];
       continue;
     }
     if (!section || !trimmed || isComment(trimmed)) continue;
-    const item: any = { section, line: trimmed, lineNumber };
+    const item = { section, line: trimmed, lineNumber };
     if (section === "Argument") argumentsList.push(item);
     else items.push(item);
   }
   return { items, arguments: argumentsList };
 }
-function markerKind(line: string) {
+function markerKind(line: string): MarkerKind {
   const text = String(line || "");
   if (/ISSUE REQUIRED/.test(text)) return "issue";
   if (/REVIEW REQUIRED/.test(text)) return "review";
@@ -82,15 +86,15 @@ function markerKind(line: string) {
     return "unsupported";
   return "commented";
 }
-function declarationMarkers(text: any): any {
-  const lines: any = normalize(text).split("\n");
-  const out: any = [];
+function declarationMarkers(text: unknown): DeclarationMarker[] {
+  const lines = normalize(text).split("\n");
+  const out: DeclarationMarker[] = [];
   for (let i = 0; i < lines.length; i++) {
-    const match: any = lines[i].trim().match(/^# Source declaration:\s*(.+)$/);
+    const match = lines[i].trim().match(/^# Source declaration:\s*(.+)$/);
     if (!match) continue;
     let context = "";
     for (let j = i - 1; j >= Math.max(0, i - 5); j--) {
-      const candidate: any = lines[j].trim();
+      const candidate = lines[j].trim();
       if (!candidate) continue;
       if (/^# \[WayX\]/.test(candidate)) context = candidate;
       break;
@@ -105,25 +109,25 @@ function declarationMarkers(text: any): any {
   return out;
 }
 function inventoryMarkers(
-  text: any,
-  file: any,
+  text: unknown,
+  file: string,
   platform: string,
   scope: string,
-): any {
-  const out: any = [];
-  const lines: any = normalize(text).split("\n");
+): InventoryMarker[] {
+  const out: InventoryMarker[] = [];
+  const lines = normalize(text).split("\n");
   for (let i = 0; i < lines.length; i++) {
-    const t: any = lines[i].trim();
-    const review: any = t.match(
+    const t = lines[i].trim();
+    const review = t.match(
       /^# \[WayX\]\s*([^:]*REVIEW REQUIRED):\s*(.*)$/,
     );
-    const issue: any = t.match(
+    const issue = t.match(
       /^# \[WayX\]\s*ISSUE REQUIRED \[([^\]]+)\]:\s*(.*)$/,
     );
     if (!review && !issue) continue;
     let source = "";
     for (let j = i + 1; j < Math.min(lines.length, i + 5); j++) {
-      const m: any = lines[j].trim().match(/^# Source declaration:\s*(.+)$/);
+      const m = lines[j].trim().match(/^# Source declaration:\s*(.+)$/);
       if (m) {
         source = m[1].trim();
         break;
@@ -134,7 +138,7 @@ function inventoryMarkers(
       kind: review ? "review" : "issue",
       code: issue ? issue[1] : null,
       family: review ? review[1].trim() : "ISSUE REQUIRED",
-      reason: (review ? review[2] : issue[2]).trim(),
+      reason: (review ? review[2] : issue![2]).trim(),
       source,
       file,
       line: i + 1,
@@ -145,7 +149,7 @@ function inventoryMarkers(
   return out;
 }
 // Modified: 2026-11-03 (chance). Intentional source drops are target independent.
-function intentionalDrop(item: any): any {
+function intentionalDrop(item: ReportSourceItem): string | null {
   if (
     item.section === "Rewrite" &&
     /json\.jq\s*\(\s*["']jq-path=/i.test(item.line)
@@ -168,12 +172,12 @@ function intentionalDrop(item: any): any {
     return "empty-json-jq";
   return null;
 }
-function activeTargetStats(text: any) {
+function activeTargetStats(text: unknown) {
   let activeLines = 0,
     generatedHelperLines = 0,
     sourceScriptLines = 0;
   for (const raw of normalize(text).split("\n")) {
-    const t: any = raw.trim();
+    const t = raw.trim();
     if (!t || isComment(t) || /^\[[^\]]+\]$/.test(t) || /^#!/.test(t)) continue;
     activeLines++;
     if (/raw\.githubusercontent\.com\/JuemingDC\/WayX\/main\/Script\//.test(t))
@@ -191,16 +195,16 @@ function activeTargetStats(text: any) {
     nativeOrOtherLines: activeLines - generatedHelperLines - sourceScriptLines,
   };
 }
-function multimap(markers: any): any {
-  const map: any = new Map();
+function multimap(markers: DeclarationMarker[]): Map<string, DeclarationMarker[]> {
+  const map = new Map<string, DeclarationMarker[]>();
   for (const marker of markers) {
     if (!map.has(marker.source)) map.set(marker.source, []);
-    map.get(marker.source).push(marker);
+    map.get(marker.source)!.push(marker);
   }
   return map;
 }
-function popMarker(map: any, source: any): any {
-  const list: any = map.get(source);
+function popMarker(map: Map<string, DeclarationMarker[]>, source: string): DeclarationMarker | null | undefined {
+  const list = map.get(source);
   if (!list?.length) return null;
   const order = [
     "issue",
@@ -210,13 +214,13 @@ function popMarker(map: any, source: any): any {
     "commented",
   ];
   list.sort(
-    (a: any, b: any) => order.indexOf(a.kind) - order.indexOf(b.kind),
+    (a, b) => order.indexOf(a.kind) - order.indexOf(b.kind),
   );
   return list.shift();
 }
-function reconcileTarget(items: any, targetText: any, verified: any): any {
-  const markers: any = declarationMarkers(targetText);
-  const markerMap: any = multimap(markers);
+function reconcileTarget(items: ReportSourceItem[], targetText: string, verified: boolean) {
+  const markers = declarationMarkers(targetText);
+  const markerMap = multimap(markers);
   const counts: Record<string, number> = {
     converted: 0,
     review: 0,
@@ -227,15 +231,15 @@ function reconcileTarget(items: any, targetText: any, verified: any): any {
     intentionalDrop: 0,
     unverified: 0,
   };
-  const details: any = [];
+  const details: (ReportSourceItem & { outcome: string; reason?: string })[] = [];
   for (const item of items) {
-    const drop: any = intentionalDrop(item);
+    const drop = intentionalDrop(item);
     if (drop) {
       counts.intentionalDrop++;
       details.push({ ...item, outcome: "intentionalDrop", reason: drop });
       continue;
     }
-    const marker: any = popMarker(markerMap, item.line);
+    const marker = popMarker(markerMap, item.line);
     if (marker) {
       counts[marker.kind]++;
       details.push({
@@ -249,11 +253,11 @@ function reconcileTarget(items: any, targetText: any, verified: any): any {
     counts[outcome]++;
     details.push({ ...item, outcome });
   }
-  const unmatchedTargetDeclarations: any = [];
+  const unmatchedTargetDeclarations: DeclarationMarker[] = [];
   for (const list of markerMap.values())
     for (const marker of list) unmatchedTargetDeclarations.push(marker);
-  const total: any = Object.values(counts).reduce(
-    (sum: any, value: number): any => sum + value,
+  const total = Object.values(counts).reduce(
+    (sum, value) => sum + value,
     0,
   );
   return {
@@ -269,8 +273,8 @@ function reconcileTarget(items: any, targetText: any, verified: any): any {
     details,
   };
 }
-function summarizeMarkers(items: any): any {
-  const summary: any = {
+function summarizeMarkers(items: InventoryMarker[]) {
+  const summary: { total: number; byPlatform: Record<string, number>; byFile: Record<string, number>; byReason: Record<string, number> } = {
     total: items.length,
     byPlatform: { qx: 0, surge: 0 },
     byFile: {},
@@ -280,24 +284,24 @@ function summarizeMarkers(items: any): any {
     summary.byPlatform[item.platform] =
       (summary.byPlatform[item.platform] || 0) + 1;
     summary.byFile[item.file] = (summary.byFile[item.file] || 0) + 1;
-    const key: any = item.reason || item.family || item.code || "unknown";
+    const key = item.reason || item.family || item.code || "unknown";
     summary.byReason[key] = (summary.byReason[key] || 0) + 1;
   }
   summary.byFile = Object.fromEntries(Object.entries(summary.byFile).sort());
   summary.byReason = Object.fromEntries(
     Object.entries(summary.byReason).sort(
-      (a: any, b: any): any => b[1] - a[1] || a[0].localeCompare(b[0]),
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
     ),
   );
   return summary;
 }
-function markdownInventory(reviews: any, issues: any) {
+function markdownInventory(reviews: InventoryMarker[], issues: InventoryMarker[]) {
   const lines = ["# WayX Review / Issue Inventory", ""];
   for (const [title, list] of [
     ["Review", reviews],
     ["Issue", issues],
-  ]) {
-    const summary: any = summarizeMarkers(list);
+  ] as [string, InventoryMarker[]][]) {
+    const summary = summarizeMarkers(list);
     lines.push(
       "## " + title,
       "",
@@ -428,7 +432,7 @@ const reconciliation: any = {
     surgeReconciled: 0,
   },
 };
-const inventory: any = [];
+const inventory: InventoryMarker[] = [];
 const validation = await readValidationReport(ROOT);
 const auditCandidate = validation.stages.verify?.checks.find(
   check => check.id === "repository-audit" && check.status === "passed",
@@ -483,18 +487,18 @@ for (const entry of catalog) {
     read(qxPath),
     read(surgePath),
   ]);
-  const parsed: any = sourceItems(source);
+  const parsed = sourceItems(source);
   const sourceVerified: any =
     verifiedPlugins.has(entry.id) &&
     audit?.coverage.artifacts[rel(sourcePath)] ===
       validationArtifactDigest(source);
-  const qxRecon: any = reconcileTarget(
+  const qxRecon = reconcileTarget(
     parsed.items,
     qx,
     sourceVerified &&
       audit?.coverage.artifacts[rel(qxPath)] === validationArtifactDigest(qx),
   );
-  const surgeRecon: any = reconcileTarget(
+  const surgeRecon = reconcileTarget(
     parsed.items,
     surge,
     sourceVerified &&
@@ -542,11 +546,11 @@ for (const asset of manualConfig.assets || []) {
     );
   }
 }
-const reviews: any = inventory.filter(
-  (item: any) => item.kind === "review",
+const reviews = inventory.filter(
+  (item) => item.kind === "review",
 );
-const issues: any = inventory.filter((item: any) => item.kind === "issue");
-const reviewInventory: any = {
+const issues = inventory.filter((item) => item.kind === "issue");
+const reviewInventory = {
   version: 1,
   review: summarizeMarkers(reviews),
   issue: summarizeMarkers(issues),
@@ -559,7 +563,7 @@ const reviewInventory: any = {
   })),
 };
 for (const platform of ["qx", "surge"]) {
-  const current: any = reviewInventory.review.byPlatform[platform] || 0;
+  const current = reviewInventory.review.byPlatform[platform] || 0;
   const prior: any = baseline.review.byPlatform[platform];
   if (current > prior)
     console.log(
