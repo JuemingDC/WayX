@@ -1,4 +1,4 @@
-import type { ScriptSemanticIr, ScriptV2Ast, LegacyScriptAst, LegacyScriptIr, V2ScriptIr, ScriptPhase, ScriptTrigger, ScriptValue, ScriptArgument, ScriptOption, RewriteCondition, VariableNode, StringNode, Phase } from "../domain/contracts.ts";
+import type { ScriptSemanticIr, ScriptV2Ast, LegacyScriptAst, LegacyScriptIr, V2ScriptIr, ScriptPhase, ScriptTrigger, ScriptValue, ScriptArgument, ScriptOption, RewriteCondition, VariableNode, StringNode, Phase, LoonArgumentDeclaration, SurgeArgumentEntry, SurgeArgumentTable } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -32,20 +32,20 @@ function unquote(s: any) {
     return v.slice(1, -1);
   return v;
 }
-export function parseLoonArguments(lines: any = []): any {
-  const args: any = [];
+export function parseLoonArguments(lines: string[] = []): LoonArgumentDeclaration[] {
+  const args: LoonArgumentDeclaration[] = [];
   for (const raw of lines) {
     const line = String(raw).trim();
     if (!line || /^[#;\/]/.test(line)) continue;
     const eq = line.indexOf("=");
     if (eq < 1) continue;
     const id = line.slice(0, eq).trim();
-    const tokens: any = splitTopLevelCsv(line.slice(eq + 1));
-    const kind: any = (tokens.shift() || "").trim().toLowerCase();
+    const tokens: string[] = splitTopLevelCsv(line.slice(eq + 1));
+    const kind = (tokens.shift() || "").trim().toLowerCase();
     const values: string[] = [];
-    const options: any = {};
+    const options: Record<string, string> = {};
     for (const token of tokens) {
-      const m: any = token.match(/^([A-Za-z_][\w-]*)\s*=\s*(.*)$/s);
+      const m = token.match(/^([A-Za-z_][\w-]*)\s*=\s*(.*)$/s);
       if (m) options[m[1].toLowerCase()] = unquote(m[2]);
       else values.push(unquote(token));
     }
@@ -86,13 +86,13 @@ function metadataDefaultValue(value: any, id: any) {
   }
   return text;
 }
-export function buildSurgeArgumentTable(argumentLines: any = []): any {
-  const declarations: any = parseLoonArguments(argumentLines);
-  const usedNames: any = new Map();
-  const entries: any = [];
+export function buildSurgeArgumentTable(argumentLines: string[] = []): SurgeArgumentTable {
+  const declarations = parseLoonArguments(argumentLines);
+  const usedNames = new Map<string, string>();
+  const entries: SurgeArgumentEntry[] = [];
   for (const declaration of declarations) {
-    const surgeName: any = surgeArgumentName(declaration.id);
-    const previous: any = usedNames.get(surgeName);
+    const surgeName = surgeArgumentName(declaration.id);
+    const previous = usedNames.get(surgeName);
     if (previous && previous !== declaration.id) {
       throw new Error(
         `Surge argument name collision after normalization: ${previous}, ${declaration.id} -> ${surgeName}`,
@@ -107,20 +107,20 @@ export function buildSurgeArgumentTable(argumentLines: any = []): any {
   }
   return {
     entries,
-    byId: new Map(entries.map((entry: any): any => [entry.id, entry])),
+    byId: new Map(entries.map((entry) => [entry.id, entry])),
   };
 }
 export function surgeArgumentMetadata(
-  argumentLines: any = [],
-  { proxyPolicyBinding = false }: any = {},
-): any {
-  const table: any = buildSurgeArgumentTable(argumentLines);
-  const args: any = table.entries.map((entry: any): any => {
+  argumentLines: string[] = [],
+  { proxyPolicyBinding = false }: { proxyPolicyBinding?: boolean } = {},
+) {
+  const table = buildSurgeArgumentTable(argumentLines);
+  const args = table.entries.map((entry) => {
     if (!entry.hasDefault) return entry.surgeName;
     return `${entry.surgeName}:${metadataDefaultValue(entry.defaultValue, entry.id)}`;
   });
-  const descriptions: any = table.entries.map((entry: any) => {
-    const pieces: any = [entry.tag || entry.id];
+  const descriptions = table.entries.map((entry) => {
+    const pieces = [entry.tag || entry.id];
     if (entry.kind === "select" && entry.values.length) {
       pieces.push("options=" + entry.values.join("|"));
     } else if (entry.kind === "switch") {
@@ -129,10 +129,10 @@ export function surgeArgumentMetadata(
     if (entry.desc) pieces.push(entry.desc);
     return `${entry.surgeName}: ${pieces.join(" — ")}`;
   });
-  let policyBinding: any = null;
+  let policyBinding: { surgeName: string; placeholder: string; defaultValue: string } | null = null;
   if (proxyPolicyBinding) {
-    const usedNames: any = new Set(
-      table.entries.map((entry: any): any => entry.surgeName),
+    const usedNames = new Set(
+      table.entries.map((entry) => entry.surgeName),
     );
     let surgeName = "wayx_proxy_policy";
     let suffix = 2;
@@ -157,16 +157,16 @@ export function surgeArgumentMetadata(
     lines.push("#!arguments-desc=" + descriptions.join("\\n"));
   return { table, lines, policyBinding };
 }
-export function surgeArgumentPlaceholder(id: any, table: any): any {
+export function surgeArgumentPlaceholder(id: unknown, table: SurgeArgumentTable | null | undefined): string | null {
   return table?.byId?.get(String(id))?.placeholder || null;
 }
-export function parseLegacyLoonPluginObjectRefs(source: any): any {
+export function parseLegacyLoonPluginObjectRefs(source: unknown): string[] | null {
   const raw = String(source || "").trim();
   if (!raw) return null;
   const bracket = raw.match(/^\[([\s\S]*)\]$/);
   if (bracket) {
-    const refs: any = [...bracket[1].matchAll(/\{([A-Za-z_][\w-]*)\}/g)].map(
-      (match: any): any => match[1],
+    const refs = [...bracket[1].matchAll(/\{([A-Za-z_][\w-]*)\}/g)].map(
+      (match) => match[1],
     );
     return refs.length ? refs : null;
   }
@@ -179,9 +179,9 @@ export function parseLegacyLoonPluginObjectRefs(source: any): any {
 }
 // 上游错误 / 转换失败案例：PluginObject is a nonempty, unique list of
 // plugin identifiers, not arbitrary JS data or runtime/capture variables.
-function validatePluginObjectRefs(refs: any) {
+function validatePluginObjectRefs(refs: string[]) {
   if (!refs.length) throw new Error("plugin object argument cannot be empty");
-  const seen: any = new Set();
+  const seen = new Set<string>();
   for (const id of refs) {
     if (
       typeof id !== "string" ||
@@ -225,7 +225,7 @@ function scriptObjectBindings(
   }
   return { ok: true };
 }
-export function surgePluginObjectArgument(refs: any = [], table: any): any {
+export function surgePluginObjectArgument(refs: string[] = [], table: SurgeArgumentTable | null | undefined): { ok: true; value: string } | { ok: false; reason: string } {
   try {
     validatePluginObjectRefs(refs);
   } catch (error: any) {
@@ -233,7 +233,7 @@ export function surgePluginObjectArgument(refs: any = [], table: any): any {
   }
   const fields: string[] = [];
   for (const id of refs) {
-    const entry: any = table?.byId?.get(String(id));
+    const entry = table?.byId?.get(String(id));
     if (!entry)
       return { ok: false, reason: `undeclared Loon [Argument]: ${id}` };
     if (!entry.hasDefault) {
@@ -243,7 +243,7 @@ export function surgePluginObjectArgument(refs: any = [], table: any): any {
       };
     }
     const key = JSON.stringify(entry.id);
-    const placeholder: any = entry.placeholder;
+    const placeholder = entry.placeholder;
     if (entry.valueType === "string") {
       fields.push(`${key}:${JSON.stringify(placeholder)}`);
     } else if (entry.valueType === "number" || entry.valueType === "boolean") {
@@ -258,11 +258,11 @@ export function surgePluginObjectArgument(refs: any = [], table: any): any {
   const jsonTemplate = "{" + fields.join(",") + "}";
   return { ok: true, value: JSON.stringify(jsonTemplate) };
 }
-export function surgeRewriteArgumentPayload(refs: any = [], table: any) {
-  const unique: any = [...new Set(refs.map(String))];
+export function surgeRewriteArgumentPayload(refs: string[] = [], table: SurgeArgumentTable | null | undefined): { ok: true; value: string } | { ok: false; reason: string } {
+  const unique = [...new Set(refs.map(String))];
   const fields: string[] = [];
   for (const id of unique) {
-    const entry: any = table?.byId?.get(id);
+    const entry = table?.byId?.get(id);
     if (!entry)
       return { ok: false, reason: `undeclared Loon [Argument]: ${id}` };
     const key = JSON.stringify(entry.id);
@@ -280,13 +280,13 @@ export function surgeRewriteArgumentPayload(refs: any = [], table: any) {
   const template = "{" + fields.join(",") + "}";
   return { ok: true, value: JSON.stringify(template) };
 }
-export function surgeDynamicOptionValue(id: any, table: any): any {
-  const entry: any = table?.byId?.get(String(id));
+export function surgeDynamicOptionValue(id: unknown, table: SurgeArgumentTable | null | undefined): string | null {
+  const entry = table?.byId?.get(String(id));
   if (!entry || !entry.hasDefault) return null;
   return entry.placeholder;
 }
-export function surgeEnableRequirement(id: any, table: any): any {
-  const entry: any = table?.byId?.get(String(id));
+export function surgeEnableRequirement(id: unknown, table: SurgeArgumentTable | null | undefined): string | null {
+  const entry = table?.byId?.get(String(id));
   if (!entry || entry.valueType !== "boolean") return null;
   return `#!REQUIREMENT "'${entry.placeholder}'=='true'"`;
 }

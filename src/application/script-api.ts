@@ -155,12 +155,12 @@ export async function prepareScriptApiAdapters(
               enumValues: Object.fromEntries(
                 refs
                   .filter(
-                    (id: string) => table.byId.get(id).valueType === "string",
+                    (id: string) => table.byId.get(id)!.valueType === "string",
                   )
-                  .map((id: string) => [id, table.byId.get(id).values]),
+                  .map((id: string) => [id, table.byId.get(id)!.values]),
               ),
               fields: Object.fromEntries(
-                refs.map((id: string) => [id, table.byId.get(id).valueType]),
+                refs.map((id: string) => [id, table.byId.get(id)!.valueType]),
               ),
             };
         } else if (

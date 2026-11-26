@@ -1,3 +1,4 @@
+import type { SourceEntry, ConversionOutput } from "../domain/contracts.ts";
 // Modified: 2026-11-10 (chance). Plugin headers copy upstream dates, independent of conversion stamps.
 import { upstreamUpdateTime } from "../domain/update-metadata.ts";
 // Modified: 2026-11-08 (chance). Emit update timestamps only; no separate conversion time.
@@ -250,10 +251,12 @@ export function hasActiveOutputLines(lines: any = []): any {
     );
   });
 }
-export function finalizeOutputLines(lines: any = []): any {
+export function finalizeOutputLines(lines: string[] = []): string {
   return lines.join("\n").replace(/\n*$/, "\n");
 }
-const QX_DESTINATIONS = new Map([
+type QxOutputSection = "notes" | "filter" | "rewrite" | "task" | "mitm";
+type QxOutputState = Record<QxOutputSection, string[]> & Pick<ConversionOutput, "generatedScripts">;
+const QX_DESTINATIONS = new Map<string, QxOutputSection>([
   ["notes", "notes"],
   ["comment", "notes"],
   ["filter", "filter"],
@@ -261,7 +264,7 @@ const QX_DESTINATIONS = new Map([
   ["task", "task"],
   ["mitm", "mitm"],
 ]);
-export function createQxOutputState(): any {
+export function createQxOutputState(): QxOutputState {
   return {
     notes: [],
     filter: [],
@@ -271,27 +274,29 @@ export function createQxOutputState(): any {
     generatedScripts: new Map(),
   };
 }
-export function qxOutputDestination(state: any, section: any): any {
+export function qxOutputDestination(state: QxOutputState, section: QxOutputSection): string[];
+export function qxOutputDestination(state: QxOutputState, section: unknown): string[] | null;
+export function qxOutputDestination(state: QxOutputState, section: unknown): string[] | null {
   const key = QX_DESTINATIONS.get(String(section || "").toLowerCase());
   return key ? state[key] : null;
 }
-export function appendQxOutput(state: any, section: string, ...lines: any[]) {
-  const dest: any = qxOutputDestination(state, section);
+export function appendQxOutput(state: QxOutputState, section: string, ...lines: string[]) {
+  const dest = qxOutputDestination(state, section);
   if (!dest) return false;
   dest.push(...lines);
   return true;
 }
-export function qxRuleOutputDestination(state: any, kind: any): any {
+export function qxRuleOutputDestination(state: QxOutputState, kind: string) {
   return qxOutputDestination(state, kind === "rewrite" ? "rewrite" : "filter");
 }
-export function qxRewriteOutputDestination(state: any, section: any): any {
+export function qxRewriteOutputDestination(state: QxOutputState, section: string) {
   if (section === "rewrite" || section === "drop")
     return qxOutputDestination(state, "rewrite");
   return qxOutputDestination(state, "notes");
 }
 // Modified: 2026-10-25 (chance). Every author/app emits one mixed snippet;
 // filter, rewrite and MITM stay together for the single rewrite subscription.
-export function renderQxOutput({ state, headerLines, entry, stamp }: any): any {
+export function renderQxOutput({ state, headerLines, entry, stamp }: { state: QxOutputState; headerLines: string[]; entry: SourceEntry; stamp: string }): string {
   const header: any = renderQxSnippetHeader(headerLines, entry, stamp);
   const lines: any = [
     ...header,
@@ -313,7 +318,9 @@ export function renderQxOutput({ state, headerLines, entry, stamp }: any): any {
   ];
   return finalizeOutputLines(lines);
 }
-const SURGE_DESTINATIONS = new Map([
+type SurgeOutputSection = "notes" | "general" | "rule" | "url" | "header" | "body" | "map" | "script" | "mitm";
+type SurgeOutputState = Record<SurgeOutputSection, string[]> & Pick<ConversionOutput, "generatedScripts">;
+const SURGE_DESTINATIONS = new Map<string, SurgeOutputSection>([
   ["notes", "notes"],
   ["comment", "notes"],
   ["general", "general"],
@@ -325,7 +332,7 @@ const SURGE_DESTINATIONS = new Map([
   ["script", "script"],
   ["mitm", "mitm"],
 ]);
-const SURGE_SECTION_ORDER = [
+const SURGE_SECTION_ORDER: [SurgeOutputSection, string][] = [
   ["general", "[General]"],
   ["rule", "[Rule]"],
   ["url", "[URL Rewrite]"],
@@ -335,7 +342,7 @@ const SURGE_SECTION_ORDER = [
   ["script", "[Script]"],
   ["mitm", "[MITM]"],
 ];
-export function createSurgeOutputState(): any {
+export function createSurgeOutputState(): SurgeOutputState {
   return {
     notes: [],
     general: [],
@@ -349,24 +356,26 @@ export function createSurgeOutputState(): any {
     generatedScripts: new Map(),
   };
 }
-export function surgeOutputDestination(state: any, section: any): any {
+export function surgeOutputDestination(state: SurgeOutputState, section: SurgeOutputSection): string[];
+export function surgeOutputDestination(state: SurgeOutputState, section: unknown): string[] | null;
+export function surgeOutputDestination(state: SurgeOutputState, section: unknown): string[] | null {
   const key = SURGE_DESTINATIONS.get(String(section || "").toLowerCase());
   return key ? state[key] : null;
 }
 export function appendSurgeOutput(
-  state: any,
+  state: SurgeOutputState,
   section: string,
-  ...lines: any[]
+  ...lines: string[]
 ) {
-  const dest: any = surgeOutputDestination(state, section);
+  const dest = surgeOutputDestination(state, section);
   if (!dest) return false;
   dest.push(...lines);
   return true;
 }
-export function surgeRuleOutputDestination(state: any, section: any): any {
+export function surgeRuleOutputDestination(state: SurgeOutputState, section: string) {
   return surgeOutputDestination(state, section === "map" ? "map" : "rule");
 }
-export function surgeRewriteOutputDestination(state: any, section: any): any {
+export function surgeRewriteOutputDestination(state: SurgeOutputState, section: string) {
   if (section === "drop") return surgeOutputDestination(state, "notes");
   return (
     surgeOutputDestination(state, section) ||
@@ -380,7 +389,7 @@ export function renderSurgeOutput({
   stamp,
   argumentMetadata = [],
   needsLineRequirement = false,
-}: any): any {
+}: { state: SurgeOutputState; headerLines: string[]; entry: SourceEntry; stamp: string; argumentMetadata?: string[]; needsLineRequirement?: boolean }): string {
   const needsCore20: any =
     hasActiveOutputLines(state.body) || hasActiveOutputLines(state.map);
   const header: any = renderSurgeModuleHeader(headerLines, entry, stamp, {

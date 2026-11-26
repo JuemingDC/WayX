@@ -2,7 +2,7 @@ import { compactGeneratedPluginComments } from "../domain/output-comments.ts";
 // Modified: 2026-11-03 (chance). Remove unused parser dependencies from the active conversion path.
 import { repairScriptEchoDeclarations } from "../parser/backup-references.ts";
 import { bindKnownBackups } from "../parser/backup-references.ts";
-import { addAppIcon } from "../domain/icons.ts";
+import { addAppIcon, type IconIndex } from "../domain/icons.ts";
 import { disjointUrls } from "../domain/qx-header.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript emit layer; preserve source behavior.
 // Consolidated: 2026-10-03
@@ -11,7 +11,7 @@ import { disjointUrls } from "../domain/qx-header.ts";
 import crypto from "node:crypto";
 import path from "node:path";
 import { createResourceSnapshot } from "../ingest/resources.ts";
-import type { SourceEntry } from "../domain/contracts.ts";
+import type { SourceEntry, ConversionOutput, ConversionContext, ConversionStage, ConversionStageListener, ConversionTarget, ParsedPlugin, PreparedRewriteDeclaration, SourceScriptRecord, RewriteDependencyRecord, FetchOptions, SurgeArgumentTable } from "../domain/contracts.ts";
 import {
   surgeRegexParameter,
   normalizeUrlRegexForTarget,
@@ -134,7 +134,19 @@ function rewriteErrorResult(line: any, error: any): any {
 // Normalize file actions before both target planning and phase eligibility.
 // A dependency is tied to its absolute source action index, never shared as
 // the old single-action object across a multi-action declaration.
-function correctedUpstreamJq(jq: any, line: any, ctx: any): any {
+interface PlannerContext extends Pick<ConversionContext, "declarations" | "scriptMap" | "mockFiles" | "jqFiles" | "sourceUrl"> {
+  upstreamRepairs: Map<string, { kind: string; original: string; sourceLine: string }>;
+  id: string;
+  generatedScripts: ConversionOutput["generatedScripts"];
+  stamp: string;
+  category: string;
+  argumentIds: Set<string>;
+  argumentTable: SurgeArgumentTable;
+  rawBase: string;
+  splitPipelineAction?: boolean;
+  featureCompatibilityPhases?: Set<string>;
+}
+function correctedUpstreamJq(jq: unknown, line: string, ctx: PlannerContext): any {
   const result: any = repairUpstreamJq(jq);
   if (result.changed)
     ctx.upstreamRepairs?.set(line + "\0" + result.original, {
@@ -143,7 +155,7 @@ function correctedUpstreamJq(jq: any, line: any, ctx: any): any {
     });
   return result;
 }
-function resolveRewriteJqDependencies(ast: any, line: any, ctx: any): any {
+function resolveRewriteJqDependencies(ast: any, line: string, ctx: PlannerContext): any {
   ast = selectRewritePipelineLayer(ast);
   const actions: any = ast.actions.map(
     (action: any, selectedIndex: any): any => {
@@ -212,7 +224,7 @@ function resolveRewriteJqDependencies(ast: any, line: any, ctx: any): any {
 function isJsonRewriteAction(action: any): boolean {
   return /^(?:request|response)\.json\.(?:add|delete|replace|jq|jq_file)$/.test(action.name);
 }
-function rewriteV2Action(line: any, target: any, ctx: any): any {
+function rewriteV2Action(line: string, target: ConversionTarget, ctx: PlannerContext): any {
   if (!isRewriteV2(line)) return null;
   if (isScriptV2(line)) {
     const members: any = splitScriptPipelineSources(line);
@@ -367,7 +379,7 @@ function rewriteV2Action(line: any, target: any, ctx: any): any {
   }
   return {section: "split", members: members.map(plan)};
 }
-function planDisabledSurgeRewriteComments(comments: any, ctx: any): any {
+function planDisabledSurgeRewriteComments(comments: string[], ctx: PlannerContext): any {
   const passthrough: any = [];
   const routed: any = [];
   for (const raw of comments || []) {
@@ -400,7 +412,7 @@ function planDisabledSurgeRewriteComments(comments: any, ctx: any): any {
   }
   return { passthrough, routed };
 }
-function prepareRewriteDispatchers(plugin: any, target: string, ctx: any): any {
+function prepareRewriteDispatchers(plugin: ParsedPlugin, target: ConversionTarget, ctx: PlannerContext): any {
   const result: any = new Map();
   const items: any = groupSourceSectionItems(
     plugin.sections.get("Rewrite") || [],
@@ -757,8 +769,18 @@ function mergeQxJqRewrites(lines: string[], barriers: ReadonlySet<number>): stri
   return output;
 }
 
+interface ConversionOptions {
+  parsed?: ParsedPlugin | null;
+  scriptMap?: Map<string, SourceScriptRecord>;
+  stamp?: string;
+  mockFiles?: Map<string, RewriteDependencyRecord>;
+  jqFiles?: Map<string, RewriteDependencyRecord>;
+  rawBase?: string;
+  declarations?: Map<string, PreparedRewriteDeclaration> | null;
+  icons?: IconIndex | null;
+}
 export function convertPlugin(
-  entry: any,
+  entry: SourceEntry,
   source: string,
   {
     parsed = null,
@@ -769,16 +791,16 @@ export function convertPlugin(
     rawBase = "",
     declarations = null,
     icons = null,
-  }: any = {},
-): any {
+  }: ConversionOptions = {},
+): ConversionOutput {
   if (!stamp) throw new Error("convertPlugin requires a conversion stamp");
-  const plugin: any = parsed ?? parseLoonPlugin(source);
+  const plugin = parsed ?? parseLoonPlugin(source);
   // Modified: 2026-10-25 (chance). Both targets consume one prepared source IR.
   declarations = new Map(declarations ?? prepareRewriteDeclarations(plugin));
-  const sourceHeader: any = plugin.header;
-  const qx: any = createQxOutputState();
+  const sourceHeader = plugin.header;
+  const qx = createQxOutputState();
   const qxJqBarriers = new Set<number>();
-  const sg: any = createSurgeOutputState();
+  const sg = createSurgeOutputState();
   for (const [sectionName, sectionLines] of plugin.sections) {
     if (isSupportedSourceSection(sectionName)) continue;
     const active: any = groupSourceSectionItems(sectionLines)
@@ -800,19 +822,19 @@ export function convertPlugin(
     scriptLines: plugin.sections.get("Script") || [],
     ruleLines: plugin.sections.get("Rule") || [],
   });
-  const argumentIds: any = new Set(argumentAnalysis.declaredIds);
-  const surgeArgumentPlan: any = surgeArgumentMetadata(
+  const argumentIds = new Set<string>(argumentAnalysis.declaredIds);
+  const surgeArgumentPlan = surgeArgumentMetadata(
     plugin.sections.get("Argument") || [],
     {
       proxyPolicyBinding: argumentAnalysis.policyBindings.length > 0,
     },
   );
-  const surgeArgumentTable: any = surgeArgumentPlan.table;
+  const surgeArgumentTable = surgeArgumentPlan.table;
   const surgeProxyPolicyPlaceholder: any =
     surgeArgumentPlan.policyBinding?.placeholder || null;
   let surgeNeedsLineRequirement = false;
-  const upstreamRepairs: any = new Map();
-  const qctx: any = {
+  const upstreamRepairs = new Map<string, { kind: string; original: string; sourceLine: string }>();
+  const qctx: PlannerContext = {
     declarations,
     upstreamRepairs,
     scriptMap,
@@ -827,7 +849,7 @@ export function convertPlugin(
     argumentTable: surgeArgumentTable,
     rawBase,
   };
-  const sctx: any = {
+  const sctx: PlannerContext = {
     declarations,
     upstreamRepairs,
     scriptMap,
@@ -1004,7 +1026,7 @@ export function convertPlugin(
     if (!qr || !sr) {
       const [pattern, action] = splitPatternAction(item.line);
       let ir: any = declarations.get(item.line)?.ir
-        ? structuredClone(declarations.get(item.line).ir)
+        ? structuredClone(declarations.get(item.line)!.ir!)
         : legacyRewriteToSemanticIr(pattern, action);
       if (isEmptyJsonJqIr(ir)) {
         qr = { section: "drop", reason: "empty-json-jq" };
@@ -1101,8 +1123,8 @@ export function convertPlugin(
     const comments: any = cleanSourceComments(item.comments);
     if (!item.line) continue;
     if (isRewriteV2(item.line) && (!isScriptV2(item.line) || item.atomicJsonPipeline)) {
-      for (const target of ["qx", "surge"]) {
-        const ctx: any = target === "qx" ? qctx : sctx;
+      for (const target of ["qx", "surge"] as ConversionTarget[]) {
+        const ctx = target === "qx" ? qctx : sctx;
         const result: any = rewriteV2Action(
           item.line,
           target,
@@ -1313,11 +1335,16 @@ export function convertPlugin(
 // Shared workflow-facing conversion execution primitives.
 // Author: chance
 // Category: Converter / Execution / Validation
-function notify(onStage: any, stage: string) {
+function notify(onStage: ConversionStageListener | null, stage: ConversionStage) {
   if (typeof onStage === "function") onStage(stage);
 }
 // Modified: 2026-10-25 (chance). Acquisition prepares a source-bound context;
 // conversion consumes it synchronously and never performs network I/O.
+interface MaterializeOptions {
+  fetchText?: (url: string) => Promise<string>;
+  fetchBytes?: (url: string, options: FetchOptions) => Promise<Uint8Array>;
+  resources?: ReturnType<typeof createResourceSnapshot> | null;
+}
 export async function materializeConversionContext(
   entry: SourceEntry,
   source: string,
@@ -1325,9 +1352,9 @@ export async function materializeConversionContext(
     fetchText = fetchOriginalText,
     fetchBytes = fetchOriginalBytes,
     resources = null,
-  }: any = {},
-): Promise<any> {
-  const snapshot: any =
+  }: MaterializeOptions = {},
+): Promise<ConversionContext> {
+  const snapshot =
     resources ??
     createResourceSnapshot({
       directory: path.join(
@@ -1338,9 +1365,9 @@ export async function materializeConversionContext(
       fetchText: fetchText === fetchOriginalText ? null : fetchText,
       fetchBytes,
     });
-  const parsed: any = parseLoonPlugin(source);
-  const declarations: any = prepareRewriteDeclarations(parsed);
-  const reads: any = {
+  const parsed = parseLoonPlugin(source);
+  const declarations = prepareRewriteDeclarations(parsed);
+  const reads = {
     fetchText: snapshot.fetchText,
     fetchBytes: snapshot.fetchBytes,
     cachedBytes: snapshot.cachedBytes,
@@ -1370,23 +1397,30 @@ export async function materializeConversionContext(
 export async function materializeConversionRunContext(
   entry: SourceEntry,
   source: string,
-  { onStage = null, ...options }: any = {},
-): Promise<any> {
+  { onStage = null, ...options }: MaterializeOptions & { onStage?: ConversionStageListener | null } = {},
+): Promise<ConversionContext> {
   if (typeof onStage === "function") onStage("materialize-context");
   return await materializeConversionContext(entry, source, options);
 }
+interface RunConversionOptions {
+  stamp?: string;
+  rawBase?: string;
+  onStage?: ConversionStageListener | null;
+  icons?: IconIndex | null;
+  backupIndex?: { bindings?: Record<string, Record<string, { path: string }>>; objects?: Record<string, { kind: string; path: string }>; latest?: Record<string, string> } | null;
+}
 export function convertPluginWithContext(
-  entry: any,
+  entry: SourceEntry,
   source: string,
-  context: any,
+  context: ConversionContext,
   {
     stamp = "",
     rawBase = "",
     onStage = null,
     icons = null,
     backupIndex = null,
-  }: any = {},
-): any {
+  }: RunConversionOptions = {},
+): ConversionOutput {
   if (!context || typeof context !== "object") {
     throw new TypeError(
       "convertPluginWithContext requires a materialized conversion context",
@@ -1413,7 +1447,7 @@ export function convertPluginWithContext(
   });
   // Modified: 2026-11-01 (chance). Bind verified established backup paths at emission; the shared backup pass handles newly discovered URLs.
   if (backupIndex)
-    for (const target of ["qx", "surge"])
+    for (const target of ["qx", "surge"] as ConversionTarget[])
       out[target] = bindKnownBackups(
         out[target],
         backupIndex,
@@ -1425,10 +1459,10 @@ export function convertPluginWithContext(
   return out;
 }
 export function validateConvertedPlugin(
-  entry: any,
-  out: any,
-  { surgeValidationOptions = undefined, onStage = null }: any = {},
-): any {
+  entry: Pick<SourceEntry, "id">,
+  out: ConversionOutput,
+  { surgeValidationOptions = undefined, onStage = null }: { surgeValidationOptions?: { uniqueScripts?: boolean; adblockScope?: boolean }; onStage?: ConversionStageListener | null } = {},
+): ConversionOutput {
   if (!out || typeof out !== "object") {
     throw new TypeError("validateConvertedPlugin requires converted output");
   }
@@ -1444,13 +1478,13 @@ export function validateConvertedPlugin(
 // policies/programs and original Script URLs; unsupported semantics stay diagnosed.
 export function convertNativeQxToSurge(
   text: string,
-  { id = "native_qx" }: any = {},
-): any {
+  { id = "native_qx" }: { id?: string } = {},
+): { surge: string; diagnostics: { source: string; reason: string }[] } {
   // Modified: 2026-11-02 (chance). Apply the authorized remote-script echo repair for standalone native conversion too.
   text = repairScriptEchoDeclarations(String(text)).text;
   validateQX(text, { id });
-  const name: any = text.match(/^# Name: (.*)$/m)?.[1] || id;
-  const sections: any = {
+  const name = text.match(/^# Name: (.*)$/m)?.[1] || id;
+  const sections: Record<string, string[]> = {
       Rule: [],
       "URL Rewrite": [],
       "Map Local": [],
@@ -1459,8 +1493,8 @@ export function convertNativeQxToSurge(
       Script: [],
       MITM: [],
     },
-    diagnostics: any = [];
-  const issue: any = (line: any, reason: any) => {
+    diagnostics: { source: string; reason: string }[] = [];
+  const issue = (line: string, reason: string) => {
     diagnostics.push({ source: line, reason });
     sections.Rule.push(
       "# [WayX] REVIEW REQUIRED: " + reason,

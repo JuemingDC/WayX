@@ -9,7 +9,7 @@ import {
 } from "./script-api-ir.ts";
 import { emitScriptApiPlan } from "../emit/script-api-plan.ts";
 import { emitScriptApiProgram } from "../emit/script-api-program.ts";
-import type { ScriptClient } from "../domain/script-api.ts";
+import type { ScriptClient, ScriptApiIR } from "../domain/script-api.ts";
 import type { ArgumentSchema } from "./script-argument.ts";
 export type ScriptPlatform = ScriptClient;
 export type ApiOptions = {
@@ -24,6 +24,15 @@ export type ApiOptions = {
   sourceUrl?: string;
 };
 export type ApiProblem = { api: string; reason: string; solution: string };
+export interface ScriptApiContract {
+  apiPlan: ReturnType<typeof emitScriptApiPlan>;
+  runtimePolicyVersion: typeof scriptRuntimePolicyVersion;
+  argumentSchema?: ArgumentSchema;
+  omittedParameters: string[];
+}
+export type ScriptApiContext = ApiOptions & ScriptApiContract;
+export type ScriptApiContexts = Record<string, Record<string, ScriptApiContext>>;
+export type ScriptApiOperationPlans = Record<string, Record<string, ScriptApiIR>>;
 export function inspectScriptApis(source: string) {
   const tree = ts.createSourceFile(
     "upstream.js",
@@ -95,7 +104,7 @@ export function planScriptApiConversion(
     problems,
   );
   const apiPlan = emitScriptApiPlan(operationIR);
-  const contract = {
+  const contract: ScriptApiContract = {
     apiPlan,
     runtimePolicyVersion: scriptRuntimePolicyVersion,
     ...(options.argumentSchema

@@ -1,5 +1,5 @@
 // Modified: 2026-11-03 (chance). Remove unused parser dependencies from the active conversion path.
-import type { SourceEntry } from "../domain/contracts.ts";
+import type { SourceEntry, ParsedPlugin, SourceSectionItem, PreparedRewriteDeclaration, SourceScriptRecord, RewriteDependencyRecord } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -159,10 +159,10 @@ export function normalizePluginSource(text: any) {
     .replace(/\r\n?/g, "\n")
     .replace(/^\uFEFF/, "");
 }
-export function parseLoonPlugin(text: any): any {
+export function parseLoonPlugin(text: unknown): ParsedPlugin {
   const header: string[] = [];
-  const sections: any = new Map();
-  let current: any = null;
+  const sections = new Map<string, string[]>();
+  let current: string | null = null;
   for (const raw of normalizePluginSource(text).split("\n")) {
     const match = raw.trim().match(/^\[([^\]]+)\]$/);
     if (match) {
@@ -171,16 +171,16 @@ export function parseLoonPlugin(text: any): any {
       continue;
     }
     if (current === null) header.push(raw);
-    else sections.get(current).push(raw);
+    else sections.get(current)!.push(raw);
   }
   return { header, sections };
 }
 export function isSupportedSourceSection(name: any) {
   return WAYX_SUPPORTED_SOURCE_SECTIONS.has(String(name ?? ""));
 }
-export function groupSourceSectionItems(lines: any = []): any {
-  const items: any = [];
-  let pending: any = [];
+export function groupSourceSectionItems(lines: string[] = []): SourceSectionItem[] {
+  const items: SourceSectionItem[] = [];
+  let pending: string[] = [];
   for (let sourceIndex = 0; sourceIndex < lines.length; sourceIndex++) {
     const raw = String(lines[sourceIndex] ?? "");
     const trimmed = raw.trim();
@@ -271,7 +271,7 @@ export async function inspectSourceScript(
   reference: any,
   pluginSourceUrl: string,
   { fetchText = fetchOriginalText }: any = {},
-): Promise<any> {
+): Promise<SourceScriptRecord> {
   const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
   try {
     const normalized = normalizePluginSource(
@@ -296,8 +296,8 @@ export async function materializeSourceScripts(
   source: string,
   pluginSourceUrl: string,
   { parsed = null, fetchText = fetchOriginalText }: any = {},
-): Promise<any> {
-  const scriptMap: any = new Map();
+): Promise<Map<string, SourceScriptRecord>> {
+  const scriptMap = new Map<string, SourceScriptRecord>();
   for (const reference of discoverSourceScriptUrls(source, { parsed })) {
     scriptMap.set(
       reference,
@@ -312,14 +312,14 @@ export async function materializeSourceScripts(
 // Category: Converter / Dependency / Materialization
 // Modified: 2026-10-25 (chance). Prepare source syntax once, independently of
 // target planning. Return clones so one planner cannot mutate the other's IR.
-export function prepareRewriteDeclarations(parsed: any): any {
-  const declarations: any = new Map();
+export function prepareRewriteDeclarations(parsed: ParsedPlugin): Map<string, PreparedRewriteDeclaration> {
+  const declarations = new Map<string, PreparedRewriteDeclaration>();
   for (const item of rewriteDependencyItems(parsed)) {
     if (!item.line || isScriptV2(item.line) || declarations.has(item.line))
       continue;
     try {
       if (isRewriteV2(item.line)) {
-        const ast: any = selectRewritePipelineLayer(parseRewriteV2(item.line));
+        const ast = selectRewritePipelineLayer(parseRewriteV2(item.line));
         validateRewriteV2Ast(ast);
         declarations.set(item.line, { ast });
       } else {
@@ -335,18 +335,18 @@ export function prepareRewriteDeclarations(parsed: any): any {
   }
   return declarations;
 }
-export function preparedRewriteAst(declarations: any, line: any): any {
-  const record: any = declarations?.get(line);
+export function preparedRewriteAst(declarations: Map<string, PreparedRewriteDeclaration> | null | undefined, line: string) {
+  const record = declarations?.get(line);
   if (record?.error) throw record.error;
   return record?.ast
     ? structuredClone(record.ast)
     : selectRewritePipelineLayer(parseRewriteV2(line));
 }
-function rewriteDependencyItems(parsed: any): any {
+function rewriteDependencyItems(parsed: ParsedPlugin): SourceSectionItem[] {
   return [
     ...groupSourceSectionItems(parsed?.sections?.get("Rewrite")),
     ...groupSourceSectionItems(parsed?.sections?.get("Script")).filter(
-      (item: any): any =>
+      (item) =>
         item.line && isRewriteV2(item.line) && !isScriptV2(item.line),
     ),
   ];
@@ -575,7 +575,7 @@ export async function materializeRewriteDependencies(
   entry: any,
   parsed: any,
   options: any = {},
-): Promise<any> {
+): Promise<{ mockFiles: Map<string, RewriteDependencyRecord>; jqFiles: Map<string, RewriteDependencyRecord> }> {
   const [mockFiles, jqFiles] = await Promise.all([
     materializeMockFiles(entry, parsed, options),
     materializeJqFiles(entry, parsed, options),

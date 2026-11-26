@@ -208,7 +208,12 @@ export type V2RewriteIr = RewriteIrBase & {
 export type RewriteSemanticIr = LegacyRewriteIr | V2RewriteIr;
 export type ScriptValue =
   | Exclude<ScalarNode, { type: "regex" }>
-  | { type: "plugin-object"; items: VariableNode[]; raw: string; value?: never };
+  | {
+      type: "plugin-object";
+      items: VariableNode[];
+      raw: string;
+      value?: never;
+    };
 export type ScriptArgument =
   | StringNode
   | Extract<ScriptValue, { type: "plugin-object" }>;
@@ -287,4 +292,73 @@ export interface ConversionOutput {
   qx: string;
   surge: string;
   generatedScripts: Map<string, string | Buffer>;
+}
+
+export type ConversionTarget = "qx" | "surge";
+export interface ParsedPlugin {
+  header: string[];
+  sections: Map<string, string[]>;
+}
+export interface SourceSectionItem {
+  comments: string[];
+  line: string | null;
+  sourceIndex: number;
+  pipelineMember?: boolean;
+  atomicJsonPipeline?: boolean;
+}
+export interface PreparedRewriteDeclaration {
+  ast?: RewriteAst;
+  ir?: LegacyRewriteIr;
+  error?: unknown;
+}
+export interface SourceScriptRecord {
+  qx: string;
+  surge: string;
+  source: string;
+  sourceError: string | null;
+}
+export interface RewriteDependencyRecord {
+  sourceFile?: string;
+  error?: string;
+  content?: string;
+  bodyBase64?: string;
+  bodyText?: string;
+  bodyBytes?: Uint8Array;
+  legacyAlias?: boolean;
+  byAction?: Record<number, RewriteDependencyRecord>;
+}
+export interface ConversionContext {
+  parsed: ParsedPlugin;
+  declarations: Map<string, PreparedRewriteDeclaration>;
+  scriptMap: Map<string, SourceScriptRecord>;
+  mockFiles: Map<string, RewriteDependencyRecord>;
+  jqFiles: Map<string, RewriteDependencyRecord>;
+  sourceUrl: string;
+  sourceDigest: string;
+}
+export type ConversionStage =
+  | "materialize-context"
+  | "convert"
+  | "validate-qx"
+  | "validate-surge";
+export type ConversionStageListener = (stage: ConversionStage) => void;
+export interface LoonArgumentDeclaration {
+  id: string;
+  kind: string;
+  values: string[];
+  hasDefault: boolean;
+  defaultValue: string | undefined;
+  valueType: "boolean" | "number" | "string";
+  tag: string;
+  desc: string;
+  options: Record<string, string>;
+  raw: string;
+}
+export interface SurgeArgumentEntry extends LoonArgumentDeclaration {
+  surgeName: string;
+  placeholder: string;
+}
+export interface SurgeArgumentTable {
+  entries: SurgeArgumentEntry[];
+  byId: Map<string, SurgeArgumentEntry>;
 }

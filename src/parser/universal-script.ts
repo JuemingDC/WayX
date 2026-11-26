@@ -9,6 +9,8 @@ import {
   planScriptApiConversion,
   type ScriptPlatform,
   type ApiProblem,
+  type ScriptApiContexts,
+  type ScriptApiOperationPlans,
 } from "./script-api.ts";
 import { emitScriptApiProgram } from "../emit/script-api-program.ts";
 export type UniversalProfile = {
@@ -60,8 +62,8 @@ export function planUniversalAdblockScript(
 ) {
   const inventory = inspectScriptApis(source),
     features = inventory.paths;
-  const contexts: Record<string, any> = {},
-    operationPlans: Record<string, any> = {};
+  const contexts: ScriptApiContexts = {},
+    operationPlans: ScriptApiOperationPlans = {};
   const problems: ApiProblem[] = [...inventory.problems];
   if (!["qx", "loon"].includes(from) || !profiles.length)
     return {
