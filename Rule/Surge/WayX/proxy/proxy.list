@@ -1,11 +1,11 @@
 # Name: proxy
-# Updated: 2026-11-25 15:13:53 UTC
+# Updated: 2026-11-27 03:43:12 UTC
 # Converted by: chance
 # Source Authors: Loyalsoldier, MetaCubeX, Sukka, V2Fly
 # Category: general
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/Loyalsoldier/surge-rules/release/ruleset/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/resouces/proxy.txt ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.json ; https://ruleset.skk.moe/List/non_ip/global.conf
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 34178
+# Rules: 34179
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,gsp4-cn.ls.apple.com.edgekey.net.globalredir.akadns.net
@@ -656,6 +656,7 @@ DOMAIN,as-hls-uk-live.akamaized.net
 DOMAIN,assets.ppy.sh
 DOMAIN,audio-ak-spotify-com.akamaized.net
 DOMAIN,audio4-ak-spotify-com.akamaized.net
+DOMAIN,aurora-customization-usw2.lithium.com
 DOMAIN,avail.googleflights.net
 DOMAIN,avatargarenanow-a.akamaihd.net
 DOMAIN,azure.microsoft.com

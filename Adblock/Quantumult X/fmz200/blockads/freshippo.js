@@ -1,7 +1,15 @@
 const url = $request.url;
 if (!$response.body)
     $done({});
-let obj = JSON.parse($response.body);
+let obj;
+try {
+    obj = JSON.parse($response.body);
+}
+catch (e) {
+    console.info(url);
+    console.error("JSON解析错误:", e);
+    $done({});
+}
 if (url.indexOf("queryindexpage") != -1) {
     const sceneTemplateId = [
         "509",

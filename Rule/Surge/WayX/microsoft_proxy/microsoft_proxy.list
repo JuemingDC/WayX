@@ -1,11 +1,11 @@
 # Name: microsoft_proxy
-# Updated: 2026-11-25 07:01:01 UTC
+# Updated: 2026-11-27 03:43:12 UTC
 # Converted by: chance
 # Source Authors: ACL4SSR, DustinWin, MetaCubeX, QuixoticHeart, V2Fly
 # Category: app
 # Sources: https://github.com/v2fly/domain-list-community ; https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list ; https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/media.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-companies.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-dev.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-entertainment.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-netdisk-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-social-media-!cn.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/microsoft-pki.json ; https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/onedrive.json ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/microsoft.list ; https://raw.githubusercontent.com/QuixoticHeart/rule-set/ruleset/surge/onedrive.list
 # Licenses: See .github/sources/rules.json and original source repositories
-# Rules: 658
+# Rules: 659
 # Managed by: WayX Rule Aggregator
 
 DOMAIN,prodforza.blob.core.windows.net
@@ -17,6 +17,7 @@ DOMAIN,dc.services.visualstudio.com
 DOMAIN,live.applicationinsights.azure.com
 DOMAIN,rt.services.visualstudio.com
 DOMAIN,vscode.search.windows.net
+DOMAIN,aurora-customization-usw2.lithium.com
 DOMAIN,azure.microsoft.com
 DOMAIN,azuremarketplace.microsoft.com
 DOMAIN,bingsettingssearch.trafficmanager.net

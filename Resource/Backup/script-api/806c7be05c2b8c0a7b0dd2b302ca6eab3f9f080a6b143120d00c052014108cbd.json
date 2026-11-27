@@ -1,13 +1,13 @@
 {
   "version": 1,
   "sourceUrl": "https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/freshippo.js",
-  "sourceSha256": "b2a3315778443206bab90d40c3cfd7d90c4e726eee64aa65d7df3141865eef3e",
+  "sourceSha256": "ac80d562be6f1892c831824c85eb06f2a44521c8a7e240bdac44ec01e736906c",
   "sourceClients": [
     "qx"
   ],
   "sourceSyntax": {
     "view": "decoded archived UTF-8 input",
-    "sha256": "b2a3315778443206bab90d40c3cfd7d90c4e726eee64aa65d7df3141865eef3e",
+    "sha256": "ac80d562be6f1892c831824c85eb06f2a44521c8a7e240bdac44ec01e736906c",
     "operations": [
       {
         "api": "$request.url",
@@ -47,10 +47,10 @@
       {
         "api": "$response.body",
         "access": "read",
-        "start": 507,
-        "end": 521,
-        "line": 14,
-        "column": 22,
+        "start": 521,
+        "end": 535,
+        "line": 17,
+        "column": 20,
         "members": [
           "$response",
           "body"
@@ -59,9 +59,9 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 2572,
-        "end": 2581,
-        "line": 93,
+        "start": 608,
+        "end": 617,
+        "line": 21,
         "column": 3,
         "members": [
           "$done"
@@ -70,9 +70,20 @@
       {
         "api": "$done",
         "access": "call",
-        "start": 2585,
-        "end": 2619,
-        "line": 95,
+        "start": 2670,
+        "end": 2679,
+        "line": 102,
+        "column": 3,
+        "members": [
+          "$done"
+        ]
+      },
+      {
+        "api": "$done",
+        "access": "call",
+        "start": 2683,
+        "end": 2717,
+        "line": 104,
         "column": 1,
         "members": [
           "$done"
@@ -90,7 +101,7 @@
         "sourceClient": "qx",
         "targetClient": "surge",
         "sourceView": "analysis-input",
-        "analysisSourceSha256": "b2a3315778443206bab90d40c3cfd7d90c4e726eee64aa65d7df3141865eef3e",
+        "analysisSourceSha256": "ac80d562be6f1892c831824c85eb06f2a44521c8a7e240bdac44ec01e736906c",
         "operations": [
           {
             "id": "api:0",
@@ -174,10 +185,10 @@
             "kind": "context",
             "source": {
               "api": "$response.body",
-              "start": 507,
-              "end": 521,
-              "line": 14,
-              "column": 22,
+              "start": 521,
+              "end": 535,
+              "line": 17,
+              "column": 20,
               "access": "read",
               "memberPath": [
                 "body"
@@ -200,9 +211,9 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 2572,
-              "end": 2581,
-              "line": 93,
+              "start": 608,
+              "end": 617,
+              "line": 21,
               "column": 3,
               "access": "call",
               "memberPath": []
@@ -224,9 +235,33 @@
             "kind": "completion",
             "source": {
               "api": "$done",
-              "start": 2585,
-              "end": 2619,
-              "line": 95,
+              "start": 2670,
+              "end": 2679,
+              "line": 102,
+              "column": 3,
+              "access": "call",
+              "memberPath": []
+            },
+            "canonical": "complete(pass|modify|respond)",
+            "value": "runtime value",
+            "target": {
+              "capability": "runtime",
+              "api": "$done",
+              "lowering": "canonical status Number and byte view; target status line/Number and synthetic flat/response layout; response h2_trailers maps to Surge trailers with requires-body=true",
+              "proof": "API runtime contract tests; no author-program static proof"
+            },
+            "decision": "runtime",
+            "diagnostics": []
+          },
+          {
+            "id": "api:6",
+            "rule": "complete",
+            "kind": "completion",
+            "source": {
+              "api": "$done",
+              "start": 2683,
+              "end": 2717,
+              "line": 104,
               "column": 1,
               "access": "call",
               "memberPath": []
