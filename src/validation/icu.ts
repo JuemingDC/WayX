@@ -1,7 +1,14 @@
 // Modified: 2026-10-30 (chance). Use native ICU for target syntax and fixture
 // replacement execution; no Python or JavaScript substitute for client regex.
 import koffi from "koffi";
-let bindings: any;
+interface IcuBindings {
+  open(pattern: Buffer, length: number, flags: number, parseError: null, status: number[]): object | null;
+  close(regex: object): void;
+  errorName(status: number): string;
+  setText(regex: object, text: Buffer, length: number, status: number[]): void;
+  replace(regex: object, text: Buffer, length: number, output: Buffer, capacity: number, status: number[]): number;
+}
+let bindings: IcuBindings | undefined;
 function icu() {
   if (bindings) return bindings;
   let lib: ReturnType<typeof koffi.load> | undefined;

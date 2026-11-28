@@ -113,6 +113,7 @@ export interface RewriteAst {
   sourceActionIndices?: number[];
   sourceActionCount?: number;
 }
+export type RewriteDeclaration = Omit<RewriteAst, "syntax">;
 export interface UrlRegexCondition {
   type: "url-regex";
   pattern: string;
@@ -201,7 +202,8 @@ export type LegacyRewriteIr = RewriteIrBase & {
 };
 export type V2RewriteIr = RewriteIrBase & {
   sourceSyntax: "v2";
-  condition: RewriteCondition | null;
+  phase: Phase;
+  condition: RewriteCondition;
   operations: V2RewriteOperation[];
   sourcePayload: { ast: RewriteAst };
 };
@@ -389,6 +391,7 @@ export type RewriteOutputSection =
   | "body"
   | "map"
   | "script"
+  | "task"
   | "comment";
 export interface RewriteLinePlan {
   section: RewriteOutputSection;

@@ -94,22 +94,24 @@ const ids = (node: ts.Node) => {
   return names;
 };
 
+import type { ScriptApiContext } from "../parser/script-api.ts";
+
 export function selectScriptApiRuntime(
   runtime: string,
   usage: ScriptApiUsage,
-  configs: any[],
+  configs: readonly ScriptApiContext[],
 ) {
   const has = (name: string) => usage.dynamic || usage.roots.has(name);
   const factory = ts.factory;
   const uniform = (path: string[]) => {
     const values = configs.map((config) =>
-      path.reduce((value, key) => value?.[key], config),
+      path.reduce<unknown>((value, key) => (value as Record<string, unknown> | undefined)?.[key], config),
     );
     return values.every((value) => Object.is(value, values[0]))
       ? { known: true, value: values[0] }
       : { known: false, value: undefined };
   };
-  const primitive = (node: ts.Node): { known: boolean; value?: any } => {
+  const primitive = (node: ts.Node): { known: boolean; value?: string | number | boolean | null } => {
     if (node.kind === ts.SyntaxKind.TrueKeyword)
       return { known: true, value: true };
     if (node.kind === ts.SyntaxKind.FalseKeyword)
@@ -125,7 +127,7 @@ export function selectScriptApiRuntime(
       };
     return { known: false };
   };
-  const literal = (value: any): ts.Expression =>
+  const literal = (value: unknown): ts.Expression =>
     value === undefined
       ? factory.createIdentifier("undefined")
       : value === null
@@ -401,14 +403,14 @@ export function selectScriptApiRuntime(
   return { code, hostFields, configPaths };
 }
 
-export function selectScriptConfig(config: any, paths: string[][]) {
-  const result: any = {};
+export function selectScriptConfig(config: ScriptApiContext, paths: string[][]) {
+  const result: Record<string, unknown> = {};
   for (const path of paths) {
-    let input = config,
+    let input: unknown = config,
       output = result;
     for (let i = 0; i < path.length; i++) {
       const key = path[i];
-      input = input?.[key];
+      input = (input as Record<string, unknown> | undefined)?.[key];
       if (input === undefined) break;
       if (
         i === path.length - 1 ||
@@ -418,7 +420,7 @@ export function selectScriptConfig(config: any, paths: string[][]) {
       ) {
         output[key] = input;
         break;
-      } else output = output[key] ??= {};
+      } else output = (output[key] ??= {}) as Record<string, unknown>;
     }
   }
   return result;
@@ -429,7 +431,7 @@ export function selectScriptConfig(config: any, paths: string[][]) {
 export function emitBodyScript(
   source: string,
   usage: ScriptApiUsage,
-  configs: any[],
+  configs: readonly ScriptApiContext[],
   to: string | undefined,
   fresh: (name: string) => string,
 ) {

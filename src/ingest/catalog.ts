@@ -34,8 +34,8 @@ const unescapeHtml = (s: string) =>
     .replace(/&#39;|&apos;/g, "'")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
-export function extractLpxUrl(item: any): string | null {
-  const raw = typeof item === "object" ? item?.url : String(item),
+export function extractLpxUrl(item: unknown): string | null {
+  const raw = typeof item === "object" ? (item as { url?: unknown } | null)?.url : String(item),
     match = String(raw ?? "").match(
       /https:\/\/kelee\.one\/Tool\/Loon\/Lpx\/[^\s"'<>]+?\.lpxe?(?:\?[^\s"'<>]*)?/i,
     );
@@ -59,7 +59,7 @@ export function safeFilenameFromUrl(url: string): string {
     throw Error("Unsafe plugin filename: " + name);
   return name;
 }
-export function categoryFor(item: any, _stem?: string): string | null {
+export function categoryFor(item: { tag?: unknown } | null, _stem?: string): string | null {
   const tags = Array.isArray(item?.tag) ? item.tag : [item?.tag];
   return tags.includes("依赖")
     ? "依赖"
@@ -87,12 +87,12 @@ export function targetName(stem: string, extension: string, used: Set<string>) {
   return value;
 }
 export function buildCatalog(
-  payload: any,
+  payload: unknown,
   previous: SourceEntry[],
   staticEntries: SourceEntry[],
 ): [SourceEntry[], CatalogMetadata[]] {
   const fixed = staticEntries.filter((e) => !retired.has(identity(e.source))),
-    lists = Array.isArray(payload) ? payload : payload?.lists;
+    lists = Array.isArray(payload) ? payload : (payload as { lists?: unknown } | null)?.lists;
   if (!Array.isArray(lists))
     throw Error(
       "Kelee list.json must be an array or an object with a 'lists' array",
@@ -214,7 +214,7 @@ export async function resolveRucu6ShortLink(link: string): Promise<string> {
   throw Error("RuCu6 short-link redirect limit");
 }
 export async function buildRucu6Catalog(
-  payload: any,
+  payload: string | null,
   previous: SourceEntry[],
   staticEntries: SourceEntry[],
   resolve = resolveRucu6ShortLink,
@@ -223,7 +223,7 @@ export async function buildRucu6Catalog(
   const add = (url: string) => {
     if (!urls.includes(url)) urls.push(url);
   };
-  const collect = (value: any) => {
+  const collect = (value: unknown) => {
     if (typeof value === "string") {
       for (const m of value.matchAll(
         /https:\/\/rucu6\.pages\.dev\/Plugins\/[^\s"'<>]+?\.lpxe?/g,
@@ -264,9 +264,9 @@ export async function buildRucu6Catalog(
       (e) => new URL(e.source).hostname !== "rucu6.pages.dev",
     ),
     used = Object.fromEntries(
-      ["id", "file", "qx", "surge"].map((f) => [
+      (["id", "file", "qx", "surge"] as const).map((f) => [
         f,
-        new Set(other.map((e) => (e as any)[f])),
+        new Set(other.map((e) => e[f])),
       ]),
     ) as Record<string, Set<string>>;
   return urls
@@ -285,8 +285,8 @@ export async function buildRucu6Catalog(
               surge: "RuCu6_" + stem + ".sgmodule",
               category: "插件",
             };
-      for (const f of ["id", "file", "qx", "surge"]) {
-        const value = (entry as any)[f];
+      for (const f of ["id", "file", "qx", "surge"] as const) {
+        const value = entry[f as keyof SourceEntry];
         if (used[f].has(value))
           throw Error("RuCu6 index collision: " + f + "=" + value);
         used[f].add(value);
@@ -296,11 +296,11 @@ export async function buildRucu6Catalog(
 }
 export function validateCombined(entries: SourceEntry[]) {
   const seen = Object.fromEntries(
-    ["id", "file", "qx", "surge"].map((k) => [k, new Set<string>()]),
+    (["id", "file", "qx", "surge"] as const).map((k) => [k, new Set<string>()]),
   );
   for (const entry of entries) {
-    for (const f of ["id", "file", "source", "qx", "surge", "category"])
-      if (typeof (entry as any)[f] !== "string" || !(entry as any)[f].trim())
+    for (const f of ["id", "file", "source", "qx", "surge", "category"] as const)
+      if (typeof entry[f as keyof SourceEntry] !== "string" || !entry[f as keyof SourceEntry].trim())
         throw Error("Missing catalog " + f);
     if (!/^[A-Za-z0-9._-]+$/.test(entry.id)) throw Error("Invalid catalog id");
     for (const [f, suffix] of [
@@ -318,7 +318,7 @@ export function validateCombined(entries: SourceEntry[]) {
         throw Error("Unsafe catalog " + f);
     }
     for (const f of Object.keys(seen)) {
-      const value = (entry as any)[f];
+      const value = entry[f as keyof SourceEntry];
       if (seen[f].has(value))
         throw Error("Duplicate catalog " + f + ": " + value);
       seen[f].add(value);
@@ -369,7 +369,7 @@ export async function refreshCatalog(
     listUrl = process.env.KELEE_LIST_URL || DEFAULT_LIST_URL,
     rucu6ListUrl = process.env.RUCU6_LIST_URL || DEFAULT_RUCU6_LIST_URL,
     fetchText = fetchOriginalText,
-  }: any = {},
+  }: { check?: boolean; listUrl?: string; rucu6ListUrl?: string; fetchText?: (url: string) => Promise<string> } = {},
 ) {
   const previous = await readJson<SourceEntry[]>(
       path.join(root, ".github/sources/loon.json"),
@@ -385,11 +385,11 @@ export async function refreshCatalog(
     rucuFeed: string | null = null;
   // Modified: 2026-11-08 (chance). A directory-only HTTP 403 must not pause
   // registered plugin acquisition or retire entries that could not be rediscovered.
-  let keleeDiscovery: any = { complete: !paused, source: listUrl };
+  let keleeDiscovery: { complete: boolean; source: string; status?: number; retainedEntries?: number; reason?: string } = { complete: !paused, source: listUrl };
   if (!paused) {
     try {
       feed = await fetchText(listUrl);
-    } catch (error: any) {
+    } catch (error) {
       const retained = previous.filter((e) => isKeleeSource(e.source));
       if (
         error.status !== 403 ||

@@ -96,17 +96,27 @@ export async function setOutput(name: string, value: string) {
   if (process.env.GITHUB_OUTPUT)
     await fs.appendFile(process.env.GITHUB_OUTPUT, `${name}=${value}\n`);
 }
+type MonitorSourceConfig = {
+  id: string; kind: string; url?: string; repo?: string; ref?: string;
+  cached_feed?: string; normalize?: string; save_as?: string;
+  include_globs?: string[]; sync_changed_files?: boolean;
+};
+type MonitorSettings = { timeout_seconds?: number; mirror_root?: string; runtime_root?: string; state_file?: string };
+type MonitorSourceState = { url?: string; sha256?: string; repo?: string; ref?: string; remote_sha?: string; kind?: string };
+type MonitorState = { version: number; sources: Record<string, MonitorSourceState> };
+type MonitorResult = { source: Pick<MonitorSourceConfig, "id" | "url" | "repo">; changed: boolean; succeeded: boolean; message: string; deferred?: boolean };
+type MonitorFailure = { source: MonitorResult["source"]; stage: string; errorType: string; reason: string; rollbackSucceeded: boolean };
 export async function monitorSource(
   root: string,
-  src: any,
-  previous: any,
-  settings: any,
+  src: MonitorSourceConfig,
+  previous: MonitorSourceState,
+  settings: MonitorSettings,
   request = requestOriginal,
 ): Promise<{
   changed: boolean;
   stateChanged: boolean;
   message: string;
-  state: any;
+  state: MonitorSourceState;
   changes: Map<string, Uint8Array | null>;
 }> {
   const changes = new Map<string, Uint8Array | null>(),
@@ -127,7 +137,7 @@ export async function monitorSource(
       valid = Boolean(mirror && cached && sha(mirror) === previous.sha256);
     let raw: Buffer;
     if (src.cached_feed) {
-      const feed = await readJson<any>(safePath(root, src.cached_feed), {});
+      const feed = await readJson<{ source?: string; text?: string }>(safePath(root, src.cached_feed), {});
       if (
         feed.source !== src.url ||
         typeof feed.text !== "string" ||
@@ -138,7 +148,7 @@ export async function monitorSource(
         );
       raw = Buffer.from(feed.text);
     } else {
-      const result = await request(src.url, {
+      const result = await request(src.url!, {
         headers: { "Accept-Encoding": "identity" },
         timeoutMs,
         maxBytes: 128 * 1024 * 1024,
@@ -274,11 +284,11 @@ export async function monitorSource(
 export async function runMonitor(root = process.cwd()) {
   let runtime = ".github/monitor/.runtime",
     statePath = ".github/monitor/state.json",
-    results: any[] = [],
-    failures: any[] = [],
-    state: { version: number; sources: Record<string, Record<string, unknown>> } = { version: 1, sources: {} };
+    results: MonitorResult[] = [],
+    failures: MonitorFailure[] = [],
+    state: MonitorState = { version: 1, sources: {} };
   try {
-    const cfg = await readJson<any>(
+    const cfg = await readJson<{ sources: MonitorSourceConfig[]; settings?: MonitorSettings }>(
         path.join(root, ".github/monitor/sources.json"),
       ),
       settings = cfg.settings ?? {};
@@ -289,11 +299,11 @@ export async function runMonitor(root = process.cwd()) {
     if (
       !Array.isArray(cfg.sources) ||
       !cfg.sources.length ||
-      cfg.sources.some((s: any) => typeof s?.id !== "string" || !s.id) ||
-      new Set(cfg.sources.map((s: any) => s.id)).size !== cfg.sources.length
+      cfg.sources.some((s) => typeof s?.id !== "string" || !s.id) ||
+      new Set(cfg.sources.map((s) => s.id)).size !== cfg.sources.length
     )
       throw Error("Monitor source IDs must be nonempty and unique");
-    state = await readJson<any>(path.join(root, statePath), state);
+    state = await readJson<MonitorState>(path.join(root, statePath), state);
     state.sources ??= {};
     if (
       !state.sources ||
@@ -308,9 +318,9 @@ export async function runMonitor(root = process.cwd()) {
       // after a recorded 403; do not advance its mirror or pretend it was checked.
       // All specification/source-monitor failures continue to block publication.
       if (src.id === "kelee-plugin-directory" && src.url === "https://hub.kelee.one/list.json") {
-        const discovery = await readJson<any>(path.join(root,".github/monitor/.runtime/catalog-discovery.json"),{});
+        const discovery = await readJson<{ keleeDiscovery?: { source: string; complete: boolean; status?: number; retainedEntries?: number } }>(path.join(root,".github/monitor/.runtime/catalog-discovery.json"),{});
         const d = discovery.keleeDiscovery;
-        if (!paused && d?.source === src.url && d.complete === false && d.status === 403 && d.retainedEntries > 0) {
+        if (!paused && d?.source === src.url && d.complete === false && d.status === 403 && d.retainedEntries! > 0) {
           results.push({source:src,changed:false,succeeded:false,deferred:true,message:"Directory HTTP 403; registered plugins are still acquired; previous mirror retained"});
           continue;
         }
@@ -343,7 +353,7 @@ export async function runMonitor(root = process.cwd()) {
           succeeded: true,
           message: result.message,
         });
-      } catch (error: any) {
+      } catch (error) {
         const reason = `${error.name}: ${error.message}`;
         failures.push({
           source: src,
@@ -360,7 +370,7 @@ export async function runMonitor(root = process.cwd()) {
         });
       }
     }
-  } catch (error: any) {
+  } catch (error) {
     const source = {
         id: "monitor-configuration",
         url: ".github/monitor/sources.json",

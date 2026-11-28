@@ -18,6 +18,9 @@ import { isWayxMapLocalPayloadFilename } from "../domain/generated-scripts.ts";
 import { executableScript } from "../domain/executable-script.ts";
 import { ADBLOCK_NUMBERS_FILE, ensureAdblockNumbers, adblockIdentity, applyAdblockNumber } from "./adblock-numbers.ts";
 
+import type { BackupIndex, BackupAdapterRecord } from "../ingest/resources.ts";
+import type { SourceEntry } from "../domain/contracts.ts";
+
 const stateFile = ".github/sources/layout-state.json";
 const base = "https://raw.githubusercontent.com/JuemingDC/WayX/main/";
 const digest = (s: string | Uint8Array) =>
@@ -72,8 +75,8 @@ function sourceAuthor(url: string) {
 function destination(
   file: string,
   text: string,
-  catalog: any[],
-  native: any[],
+  catalog: readonly SourceEntry[],
+  native: readonly { prefix: string; repository: string }[],
 ) {
   const parts = file.split("/"),
     type = parts[0];
@@ -117,6 +120,7 @@ function rewrite(text: string, mappings: Record<string, string>) {
   }
   return text;
 }
+// Modified: 2026-11-28 (chance). This path migration accepts versioned JSON with open keys.
 function jsonPaths(
   value: any,
   map: Record<string, string>,
@@ -280,14 +284,14 @@ export async function prepareWorkingLayout(root: string) {
       ) + "\n",
     );
   }
-  const index = await readJson<any>(
+  const index = await readJson<BackupIndex | null>(
     path.join(root, "Resource/Backup/index.json"),
     null,
   );
   if (index) {
     const restored = jsonPaths(index, reverse, suffix);
     restored.adapters = {};
-    for (const [file, record] of Object.entries<any>(index.adapters ?? {})) {
+    for (const [file, record] of Object.entries(index.adapters ?? {})) {
       const old = reverse[file] ?? file;
       restored.adapters[old] = { ...record, path: old };
       delete restored.adapters[old].logicalPath;
@@ -308,22 +312,22 @@ export async function publishLayout(
   root: string,
   { write = true, validateCode = true } = {},
 ) {
-  const catalog = await readJson<any[]>(
+  const catalog = await readJson<SourceEntry[]>(
     path.join(root, ".github/sources/loon.json"),
     [],
   );
-  const nativeConfig = await readJson<any>(
+  const nativeConfig = await readJson<{ sources?: { prefix: string; repository: string }[]; repository?: string; prefix?: string }>(
     path.join(root, ".github/sources/native-qx.json"),
     {},
   );
   const native = Array.isArray(nativeConfig.sources)
     ? nativeConfig.sources
     : nativeConfig.repository
-      ? [nativeConfig]
+      ? [nativeConfig as { prefix: string; repository: string }]
       : [];
-  const index = await readJson<any>(
+  const index = await readJson<BackupIndex>(
     path.join(root, "Resource/Backup/index.json"),
-    { objects: {}, adapters: {}, bindings: {} },
+    { objects: {}, adapters: {}, bindings: {} } as BackupIndex,
   );
   const changes = new Map<string, string | Uint8Array | null>();
   // Modified: 2026-11-14 (chance). Retire the mistaken standalone jq publication;
@@ -356,7 +360,7 @@ export async function publishLayout(
   changes.set(ADBLOCK_NUMBERS_FILE, JSON.stringify(adblockNumbers, null, 2) + "\n");
   const scriptCopies = new Map<string, Map<string, string>>();
   const occupied = new Map<string, string>();
-  const adapterCopies: Record<string, any> = {};
+  const adapterCopies: Record<string, BackupAdapterRecord> = {};
   const scriptFile = async (
     logical: string,
     owner: string,
@@ -429,7 +433,7 @@ export async function publishLayout(
     if (validateCode) {
       try {
         new vm.Script(code, { filename: dest });
-      } catch (error: any) {
+      } catch (error) {
         // Native proxy entrypoints also accept function-level returns.
         if (!/Illegal return statement/.test(error.message)) throw error;
         code = "(function(){\n" + code + "\n})();\n";
@@ -592,10 +596,10 @@ export async function publishLayout(
   const mapped = jsonPaths(index, state.artifacts, suffix);
   mapped.adapters = adapterCopies;
   mapped.bindings = {};
-  for (const [owner, bindings] of Object.entries<any>(index.bindings ?? {})) {
+  for (const [owner, bindings] of Object.entries(index.bindings ?? {})) {
     const dest = state.artifacts[owner] ?? owner,
-      table: any = {};
-    for (const [url, binding] of Object.entries<any>(bindings)) {
+      table: Record<string, { path: string; binary?: boolean; echo?: boolean }> = {};
+    for (const [url, binding] of Object.entries(bindings)) {
       const next = scriptCopies.get(owner)?.get(binding.path);
       if (next) table[url] = { ...binding, path: next };
     }

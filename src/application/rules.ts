@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fetchOriginalBytes } from "../ingest/resources.ts";
-import { build, type RuleMetadata } from "../domain/aggregate.ts";
+import { build, type RuleConfiguration, type RuleMetadata, type RuleAnomaly } from "../domain/aggregate.ts";
 import { readJson, readOptional, commitFiles } from "../publish/transaction.ts";
 export const MARKER = "# Managed by: WayX Rule Aggregator";
 const digest = (v: string | Uint8Array) =>
@@ -27,19 +27,22 @@ export async function mapLimit<T, R>(
   );
   return result;
 }
+type RuleInputDescriptor = Omit<import("../domain/aggregate.ts").RuleSource, "category"> & { category?: string };
+type RuleInputEvidence = RuleInputDescriptor & { fetched_url: string; sha256: string };
+type RuleInputIndex = { version: number; configuration: string; sources: RuleInputEvidence[] };
 export async function loadInputs(
   root: string,
-  config: any,
+  config: RuleConfiguration,
   online: boolean,
   fetchBytes = fetchOriginalBytes,
-): Promise<[Record<string, Buffer>, any]> {
+): Promise<[Record<string, Buffer>, RuleInputIndex]> {
   const configBytes = await fs.readFile(
       path.join(root, ".github/sources/rules.json"),
     ),
     directory = ".github/monitor/.runtime/rule-inputs",
     data: Record<string, Buffer> = {};
   if (!online) {
-    const index = await readJson<any>(path.join(root, directory, "index.json"));
+    const index = await readJson<RuleInputIndex>(path.join(root, directory, "index.json"));
     if (index.version !== 1 || index.configuration !== digest(configBytes))
       throw Error("Missing or stale rule input evidence");
     for (const item of index.sources) {
@@ -63,15 +66,15 @@ export async function loadInputs(
           : undefined,
       accept: "application/vnd.github+json",
     });
-  const release = JSON.parse(
+  const release: { published_at: string; assets: { name: string; browser_download_url: string }[]; tag_name: string } = JSON.parse(
     (await get(config.geosite.release_api)).toString(),
   );
   if (Date.now() - Date.parse(release.published_at) > 14 * 86400000)
     throw Error("Official geosite release is stale");
   const assets = Object.fromEntries(
-    release.assets.map((a: any) => [a.name, a.browser_download_url]),
+    release.assets.map((a) => [a.name, a.browser_download_url]),
   );
-  const descriptors = [
+  const descriptors: RuleInputDescriptor[] = [
     ...config.sources,
     {
       id: "geosite",
@@ -89,7 +92,7 @@ export async function loadInputs(
       license: "MIT",
     },
   ];
-  const rows = await mapLimit(descriptors, 6, async (item: any) => {
+  const rows = await mapLimit(descriptors, 6, async (item) => {
     const errors: string[] = [];
     for (const url of [item.url, ...(item.mirrors ?? [])])
       try {
@@ -117,7 +120,7 @@ export async function loadInputs(
           payload,
           evidence: { ...item, fetched_url: url, sha256: digest(payload) },
         };
-      } catch (error: any) {
+      } catch (error) {
         errors.push(error.message);
       }
     throw Error(item.id + ": " + errors.join("; "));
@@ -160,10 +163,10 @@ export async function runRules(
 ) {
   const configFile = ".github/sources/rules.json",
     stateFile = ".github/sources/rules-state.json",
-    config = await readJson<any>(path.join(root, configFile));
+    config = await readJson<RuleConfiguration>(path.join(root, configFile));
   if (config.version !== 1) throw Error("Unsupported rule registry version");
-  const names = config.applications.map((a: any) => a.name),
-    ids = config.sources.map((s: any) => s.id);
+  const names = config.applications.map((a) => a.name),
+    ids = config.sources.map((s) => s.id);
   if (
     new Set(names).size !== names.length ||
     names.some((s: string) => !/^[a-z][a-z0-9_]*$/.test(s))
@@ -192,7 +195,7 @@ export async function runRules(
     ),
     [outputs, metadata, anomalies] = build(config, inputs);
   if (!Object.keys(outputs).length) throw Error("No generated rule sets");
-  const state = await readJson<any>(path.join(root, stateFile), {
+  const state = await readJson<{ version: number; outputs: Record<string, string>; counts?: Record<string, number>; configuration?: string; generator?: string }>(path.join(root, stateFile), {
       version: 1,
       outputs: {},
     }),
@@ -206,7 +209,7 @@ export async function runRules(
     hashes = Object.fromEntries(
       Object.entries(outputs).map(([file, content]) => [file, digest(content)]),
     );
-  const report: any = {
+  const report: { version: number; complete: boolean; quarantined: RuleAnomaly[]; filtered: RuleAnomaly[]; sources: RuleInputEvidence[]; counts: Record<string, number>; updatedFiles?: number } = {
     version: 1,
     complete: true,
     quarantined: anomalies.filter((a) => !a.code.startsWith("filtered-")),
@@ -288,7 +291,7 @@ export async function runRules(
   );
   await commitFiles(root, changes);
   console.log(
-    `Rule aggregation: files=${Object.keys(outputs).length}, rules=${Object.values(counts).reduce((a: any, b: number) => a + b, 0)}, quarantined=${report.quarantined.length}, ignored=${report.filtered.length}`,
+    `Rule aggregation: files=${Object.keys(outputs).length}, rules=${Object.values(counts).reduce((a, b) => a + b, 0)}, quarantined=${report.quarantined.length}, ignored=${report.filtered.length}`,
   );
   return report;
 }

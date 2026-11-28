@@ -1,10 +1,11 @@
 // Modified: 2026-11-03 (chance). Remove unused parser dependencies from the active conversion path.
-import type { SourceEntry, ParsedPlugin, SourceSectionItem, PreparedRewriteDeclaration, SourceScriptRecord, RewriteDependencyRecord } from "../domain/contracts.ts";
+import type { SourceEntry, ParsedPlugin, SourceSectionItem, PreparedRewriteDeclaration, SourceScriptRecord, RewriteDependencyRecord, SourceAction } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
 // Category: Converter / input
 import fs from "node:fs/promises";
+import type { RewriteDependencySpec } from "./rewrite.ts";
 import {
   splitScriptPipelineSources,
   isScriptV2,
@@ -68,7 +69,7 @@ function safeRelativePath(value: unknown, field: string): string {
 }
 function absoluteHttpUrl(value: unknown, field: string): string {
   const text = cleanString(value);
-  let url: any;
+  let url: URL;
   try {
     url = new URL(text);
   } catch {
@@ -154,7 +155,7 @@ export const WAYX_SUPPORTED_SOURCE_SECTIONS = new Set([
   "MITM",
   "MitM",
 ]);
-export function normalizePluginSource(text: any) {
+export function normalizePluginSource(text: unknown) {
   return String(text ?? "")
     .replace(/\r\n?/g, "\n")
     .replace(/^\uFEFF/, "");
@@ -175,7 +176,7 @@ export function parseLoonPlugin(text: unknown): ParsedPlugin {
   }
   return { header, sections };
 }
-export function isSupportedSourceSection(name: any) {
+export function isSupportedSourceSection(name: string) {
   return WAYX_SUPPORTED_SOURCE_SECTIONS.has(String(name ?? ""));
 }
 export function groupSourceSectionItems(lines: string[] = []): SourceSectionItem[] {
@@ -201,7 +202,7 @@ export function groupSourceSectionItems(lines: string[] = []): SourceSectionItem
     const atomicJsonPipeline = projected.length > 1 &&
       projected.some(line => /\bthen\s+(?:request|response)\.json\./.test(line));
     const members = atomicJsonPipeline ? [trimmed] : projected;
-    members.forEach((line: string, index: number): any =>
+    members.forEach((line: string, index: number) =>
       items.push({
         comments: index === 0 ? pending : [],
         line,
@@ -216,16 +217,16 @@ export function groupSourceSectionItems(lines: string[] = []): SourceSectionItem
     items.push({ comments: pending, line: null, sourceIndex: lines.length });
   return items;
 }
-export function cleanSourceComments(comments: any = []): any {
+export function cleanSourceComments(comments: readonly string[] = []) {
   return comments
-    .map((value: any): any => value || "")
-    .map((value: any) => (String(value).trim() ? String(value) : ""))
+    .map((value) => value || "")
+    .map((value) => (String(value).trim() ? String(value) : ""))
     .filter(
-      (value: any, index: any, all: any) =>
+      (value, index, all) =>
         !(value === "" && all[index - 1] === ""),
     );
 }
-export function sourceCommentText(raw: any) {
+export function sourceCommentText(raw: string) {
   const text = String(raw ?? "").trim();
   const match = text.match(/^(?:#|;|\/\/)\s*(.*?)\s*$/);
   return match ? match[1].trim() : null;
@@ -239,10 +240,10 @@ export function sourceCommentText(raw: any) {
 // Category: Converter / Script / Materialization
 export function discoverSourceScriptUrls(
   source: string,
-  { parsed = null }: any = {},
-): any {
+  { parsed = null }: { parsed?: ParsedPlugin | null } = {},
+) {
   const text = String(source ?? "");
-  const urls: any = new Set(
+  const urls = new Set(
     // Modified: 2026-11-01 (chance). Disabled declarations remain dependencies, but documentation/commented examples are not executable script references.
     [
       ...text
@@ -250,9 +251,9 @@ export function discoverSourceScriptUrls(
         .filter((line: string) => !/^\s*(?:#|;|\/\/)/.test(line))
         .join("\n")
         .matchAll(/script-path\s*=\s*(?:"([^"\n]+)"|'([^'\n]+)'|([^,\s]+))/gi),
-    ].map((match: any): any => (match[1] ?? match[2] ?? match[3]).trim()),
+    ].map((match) => (match[1] ?? match[2] ?? match[3]).trim()),
   );
-  const plugin: any = parsed || parseLoonPlugin(text);
+  const plugin = parsed || parseLoonPlugin(text);
   for (const item of [
     ...groupSourceSectionItems(plugin.sections.get("Script")),
     ...groupSourceSectionItems(plugin.sections.get("Rewrite")),
@@ -268,9 +269,9 @@ export function discoverSourceScriptUrls(
   return [...urls];
 }
 export async function inspectSourceScript(
-  reference: any,
+  reference: string,
   pluginSourceUrl: string,
-  { fetchText = fetchOriginalText }: any = {},
+  { fetchText = fetchOriginalText }: { fetchText?: (url: string) => Promise<string> } = {},
 ): Promise<SourceScriptRecord> {
   const originalUrl = resolveOriginalUrl(reference, pluginSourceUrl);
   try {
@@ -283,7 +284,7 @@ export async function inspectSourceScript(
       source: normalized,
       sourceError: null,
     };
-  } catch (error: any) {
+  } catch (error) {
     return {
       qx: originalUrl,
       surge: originalUrl,
@@ -295,7 +296,7 @@ export async function inspectSourceScript(
 export async function materializeSourceScripts(
   source: string,
   pluginSourceUrl: string,
-  { parsed = null, fetchText = fetchOriginalText }: any = {},
+  { parsed = null, fetchText = fetchOriginalText }: { parsed?: ParsedPlugin | null; fetchText?: (url: string) => Promise<string> } = {},
 ): Promise<Map<string, SourceScriptRecord>> {
   const scriptMap = new Map<string, SourceScriptRecord>();
   for (const reference of discoverSourceScriptUrls(source, { parsed })) {
@@ -323,13 +324,13 @@ export function prepareRewriteDeclarations(parsed: ParsedPlugin): Map<string, Pr
         validateRewriteV2Ast(ast);
         declarations.set(item.line, { ast });
       } else {
-        const legacy: any = splitLegacyRewriteLine(item.line);
+        const legacy = splitLegacyRewriteLine(item.line);
         if (legacy)
           declarations.set(item.line, {
             ir: legacyRewriteToSemanticIr(legacy.pattern, legacy.action),
           });
       }
-    } catch (error: any) {
+    } catch (error) {
       declarations.set(item.line, { error });
     }
   }
@@ -353,19 +354,26 @@ function rewriteDependencyItems(parsed: ParsedPlugin): SourceSectionItem[] {
 }
 // One action-indexed result contract for Mock/JQ dependencies. Payload reading
 // stays with each format; one failure must not remove adjacent successful actions.
+// Modified: 2026-11-28 (chance). Preserve prepared declaration and action indices through file acquisition.
+interface DependencyReads {
+  fetchText?: (url: string) => Promise<string>;
+  fetchBytes?: (url: string) => Promise<Uint8Array>;
+  cachedBytes?: ((url: string) => Promise<Uint8Array | null>) | null;
+  declarations?: Map<string, PreparedRewriteDeclaration> | null;
+}
 async function readActionDependencies(
-  files: any,
-  { single, read, spec, label }: any,
-): Promise<any> {
+  files: readonly { action: SourceAction; index: number }[],
+  { single, read, spec, label }: { single: boolean; read: (action: SourceAction) => Promise<RewriteDependencyRecord>; spec: (action: SourceAction) => RewriteDependencySpec | null; label: string },
+): Promise<RewriteDependencyRecord> {
   if (single) return read(files[0].action);
-  const byAction: any = {},
+  const byAction: Record<number, RewriteDependencyRecord> = {},
     failures: string[] = [];
   for (const { action, index } of files)
     try {
       byAction[index] = await read(action);
-    } catch (error: any) {
+    } catch (error) {
       const reason = String(error?.message || error).split("\n")[0];
-      let sourceFile: any;
+      let sourceFile: string | null | undefined;
       try {
         sourceFile = spec(action)?.url;
       } catch {}
@@ -383,41 +391,41 @@ async function readActionDependencies(
   };
 }
 export async function materializeMockFiles(
-  entry: any,
-  parsed: any,
+  entry: Pick<SourceEntry, "source">,
+  parsed: ParsedPlugin,
   {
     fetchText = fetchOriginalText,
     fetchBytes = fetchOriginalBytes,
     cachedBytes = null,
     declarations = null,
-  }: any = {},
-): Promise<any> {
-  const reads: any = memoizeResourceReads({ fetchText, fetchBytes });
-  const out: any = new Map();
+  }: DependencyReads = {},
+): Promise<Map<string, RewriteDependencyRecord>> {
+  const reads = memoizeResourceReads({ fetchText, fetchBytes });
+  const out = new Map();
   for (const item of rewriteDependencyItems(parsed)) {
     if (!item.line || !isRewriteV2(item.line) || isScriptV2(item.line))
       continue;
     try {
-      const ast: any = preparedRewriteAst(declarations, item.line);
+      const ast = preparedRewriteAst(declarations, item.line);
       validateRewriteV2Ast(ast);
-      const files: any = ast.actions
-        .map((action: any, index: any): any => ({
+      const files = ast.actions
+        .map((action, index) => ({
           action,
           index: ast.sourceActionIndices?.[index] ?? index,
         }))
-        .filter(({ action }: any) =>
+        .filter(({ action }) =>
           /^(?:request|response)\.body\.mock_file$/.test(action.name),
         );
       if (!files.length) continue;
       // Separate output retains every file action and its original index.
       // Keep the historical single-file shape for independent declarations.
-      const text: any = reads.fetchText;
-      const read: any = async (action: any): Promise<any> => {
-        const plan: any = dependencySpecFromAction(action, {
+      const text = reads.fetchText;
+      const read = async (action: SourceAction): Promise<RewriteDependencyRecord> => {
+        const plan = dependencySpecFromAction(action, {
           pluginSourceUrl: entry.source,
         });
-        if (plan.base64) {
-          const body: any = await text(plan.url);
+        if (plan!.base64) {
+          const body = await text(plan!.url!);
           const compact = String(body).replace(/\s+/g, "");
           if (
             !/^[A-Za-z0-9+/]*={0,2}$/.test(compact) ||
@@ -426,24 +434,24 @@ export async function materializeMockFiles(
             throw new Error("invalid Base64 mock_file content");
           return {
             bodyBase64: Buffer.from(compact, "base64").toString("base64"),
-            sourceFile: plan.url,
+            sourceFile: plan!.url!,
           };
         }
-        if (plan.binary)
+        if (plan!.binary)
           return {
-            bodyBase64: Buffer.from(await reads.fetchBytes(plan.url)).toString(
+            bodyBase64: Buffer.from(await reads.fetchBytes(plan!.url!)).toString(
               "base64",
             ),
-            sourceFile: plan.url,
+            sourceFile: plan!.url!,
           };
-        const bodyText = await text(plan.url);
+        const bodyText = await text(plan!.url!);
         const bodyBytes =
           action.name === "response.body.mock_file" && cachedBytes
-            ? await cachedBytes(plan.url)
+            ? await cachedBytes(plan!.url!)
             : null;
         return {
           bodyText,
-          sourceFile: plan.url,
+          sourceFile: plan!.url!,
           ...(bodyBytes ? { bodyBytes } : {}),
         };
       };
@@ -453,11 +461,11 @@ export async function materializeMockFiles(
           single: files.length === 1,
           read,
           label: "mock_file",
-          spec: (action: any): any =>
+          spec: (action: SourceAction) =>
             dependencySpecFromAction(action, { pluginSourceUrl: entry.source }),
         }),
       );
-    } catch (error: any) {
+    } catch (error) {
       out.set(item.line, {
         error: String(error?.message || error).split("\n")[0],
       });
@@ -465,7 +473,7 @@ export async function materializeMockFiles(
   }
   return out;
 }
-function splitLegacyRewriteLine(line: any): any {
+function splitLegacyRewriteLine(line: string) {
   const source = String(line ?? "").trim();
   const idx = source.search(/\s/);
   if (idx < 0) return null;
@@ -480,43 +488,43 @@ function splitLegacyRewriteLine(line: any): any {
 // Modified: 2026-11-14 (chance). Resolve file programs only for native inline
 // target expressions; do not produce a second standalone publication format.
 export async function materializeJqFiles(
-  entry: any,
-  parsed: any,
-  { fetchText = fetchOriginalText, declarations = null }: any = {},
-): Promise<any> {
-  const reads: any = memoizeResourceReads({ fetchText });
-  const out: any = new Map();
+  entry: Pick<SourceEntry, "source">,
+  parsed: ParsedPlugin,
+  { fetchText = fetchOriginalText, declarations = null }: DependencyReads = {},
+): Promise<Map<string, RewriteDependencyRecord>> {
+  const reads = memoizeResourceReads({ fetchText });
+  const out = new Map();
   for (const item of rewriteDependencyItems(parsed)) {
     if (!item.line) continue;
     try {
-      let spec: any = null;
+      let spec: RewriteDependencySpec | null = null;
       if (isScriptV2(item.line)) continue;
       if (isRewriteV2(item.line)) {
-        const ast: any = preparedRewriteAst(declarations, item.line);
+        const ast = preparedRewriteAst(declarations, item.line);
         validateRewriteV2Ast(ast);
-        const files: any = ast.actions
-          .map((action: any, index: any): any => ({
+        const files = ast.actions
+          .map((action, index) => ({
             action,
             index: ast.sourceActionIndices?.[index] ?? index,
           }))
           .filter(
-            ({ action }: any): any =>
+            ({ action }) =>
               /^(request|response)\.json\.(jq|jq_file)$/.test(action.name) &&
               (action.name.endsWith(".jq_file") ||
                 /^jq-path\s*=/i.test(
-                  String(action.args[0]?.value || "").trim(),
+                  String((action.args[0] as { value?: unknown })?.value || "").trim(),
                 )),
           );
         if (!files.length) continue;
-        const read: any = async (action: any): Promise<any> => {
-          const dependency: any = jqDependencySpecFromAction(action, {
+        const read = async (action: SourceAction): Promise<RewriteDependencyRecord> => {
+          const dependency = jqDependencySpecFromAction(action, {
             pluginSourceUrl: entry.source,
           });
           if (!dependency?.resolvable || !dependency.url)
             throw new Error(
               dependency?.reason || "JQ dependency is not resolvable",
             );
-          const content: any = minifyJqFile(
+          const content = minifyJqFile(
             await reads.fetchText(dependency.url),
           );
           if (!content)
@@ -533,7 +541,7 @@ export async function materializeJqFiles(
             single: (ast.sourceActionCount || ast.actions.length) === 1,
             read,
             label: "JQ",
-            spec: (action: any): any =>
+            spec: (action: SourceAction) =>
               jqDependencySpecFromAction(action, {
                 pluginSourceUrl: entry.source,
               }),
@@ -541,9 +549,9 @@ export async function materializeJqFiles(
         );
         continue;
       } else {
-        const legacy: any = splitLegacyRewriteLine(item.line);
+        const legacy = splitLegacyRewriteLine(item.line);
         if (!legacy) continue;
-        const ir: any = legacyRewriteToSemanticIr(
+        const ir = legacyRewriteToSemanticIr(
           legacy.pattern,
           legacy.action,
         );
@@ -555,15 +563,15 @@ export async function materializeJqFiles(
       if (!spec.resolvable || !spec.url) {
         throw new Error(spec.reason || "JQ dependency is not resolvable");
       }
-      const text: any = await reads.fetchText(spec.url);
-      const content: any = minifyJqFile(text);
+      const text = await reads.fetchText(spec.url);
+      const content = minifyJqFile(text);
       if (!content) throw new Error("JQ dependency resolved to empty content");
       out.set(item.line, {
         content,
         sourceFile: spec.url,
         legacyAlias: Boolean(spec.legacyAlias),
       });
-    } catch (error: any) {
+    } catch (error) {
       out.set(item.line, {
         error: String(error?.message || error).split("\n")[0],
       });
@@ -572,9 +580,9 @@ export async function materializeJqFiles(
   return out;
 }
 export async function materializeRewriteDependencies(
-  entry: any,
-  parsed: any,
-  options: any = {},
+  entry: Pick<SourceEntry, "source">,
+  parsed: ParsedPlugin,
+  options: DependencyReads = {},
 ): Promise<{ mockFiles: Map<string, RewriteDependencyRecord>; jqFiles: Map<string, RewriteDependencyRecord> }> {
   const [mockFiles, jqFiles] = await Promise.all([
     materializeMockFiles(entry, parsed, options),

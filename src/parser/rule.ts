@@ -17,10 +17,10 @@ import {
 // Author: chance
 // Category: Converter / Rule / AST
 export const LOON_LOGICAL_RULE_TYPES = new Set(["AND", "OR", "NOT"]);
-export function splitTopLevelCsv(input: string): any {
+export function splitTopLevelCsv(input: string) {
   const out: string[] = [];
   let buf = "",
-    quote: any = null,
+    quote: string | null = null,
     esc = false,
     depth = 0;
   for (const ch of String(input ?? "")) {
@@ -62,7 +62,7 @@ export function splitTopLevelCsv(input: string): any {
   out.push(buf.trim());
   return out;
 }
-export function unquoteRuleField(value: any) {
+export function unquoteRuleField(value: unknown) {
   const s = String(value ?? "").trim();
   if (
     (s.startsWith('"') && s.endsWith('"')) ||
@@ -72,7 +72,7 @@ export function unquoteRuleField(value: any) {
   }
   return s;
 }
-export function splitLogicalSubrules(value: any): any {
+export function splitLogicalSubrules(value: unknown) {
   const source = String(value ?? "").trim();
   if (!source.startsWith("(") || !source.endsWith(")")) return null;
   const inner = source.slice(1, -1).trim();
@@ -84,7 +84,7 @@ export function splitLogicalSubrules(value: any): any {
     if (inner[i] !== "(") return null;
     const start = ++i;
     let depth = 1,
-      quote: any = null,
+      quote: string | null = null,
       esc = false;
     for (; i < inner.length; i++) {
       const ch = inner[i];
@@ -123,7 +123,42 @@ export function splitLogicalSubrules(value: any): any {
   }
   return out;
 }
-function parseParameter(raw: any) {
+// Modified: 2026-11-28 (chance). Keep the same typed rule tree across parsing,
+// validation and target-specific rendering.
+export interface LoonRuleAst {
+  source: string;
+  syntaxSource: string;
+  inlineComment: string;
+  nested: boolean;
+  kind: "logical" | "rule";
+  type: string;
+  fieldCount: number;
+  valueRaw: string;
+  value: string;
+  policyRaw: string | null;
+  policy: string;
+  params: { raw: string; name: string; value: string | null }[];
+  children: LoonRuleAst[];
+}
+type ParsedRule =
+  | { ok: true; ast: LoonRuleAst; reason: null }
+  | { ok: false; ast: LoonRuleAst | null; reason: string };
+
+type QxRulePlan = { kind: "comment" | "filter" | "rewrite"; line: string; reason: string };
+type SurgeRulePlan = {
+  kind: "comment" | "rule" | "map";
+  section?: "rule" | "map";
+  line?: string;
+  lines: string[];
+  reason: string;
+};
+interface SurgeRuleOptions {
+  proxyPolicyPlaceholder?: string | null;
+  matchingEnhancements?: boolean;
+  preMatching?: boolean;
+}
+
+function parseParameter(raw: unknown) {
   const text = String(raw ?? "").trim();
   const eq = text.indexOf("=");
   if (eq < 0) return { raw: text, name: text.toLowerCase(), value: null };
@@ -133,21 +168,21 @@ function parseParameter(raw: any) {
     value: text.slice(eq + 1).trim(),
   };
 }
-export function parseLoonRuleAst(line: any, { nested = false }: any = {}): any {
+export function parseLoonRuleAst(line: unknown, { nested = false }: { nested?: boolean } = {}): ParsedRule {
   const source = String(line ?? "").trim();
   const inline = source.match(/^(.*?)\s+\/\/\s*(.+)$/);
   const syntaxSource = inline ? inline[1].trim() : source;
   const inlineComment = inline ? inline[2].trim() : "";
-  const parts: any = splitTopLevelCsv(syntaxSource);
+  const parts = splitTopLevelCsv(syntaxSource);
   const type = String(parts[0] ?? "")
     .trim()
     .toUpperCase();
   if (!type) return { ok: false, ast: null, reason: "missing-rule-type" };
   const logical = LOON_LOGICAL_RULE_TYPES.has(type);
   const policyRaw = nested ? null : String(parts[2] ?? "").trim();
-  const parameterFields: any = nested ? parts.slice(2) : parts.slice(3);
-  const params: any = parameterFields.filter(Boolean).map(parseParameter);
-  const ast: any = {
+  const parameterFields = nested ? parts.slice(2) : parts.slice(3);
+  const params = parameterFields.filter(Boolean).map(parseParameter);
+  const ast: LoonRuleAst = {
     source,
     syntaxSource,
     inlineComment,
@@ -165,7 +200,7 @@ export function parseLoonRuleAst(line: any, { nested = false }: any = {}): any {
     children: [],
   };
   if (!logical) return { ok: true, ast, reason: null };
-  const childSources: any = splitLogicalSubrules(ast.valueRaw);
+  const childSources = splitLogicalSubrules(ast.valueRaw);
   if (!childSources?.length) {
     return { ok: false, ast, reason: `invalid-${type}-subrules` };
   }
@@ -173,41 +208,41 @@ export function parseLoonRuleAst(line: any, { nested = false }: any = {}): any {
     return { ok: false, ast, reason: "invalid-NOT-cardinality" };
   }
   for (const childSource of childSources) {
-    const child: any = parseLoonRuleAst(childSource, { nested: true });
+    const child = parseLoonRuleAst(childSource, { nested: true });
     if (!child.ok) return { ok: false, ast, reason: child.reason };
     ast.children.push(child.ast);
   }
   return { ok: true, ast, reason: null };
 }
 export function walkRuleAst(
-  ast: any,
-  visitor: any,
-  { depth = 0 }: any = {},
+  ast: LoonRuleAst,
+  visitor: (node: LoonRuleAst, context: { depth: number }) => void,
+  { depth = 0 }: { depth?: number } = {},
 ) {
   visitor(ast, { depth });
   for (const child of ast?.children ?? [])
     walkRuleAst(child, visitor, { depth: depth + 1 });
 }
-export function ruleTypesInAst(ast: any): any {
-  const types: any = [];
-  walkRuleAst(ast, (node: any): any => types.push(node.type));
+export function ruleTypesInAst(ast: LoonRuleAst): string[] {
+  const types: string[] = [];
+  walkRuleAst(ast, (node: LoonRuleAst) => types.push(node.type));
   return types;
 }
 export function renderRuleAst(
-  ast: any,
-  { valueRenderer = null, policyOverride = null }: any = {},
-): any {
-  const renderValue: any = (node: any): any => {
+  ast: LoonRuleAst,
+  { valueRenderer = null, policyOverride = null }: { valueRenderer?: ((node: LoonRuleAst) => string) | null; policyOverride?: string | null } = {},
+): string {
+  const renderValue = (node: LoonRuleAst) => {
     if (typeof valueRenderer === "function") return valueRenderer(node);
     return node.valueRaw;
   };
-  let value: any;
+  let value: string;
   if (ast.kind === "logical") {
     value =
       "(" +
       ast.children
         .map(
-          (child: any) =>
+          (child) =>
             "(" + renderRuleAst(child, { valueRenderer }) + ")",
         )
         .join(",") +
@@ -215,7 +250,7 @@ export function renderRuleAst(
   } else {
     value = renderValue(ast);
   }
-  const parts: any = [ast.type, value];
+  const parts = [ast.type, value];
   if (!ast.nested) {
     parts.push(policyOverride ?? ast.policyRaw ?? "");
   }
@@ -263,8 +298,9 @@ export const QX_RULE_TYPES = new Map([
 // Surge URL-REGEX Map Local arguments. Null means no verified direct mapping.
 // DROP/NO-DROP use the existing WayX QX reject adaptation; QX cannot express
 // their connection discard / retry behavior as distinct rewrite actions.
-export const RULE_POLICY_MAPPINGS: any = new Map(
-  [
+type RulePolicyFields = [string, [string | null, string | null, string | null, string | null]];
+export const RULE_POLICY_MAPPINGS = new Map(
+  ([
     ["DIRECT", ["direct", null, "DIRECT", null]],
     ["PROXY", ["PROXY", null, "PROXY", null]],
     ["REJECT", ["reject", "reject", "REJECT", null]],
@@ -299,7 +335,7 @@ export const RULE_POLICY_MAPPINGS: any = new Map(
     ["HYBRID", [null, null, "HYBRID", null]],
     ["NO-HYBRID", [null, null, "NO-HYBRID", null]],
     ["REJECT-VIDEO", [null, null, null, null]],
-  ].map(([name, [qxFilter, qxRewrite, surgePolicy, surgeMap]]: any): any => [
+  ] as RulePolicyFields[]).map(([name, [qxFilter, qxRewrite, surgePolicy, surgeMap]]) => [
     name,
     Object.freeze({ qxFilter, qxRewrite, surgePolicy, surgeMap }),
   ]),
@@ -310,7 +346,7 @@ const WAYX_DIRECT_DOMAINS = new Set([
   "dns.weixin.qq.com",
   "dns.weixin.qq.com.cn",
 ]);
-function applyWayxDomainPolicy(ast: any): any {
+function applyWayxDomainPolicy(ast: LoonRuleAst): LoonRuleAst {
   if (
     ast.nested ||
     ast.type !== "DOMAIN" ||
@@ -322,13 +358,13 @@ function applyWayxDomainPolicy(ast: any): any {
     policy: "DIRECT",
     policyRaw: "DIRECT",
     params: ast.params.filter(
-      (param: any) => param.name !== "pre-matching",
+      (param) => param.name !== "pre-matching",
     ),
   };
 }
-export function planQxRuleAst(ast: any) {
+export function planQxRuleAst(ast: LoonRuleAst): QxRulePlan {
   ast = applyWayxDomainPolicy(ast);
-  const source: any = ast.source;
+  const source = ast.source;
   if (ast.kind === "logical") {
     return {
       kind: "comment",
@@ -336,13 +372,13 @@ export function planQxRuleAst(ast: any) {
       reason: "unsupported-qx-rule-comment",
     };
   }
-  const type: any = ast.type;
-  const value: any =
+  const type = ast.type;
+  const value =
     type === "URL-REGEX" ? normalizeUrlRegexForTarget(ast.value) : ast.value;
-  const policyRaw: any = ast.policy;
-  const mapping: any = RULE_POLICY_MAPPINGS.get(policyRaw);
+  const policyRaw = ast.policy;
+  const mapping = RULE_POLICY_MAPPINGS.get(policyRaw);
   if (type === "URL-REGEX") {
-    const action: any = mapping?.qxRewrite;
+    const action = mapping?.qxRewrite;
     if (action)
       return {
         kind: "rewrite",
@@ -358,7 +394,7 @@ export function planQxRuleAst(ast: any) {
       reason: "unsupported-qx-rule-comment",
     };
   }
-  const policy: any = mapping?.qxFilter;
+  const policy = mapping?.qxFilter;
   if (!policy && /^REJECT/.test(policyRaw)) {
     return {
       kind: "comment",
@@ -381,7 +417,7 @@ export function planQxRuleAst(ast: any) {
 export const SURGE_RULE_TYPES = SURGE_WAYX_RULE_TYPES;
 // Module [Rule] uses the same reviewed built-in policy registry as Surge Rule.
 export const SURGE_MODULE_POLICIES = SURGE_WAYX_RULE_BUILTIN_POLICIES;
-function surgeValueRenderer(node: any): any {
+function surgeValueRenderer(node: LoonRuleAst): string {
   if (node.type !== "URL-REGEX") return node.valueRaw;
   return surgeRegexParameter(normalizeUrlRegexForTarget(node.value));
 }
@@ -417,9 +453,9 @@ const SURGE_PRE_TYPES = new Set([
   "CELLULAR-CARRIER",
   "CELLULAR-RADIO",
 ]);
-function surgePreEligible(node: any, { allowRuleSet = false }: any = {}): any {
+function surgePreEligible(node: LoonRuleAst, { allowRuleSet = false }: { allowRuleSet?: boolean } = {}): boolean {
   if (node.kind === "logical")
-    return node.children.every((child: any): any =>
+    return node.children.every((child) =>
       surgePreEligible(child, { allowRuleSet }),
     );
   return (
@@ -427,16 +463,16 @@ function surgePreEligible(node: any, { allowRuleSet = false }: any = {}): any {
   );
 }
 function enhancedSurgeRuleAst(
-  ast: any,
-  policy: any,
-  { preMatching = true }: any = {},
-): any {
-  const result: any = structuredClone(ast);
-  const add: any = (node: any, name: any) => {
-    if (!node.params.some((p: any) => p.name === name))
+  ast: LoonRuleAst,
+  policy: string,
+  { preMatching = true }: Pick<SurgeRuleOptions, "preMatching"> = {},
+): LoonRuleAst {
+  const result = structuredClone(ast);
+  const add = (node: LoonRuleAst, name: string) => {
+    if (!node.params.some((p) => p.name === name))
       node.params.push({ name, raw: name, value: null });
   };
-  walkRuleAst(result, (node: any) => {
+  walkRuleAst(result, (node: LoonRuleAst) => {
     if (SURGE_EXTENDED_TYPES.has(node.type)) add(node, "extended-matching");
   });
   if (
@@ -448,17 +484,17 @@ function enhancedSurgeRuleAst(
     add(result, "pre-matching");
   return result;
 }
-export function validateSurgeRuleAst(ast: any): any {
-  const types: any = [];
-  function visit(node: any, logicalDepth: number = 0): any {
+export function validateSurgeRuleAst(ast: LoonRuleAst) {
+  const types: string[] = [];
+  function visit(node: LoonRuleAst, logicalDepth: number = 0): string | null {
     types.push(node.type);
     if (
-      node.params.some((p: any) => p.name === "extended-matching") &&
+      node.params.some((p) => p.name === "extended-matching") &&
       !SURGE_EXTENDED_TYPES.has(node.type)
     )
       return "extended-matching-unsupported-type:" + node.type;
     if (
-      node.params.some((p: any) => p.name === "pre-matching") &&
+      node.params.some((p) => p.name === "pre-matching") &&
       (node.nested ||
         !SURGE_REJECT_MATCH_POLICIES.has(node.policy) ||
         !surgePreEligible(node, { allowRuleSet: true }))
@@ -480,19 +516,19 @@ export function validateSurgeRuleAst(ast: any): any {
         return `${node.type}-requires-subrules`;
       }
       for (const child of node.children) {
-        const reason: any = visit(child, nextLogicalDepth);
+        const reason = visit(child, nextLogicalDepth);
         if (reason) return reason;
       }
     }
     return null;
   }
-  const reason: any = visit(ast);
+  const reason = visit(ast);
   return { ok: !reason, types, reason };
 }
 export function renderSurgeRuleAst(
-  ast: any,
-  { policyOverride = null }: any = {},
-): any {
+  ast: LoonRuleAst,
+  { policyOverride = null }: { policyOverride?: string | null } = {},
+): string {
   return renderRuleAst(ast, {
     valueRenderer: surgeValueRenderer,
     policyOverride,
@@ -500,40 +536,40 @@ export function renderSurgeRuleAst(
 }
 export function surgeRuleTypesInTree(
   line: string,
-  { subrule = false }: any = {},
-): any {
-  const parsed: any = parseLoonRuleAst(line, { nested: subrule });
+  { subrule = false }: { subrule?: boolean } = {},
+) {
+  const parsed = parseLoonRuleAst(line, { nested: subrule });
   if (!parsed.ok) {
-    const type: any = parsed.ast?.type ? [parsed.ast.type] : [];
+    const type = parsed.ast?.type ? [parsed.ast.type] : [];
     return { ok: false, types: type, reason: parsed.reason };
   }
   return validateSurgeRuleAst(parsed.ast);
 }
 export function planSurgeModuleRuleAst(
-  ast: any,
+  ast: LoonRuleAst,
   {
     proxyPolicyPlaceholder = null,
     matchingEnhancements = false,
     preMatching = true,
-  }: any = {},
-): any {
+  }: SurgeRuleOptions = {},
+): SurgeRulePlan {
   ast = applyWayxDomainPolicy(ast);
   // Modified: 2026-10-25 (chance). User requests no-resolve for all Surge
   // destination-IP predicates, including nested ones; preserve policies/order
   // and keep the caller's source AST unchanged. Do not duplicate existing flags.
   ast = structuredClone(ast);
-  walkRuleAst(ast, (node: any) => {
+  walkRuleAst(ast, (node: LoonRuleAst) => {
     if (
       ["IP-CIDR", "IP-CIDR6", "GEOIP", "IP-ASN"].includes(node.type) &&
-      !node.params.some((p: any) => p.name === "no-resolve")
+      !node.params.some((p) => p.name === "no-resolve")
     )
       node.params.push({ name: "no-resolve", raw: "no-resolve", value: null });
   });
-  const source: any = ast.source;
-  const type: any = ast.type;
+  const source = ast.source;
+  const type = ast.type;
   if (type === "URL-REGEX") {
-    const pattern: any = normalizeUrlRegexForTarget(ast.value);
-    const argumentsOut: any = RULE_POLICY_MAPPINGS.get(ast.policy)?.surgeMap;
+    const pattern = normalizeUrlRegexForTarget(ast.value);
+    const argumentsOut = RULE_POLICY_MAPPINGS.get(ast.policy)?.surgeMap;
     const mapLocal = argumentsOut ? `${pattern} ${argumentsOut}` : null;
     if (mapLocal) {
       return {
@@ -545,7 +581,7 @@ export function planSurgeModuleRuleAst(
       };
     }
   }
-  const typeTree: any = validateSurgeRuleAst(ast);
+  const typeTree = validateSurgeRuleAst(ast);
   if (!typeTree.ok) {
     return {
       kind: "comment",
@@ -566,7 +602,7 @@ export function planSurgeModuleRuleAst(
       reason: "invalid-rule",
     };
   }
-  const policy: any = RULE_POLICY_MAPPINGS.get(ast.policy)?.surgePolicy;
+  const policy = RULE_POLICY_MAPPINGS.get(ast.policy)?.surgePolicy;
   if (policy === "PROXY") {
     if (!proxyPolicyPlaceholder) {
       return {
@@ -580,7 +616,7 @@ export function planSurgeModuleRuleAst(
         reason: "source-proxy-policy-needs-argument",
       };
     }
-    const lineOut: any = renderSurgeRuleAst(
+    const lineOut = renderSurgeRuleAst(
       matchingEnhancements
         ? enhancedSurgeRuleAst(ast, policy, { preMatching })
         : ast,
@@ -594,7 +630,7 @@ export function planSurgeModuleRuleAst(
       reason: "proxy-policy-argument",
     };
   }
-  if (!SURGE_MODULE_POLICIES.has(policy)) {
+  if (!SURGE_MODULE_POLICIES.has(policy!)) {
     return {
       kind: "comment",
       lines: [
@@ -604,9 +640,9 @@ export function planSurgeModuleRuleAst(
       reason: "external-policy",
     };
   }
-  const lineOut: any = renderSurgeRuleAst(
+  const lineOut = renderSurgeRuleAst(
     matchingEnhancements
-      ? enhancedSurgeRuleAst(ast, policy, { preMatching })
+      ? enhancedSurgeRuleAst(ast, policy!, { preMatching })
       : ast,
     { policyOverride: policy },
   );
@@ -618,7 +654,9 @@ export function planSurgeModuleRuleAst(
     reason: "module-native-rule",
   };
 }
-function invalidRulePlan(source: string, reason: any, target: string) {
+function invalidRulePlan(source: string, reason: string, target: "qx"): QxRulePlan;
+function invalidRulePlan(source: string, reason: string, target: "surge"): SurgeRulePlan;
+function invalidRulePlan(source: string, reason: string, target: "qx" | "surge"): QxRulePlan | SurgeRulePlan {
   if (target === "qx") {
     return {
       kind: "comment",
@@ -637,20 +675,22 @@ function invalidRulePlan(source: string, reason: any, target: string) {
     reason: "invalid-rule",
   };
 }
+function repairedRulePlan(parsed: Extract<ParsedRule, { ok: true }>, source: string, target: "qx"): QxRulePlan;
+function repairedRulePlan(parsed: Extract<ParsedRule, { ok: true }>, source: string, target: "surge", options?: SurgeRuleOptions): SurgeRulePlan;
 function repairedRulePlan(
-  parsed: any,
+  parsed: Extract<ParsedRule, { ok: true }>,
   source: string,
-  target: string,
-  options: any = undefined,
-): any {
-  const repaired: any = { ast: structuredClone(parsed.ast), changed: false };
-  walkRuleAst(repaired.ast, (node: any) => {
+  target: "qx" | "surge",
+  options: SurgeRuleOptions | undefined = undefined,
+): QxRulePlan | SurgeRulePlan {
+  const repaired = { ast: structuredClone(parsed.ast), changed: false };
+  walkRuleAst(repaired.ast, (node: LoonRuleAst) => {
     if (node.type !== "URL-REGEX") return;
     const normalized = repairTargetRegexSyntax(node.value);
     node.value = normalized.pattern;
     repaired.changed ||= normalized.changed;
   });
-  const plan: any =
+  const plan =
     target === "qx"
       ? planQxRuleAst(repaired.ast)
       : planSurgeModuleRuleAst(repaired.ast, options);
@@ -661,24 +701,24 @@ function repairedRulePlan(
   ];
   return target === "qx"
     ? { ...plan, line: note.join("\n") + "\n" + plan.line }
-    : { ...plan, lines: [...note, ...plan.lines] };
+    : { ...plan, lines: [...note, ...(plan as SurgeRulePlan).lines] };
 }
-export function qxRule(line: any): any {
+export function qxRule(line: unknown): QxRulePlan {
   const source = String(line ?? "").trim();
-  const parsed: any = parseLoonRuleAst(source);
+  const parsed = parseLoonRuleAst(source);
   if (!parsed.ok) return invalidRulePlan(source, parsed.reason, "qx");
   return repairedRulePlan(parsed, source, "qx");
 }
 export function surgeModuleRule(
-  line: any,
+  line: unknown,
   {
     proxyPolicyPlaceholder = null,
     matchingEnhancements = false,
     preMatching = true,
-  }: any = {},
-): any {
+  }: SurgeRuleOptions = {},
+): SurgeRulePlan {
   const source = String(line ?? "").trim();
-  const parsed: any = parseLoonRuleAst(source);
+  const parsed = parseLoonRuleAst(source);
   if (!parsed.ok) return invalidRulePlan(source, parsed.reason, "surge");
   return repairedRulePlan(parsed, source, "surge", {
     proxyPolicyPlaceholder,
@@ -686,6 +726,6 @@ export function surgeModuleRule(
     preMatching,
   });
 }
-export function surgeRule(line: any): any {
+export function surgeRule(line: unknown): string {
   return surgeModuleRule(line).lines.join("\n");
 }

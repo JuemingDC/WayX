@@ -40,10 +40,10 @@ const normalize = (text: unknown) =>
     .replace(/^\uFEFF/, "");
 const read = async (file: string): Promise<string> =>
   normalize(await fs.readFile(file, "utf8"));
-async function readJson(file: string, fallback: any = null): Promise<any> {
+async function readJson<T>(file: string, fallback: T = null as T): Promise<T> {
   try {
     return JSON.parse(await fs.readFile(file, "utf8"));
-  } catch (error: any) {
+  } catch (error) {
     if (error?.code === "ENOENT") return fallback;
     throw error;
   }
@@ -334,18 +334,29 @@ function markdownInventory(reviews: InventoryMarker[], issues: InventoryMarker[]
   }
   return lines.join("\n") + "\n";
 }
-function markdownReconciliation(report: any) {
+type ReconciliationEntry =
+  | { id: string; opaque: true; retained: boolean; acquisition: Awaited<ReturnType<typeof opaqueEntries>>[string] }
+  | { id: string; opaque?: never; retained: boolean; paused: boolean; source: { file: string; items: number; arguments: number; bySection: Record<string, number> }; qx: ReturnType<typeof reconcileTarget>; surge: ReturnType<typeof reconcileTarget> };
+type ConvertedReconciliation = Extract<ReconciliationEntry, { opaque?: never }>;
+type OpaqueReconciliation = Extract<ReconciliationEntry, { opaque: true }>;
+type ReconciliationReport = {
+  version: number; entries: ReconciliationEntry[];
+  summary: { plugins: number; sourceItems: number; arguments: number; qxReconciled: number; surgeReconciled: number };
+};
+type ManualAssets = { version: number; assets: { id: string; qx?: string; surge?: string; mode?: string }[] };
+type SyncEvidence = { publishable?: boolean; convertedPlugins?: string[]; retainedPlugins?: string[]; failures?: { plugin: { id: string } }[] };
+function markdownReconciliation(report: ReconciliationReport) {
   const lines = ["# WayX Source to Target Reconciliation", ""];
   lines.push(
     "| Plugin | Source items | QX converted | QX comment/review/issue/drop | QX OK | Surge converted | Surge comment/review/issue/drop | Surge OK |",
   );
   lines.push("|---|---:|---:|---:|:---:|---:|---:|:---:|");
   for (const item of report.entries.filter(
-    (entry: any) =>
+    (entry): entry is ConvertedReconciliation =>
       !entry.opaque && (!entry.qx.reconciled || !entry.surge.reconciled),
   )) {
-    const q: any = item.qx.counts,
-      s: any = item.surge.counts;
+    const q = item.qx.counts,
+      s = item.surge.counts;
     lines.push(
       "| " +
         item.id +
@@ -386,16 +397,16 @@ function markdownReconciliation(report: any) {
       report.summary.plugins,
     "",
   );
-  for (const entry of report.entries.filter((e: any) => e.opaque))
+  for (const entry of report.entries.filter((e): e is OpaqueReconciliation => e.opaque!))
     lines.push(
       `- ${entry.id}: opaque source archived (${entry.acquisition.sha256}); conversion skipped, prior outputs retained when available.`,
     );
   return lines.join("\n");
 }
-let baseline: any;
+let baseline: { version: number; review: { byPlatform: Record<string, number> } };
 try {
   baseline = JSON.parse(await fs.readFile(BASELINE, "utf8"));
-} catch (error: any) {
+} catch (error) {
   throw new Error(
     "Cannot read Review baseline " + BASELINE + ": " + error.message,
     { cause: error },
@@ -417,11 +428,11 @@ if (
 }
 await fs.mkdir(OUT_DIR, { recursive: true });
 const catalog = await loadLoonSourceCatalog(SOURCE_CATALOG);
-const manualConfig: any = await readJson(MANUAL_ASSETS, {
+const manualConfig = await readJson<ManualAssets>(MANUAL_ASSETS, {
   version: 1,
   assets: [],
 });
-const reconciliation: any = {
+const reconciliation: ReconciliationReport = {
   version: 1,
   entries: [],
   summary: {
@@ -438,14 +449,14 @@ const auditCandidate = validation.stages.verify?.checks.find(
   check => check.id === "repository-audit" && check.status === "passed",
 );
 const audit = validAuditEvidence(auditCandidate) ? auditCandidate : undefined;
-const sync: any = await readJson(
+const sync = await readJson<SyncEvidence>(
   path.join(ROOT, ".github/monitor/.runtime/sync-failures.json"),
   {},
 );
 const auditedPlugins = new Set(audit?.coverage.plugins ?? []);
-const verifiedPlugins: any = new Set(
+const verifiedPlugins = new Set(
   sync.publishable === true
-    ? (sync.convertedPlugins || []).filter((id: any) =>
+    ? (sync.convertedPlugins || []).filter((id) =>
         auditedPlugins.has(id),
       )
     : [],
@@ -454,15 +465,15 @@ const pauseKelee = await keleePaused(ROOT);
 // Modified: 2026-10-30 (chance). A deliberately frozen source retains its baseline, not current conversion evidence.
 const pausedIds = new Set(
   catalog
-    .filter((e: any) => pauseKelee && isKeleeSource(e.source))
-    .map((e: any) => e.id),
+    .filter((e) => pauseKelee && isKeleeSource(e.source))
+    .map((e) => e.id),
 );
-const retainedPlugins: any = new Set(
+const retainedPlugins = new Set(
   sync.publishable === true
     ? (sync.retainedPlugins || []).filter(
-        (id: any): any =>
+        (id) =>
           sync.failures?.some(
-            (failure: any) => failure.plugin.id === id,
+            (failure) => failure.plugin.id === id,
           ) || pausedIds.has(id),
       )
     : [],
@@ -488,7 +499,7 @@ for (const entry of catalog) {
     read(surgePath),
   ]);
   const parsed = sourceItems(source);
-  const sourceVerified: any =
+  const sourceVerified =
     verifiedPlugins.has(entry.id) &&
     audit?.coverage.artifacts[rel(sourcePath)] ===
       validationArtifactDigest(source);
@@ -514,11 +525,11 @@ for (const entry of catalog) {
       items: parsed.items.length,
       arguments: parsed.arguments.length,
       bySection: Object.fromEntries(
-        [...new Set(parsed.items.map((x: any): any => x.section))]
+        [...new Set(parsed.items.map((x) => x.section))]
           .sort()
-          .map((section: any): any => [
+          .map((section) => [
             section,
-            parsed.items.filter((x: any) => x.section === section).length,
+            parsed.items.filter((x) => x.section === section).length,
           ]),
       ),
     },
@@ -538,9 +549,9 @@ for (const asset of manualConfig.assets || []) {
   for (const [platform, key] of [
     ["qx", "qx"],
     ["surge", "surge"],
-  ]) {
+  ] as const) {
     if (!asset[key]) continue;
-    const file = path.join(ROOT, asset[key]);
+    const file = path.join(ROOT, asset[key]!);
     inventory.push(
       ...inventoryMarkers(await read(file), rel(file), platform, "manual"),
     );
@@ -555,7 +566,7 @@ const reviewInventory = {
   review: summarizeMarkers(reviews),
   issue: summarizeMarkers(issues),
   items: inventory,
-  manualAssets: (manualConfig.assets || []).map((asset: any): any => ({
+  manualAssets: (manualConfig.assets || []).map((asset) => ({
     id: asset.id,
     qx: asset.qx,
     surge: asset.surge,
@@ -564,7 +575,7 @@ const reviewInventory = {
 };
 for (const platform of ["qx", "surge"]) {
   const current = reviewInventory.review.byPlatform[platform] || 0;
-  const prior: any = baseline.review.byPlatform[platform];
+  const prior = baseline.review.byPlatform[platform];
   if (current > prior)
     console.log(
       "::warning title=Review inventory increased::" +
@@ -604,8 +615,8 @@ console.log(
     "; Issue=" +
     reviewInventory.issue.total,
 );
-const bad: any = reconciliation.entries.filter(
-  (entry: any) =>
+const bad = reconciliation.entries.filter(
+  (entry): entry is ConvertedReconciliation =>
     !entry.opaque &&
     !entry.retained &&
     (!entry.qx.reconciled || !entry.surge.reconciled),

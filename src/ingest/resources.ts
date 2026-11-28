@@ -101,6 +101,7 @@ export function resolveOriginalUrl(
     return assertHttpUrl(new URL(ref, assertHttpUrl(baseUrl)).toString());
   }
 }
+// Modified: 2026-11-28 (chance). Transport failures may contain arbitrary thrown values and causes.
 export function isTransientFetchError(error: any) {
   if (error?.code === "ERR_FETCH_SIZE") return false;
   if (error?.status)
@@ -299,12 +300,12 @@ export async function fetchOriginalText(
 export function memoizeResourceReads({
   fetchText = fetchOriginalText,
   fetchBytes = fetchOriginalBytes,
-}: any = {}) {
-  const pending = new Map<string, Promise<any>>();
-  const once = (
+}: { fetchText?: (url: string) => Promise<string>; fetchBytes?: (url: string) => Promise<Uint8Array> } = {}) {
+  const pending = new Map<string, Promise<string | Uint8Array>>();
+  const once = <T extends string | Uint8Array>(
     kind: string,
     url: string,
-    read: (url: string) => Promise<any>,
+    read: (url: string) => Promise<T>,
   ) => {
     const key = JSON.stringify([kind, assertHttpUrl(url), profile]);
     if (!pending.has(key))
@@ -312,7 +313,7 @@ export function memoizeResourceReads({
         key,
         Promise.resolve().then(() => read(url)),
       );
-    return pending.get(key)!;
+    return pending.get(key)! as Promise<T>;
   };
   return {
     fetchText: (url: string) => once("text", url, fetchText),
@@ -390,7 +391,7 @@ export function createResourceSnapshot({
             };
             records.set(key, record);
             return { file, ...record };
-          } catch (error: any) {
+          } catch (error) {
             records.set(key, {
               url: original,
               error: String(error.message || error),
@@ -530,7 +531,7 @@ export async function keleePaused(root: string): Promise<boolean> {
         ),
       ).paused === true
     );
-  } catch (error: any) {
+  } catch (error) {
     if (error.code === "ENOENT") return false;
     throw error;
   }

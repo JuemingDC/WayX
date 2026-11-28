@@ -43,9 +43,9 @@ const mode = process.argv.includes("--write") ? "write" : "check";
 const manifest = await loadLoonSourceCatalog(MANIFEST);
 // Every Action converts the complete catalog. Recheck all successful entries;
 // isolated failures retain their prior baselines and Issue diagnostics.
-let selectedIds: any = null;
+let selectedIds: Set<string> | null = null;
 if (process.argv.includes("--successful-only")) {
-  const report: any = JSON.parse(
+  const report: { publishable?: boolean; convertedPlugins?: string[] } = JSON.parse(
     await fs.readFile(
       path.join(ROOT, ".github/monitor/.runtime/sync-failures.json"),
       "utf8",
@@ -56,17 +56,17 @@ if (process.argv.includes("--successful-only")) {
   selectedIds = new Set(report.convertedPlugins);
   if (
     [...selectedIds].some(
-      (id: any) => !manifest.some((entry: any) => entry.id === id),
+      (id) => !manifest.some((entry) => entry.id === id),
     )
   )
     throw new Error("Unknown plugin in full conversion report");
 }
 const staleEntries: string[] = [];
-const findings: any = [],
+const findings: (Awaited<ReturnType<typeof recordOutputMismatch>> | { code: string; plugin: string; file: string; text: string })[] = [],
   verifiedPlugins: string[] = [],
-  artifacts: any = {};
+  artifacts: Record<string, string> = {};
 let checked = 0;
-const failures: any = createWorkflowFailureReporter({
+const failures = createWorkflowFailureReporter({
   summaryLabel: "Canonical regeneration failures",
   detailFallback: "error",
   annotationFallback: "error",
@@ -94,13 +94,13 @@ for (const entry of manifest) {
     const targetState = await readManagedTargetState(ROOT, entry);
     const oldQx = targetState.qx;
     const oldSurge = targetState.surge;
-    const stamp: any =
+    const stamp =
       firstConversionStamp([oldQx, oldSurge], { trim: true }) ||
       nowConversionStamp();
-    const context: any = await materializeConversionRunContext(entry, source, {
+    const context = await materializeConversionRunContext(entry, source, {
       resources,
     });
-    let out: any = convertPluginWithContext(entry, source, context, {
+    let out = convertPluginWithContext(entry, source, context, {
       stamp,
       rawBase: RAW_BASE,
       backupIndex: await readBackupJson(
@@ -113,7 +113,7 @@ for (const entry of manifest) {
       surgeValidationOptions: { adblockScope: true },
     });
     const targetDiffs = managedTargetDiffs(targetState, out);
-    const helperDiffs: any = await generatedScriptDiffs(
+    const helperDiffs = await generatedScriptDiffs(
       ROOT,
       entry,
       out.generatedScripts,
@@ -126,7 +126,7 @@ for (const entry of manifest) {
         [targetState.qxRelativePath, oldQx],
         [targetState.surgeRelativePath, oldSurge],
       ])
-        artifacts[file!] = validationArtifactDigest(text);
+        artifacts[file!] = validationArtifactDigest(text)!;
       continue;
     }
     staleEntries.push(entry.id);
@@ -140,16 +140,16 @@ for (const entry of manifest) {
         ),
       );
     for (const name of helperDiffs) {
-      const stale: any = name.startsWith("delete:"),
-        filename: any = stale ? name.slice(7) : name;
+      const stale = name.startsWith("delete:"),
+        filename = stale ? name.slice(7) : name;
       const relative = "Script/" + entry.id + "/" + filename;
-      let actual: any = null;
+      let actual: string | Buffer | null = null;
       try {
         const file = path.join(ROOT, relative);
         actual = isWayxMapLocalPayloadFilename(filename)
           ? await fs.readFile(file)
           : await fs.readFile(file, "utf8");
-      } catch (error: any) {
+      } catch (error) {
         if (error.code !== "ENOENT") throw error;
       }
       findings.push(
@@ -196,7 +196,7 @@ for (const entry of manifest) {
           ? " + helpers=" + out.generatedScripts.size
           : ""),
     );
-  } catch (error: any) {
+  } catch (error) {
     findings.push({
       code: "canonical-validation",
       plugin: entry.id,

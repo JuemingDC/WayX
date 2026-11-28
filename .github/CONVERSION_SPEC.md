@@ -557,7 +557,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 | Date | Stage | Required behavior |
 | --- | --- | --- |
 | 2026-11-01 | Workflow | `.github/workflows/converter-check.yml`, WayX Automation; main, optional test only |
-| 2026-10-31 | Schedule | `30 21 * * *` UTC → next day 05:30 Asia/Shanghai |
+| 2026-11-28 | Schedule | `0 21 * * *` UTC → next day 05:00 Asia/Shanghai |
 | 2026-11-01 | Triggers | Implementation/config/test/spec pushes, PR, manual, daily; generated commits do not retrigger |
 | 2026-11-17 | Order | Initialize logs only → PR/push contract tests → restore working layout/branch budget → catalog → routing/sync → backup/API/rebind/cleanup → final audit → monitor/reports/Issues → gates → publish |
 | 2026-11-01 | Same-repo test PR | Exact PR head + authorized existing test publication; external PR read-only artifacts/candidates |
@@ -615,6 +615,7 @@ https://example.test/a.js#_wayx_argument=%7B%22value%22%3A%22mode%3Dclean%22%7D
 
 | Date | Rule / mapping added or revised | Demonstration / contract |
 | --- | --- | --- |
+| 2026-11-28 | Daily automation | Run the existing acquisition, conversion and publication workflow at 05:00 Asia/Shanghai. |
 | 2026-11-26 | Surge resource refresh | Validate remote Map Local update intervals and preserve explicitly disabled native Script auto-updates in regression coverage. |
 | 2026-11-20 | jq source order, framing headers and HTTP Script V2 | A/B/A → three ordered rules; adjacent identical matchers stay separate; reject fixed Content-Length or Transfer-Encoding header mutations, including arrays; QX Script V2 emits HTTPS or local paths |
 | 2026-11-18 | HTTP exception compatibility, runtime policy 14 | Escaped synchronous error / returned rejected Promise → log + `$done({})` once before submission; author catches/native submission errors/non-HTTP triggers preserved; replace blanket no-passthrough rule |

@@ -2,7 +2,7 @@ import { publishLayout } from "./release-layout.ts";
 import { refreshFrozenSurgeFlags } from "./surge-flags.ts";
 import { refreshFrozenQxFlags } from "./qx-flags.ts";
 import { readJson, readOptional, commitFiles } from "../publish/transaction.ts";
-import type { SourceEntry } from "../domain/contracts.ts";
+import type { SourceEntry, ConversionContext } from "../domain/contracts.ts";
 import { refreshSourceBackups } from "./backups.ts";
 import { loadIconIndex } from "../ingest/icons.ts";
 import { backfillIcons } from "./icons.ts";
@@ -27,6 +27,8 @@ import {
   convertPluginWithContext,
 } from "../emit/conversion.ts";
 import {
+  type ManagedSourceState,
+  type ManagedTargetState,
   prepareNativeQxSync,
   commitNativeQxSync,
   createWorkflowFailureReporter,
@@ -51,8 +53,46 @@ export function isLoonPluginSource(text: unknown): boolean {
 // per-plugin conversion/write transaction without repeating acquisition.
 // Each plugin has its own conversion and write transaction. The catalog loop
 // continues only after a failure has left the previous artifacts intact.
+interface PreparedEntry {
+  id: string;
+  sourceUrl: string;
+  previousSource: string | null;
+  source: string;
+  targetState: ManagedTargetState;
+  context: ConversionContext;
+  sourceState: ManagedSourceState;
+  changed: boolean;
+  paused?: never;
+  opaque?: never;
+}
+type DeferredEntry =
+  | { id: string; paused: true; opaque?: never }
+  | { id: string; opaque: true; paused?: never; record: Awaited<ReturnType<typeof archiveOpaque>>; baselineAvailable: boolean };
+type ConvertedEntry = { id: string; changed: boolean } & Awaited<ReturnType<typeof commitManagedConversion>>;
+type RunLog = (message: string) => void;
+interface SyncEntryOptions {
+  root?: string;
+  fetchText?: (url: string) => Promise<string>;
+  fetchBytes?: ((url: string) => Promise<Uint8Array>) | null;
+  materialize?: typeof materializeConversionRunContext;
+  convert?: typeof convertPluginWithContext;
+  commit?: typeof commitManagedConversion;
+  log?: RunLog;
+  resources?: ReturnType<typeof createResourceSnapshot> | null;
+  prepared?: PreparedEntry | null;
+  prepareOnly?: boolean;
+  icons?: Awaited<ReturnType<typeof loadIconIndex>>;
+}
+type SyncFailure = ReturnType<typeof buildSyncFailure>;
+interface SyncError extends Error {
+  syncFailure?: SyncFailure;
+  rollbackSucceeded?: boolean;
+  baselineAvailable?: boolean;
+}
+export function syncCatalogEntry(entry: SourceEntry, options: SyncEntryOptions & { prepareOnly: true }): Promise<PreparedEntry | DeferredEntry>;
+export function syncCatalogEntry(entry: SourceEntry, options?: SyncEntryOptions & { prepareOnly?: false }): Promise<ConvertedEntry | DeferredEntry>;
 export async function syncCatalogEntry(
-  entry: any,
+  entry: SourceEntry,
   {
     root = ROOT,
     fetchText = fetchOriginalText,
@@ -65,21 +105,21 @@ export async function syncCatalogEntry(
     prepared = null,
     prepareOnly = false,
     icons = null,
-  }: any = {},
-): Promise<any> {
+  }: SyncEntryOptions = {},
+): Promise<PreparedEntry | DeferredEntry | ConvertedEntry> {
   // Modified: 2026-10-29 (chance). Direct callers also honor source freeze.
   if ((await keleePaused(root)) && isKeleeSource(entry.source))
     return { id: entry.id, paused: true };
   let stage = "read-current-source",
-    previousSource: any = null,
-    source: any = null,
-    targetState: any = null;
-  const onStage: any = (value: any) => {
+    previousSource: string | null = null,
+    source: string | null = null,
+    targetState: ManagedTargetState | null = null;
+  const onStage = (value: string) => {
     stage = value;
   };
-  let declarations: any = null;
+  let declarations: SyncFailure["declarations"] | null = null;
   try {
-    let context: any, sourceState: any, changed: any;
+    let context: ConversionContext, sourceState: ManagedSourceState, changed: boolean;
     if (prepared) {
       if (prepared.id !== entry.id || prepared.sourceUrl !== entry.source)
         throw new Error("Prepared entry does not match catalog source");
@@ -89,7 +129,7 @@ export async function syncCatalogEntry(
     } else {
       try {
         previousSource = await readCatalogSource(root, entry);
-      } catch (error: any) {
+      } catch (error) {
         if (error.code !== "ENOENT") throw error;
       }
       stage = "read-target-state";
@@ -138,7 +178,7 @@ export async function syncCatalogEntry(
       // Every Action compiles every entry, including unchanged upstream text:
       // Generator, specification and remote dependency changes affect output too.
       stage = "review-source-semantics";
-      const semantic: any = await collectIssueCandidates({
+      const semantic = await collectIssueCandidates({
         root,
         catalog: [entry],
         sourceOverrides: new Map([[entry.id, source]]),
@@ -147,12 +187,12 @@ export async function syncCatalogEntry(
       });
       if (semantic.targetProblems.length) {
         declarations = semantic.targetProblems.flatMap(
-          (problem: any): any => problem.declarations,
+          (problem) => problem.declarations,
         );
         throw new Error(
           "Unknown or invalid source grammar: " +
             semantic.targetProblems
-              .flatMap((problem: any): any => problem.reasons)
+              .flatMap((problem) => problem.reasons)
               .join("; "),
         );
       }
@@ -173,7 +213,7 @@ export async function syncCatalogEntry(
         sourceState,
         changed,
       };
-    const out: any = convert(entry, source, context, {
+    const out = convert(entry, source, context, {
       stamp: nowConversionStamp(),
       rawBase: RAW_BASE,
       backupIndex: await readJson(
@@ -193,7 +233,7 @@ export async function syncCatalogEntry(
         ...(out.qx + "\n" + out.surge).matchAll(
           /^# Source declaration:\s*(.+)$/gm,
         ),
-      ].map((match: any): any => ({ section: "Source", line: match[1] }));
+      ].map((match) => ({ section: "Source", line: match[1] }));
       throw new Error(
         "Target mapping requires review; previous source and outputs retained",
       );
@@ -211,7 +251,7 @@ export async function syncCatalogEntry(
         : "conversion verified: source and outputs unchanged",
     );
     return { id: entry.id, changed, helperChanges, targetChanges };
-  } catch (error: any) {
+  } catch (error) {
     error.syncFailure = buildSyncFailure({
       entry,
       stage,
@@ -258,22 +298,22 @@ export async function runCatalogSync({
   log = console.log,
   writeError = console.error,
   warn = console.warn,
-}: any = {}): Promise<any> {
+}: { layout?: boolean; root?: string; entryOptions?: Omit<SyncEntryOptions, "prepareOnly">; log?: RunLog; writeError?: RunLog; warn?: RunLog } = {}) {
   const manifest = await loadLoonSourceCatalog(
     path.join(root, ".github/sources/loon.json"),
   );
-  const failures: any = createWorkflowFailureReporter({
+  const failures = createWorkflowFailureReporter({
     summaryLabel: "Isolated sync failures",
     writeError,
   });
-  const structuredFailures: any = [],
-    opaquePlugins: any = [],
-    validatedPlugins: any = [],
-    convertedPlugins: any = [],
-    updatedPlugins: any = [],
-    unchangedPlugins: any = [],
-    retainedPlugins: any = [],
-    deferredPlugins: any = [];
+  const structuredFailures: SyncFailure[] = [],
+    opaquePlugins: (Awaited<ReturnType<typeof archiveOpaque>> & { id: string; baselineAvailable: boolean })[] = [],
+    validatedPlugins: string[] = [],
+    convertedPlugins: string[] = [],
+    updatedPlugins: string[] = [],
+    unchangedPlugins: string[] = [],
+    retainedPlugins: string[] = [],
+    deferredPlugins: string[] = [];
   let publishable = true;
   // Modified: 2026-10-25 (chance). Finish acquisition for the complete catalog
   // and seal one shared snapshot before any target is generated or committed.
@@ -288,13 +328,13 @@ export async function runCatalogSync({
       entryOptions.fetchBytes ??
       (entryOptions.fetchText
         ? async (url: string) =>
-            Buffer.from(await entryOptions.fetchText(url), "utf8")
+            Buffer.from(await entryOptions.fetchText!(url), "utf8")
         : undefined),
   });
   // Modified: 2026-10-30 (chance). Share one original icon snapshot with all emitters.
   const icons = await loadIconIndex(root, resources);
-  const preparedEntries: any = [];
-  const capture: any = (entry: any, error: any) => {
+  const preparedEntries: { entry: SourceEntry; prepared: PreparedEntry }[] = [];
+  const capture = (entry: SourceEntry, error: SyncError) => {
     failures.capture(entry, error);
     structuredFailures.push(
       error.syncFailure || buildSyncFailure({ entry, stage: "sync", error }),
@@ -306,7 +346,7 @@ export async function runCatalogSync({
   for (const entry of manifest) {
     log(`\n== acquire ${entry.id} ==`);
     try {
-      const prepared: any = await syncCatalogEntry(entry, {
+      const prepared = await syncCatalogEntry(entry, {
         ...entryOptions,
         root,
         log,
@@ -332,20 +372,20 @@ export async function runCatalogSync({
         continue;
       }
       preparedEntries.push({ entry, prepared });
-    } catch (error: any) {
+    } catch (error) {
       capture(entry, error);
     }
   }
   // Modified: 2026-10-25 (chance). Acquire native QX app bundles in the same
   // run snapshot; a failed/partial source set prevents publication.
-  let nativeQxPlan: any = null;
+  let nativeQxPlan: Awaited<ReturnType<typeof prepareNativeQxSync>> = null;
   try {
     nativeQxPlan = await prepareNativeQxSync(root, {
       fetchText: resources.fetchText,
       resources,
       icons,
     });
-  } catch (error: any) {
+  } catch (error) {
     publishable = false;
     writeError("Native QX acquisition failed: " + String(error.stack || error));
   }
@@ -353,7 +393,7 @@ export async function runCatalogSync({
   for (const { entry, prepared } of preparedEntries) {
     log(`\n== convert ${entry.id} ==`);
     try {
-      const result: any = await syncCatalogEntry(entry, {
+      const result = await syncCatalogEntry(entry, {
         ...entryOptions,
         root,
         log,
@@ -363,11 +403,11 @@ export async function runCatalogSync({
       });
       validatedPlugins.push(entry.id);
       convertedPlugins.push(entry.id);
-      (result.targetChanges.length || result.helperChanges.length
+      ((result as ConvertedEntry).targetChanges.length || (result as ConvertedEntry).helperChanges.length
         ? updatedPlugins
         : unchangedPlugins
       ).push(entry.id);
-    } catch (error: any) {
+    } catch (error) {
       capture(entry, error);
     }
   }
@@ -393,7 +433,7 @@ export async function runCatalogSync({
     // Modified: 2026-11-05 (chance). Migrate all client outputs and script references before the final index/validation.
     if (publishable && layout) await publishLayout(root);
     await writeReadmePlan(root);
-  } catch (error: any) {
+  } catch (error) {
     publishable = false;
     writeError(
       "Catalog/README publication preparation failed: " +
@@ -401,7 +441,7 @@ export async function runCatalogSync({
     );
   }
   await resources.seal();
-  const summary: any = {
+  const summary = {
     publishable,
     validatedPlugins,
     convertedPlugins,
@@ -420,7 +460,7 @@ export async function runCatalogSync({
   return { ...summary, failures: structuredFailures };
 }
 async function main() {
-  const result: any = await runCatalogSync({ layout: true });
+  const result = await runCatalogSync({ layout: true });
   if (process.env.GITHUB_OUTPUT)
     await fs.appendFile(
       process.env.GITHUB_OUTPUT,

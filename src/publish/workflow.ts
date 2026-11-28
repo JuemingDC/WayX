@@ -52,7 +52,7 @@ async function staleGeneratedHelpers(
   let names: string[] = [];
   try {
     names = await fs.readdir(dir);
-  } catch (error: any) {
+  } catch (error) {
     if (error?.code === "ENOENT") return [];
     throw error;
   }
@@ -92,9 +92,9 @@ export function nowConversionStamp(): string {
   );
 }
 export function conversionStampFromText(
-  text: any,
-  { trim = false }: any = {},
-): any {
+  text: unknown,
+  { trim = false }: { trim?: boolean } = {},
+) {
   // Modified: 2026-11-08 (chance). Prefer the managed update timestamp;
   // read the old label only to migrate existing publications without date churn.
   const value = String(text ?? "");
@@ -105,11 +105,11 @@ export function conversionStampFromText(
   return trim ? match[1].trim() : match[1];
 }
 export function firstConversionStamp(
-  texts: any,
-  { trim = false }: any = {},
-): any {
+  texts: Iterable<unknown>,
+  { trim = false }: { trim?: boolean } = {},
+) {
   for (const text of texts) {
-    const stamp: any = conversionStampFromText(text, { trim });
+    const stamp = conversionStampFromText(text, { trim });
     if (stamp) return stamp;
   }
   return null;
@@ -207,7 +207,7 @@ async function managedHelperMatches(file: string, content: string | Buffer) {
   }
   try {
     return (await fs.readFile(file)).equals(content);
-  } catch (error: any) {
+  } catch (error) {
     if (error.code === "ENOENT") return false;
     throw error;
   }
@@ -359,12 +359,51 @@ export function repairNativeQxSource(source: {url: string; text: string}): strin
     : line).join("\n");
 }
 // Modified: 2026-11-01 (chance). Native QX follows check/copy: retain executable text and order; only repair snippet formatting and the explicitly authorized source typo.
+// Modified: 2026-11-28 (chance). Type native source discovery and artifact publication records.
+interface NativeQxConfig {
+  version: 1;
+  repository: string;
+  ref: string;
+  prefix: string;
+  website?: string;
+  author?: string;
+  layout?: string;
+  include?: string[];
+  exclude?: string[];
+  directories?: Record<string, string>;
+  aliases?: Record<string, string>;
+  names?: Record<string, string>;
+  preferred_versions?: Record<string, string>;
+  surge?: boolean;
+  surge_exclude?: Record<string, string>;
+}
+type NativeQxRegistry = NativeQxConfig | { version: 2; sources: NativeQxConfig[] };
+type NativeQxFile = { path: string; type: string; sha?: string; url?: string; name?: string; author?: string; desc?: string; category?: string };
+type NativeSource = { text: string; rawText?: string; path: string; url: string; siteItem?: NativeQxFile };
+type NativeSurgeSource = NativeQxFile & { text: string; sourceUrl: string };
+type NativeDiagnostic = { source?: string; application?: string; declaration?: string; repository?: string; reason: string };
+type NativeSkip = { application?: string; source?: string; sources?: string[]; reason: string };
+type FetchText = (url: string) => Promise<string>;
+type NativeResources = { reuseVerifiedText(url: string, bytes: Uint8Array): Promise<string> };
+type WebsiteDiscovery = {
+  source: string;
+  catalogUrl: string;
+  catalogSha256: string;
+  total: number;
+  eligible: number;
+  ignored: ReturnType<typeof parseDdgksfCatalog>["ignored"];
+  repositorySupplement?: string[];
+  sourceResources?: number;
+  nativeSurgeResources?: number;
+  skipped?: NativeSkip[];
+  outputs?: number;
+};
 export function mergeNativeQxSources(
-  sources: any,
-  { name, author, diagnostics = [] }: any = {},
+  sources: readonly NativeSource[],
+  { name, author, diagnostics = [] }: { name?: string; author?: string; diagnostics?: NativeDiagnostic[] } = {},
 ) {
   const out: string[] = [
-    "# Name: " + name, "# Updated: " + upstreamUpdateTime(sources.map((source: any) => source.rawText??source.text).join("\n")), "# Copied by: chance",
+    "# Name: " + name, "# Updated: " + upstreamUpdateTime(sources.map((source) => source.rawText??source.text).join("\n")), "# Copied by: chance",
     "# Source Authors: " + (author ?? ""), "# Category: app", NATIVE_QX_MARKER, "",
   ];
   for (const source of sources) {
@@ -421,7 +460,7 @@ export function mergeNativeQxSources(
   validateQX(text, {id: name ?? "native_qx"});
   return text;
 }
-function nativeWebsiteSurge(text:string,item:any){
+function nativeWebsiteSurge(text:string,item:NativeSurgeSource){
   const updated=upstreamUpdateTime(text);
   const renames=new Map<string,string>();let counter=0;
   const used=new Set([...text.matchAll(/^#!arguments=(.+)$/gm)].flatMap(m=>m[1].split(',').map(row=>row.split(':',1)[0].trim())));
@@ -442,10 +481,10 @@ function nativeWebsiteSurge(text:string,item:any){
   return normalizeSurgeModuleHeader(text+'\n# Managed by: WayX Native Surge\n# Source: '+item.sourceUrl+'\n# Updated: '+updated+'\n# Copied by: chance\n');
 }
 export async function prepareNativeQxSync(
-  root: any,
-  { fetchText, icons = null, resources = null }: any = {},
-): Promise<any> {
-  let registry: any;
+  root: string,
+  { fetchText, icons = null, resources = null }: { fetchText?: FetchText; icons?: import("../domain/icons.ts").IconIndex | null; resources?: NativeResources | null } = {},
+) {
+  let registry: NativeQxRegistry;
   try {
     registry = JSON.parse(
       await fs.readFile(
@@ -453,16 +492,16 @@ export async function prepareNativeQxSync(
         "utf8",
       ),
     );
-  } catch (error: any) {
+  } catch (error) {
     if (error.code === "ENOENT") return null;
     throw error;
   }
   // Modified: 2026-10-25 (chance). Isolated author registries share a
   // single acquisition/commit transaction; v1 remains valid for existing users.
-  const configs: any = registry.version === 2 ? registry.sources : [registry];
+  const configs = registry.version === 2 ? registry.sources : [registry];
   if (!Array.isArray(configs) || !configs.length)
     throw Error("Empty native QX registry");
-  const plans: any = [];
+  const plans: Awaited<ReturnType<typeof prepareNativeQxSource>>[] = [];
   // Modified: 2026-11-25 (chance). Immutable Git blobs can reuse the existing
   // byte-exact archive after verifying both its checksum and the current tree.
   const index = resources ? await readJson<{objects: Record<string, BackupObject>; latest: Record<string,string>} | null>(path.join(root, "Resource/Backup/index.json"), null) : null;
@@ -479,11 +518,11 @@ export async function prepareNativeQxSync(
           return resources.reuseVerifiedText(url, bytes);
       }
     }
-    return fetchText(url);
+    return fetchText!(url);
   };
   for (const config of configs)
     plans.push(await prepareNativeQxSource(config, { fetchText, fetchPinnedText, icons }));
-  const outputs: any = new Map();
+  const outputs = new Map<string, string>();
   for (const plan of plans)
     for (const [file, text] of plan.outputs) {
       if (outputs.has(file)) throw Error("Duplicate native QX output: " + file);
@@ -492,22 +531,22 @@ export async function prepareNativeQxSync(
   return {
     outputs,
     commit: plans.length === 1 ? plans[0].commit : undefined,
-    sources: plans.map((plan: any, i: any): any => ({
+    sources: plans.map((plan, i) => ({
       repository: configs[i].repository,
       website: configs[i].website,
       prefix: configs[i].prefix,
       commit: plan.commit,
     })),
-    inputs: plans.flatMap((p: any): any => p.inputs),
-    skipped: plans.flatMap((p: any): any => p.skipped),
-    diagnostics: plans.flatMap((p: any): any => p.diagnostics),
-    discovery: plans.map((p:any)=>p.discovery).filter(Boolean),
+    inputs: plans.flatMap((p) => p.inputs),
+    skipped: plans.flatMap((p) => p.skipped),
+    diagnostics: plans.flatMap((p) => p.diagnostics),
+    discovery: plans.map((p)=>p.discovery).filter(Boolean),
   };
 }
 async function prepareNativeQxSource(
-  config: any,
-  { fetchText, fetchPinnedText, icons = null }: any,
-): Promise<any> {
+  config: NativeQxConfig,
+  { fetchText, fetchPinnedText, icons = null }: { fetchText?: FetchText; fetchPinnedText: (url: string, sourceUrl: string, blobSha: unknown) => Promise<string>; icons?: import("../domain/icons.ts").IconIndex | null },
+) {
   if (
     config.version !== 1 ||
     !/^[\w.-]+\/[\w.-]+$/.test(config.repository) ||
@@ -515,24 +554,24 @@ async function prepareNativeQxSource(
   )
     throw Error("Invalid native QX registry");
   // Modified: 2026-11-01 (chance). Explicit native QX allowlists select only the requested collection and standalone app; missing entries fail instead of pruning old outputs.
-  if (config.include && (!Array.isArray(config.include) || !config.include.length || config.include.some((p: any) => typeof p !== "string" || p.startsWith("/") || p.split("/").includes("..") || !p.endsWith(".snippet")))) throw Error("Invalid native QX include list");
-  let commit:any,files:any[],discovery:any;
+  if (config.include && (!Array.isArray(config.include) || !config.include.length || config.include.some((p) => typeof p !== "string" || p.startsWith("/") || p.split("/").includes("..") || !p.endsWith(".snippet")))) throw Error("Invalid native QX include list");
+  let commit: string | undefined, files: NativeQxFile[], discovery: WebsiteDiscovery | undefined;
   const githubFiles=async()=>{
   const api = "https://api.github.com/repos/" + config.repository;
   commit = JSON.parse(
-    await fetchText(api + "/commits/" + encodeURIComponent(config.ref)),
+    await fetchText!(api + "/commits/" + encodeURIComponent(config.ref)),
   ).sha;
-  if (!/^[a-f0-9]{40}$/.test(commit))
+  if (!/^[a-f0-9]{40}$/.test(commit!))
     throw Error("Invalid native QX snapshot commit");
-  const tree: any = JSON.parse(
-    await fetchText(api + "/git/trees/" + commit + "?recursive=1"),
+  const tree: { truncated?: boolean; tree: NativeQxFile[] } = JSON.parse(
+    await fetchText!(api + "/git/trees/" + commit + "?recursive=1"),
   );
   if (tree.truncated || !Array.isArray(tree.tree))
     throw Error("Incomplete native QX source tree");
   // Modified: 2026-11-01 (chance). Discover configured QX conf directories and route each directory to its declared category.
   const selectedFiles = tree.tree
     .filter(
-      (x: any): any =>
+      (x) =>
         x.type === "blob" &&
         (config.include ? config.include.includes(x.path) : (config.directories
           ? new RegExp("^(?:" + Object.keys(config.directories).join("|") + ")/[^/]+\\.conf$")
@@ -543,34 +582,34 @@ async function prepareNativeQxSource(
         !(config.exclude || []).includes(x.path),
     )
     // Git tree url points to the blob JSON API, not the downloadable resource.
-    .map((file: any) => ({path:file.path,type:file.type,sha:file.sha}))
-    .sort((a: any, b: any): any => a.path.localeCompare(b.path, "en"));
+    .map((file) => ({path:file.path,type:file.type,sha:file.sha}))
+    .sort((a, b) => a.path.localeCompare(b.path, "en"));
   if (!selectedFiles.length) throw Error("Empty native QX source catalog");
-  if (config.include?.some((p: string) => !selectedFiles.some((f: any) => f.path === p))) throw Error("Missing requested native QX source");
+  if (config.include?.some((p: string) => !selectedFiles.some((f) => f.path === p))) throw Error("Missing requested native QX source");
   return selectedFiles;
   };
   if(config.website){
     if(config.website!=="https://ddgksf2013.top/")throw Error("Unregistered native website");
-    const html=await fetchText(config.website),catalogUrl=ddgksfCatalogUrl(html,config.website),payload=await fetchText(catalogUrl);
+    const html=await fetchText!(config.website),catalogUrl=ddgksfCatalogUrl(html,config.website),payload=await fetchText!(catalogUrl);
     const catalog=parseDdgksfCatalog(payload);
     discovery={source:config.website,catalogUrl,catalogSha256:crypto.createHash('sha256').update(payload).digest('hex'),total:catalog.total,eligible:catalog.entries.length,ignored:catalog.ignored};
     files=catalog.entries.map(entry=>({...entry,type:'blob'}));
     const existing=await githubFiles();
     const keys=new Set(files.map(file=>path.posix.basename(file.path,'.conf')));
-    const extra=existing.filter((file:any)=>!keys.has(path.posix.basename(file.path,'.conf').toLowerCase().replace(/_/g,'-')));
-    files.push(...extra);discovery.repositorySupplement=extra.map((file:any)=>file.path);
+    const extra=existing.filter((file)=>!keys.has(path.posix.basename(file.path,'.conf').toLowerCase().replace(/_/g,'-')));
+    files.push(...extra);discovery.repositorySupplement=extra.map((file)=>file.path);
   }else files=await githubFiles();
-  const groups: any = new Map(),
-    inputs: any = [],
-    skipped: any = [],
-    diagnostics: any = [];
-  const nativeSurge:any[]=[];
+  const groups = new Map<string, NativeSource[]>(),
+    inputs: { repository: string; path: string; acquiredUrl: string; sourceUrl: string; sha256: string }[] = [],
+    skipped: NativeSkip[] = [],
+    diagnostics: NativeDiagnostic[] = [];
+  const nativeSurge: NativeSurgeSource[] = [];
   for (const file of files) {
-    const url:any=file.url??"https://raw.githubusercontent.com/"+config.repository+"/"+commit+"/"+file.path;
-    if(unavailableSource(url)){skipped.push({application:file.name??file.path,source:url,reason:unavailableSource(url)});continue;}
+    const url=file.url??"https://raw.githubusercontent.com/"+config.repository+"/"+commit+"/"+file.path;
+    if(unavailableSource(url)){skipped.push({application:file.name??file.path,source:url,reason:unavailableSource(url)!});continue;}
     const sourceUrl=file.url??"https://raw.githubusercontent.com/"+config.repository+"/"+config.ref+"/"+file.path;
     let rawText:string;
-    try{rawText=file.url ? await fetchText(url) : await fetchPinnedText(url,sourceUrl,file.sha);}catch(error:any){
+    try{rawText=file.url ? await fetchText!(url) : await fetchPinnedText(url,sourceUrl,file.sha);}catch(error){
       if(!config.website||![404,410].includes(error.status))throw error;
       skipped.push({application:file.name,source:url,reason:'HTTP '+error.status});continue;
     }
@@ -582,7 +621,7 @@ async function prepareNativeQxSource(
       nativeSurge.push({...file,text,sourceUrl});continue;
     }
     const stem = path.posix.basename(file.path, path.posix.extname(file.path)),
-      key: any =
+      key =
         config.aliases?.[stem] ||
         ((config.layout === "root" || config.directories)
           ? stem.toLowerCase().replace(/_/g, "-")
@@ -590,7 +629,7 @@ async function prepareNativeQxSource(
     if (!/^[a-z0-9-]+$/.test(key))
       throw Error("Invalid native QX application key");
     if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push({
+    groups.get(key)!.push({
       text,
       rawText,
       siteItem: file.url?file:undefined,
@@ -605,22 +644,22 @@ async function prepareNativeQxSource(
     });
 
   }
-  const outputs: any = new Map();
+  const outputs = new Map<string, string>();
   for (const [key, allSources] of groups) {
-    let sources: any = allSources;
+    let sources = allSources;
     // Modified: 2026-10-25 (chance). For alternative app versions, retain
     // only a uniquely single-author version, never infer an attribution.
-    const rewrites: any = allSources.filter((x: any): any =>
+    const rewrites = allSources.filter((x) =>
       x.path.startsWith("rewrite/"),
     );
     if (rewrites.length > 1) {
-      const preferred: any = config.preferred_versions?.[key];
-      const eligible: any = rewrites.filter((x: any) => {
+      const preferred = config.preferred_versions?.[key];
+      const eligible = rewrites.filter((x) => {
         if (preferred) return x.path === preferred;
-        const authors: any = x.text
+        const authors = x.text
           .match(/^#!author\s*=\s*(.+)$/im)?.[1]
           ?.split(/[,，、&]/)
-          .map((a: any): any => a.trim())
+          .map((a) => a.trim())
           .filter(Boolean);
         return authors?.length === 1;
       });
@@ -628,17 +667,17 @@ async function prepareNativeQxSource(
         skipped.push({
           application: key,
           reason: "No unique single-author version",
-          sources: rewrites.map((x: any): any => x.path),
+          sources: rewrites.map((x) => x.path),
         });
         continue;
       }
       sources = allSources.filter(
-        (x: any) => !x.path.startsWith("rewrite/") || x === eligible[0],
+        (x) => !x.path.startsWith("rewrite/") || x === eligible[0],
       );
     }
-    const name: any =
+    const name =
       sources
-        .map((x: any): any => (x.text.match(/^#!name\s*=\s*(.+)$/im)?.[1] || x.text.match(/^\s*\/\/\s*@ScriptName\s+(.+)$/im)?.[1]))
+        .map((x) => (x.text.match(/^#!name\s*=\s*(.+)$/im)?.[1] || x.text.match(/^\s*\/\/\s*@ScriptName\s+(.+)$/im)?.[1]))
         .filter(Boolean)
         .at(-1) ||
       sources[0].siteItem?.name ||
@@ -649,7 +688,7 @@ async function prepareNativeQxSource(
     // Modified: 2026-11-01 (chance). Function/HTML enhancements are Modules; advertising filters remain Adblock.
     const category = config.directories?.[sources[0].path.split("/")[0]] ?? "Adblock";
     if (!["Adblock", "Module"].includes(category)) throw Error("Invalid native category");
-    if (sources.some((x: any) => (config.directories?.[x.path.split("/")[0]] ?? "Adblock") !== category)) throw Error("Mixed native categories");
+    if (sources.some((x) => (config.directories?.[x.path.split("/")[0]] ?? "Adblock") !== category)) throw Error("Mixed native categories");
     const qxDir = category === "Module" ? "Module/QuantumultX" : QX_ADBLOCK_DIR;
     const surgeDir = category === "Module" ? "Module/Surge" : SURGE_ADBLOCK_DIR;
     const categorized = text.replace(/^# Category:.*$/m, "# Category: " + category);
@@ -659,7 +698,7 @@ async function prepareNativeQxSource(
     if (surgeExclusion) diagnostics.push({ repository: config.repository, application: key, reason: surgeExclusion });
     if (config.surge && !surgeExclusion) {
       // Modified: 2026-11-01 (chance). Keep declaration modes and JS APIs unchanged; the shared backup pass downloads bytes and rebinds script operands before publication.
-      const converted: any = convertNativeQxToSurge(categorized, {
+      const converted = convertNativeQxToSurge(categorized, {
         id: config.prefix + key,
       });
       outputs.set(
@@ -667,7 +706,7 @@ async function prepareNativeQxSource(
         addAppIcon(converted.surge, icons, [key]).text,
       );
       diagnostics.push(
-        ...converted.diagnostics.map((item: any): any => ({
+        ...converted.diagnostics.map((item) => ({
           repository: config.repository,
           application: key,
           ...item,
@@ -686,16 +725,16 @@ async function prepareNativeQxSource(
   if(discovery){discovery.sourceResources=groups.size+nativeSurge.length;discovery.nativeSurgeResources=nativeSurge.length;discovery.skipped=skipped;discovery.outputs=outputs.size;}
   return { outputs, commit, inputs, skipped, diagnostics,discovery };
 }
-export async function commitNativeQxSync(root: any, plan: any) {
+export async function commitNativeQxSync(root: string, plan: Awaited<ReturnType<typeof prepareNativeQxSync>>) {
   if (!plan) return;
   // Modified: 2026-11-01 (chance). Compare final stable script references so unchanged native outputs retain their prior update stamps.
   const backups = await readJson(path.join(root,"Resource/Backup/index.json"),null);
   if (backups) for (const [file,text] of plan.outputs) plan.outputs.set(file,bindKnownBackups(text,backups,"https://raw.githubusercontent.com/JuemingDC/WayX/main",file));
   const statePath = ".github/sources/native-qx-state.json";
-  let prior: any = { outputs: [] };
+  let prior: { outputs: string[] } = { outputs: [] };
   try {
     prior = JSON.parse(await fs.readFile(path.join(root, statePath), "utf8"));
-  } catch (error: any) {
+  } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
   const writes = new Map<string, string | null>();
@@ -706,10 +745,10 @@ export async function commitNativeQxSync(root: any, plan: any) {
       )
     )
       throw Error("Native QX ownership boundary violation");
-    let previous: any = null;
+    let previous: string | null = null;
     try {
       previous = await fs.readFile(path.join(root, relative), "utf8");
-    } catch (error: any) {
+    } catch (error) {
       if (error.code !== "ENOENT") throw error;
     }
     if (previous !== null && !previous.includes(NATIVE_QX_MARKER) && !previous.includes("# Managed by: WayX Native Surge"))
@@ -717,7 +756,7 @@ export async function commitNativeQxSync(root: any, plan: any) {
         "Refusing to overwrite unmanaged native QX resource: " + relative,
       );
     // Modified: 2026-11-10 (chance). An upstream-only date change is publishable metadata.
-    const next: any = plan.outputs.get(relative) ?? null;
+    const next = plan.outputs.get(relative) ?? null;
     if (next !== previous) writes.set(relative, next);
   }
   writes.set(
@@ -754,61 +793,75 @@ const QX_UNIVERSAL_BASE =
 const SURGE_WEB_INSTALL_BASE = "https://surge.app/install-module?url=";
 const BOXJS_SUBSCRIBE_BASE = "https://boxjs.com/#/sub/add/";
 const STALE_WAYX_SCRIPT_RAW = `${RAW_BASE}/${["scr", "ipt"].join("")}/`;
-function normalizePlatformPart(value: any) {
+// Modified: 2026-11-28 (chance). Use the same catalog records for grouping and link rendering.
+interface ReadmeItem {
+  rel: string;
+  name: string;
+  text: string;
+  ext: string;
+}
+interface ReadmeRow {
+  key: string;
+  qx: ReadmeItem | null;
+  surge: ReadmeItem | null;
+  catalogSource?: string;
+  number?: string | null;
+}
+function normalizePlatformPart(value: unknown) {
   return String(value ?? "")
     .toLowerCase()
     .replace(/[\s_-]+/g, "");
 }
-function encodeRepoPath(rel: any) {
+function encodeRepoPath(rel: string) {
   return String(rel).split("/").map(encodeURIComponent).join("/");
 }
-export function rawRepoUrl(rel: any) {
+export function rawRepoUrl(rel: string) {
   return `${RAW_BASE}/${encodeRepoPath(rel)}`;
 }
-export function blobRepoUrl(rel: any) {
+export function blobRepoUrl(rel: string) {
   return `${BLOB_BASE}/${encodeRepoPath(rel)}`;
 }
-export function extractResourceName(text: string, fallback: string = ""): any {
+export function extractResourceName(text: string, fallback: string = "") {
   const source = String(text ?? "");
   const qx = source.match(/^#\s*name\s*:\s*(.+?)\s*$/im);
   if (qx?.[1]) return qx[1].trim();
   const surge = source.match(/^#!name\s*=\s*(.+?)\s*$/im);
   if (surge?.[1]) return surge[1].trim();
   try {
-    const json: any = JSON.parse(source);
+    const json = JSON.parse(source) as { name?: unknown };
     if (typeof json?.name === "string" && json.name.trim())
       return json.name.trim();
   } catch {}
   return String(fallback ?? "").trim();
 }
-export function qxAddResourceUrl(payload: any) {
+export function qxAddResourceUrl(payload: object) {
   return QX_UNIVERSAL_BASE + encodeURIComponent(JSON.stringify(payload));
 }
-function safeTag(value: any) {
+function safeTag(value: unknown) {
   return String(value ?? "")
     .replace(/,/g, "，")
     .trim();
 }
-function qxRemoteDescriptor(url: string, tag: any) {
+function qxRemoteDescriptor(url: string, tag: unknown) {
   return `${url}, tag=${safeTag(tag)}, update-interval=${README_AUTO_UPDATE_INTERVAL}, enabled=true`;
 }
-export function surgeModuleInstallUrl(rel: any) {
+export function surgeModuleInstallUrl(rel: string) {
   return SURGE_WEB_INSTALL_BASE + encodeURIComponent(rawRepoUrl(rel));
 }
-export function boxJsSubscribeUrl(rel: any) {
+export function boxJsSubscribeUrl(rel: string) {
   return BOXJS_SUBSCRIBE_BASE + encodeURIComponent(rawRepoUrl(rel));
 }
-async function walkFiles(root: any, rel: any): Promise<any> {
+async function walkFiles(root: string, rel: string): Promise<string[]> {
   const abs = path.join(root, rel);
-  let entries: any;
+  let entries: import("node:fs").Dirent[];
   try {
     entries = await fs.readdir(abs, { withFileTypes: true });
-  } catch (error: any) {
+  } catch (error) {
     if (error?.code === "ENOENT") return [];
     throw error;
   }
-  const out: any = [];
-  for (const ent of entries.sort((a: any, b: any): any =>
+  const out: string[] = [];
+  for (const ent of entries.sort((a, b) =>
     a.name.localeCompare(b.name, "en"),
   )) {
     if (ent.name.startsWith(".")) continue;
@@ -818,7 +871,7 @@ async function walkFiles(root: any, rel: any): Promise<any> {
   }
   return out;
 }
-function detectPlatform(rel: any): any {
+function detectPlatform(rel: string) {
   for (const part of String(rel).split("/")) {
     const key = normalizePlatformPart(part);
     if (key === "quantumultx" || key === "quanx") return "qx";
@@ -826,36 +879,36 @@ function detectPlatform(rel: any): any {
   }
   return null;
 }
-function stemOf(rel: any) {
+function stemOf(rel: string) {
   const base = path.posix.basename(rel);
   return base.replace(/\.[^.]+$/, "");
 }
-function rowKey(category: string, rel: any): any {
-  const parts: any = rel.split("/");
+function rowKey(category: string, rel: string) {
+  const parts = rel.split("/");
   if (category === "Module")
     // Modified: 2026-11-01 (chance). Flat per-platform Module directories use the filename identity; do not collapse every app into one platform row.
     return parts.length === 2 || ["quantumultx", "surge"].includes(normalizePlatformPart(parts[1])) ? stemOf(rel) : parts[1] || stemOf(rel);
   return stemOf(rel);
 }
-async function catalogRowMetadata(root: string, category: string): Promise<any> {
-  const empty: any = (): any => ({ order: new Map(), sources: new Map() });
+async function catalogRowMetadata(root: string, category: string) {
+  const empty = () => ({ order: new Map<string, number>(), sources: new Map<string, string>() });
   if (category !== "Adblock") return empty();
-  let manifest: any;
+  let manifest: unknown;
   try {
     manifest = JSON.parse(
       await fs.readFile(path.join(root, ".github/sources/loon.json"), "utf8"),
     );
-  } catch (error: any) {
+  } catch (error) {
     if (error?.code === "ENOENT") return empty();
     throw error;
   }
   if (!Array.isArray(manifest))
     throw new Error("README catalog order source must be an array");
-  const order: any = new Map();
-  const sources: any = new Map();
-  manifest.forEach((entry: any, index: number) => {
-    for (const field of ["qx", "surge"]) {
-      const value: any = entry?.[field];
+  const order = new Map<string, number>();
+  const sources = new Map<string, string>();
+  (manifest as Partial<SourceEntry>[]).forEach((entry, index) => {
+    for (const field of ["qx", "surge"] as const) {
+      const value: unknown = entry?.[field];
       if (typeof value !== "string" || !value.trim()) continue;
       const key = value.split("/").length >= 3 ? value.split("/").slice(0,2).join("/") : stemOf(value.trim());
       if (!order.has(key)) order.set(key, index);
@@ -865,10 +918,10 @@ async function catalogRowMetadata(root: string, category: string): Promise<any> 
   });
   return { order, sources };
 }
-async function scanCategory(root: string, category: string): Promise<any> {
+async function scanCategory(root: string, category: string): Promise<ReadmeRow[]> {
   const dir = category === "BoxJs" ? "Boxjs" : category;
-  const files: any = await walkFiles(root, dir);
-  const rows: any = new Map();
+  const files = await walkFiles(root, dir);
+  const rows = new Map<string, ReadmeRow>();
   for (const rel of files) {
     const ext = path.posix.extname(rel).toLowerCase();
     if (category === "BoxJs" && ext !== ".json") continue;
@@ -883,7 +936,7 @@ async function scanCategory(root: string, category: string): Promise<any> {
       continue;
     // Root-level Module files do not include a platform directory.
     // Infer the platform only there, from the unambiguous module extension.
-    const platform: any =
+    const platform =
       detectPlatform(rel) ??
       (category === "Module" && rel.split("/").length === 2
         ? ext === ".sgmodule"
@@ -900,10 +953,10 @@ async function scanCategory(root: string, category: string): Promise<any> {
       );
     }
     const fallback = stemOf(rel);
-    const name: any = extractResourceName(text, fallback);
-    const key: any = rel.split("/").length >= 5 ? rel.split("/")[2] + "/" + rel.split("/")[3] : rowKey(category, rel);
-    const row: any = rows.get(key) ?? { key, qx: null, surge: null };
-    const item: any = { rel, name, text, ext };
+    const name = extractResourceName(text, fallback);
+    const key = rel.split("/").length >= 5 ? rel.split("/")[2] + "/" + rel.split("/")[3] : rowKey(category, rel);
+    const row: ReadmeRow = rows.get(key) ?? { key, qx: null, surge: null };
+    const item = { rel, name, text, ext };
     if (category === "BoxJs") {
       if (platform === "surge") row.surge = item;
       else row.qx = item;
@@ -921,17 +974,17 @@ async function scanCategory(root: string, category: string): Promise<any> {
   for (const row of rows.values()) {
     row.catalogSource = sources.get(row.key);
     if (adblockNumbers)
-      row.number = adblockNumberForPath(adblockNumbers, (row.qx ?? row.surge).rel);
+      row.number = adblockNumberForPath(adblockNumbers, (row.qx ?? row.surge)!.rel);
   }
   // Modified: 2026-10-25 (chance). Keep fetch-source group order separate
   // from alphabetical resource order within each existing author group.
-  return [...rows.values()].sort((a: any, b: any): any => {
-    const ar: any = sourceOrder.has(a.key) ? sourceOrder.get(a.key) : Infinity;
-    const br: any = sourceOrder.has(b.key) ? sourceOrder.get(b.key) : Infinity;
+  return [...rows.values()].sort((a, b) => {
+    const ar = sourceOrder.has(a.key) ? sourceOrder.get(a.key)! : Infinity;
+    const br = sourceOrder.has(b.key) ? sourceOrder.get(b.key)! : Infinity;
     return ar - br || a.key.localeCompare(b.key, "en");
   });
 }
-export function qxSnippetInstallUrl(item: any) {
+export function qxSnippetInstallUrl(item: Pick<ReadmeItem, "rel" | "name" | "ext">) {
   if (!item?.rel || item.ext !== ".snippet") {
     throw new Error(
       "Quantumult X module/adblock install target must be a .snippet resource",
@@ -944,22 +997,22 @@ export function qxSnippetInstallUrl(item: any) {
     rewrite_remote: [qxRemoteDescriptor(rawRepoUrl(item.rel), item.name)],
   });
 }
-function qxInstallerForRule(item: any) {
+function qxInstallerForRule(item: ReadmeItem) {
   const payload = {
     filter_remote: [qxRemoteDescriptor(rawRepoUrl(item.rel), item.name)],
   };
   return qxAddResourceUrl(payload);
 }
-function markdownLink(label: string, url: any) {
+function markdownLink(label: string, url: string) {
   return `[${label}](${url})`;
 }
-function resourceNameCell(row: any) {
-  const item: any = row.qx ?? row.surge;
+function resourceNameCell(row: ReadmeRow) {
+  const item = row.qx ?? row.surge;
   return item
     ? `**[${item.name}](${blobRepoUrl(item.rel)})**`
     : `**${row.key}**`;
 }
-function rowInstallCells(category: any, row: any) {
+function rowInstallCells(category: string, row: ReadmeRow) {
   let qx = "—";
   let surge = "—";
   if (category === "BoxJs" && row.qx) {
@@ -980,12 +1033,12 @@ function rowInstallCells(category: any, row: any) {
   }
   return { qx, surge };
 }
-function adblockSource(row: any) {
-  const source: any =
+function adblockSource(row: ReadmeRow) {
+  const source =
     row.catalogSource ||
     [row.qx, row.surge]
       .map(
-        (item: any): any =>
+        (item) =>
           item?.text.match(/^#\s*Source:\s*(https?:\/\/\S+)\s*$/im)?.[1],
       )
       .find(Boolean);
@@ -1017,7 +1070,7 @@ function adblockSource(row: any) {
     return "本地资源";
   }
 }
-function escapeHtml(value: any) {
+function escapeHtml(value: unknown) {
   return String(value).replace(
     /[&<>"']/g,
     (char: string) =>
@@ -1034,8 +1087,8 @@ function escapeHtml(value: any) {
 }
 function renderTable(
   category: string,
-  rows: any,
-  heading: any = category,
+  rows: ReadmeRow[],
+  heading: string | null = category,
   level: number = 2,
 ) {
   const lines = [
@@ -1081,11 +1134,11 @@ const initialBoundaries = [
   ["Y", "压"],
   ["Z", "匝"],
 ];
-function rowName(row: any): any {
+function rowName(row: ReadmeRow) {
   return (row.qx ?? row.surge)?.name || row.key;
 }
-function rowInitial(row: any): any {
-  const first: any = rowName(row)
+function rowInitial(row: ReadmeRow) {
+  const first = rowName(row)
     .trim()
     .replace(/^[^\p{L}\p{N}]+/u, "")
     .charAt(0);
@@ -1097,24 +1150,24 @@ function rowInitial(row: any): any {
   }
   return "其他";
 }
-function alphabetTables(category: string, rows: any, level: number = 4) {
-  const groups: any = new Map();
+function alphabetTables(category: string, rows: ReadmeRow[], level: number = 4) {
+  const groups = new Map<string, ReadmeRow[]>();
   for (const row of rows) {
-    const letter: any = rowInitial(row);
+    const letter = rowInitial(row);
     if (!groups.has(letter)) groups.set(letter, []);
-    groups.get(letter).push(row);
+    groups.get(letter)!.push(row);
   }
   return [...groups]
-    .sort(([a]: any, [b]: any) => {
-      const rank: any = (x: any): any =>
+    .sort(([a], [b]) => {
+      const rank = (x: string) =>
         /^[A-Z]$/.test(x) ? x.charCodeAt(0) : x === "0–9" ? 100 : 101;
       return rank(a) - rank(b);
     })
-    .map(([letter, items]: any) =>
+    .map(([letter, items]) =>
       renderTable(
         category,
         items.sort(
-          (a: any, b: any): any =>
+          (a, b) =>
             nameCollator.compare(rowName(a), rowName(b)) ||
             a.key.localeCompare(b.key),
         ),
@@ -1125,13 +1178,13 @@ function alphabetTables(category: string, rows: any, level: number = 4) {
     .join("\n\n");
 }
 // README grouping only: preserve the actual policies and install descriptors.
-function ruleGroup(row: any) {
-  const actions: any = new Set();
+function ruleGroup(row: ReadmeRow) {
+  const actions = new Set();
   for (const line of (row.qx?.text || row.surge?.text || "").split("\n")) {
     if (!line.trim() || /^[#;]/.test(line.trim()) || line.startsWith("//"))
       continue;
     // Modified: 2026-10-27 (chance). Classify ssid as proxy routing in the resource index.
-    const action: any = line
+    const action = line
       .match(/,\s*(direct|proxy|ssid|reject(?:-[a-z0-9]+)?)\s*$/i)?.[1]
       ?.toLowerCase();
     if (action)
@@ -1154,19 +1207,19 @@ function ruleGroup(row: any) {
 export async function buildReadmePlan(root = process.cwd()): Promise<Map<string, string>> {
   const sections: string[] = [];
   for (const category of README_CATEGORY_ORDER) {
-    const rows: any = await scanCategory(root, category);
+    const rows: ReadmeRow[] = await scanCategory(root, category);
     if (category === "Adblock" && rows.length) {
-      const groups: any = new Map();
+      const groups = new Map<string, ReadmeRow[]>();
       for (const row of rows) {
-        const author: any = adblockSource(row);
+        const author = adblockSource(row);
         if (!groups.has(author)) groups.set(author, []);
-        groups.get(author).push(row);
+        groups.get(author)!.push(row);
       }
       sections.push(
         "## Adblock\n\n按拉取来源分组，点击展开；各来源内部按名称 A–Z 分栏，中文按拼音首字母，数字单列。\n\n" +
           [...groups]
             .map(
-              ([author, items]: any) =>
+              ([author, items]) =>
                 "<details>\n<summary><strong>" +
                 escapeHtml(author) +
                 "</strong> · " +
@@ -1187,8 +1240,8 @@ export async function buildReadmePlan(root = process.cwd()): Promise<Map<string,
               renderTable(
                 category,
                 rows
-                  .filter((row: any) => ruleGroup(row) === group)
-                  .sort((a: any, b: any) =>
+                  .filter((row) => ruleGroup(row) === group)
+                  .sort((a, b) =>
                     nameCollator.compare(rowName(a), rowName(b)),
                   ),
                 group,
@@ -1200,7 +1253,7 @@ export async function buildReadmePlan(root = process.cwd()): Promise<Map<string,
     else sections.push(renderTable(category, rows));
     // Modified: 2026-11-03 (chance). Fold category content and preserve nested source folds.
     const heading = `## ${category}\n\n`;
-    const current: any = sections[sections.length - 1];
+    const current = sections[sections.length - 1];
     if (!current.startsWith(heading)) throw new Error(`README heading mismatch: ${category}`);
     sections[sections.length - 1] =
       heading +
@@ -1243,10 +1296,10 @@ export async function readmePlanDiff(
   const desired = plan ?? (await buildReadmePlan(root));
   const changed: string[] = [];
   for (const [rel, content] of desired) {
-    let current: any = null;
+    let current: string | null = null;
     try {
       current = await fs.readFile(path.join(root, rel), "utf8");
-    } catch (error: any) {
+    } catch (error) {
       if (error?.code !== "ENOENT") throw error;
     }
     if (current !== content) changed.push(rel);
@@ -1328,10 +1381,10 @@ export function buildSyncFailure({
   error,
   previousSource = null,
   fetchedSource = null,
-}: any): any {
-  const reason = String(error?.message || error || "unknown failure");
+}: { entry: Pick<SourceEntry, "id" | "file" | "source" | "qx" | "surge">; stage: string; error: unknown; previousSource?: string | null; fetchedSource?: string | null }) {
+  const reason = String((error as WorkflowError | null)?.message || error || "unknown failure");
   const detail = String(
-    error?.stack || error?.message || error || "unknown failure",
+    (error as WorkflowError | null)?.stack || (error as WorkflowError | null)?.message || error || "unknown failure",
   );
   const context = failureDeclarationContext(previousSource, fetchedSource);
   return {
@@ -1350,9 +1403,9 @@ export function buildSyncFailure({
   };
 }
 export async function writeSyncFailureReport(
-  root: any,
-  failures: any,
-  { runtimeDir = ".github/monitor/.runtime", summary = null }: any = {},
+  root: string,
+  failures: readonly ReturnType<typeof buildSyncFailure>[],
+  { runtimeDir = ".github/monitor/.runtime", summary = null }: { runtimeDir?: string; summary?: object | null } = {},
 ) {
   const dir = path.join(root, runtimeDir);
   await fs.mkdir(dir, { recursive: true });
@@ -1417,11 +1470,11 @@ export async function writeValidationEvidence(
 }
 export async function recordOutputMismatch(
   file: string,
-  expected: any,
-  actual: any,
+  expected: string | Buffer | null | undefined,
+  actual: string | Buffer | null | undefined,
   plugin: string | null = null,
-): Promise<any> {
-  const finding: any = outputMismatch(file, expected, actual, plugin);
+): Promise<OutputMismatch | null> {
+  const finding = outputMismatch(file, expected, actual, plugin);
   const report = process.env.WAYX_CHECK_REPORT;
   if (!finding || !report) return finding;
   const dir = path.join(path.dirname(report), "output-differences");
@@ -1460,12 +1513,23 @@ export function validationArtifactDigest(value: string | Buffer | null | undefin
     ? null
     : crypto.createHash("sha256").update(text).digest("hex");
 }
+interface OutputMismatch {
+  code: "output-mismatch";
+  file: string;
+  plugin: string | null;
+  line?: number;
+  expectedHash: string | null;
+  actualHash: string | null;
+  expected: string;
+  actual: string;
+  evidence?: { expected: string; actual: string; patch: string };
+}
 export function outputMismatch(
   file: string,
   expected: string | Buffer | null | undefined,
   actual: string | Buffer | null | undefined,
   plugin: string | null = null,
-) {
+): OutputMismatch | null {
   const want = artifactContent(expected),
     got = artifactContent(actual);
   if (want === got || (Buffer.isBuffer(want) && Buffer.isBuffer(got) && want.equals(got)))
@@ -1509,22 +1573,24 @@ export function outputMismatch(
             .slice(0, 2000),
   };
 }
-function fallbackValue(error: any, mode: any): any {
-  return mode === "error" ? error : error?.message;
+type ErrorFallback = "message" | "error";
+type WorkflowError = { message?: unknown; stack?: unknown };
+function fallbackValue(error: unknown, mode: ErrorFallback) {
+  return mode === "error" ? error : (error as WorkflowError | null)?.message;
 }
-function failureDetail(error: any, mode: any): any {
-  return error?.stack || fallbackValue(error, mode);
+function failureDetail(error: unknown, mode: ErrorFallback) {
+  return (error as WorkflowError | null)?.stack || fallbackValue(error, mode);
 }
-function annotationValue(error: any, mode: any): any {
-  if (mode === "error") return error?.message || error;
-  return error?.message;
+function annotationValue(error: unknown, mode: ErrorFallback) {
+  if (mode === "error") return (error as WorkflowError | null)?.message || error;
+  return (error as WorkflowError | null)?.message;
 }
 export function formatWorkflowErrorAnnotation(
-  entry: any,
-  error: any,
-  { annotationFallback = "message" }: any = {},
+  entry: Pick<SourceEntry, "id">,
+  error: unknown,
+  { annotationFallback = "message" }: { annotationFallback?: ErrorFallback } = {},
 ) {
-  const title: any = entry?.id;
+  const title = entry?.id;
   const message = String(
     annotationValue(error, annotationFallback),
   ).replaceAll("\n", "%0A");
@@ -1535,9 +1601,9 @@ export function createWorkflowFailureReporter({
   detailFallback = "message",
   annotationFallback = "message",
   writeError = console.error,
-}: any = {}): any {
+}: { summaryLabel?: string; detailFallback?: ErrorFallback; annotationFallback?: ErrorFallback; writeError?: (message: string) => void } = {}) {
   const failures: string[] = [];
-  function capture(entry: any, error: any) {
+  function capture(entry: Pick<SourceEntry, "id">, error: unknown) {
     failures.push(`${entry.id}: ${failureDetail(error, detailFallback)}`);
     writeError(
       formatWorkflowErrorAnnotation(entry, error, { annotationFallback }),
@@ -1554,7 +1620,7 @@ export function createWorkflowFailureReporter({
     get size() {
       return failures.length;
     },
-    snapshot(): any {
+    snapshot() {
       return [...failures];
     },
   };

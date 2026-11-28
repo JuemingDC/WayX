@@ -1,3 +1,4 @@
+import type { RewriteAst, ScriptSemanticIr, RewriteValue, ComparisonNode, VariableNode, SourceEntry } from "../domain/contracts.ts";
 // Modified: 2026-11-05 (chance). Restore only known regex fields in retained
 // Loon→QX artifacts, without reacquiring paused sources or touching native QX.
 import path from "node:path";
@@ -32,7 +33,7 @@ export function restoreFrozenQxFlags(source: string, target: string) {
   };
   for (const line of source.split(/\r?\n/)) {
     if (/^\s*(?:#|;|\/\/)/.test(line)) continue;
-    let ast: any;
+    let ast: RewriteAst | ScriptSemanticIr | null;
     try {
       ast =
         /^(?:request|response) if /.test(line.trim()) &&
@@ -43,16 +44,16 @@ export function restoreFrozenQxFlags(source: string, target: string) {
       continue;
     }
     if (!ast?.condition) continue;
-    const visit = (node: any) => {
+    const visit = (node: unknown) => {
       if (!node || typeof node !== "object") return;
       if (
-        node.type === "comparison" &&
-        node.left?.name === "url" &&
-        node.operator === "~=" &&
-        node.right?.type === "regex"
+        (node as { type?: string }).type === "comparison" &&
+        ((node as ComparisonNode).left as VariableNode)?.name === "url" &&
+        (node as ComparisonNode).operator === "~=" &&
+        (node as ComparisonNode).right?.type === "regex"
       ) {
-        const old = compileRegexForTarget(node.right).pattern;
-        const restored = compileRegexForTarget(node.right, {
+        const old = compileRegexForTarget((node as ComparisonNode).right as Extract<RewriteValue, { type: "regex" }>).pattern;
+        const restored = compileRegexForTarget((node as ComparisonNode).right as Extract<RewriteValue, { type: "regex" }>, {
           target: "qx",
         }).pattern;
         add(urls, old, restored);
@@ -63,19 +64,19 @@ export function restoreFrozenQxFlags(source: string, target: string) {
         else visit(value);
     };
     visit(ast.condition);
-    for (const action of ast.actions ?? []) {
+    for (const action of (ast as RewriteAst).actions ?? []) {
       if (!/^(request|response)\.(body|header)\.replace$/.test(action.name))
         continue;
       // Reuse the planner on isolated ASTs to identify old/new search tokens;
       // never regenerate a retained artifact or its script references.
-      const one = { ...ast, actions: [action] },
+      const one = { ...(ast as RewriteAst), actions: [action] },
         old = structuredClone(one);
-      const priorPolicy = (node: any, inCondition = false) => {
+      const priorPolicy = (node: unknown, inCondition = false) => {
         if (!node || typeof node !== "object") return;
-        if (node.type === "regex")
-          node.flags = inCondition
+        if ((node as { type?: string }).type === "regex")
+          (node as { flags: string }).flags = inCondition
             ? ""
-            : String(node.flags || "").replace(/i/g, "");
+            : String((node as { flags?: string }).flags || "").replace(/i/g, "");
         for (const [key, value] of Object.entries(node))
           if (Array.isArray(value))
             value.forEach((v) => priorPolicy(v, inCondition));
@@ -146,10 +147,10 @@ export function restoreFrozenQxFlags(source: string, target: string) {
   return { text, changed, unresolved: [...unresolved] };
 }
 
-export async function refreshFrozenQxFlags(root: string, catalog: any[]) {
+export async function refreshFrozenQxFlags(root: string, catalog: readonly SourceEntry[]) {
   if (!(await keleePaused(root))) return;
   const changes = new Map<string, string>(),
-    reports: any[] = [];
+    reports: { file: string; changed: number; unresolved: string[] }[] = [];
   for (const entry of catalog.filter((e) => isKeleeSource(e.source))) {
     const file = "Adblock/Quantumult X/" + entry.qx;
     const source = await readOptional(

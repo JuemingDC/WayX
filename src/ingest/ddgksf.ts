@@ -28,7 +28,7 @@ export function parseDdgksfCatalog(text: string) {
   if (!Array.isArray(payload) || !payload.length)
     throw Error("Invalid Ddgksf website catalog");
   const entries: SiteResource[] = [],
-    ignored: any[] = [];
+    ignored: { name: string; url: string; reason: string; category: string }[] = [];
   let total = 0;
   const urls = new Set<string>(),
     paths = new Set<string>();

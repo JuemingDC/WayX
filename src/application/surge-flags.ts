@@ -1,3 +1,4 @@
+import type { RewriteAst, ScriptSemanticIr, RewriteValue, ComparisonNode, VariableNode, StringNode, SourceEntry } from "../domain/contracts.ts";
 // Modified: 2026-11-01 (chance). Apply the authorized Surge flag policy to frozen
 // snapshots without fetching/unpausing sources or regenerating other behavior.
 import path from "node:path";
@@ -35,7 +36,7 @@ export function restoreFrozenSurgeFlags(source: string, target: string) {
   // never be resolved by whichever source declaration happened to appear last.
   for (const line of source.split(/\r?\n/)) {
     if (/^\s*(?:#|;|\/\/)/.test(line)) continue;
-    let ast: any;
+    let ast: RewriteAst | ScriptSemanticIr | null;
     try {
       ast =
         /^(?:request|response) if /.test(line.trim()) &&
@@ -46,16 +47,16 @@ export function restoreFrozenSurgeFlags(source: string, target: string) {
       continue;
     }
     if (!ast?.condition) continue;
-    const matchers: any[] = [];
-    function visit(node: any) {
+    const matchers: Extract<RewriteValue, { type: "regex" }>[] = [];
+    function visit(node: unknown) {
       if (!node || typeof node !== "object") return;
       if (
-        node.type === "comparison" &&
-        node.left?.name === "url" &&
-        node.operator === "~=" &&
-        node.right?.type === "regex"
+        (node as { type?: string }).type === "comparison" &&
+        ((node as ComparisonNode).left as VariableNode)?.name === "url" &&
+        (node as ComparisonNode).operator === "~=" &&
+        (node as ComparisonNode).right?.type === "regex"
       )
-        matchers.push(node.right);
+        matchers.push((node as ComparisonNode).right as Extract<RewriteValue, { type: "regex" }>);
       for (const value of Object.values(node))
         if (value && typeof value === "object") {
           if (Array.isArray(value)) value.forEach(visit);
@@ -70,11 +71,11 @@ export function restoreFrozenSurgeFlags(source: string, target: string) {
       }).pattern;
       add(urls, old, restored);
       add(urls, restored, restored);
-      for (const action of ast.actions ?? []) {
-        const array = action.args.find((a: any) => a.type === "array");
+      for (const action of (ast as RewriteAst).actions ?? []) {
+        const array = action.args.find((a) => a.type === "array");
         const rows = array
-          ? array.items.map((_: any, i: number) =>
-              action.args.map((a: any) =>
+          ? array.items.map((_, i) =>
+              action.args.map((a) =>
                 a.type === "array" ? a.items[i] : a,
               ),
             )
@@ -95,7 +96,7 @@ export function restoreFrozenSurgeFlags(source: string, target: string) {
             "\0" +
             old +
             "\0" +
-            (header ? args[0]?.value + "\0" : "");
+            (header ? (args[0] as StringNode)?.value + "\0" : "");
           const map = body ? bodies : headers;
           add(map, prefix + rx.pattern, mapped);
           add(map, prefix + mapped, mapped);
@@ -173,10 +174,10 @@ export function restoreFrozenSurgeFlags(source: string, target: string) {
   return { text, changed, unresolved: [...new Set(unresolved)] };
 }
 
-export async function refreshFrozenSurgeFlags(root: string, catalog: any[]) {
+export async function refreshFrozenSurgeFlags(root: string, catalog: readonly SourceEntry[]) {
   if (!(await keleePaused(root))) return;
   const changes = new Map<string, string>(),
-    reports: any[] = [];
+    reports: { file: string; changed: number; unresolved: string[] }[] = [];
   for (const entry of catalog.filter((e) => isKeleeSource(e.source))) {
     const file = "Adblock/Surge/" + entry.surge;
     const source = await readOptional(

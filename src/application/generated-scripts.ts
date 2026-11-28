@@ -1,5 +1,7 @@
 // Modified: 2026-11-02 (chance). Retire only owned generated scripts after
 // final rebinding. Keep active/transitive/manual dependencies and exact archives.
+import type { BackupIndex, BackupObject } from "../ingest/resources.ts";
+import type { ManagedFileChanges } from "../domain/contracts.ts";
 import path from "node:path";
 import { listFiles, readOptional, safePath } from "../publish/transaction.ts";
 import { isWayxGeneratedHelperFilename, isWayxMapLocalPayloadFilename } from "../domain/generated-scripts.ts";
@@ -18,7 +20,7 @@ const generated = (file: string) =>
         isWayxMapLocalPayloadFilename(path.posix.basename(file)))));
 export async function pruneGeneratedScripts(
   root: string,
-  { index, changes, artifacts = [] }: any,
+  { index, changes, artifacts = [] }: { index: BackupIndex; changes: ManagedFileChanges; rawBase?: string; artifacts?: { relative: string; text: string }[] },
 ) {
   const files = new Set(
     (await listFiles(path.join(root, "Script"))).map((f) => "Script/" + f),
@@ -30,8 +32,8 @@ export async function pruneGeneratedScripts(
   const owned = new Set([...files].filter(generated));
   // Active raw-backed scripts may depend on generated helpers too. Archives
   // are graph nodes, never deletion candidates or unconditional liveness roots.
-  const archives = new Map<string, any>(
-    Object.entries<any>(index.objects || {}).filter(
+  const archives = new Map<string, BackupObject>(
+    Object.entries(index.objects || {}).filter(
       ([file, record]) =>
         record.kind === "script" && file.startsWith("Resource/Backup/script/"),
     ),
@@ -44,7 +46,7 @@ export async function pruneGeneratedScripts(
         ? null
         : typeof value === "string"
           ? value
-          : Buffer.from(value).toString("utf8");
+          : Buffer.from(value!).toString("utf8");
     }
     const bytes = await readOptional(safePath(root, file));
     return bytes === null ? null : bytes.toString();
@@ -130,12 +132,12 @@ export async function pruneGeneratedScripts(
     changes.set(file, null);
     if (index.adapters) delete index.adapters[file];
   }
-  for (const [artifact, bindings] of Object.entries<any>(
+  for (const [artifact, bindings] of Object.entries(
     index.bindings || {},
   )) {
-    for (const [url, binding] of Object.entries<any>(bindings))
+    for (const [url, binding] of Object.entries(bindings))
       if (removed.includes(binding.path)) delete bindings[url];
-    if (!Object.keys(bindings).length) delete index.bindings[artifact];
+    if (!Object.keys(bindings).length) delete index.bindings![artifact];
   }
   return {
     removed,

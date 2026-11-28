@@ -23,9 +23,11 @@ import { scriptCodecs } from "./script-codecs.ts";
 import { aesProvider } from "../vendor/providers/aes.ts";
 import { encodingProvider } from "../vendor/providers/encoding.ts";
 import { urlProvider } from "../vendor/providers/url.ts";
+import type { ScriptApiContexts } from "../parser/script-api.ts";
+
 export function emitScriptApiProgram(
   source: string,
-  contexts: Record<string, any>,
+  contexts: ScriptApiContexts,
   fixedTarget?: string,
 ) {
   const tree = ts.createSourceFile(
@@ -97,10 +99,10 @@ export function emitScriptApiProgram(
   legacyEncoding ||=
     (opaqueUses(/\$task/) || usage.roots.has("$task")) &&
     Object.values(contexts).some(
-      (targets: any) => targets.surge?.from === "qx",
+      (targets) => targets.surge?.from === "qx",
     ) &&
     (!fixedTarget || fixedTarget === "surge");
-  const selected = fixedTarget
+  const selected: ScriptApiContexts = fixedTarget
     ? Object.fromEntries(
         Object.entries(contexts)
           .map(([role, targets]) => [
@@ -112,14 +114,14 @@ export function emitScriptApiProgram(
           ),
       )
     : contexts;
-  const configs = Object.values(selected).flatMap((targets: any) =>
+  const configs = Object.values(selected).flatMap((targets) =>
     Object.values(targets),
   );
   const bodyOnly = emitBodyScript(source, usage, configs, fixedTarget, fresh);
   if (bodyOnly) return bodyOnly;
   const runtime = selectScriptApiRuntime(scriptApiRuntime, usage, configs);
   const recoveryRoles = Object.fromEntries(
-    Object.entries(selected).map(([role, targets]: [string, any]) => [
+    Object.entries(selected).map(([role, targets]) => [
       role,
       Object.keys(targets).filter(
         (client) =>
@@ -164,7 +166,7 @@ export function emitScriptApiProgram(
   runtime.hostFields.add("response");
   const headerGuard =
     (!fixedTarget || fixedTarget === "surge") &&
-    configs.some((c: any) => c.from === "qx");
+    configs.some((c) => c.from === "qx");
   if (headerGuard) {
     runtime.hostFields.add("argument");
     runtime.hostFields.add("request");
@@ -174,7 +176,7 @@ export function emitScriptApiProgram(
     .map((key) => key + ":" + capture[key])
     .join(",");
   const compact = Object.fromEntries(
-    Object.entries(selected).map(([role, targets]: [string, any]) => [
+    Object.entries(selected).map(([role, targets]) => [
       role,
       Object.fromEntries(
         Object.entries(targets).map(([client, value]) => [
@@ -214,7 +216,7 @@ export function emitScriptApiProgram(
     "btoa",
     "URL",
     "URLSearchParams",
-    ...(configs.some((c: any) => c.from === "loon")
+    ...(configs.some((c) => c.from === "loon")
       ? ["$utils", "$crypto"]
       : []),
   ]);

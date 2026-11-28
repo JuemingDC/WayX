@@ -43,7 +43,7 @@ export async function refreshSourceBackups(
     nativeInputs = [],
     rawBase = RAW_BASE,
     log = console.log,
-  }: any,
+  }: { root?: string; resources: ReturnType<typeof import("../ingest/resources.ts").createResourceSnapshot>; catalog?: import("../domain/contracts.ts").SourceEntry[]; nativeInputs?: { acquiredUrl: string; sourceUrl: string; sha256: string }[]; rawBase?: string; log?: (message: string) => void },
 ) {
   const prior = await readJson<BackupIndex>(path.join(root, INDEX), {
     version: 1,
@@ -56,7 +56,7 @@ export async function refreshSourceBackups(
     changes = new Map<string, string | Uint8Array | null>();
   const pauseKelee = await keleePaused(root);
   const disabledSources = new Set<string>();
-  const failures: any[] = [],
+  const failures: { url: string; error: string; retained: string | null; kind?: string }[] = [],
     sources: BackupObject[] = [],
     pending = new Map<string, Promise<BackupObject | null>>();
   const usedScripts = new Set<string>(),
@@ -139,7 +139,7 @@ export async function refreshSourceBackups(
           if (unavailableSource(key)) { disabledSources.add(key); return null; }
           try {
             return store(key, await resources.fetchBytes(key), "script");
-          } catch (error: any) {
+          } catch (error) {
             if (error.status === 404 || error.status === 410 || error.code === "ERR_SOURCE_DISABLED") {
               disabledSources.add(key); return null;
             }
@@ -258,7 +258,7 @@ export async function refreshSourceBackups(
       seenSources.add(sourceKey(url));
       try {
         await source(url, await resources.fetchBytes(url), "run-response");
-      } catch (error: any) {
+      } catch (error) {
         failures.push({
           url,
           error: error.message,

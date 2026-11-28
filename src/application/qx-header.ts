@@ -11,8 +11,11 @@ import {
 
 const orderedRejectActions = new Set(["reject", "reject-200", "reject-dict", "reject-array"]);
 
-function tryOrderedRejectGroup(first: any, rows: any[], text: string, rawBase: string): any {
-  const component = new Set<any>([first]);
+type NativeQxRow = { line: string; url: string; header?: string; action: string };
+type HeaderArtifact = { relative: string; text: string };
+type HeaderReport = { artifact: string; source: string; status: string; mode?: string; reason?: string; overlapCount?: number; overlapExamples?: string[] };
+function tryOrderedRejectGroup(first: NativeQxRow, rows: readonly NativeQxRow[], text: string, rawBase: string) {
+  const component = new Set<NativeQxRow>([first]);
   let expanded = true;
   while (expanded) {
     expanded = false;
@@ -40,7 +43,7 @@ function tryOrderedRejectGroup(first: any, rows: any[], text: string, rawBase: s
   const hash = crypto.createHash("sha256")
     .update(members.map((row) => row.line).join("\n")).digest("hex").slice(0, 10);
   if (text.includes("wayx_qx_header_" + hash + " = type=http-request,"))
-    return { members, already: true };
+    return { members, already: true as const };
   const lines = text.split("\n"), used = new Set<number>(), removed: number[] = [];
   for (const row of members) {
     let at = -1;
@@ -101,7 +104,7 @@ function tryOrderedRejectGroup(first: any, rows: any[], text: string, rawBase: s
 
 
 /** Authorized URL-only fallback for identical QX URL/action with distinct headers. */
-function tryMergeIdenticalUrlActions(row: any, rows: any[], text: string): any {
+function tryMergeIdenticalUrlActions(row: NativeQxRow, rows: readonly NativeQxRow[], text: string) {
   if (!row.header || !orderedRejectActions.has(row.action)) return null;
   const members = rows.filter((item) => item.url === row.url);
   if (
@@ -156,7 +159,7 @@ function literalRequestHost(pattern: string): string | null {
     .replace(/\\\./g, ".");
   return /^\^https?:\/\/([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+)\//.exec(normalized)?.[1]?.toLowerCase() ?? null;
 }
-function standaloneGuardedReject(row: any, rows: any[], overlaps: any[]): boolean {
+function standaloneGuardedReject(row: NativeQxRow, rows: readonly NativeQxRow[], overlaps: readonly NativeQxRow[]): boolean {
   const host = literalRequestHost(row.url);
   return Boolean(
     host &&
@@ -172,13 +175,13 @@ export function prepareQxHeaderRewrites({
   changes,
   index,
   rawBase,
-}: any) {
-  const report: any[] = [];
-  const current = (a: any) => String(changes.get(a.relative) ?? a.text);
+}: { artifacts: HeaderArtifact[]; changes: import("../domain/contracts.ts").ManagedFileChanges; index: import("../ingest/resources.ts").BackupIndex; rawBase: string }) {
+  const report: HeaderReport[] = [];
+  const current = (a: HeaderArtifact) => String(changes.get(a.relative) ?? a.text);
   for (const target of artifacts) {
     if (!target.relative.startsWith("Adblock/Surge/")) continue;
     const source = artifacts.find(
-      (a: any) =>
+      (a: HeaderArtifact) =>
         a.relative ===
         target.relative
           .replace("Adblock/Surge/", "Adblock/Quantumult X/")
@@ -195,16 +198,16 @@ export function prepareQxHeaderRewrites({
       })
       .filter((row): row is NonNullable<typeof row> => row !== null);
     let text = current(target);
-    const rejects: any[] = [],
+    const rejects: { url: string; predicate: ReturnType<typeof parseQxHeaderPredicate>; action: string }[] = [],
       declarations: string[] = [];
-    const processed = new Set<any>();
-    for (const row of rows.filter((r: any) => r.header)) {
+    const processed = new Set<NativeQxRow>();
+    for (const row of rows.filter((r) => r.header)) {
       if (processed.has(row)) continue;
       const merged = tryMergeIdenticalUrlActions(row, rows, text);
       if (merged) {
         for (const member of merged.members) processed.add(member);
         if (!merged.already) {
-          text = merged.text;
+          text = merged.text!;
           for (const member of merged.members) {
             report.push({
               artifact: target.relative,
@@ -216,7 +219,7 @@ export function prepareQxHeaderRewrites({
         }
         continue;
       }
-      const predicate = parseQxHeaderPredicate(row.header);
+      const predicate = parseQxHeaderPredicate(row.header!);
       let reason = !predicate
         ? "Unsupported whole-header serialization predicate"
         : "";
@@ -231,9 +234,9 @@ export function prepareQxHeaderRewrites({
             for (const member of ordered.members) if (member.header) processed.add(member);
             continue;
           }
-          text = ordered.text;
+          text = ordered.text!;
           changes.set(ordered.file, ordered.code);
-          declarations.push(ordered.declaration);
+          declarations.push(ordered.declaration!);
           for (const member of ordered.members) if (member.header) {
             processed.add(member);
             report.push({ artifact: target.relative, source: member.line, status: "converted" });

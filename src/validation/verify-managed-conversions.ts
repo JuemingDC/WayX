@@ -15,13 +15,13 @@ const manifest = await loadLoonSourceCatalog(
   path.join(ROOT, ".github/sources/loon.json"),
 );
 const findings: string[] = [];
-const kelee = manifest.filter((entry: any) =>
+const kelee = manifest.filter((entry) =>
   /https:\/\/kelee\.one\/Tool\/Loon\/Lpx\//.test(entry.source),
 );
-async function readRequired(rel: string, label: string): Promise<any> {
+async function readRequired(rel: string, label: string): Promise<string | null> {
   try {
     return await fs.readFile(path.join(ROOT, rel), "utf8");
-  } catch (error: any) {
+  } catch (error) {
     findings.push(`${label} missing: ${rel} (${error?.code || error})`);
     return null;
   }
@@ -64,9 +64,9 @@ for (const [base, field, suffix] of [
   ["Resource/Loon", "file", ".lpx"],
   ["Adblock/Quantumult X", "qx", ".snippet"],
   ["Adblock/Surge", "surge", ".sgmodule"],
-]) {
-  const expected: any = new Set(
-    manifest.map((entry: any): any => entry[field]),
+] as const) {
+  const expected = new Set(
+    manifest.map((entry) => entry[field]),
   );
   for (const rel of await fs.readdir(path.join(ROOT, base), {
     recursive: true,
@@ -77,7 +77,7 @@ for (const [base, field, suffix] of [
       findings.push("Retired managed artifact remains: " + base + "/" + rel);
   }
 }
-const activeIds: any = new Set(manifest.map((entry: any): any => entry.id));
+const activeIds = new Set(manifest.map((entry) => entry.id));
 for (const rel of await fs.readdir(path.join(ROOT, "Script"), {
   recursive: true,
 })) {
@@ -93,7 +93,7 @@ for (const rel of await fs.readdir(path.join(ROOT, "Script"), {
   )
     findings.push("Retired generated helper remains: Script/" + rel);
 }
-let snapshot: any = null;
+let snapshot: { plugins?: { source: string }[]; count?: number } | null = null;
 try {
   snapshot = JSON.parse(
     await fs.readFile(
@@ -101,17 +101,17 @@ try {
       "utf8",
     ),
   );
-} catch (error: any) {
+} catch (error) {
   if (error?.code !== "ENOENT")
     findings.push(
       "Kelee runtime snapshot unreadable: " + (error?.message || error),
     );
 }
 if (snapshot) {
-  const expected: any = (snapshot.plugins || []).map(
-    (item: any): any => item.source,
+  const expected = (snapshot.plugins || []).map(
+    (item) => item.source,
   );
-  const actual: any = kelee.map((entry: any): any => entry.source);
+  const actual = kelee.map((entry) => entry.source);
   if (JSON.stringify(expected) !== JSON.stringify(actual)) {
     findings.push("Kelee manifest order differs from plugin-center list order");
   }
@@ -121,7 +121,7 @@ if (snapshot) {
     );
   }
 }
-const readme: any = await readRequired("README.md", "README");
+const readme = await readRequired("README.md", "README");
 if (readme) {
   const expected = (await buildReadmePlan(ROOT)).get("README.md");
   if (readme !== expected)
@@ -132,7 +132,7 @@ if (readme) {
     const marker =
       "Adblock/Quantumult%20X/" +
       encodeURIComponent(entry.qx).replace(/%2F/g, "/");
-    let index: any = readme.indexOf(marker);
+    let index = readme.indexOf(marker);
     if (index < 0) {
       // GitHub blob links percent-encode the directory space, while filenames can
       // contain Unicode/space encodings. Fall back to the encoded filename.
@@ -148,7 +148,7 @@ if (readme) {
 }
 await writeValidationEvidence(
   manifest.length,
-  findings.map((text: any): any => ({ code: "managed-integrity", text })),
+  findings.map((text: string) => ({ code: "managed-integrity", text })),
 );
 if (findings.length) {
   console.error(

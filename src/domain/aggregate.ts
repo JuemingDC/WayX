@@ -28,7 +28,8 @@ export class Rule {
     pool.set(this.key, this);
   }
 }
-const cmp = (a: any, b: any): number => {
+type SortKey = string | number | boolean | readonly SortKey[];
+const cmp = (a: SortKey, b: SortKey): number => {
   if (Array.isArray(a) && Array.isArray(b)) {
     for (let n = 0; n < Math.min(a.length, b.length); n++) {
       const c = cmp(a[n], b[n]);
@@ -36,7 +37,7 @@ const cmp = (a: any, b: any): number => {
     }
     return a.length - b.length;
   }
-  return a < b ? -1 : a > b ? 1 : 0;
+  return (a as string) < (b as string) ? -1 : (a as string) > (b as string) ? 1 : 0;
 };
 const ruleCompare = (a: Rule, b: Rule) =>
   cmp([a.kind, a.value, a.options], [b.kind, b.value, b.options]);
@@ -288,10 +289,10 @@ export function* wireFields(
 type GeoEntry = [number, string, Set<string>];
 export function geosites(
   data: Uint8Array,
-  _anomalies: any[] = [],
+  _anomalies: RuleAnomaly[] = [],
 ): Map<string, GeoEntry[]> {
   const sites = new Map<string, GeoEntry[]>(),
-    decode = (x: any) => Buffer.from(x).toString("utf8");
+    decode = (x: number | Uint8Array) => Buffer.from(x as Uint8Array).toString("utf8");
   for (const [field, wire, payload] of wireFields(data)) {
     if (field !== 1 || wire !== 2) throw Error("Unknown GeoSiteList schema");
     let name: string | null = null;
@@ -364,19 +365,61 @@ export function serialize(rule: Rule, policy: string, target: string): string {
     ...surgeOptions(rule),
   ].join(",");
 }
+// Modified: 2026-11-28 (chance). Track source selectors and rule provenance through aggregation.
+export interface RuleSource {
+  id: string;
+  url: string;
+  author: string;
+  category: string;
+  format: string;
+  policy?: string;
+  standalone?: boolean;
+  mirrors?: string[];
+  timeout?: number;
+  allow_empty?: boolean;
+  max_age_days?: number;
+  revision?: string;
+  license?: string;
+}
+export interface RuleConfiguration {
+  version: number;
+  sources: RuleSource[];
+  geosite: { release_api: string; repository: string; origin?: string; source?: string; url?: string };
+  applications: {
+    name: string; tags: string[]; exclude_tags?: string[]; split?: boolean; proxy_tags?: string[];
+    routing_layers?: { policy: string; surge_suffix: string; sources?: string[]; tags?: string[] }[];
+  }[];
+  collections: Record<string, string[]>;
+  default_policies?: Record<string, string>;
+  routing_policies?: Record<string, string>;
+  rule_exclusions?: Record<string, { kind: string; value_regex: string }[]>;
+  classification?: { priority?: string[]; domestic_tags?: string[]; overseas_tags?: string[]; [key: string]: unknown };
+  surge_output?: Record<string, unknown>;
+}
+export interface RuleAnomaly {
+  source: string;
+  code: string;
+  declaration: string;
+  reason: string;
+  line?: number;
+  category?: string;
+  target?: string;
+  categories?: string[];
+}
+type NativeRuleRow = [rule: Rule, policy: string, explicit?: boolean];
 export function nativeRules(
   text: string,
-  source: any,
-  anomalies: any[],
+  source: RuleSource,
+  anomalies: RuleAnomaly[],
   withOrigin = false,
-): any[] {
-  const result: any[] = [],
+): NativeRuleRow[] {
+  const result: NativeRuleRow[] = [],
     emit = (rule: Rule, policy: string, explicit = false) =>
       result.push(withOrigin ? [rule, policy, explicit] : [rule, policy]),
     desktop =
       /\b(?:PROCESS-NAME|PROCESS-PATH|PROCESS-NAME-REGEX|PROCESS-PATH-REGEX|UID|USER|USER-ID)\s*,/i;
   const filtered = (
-    line: any,
+    line: unknown,
     reason: string,
     code = "filtered-unsupported-rule",
     number?: number,
@@ -462,7 +505,7 @@ export function nativeRules(
               domain_suffix: "DOMAIN-SUFFIX",
               domain_keyword: "DOMAIN-KEYWORD",
               ip_cidr: value.includes(":") ? "IP-CIDR6" : "IP-CIDR",
-            } as any
+            } as Record<string, string>
           )[key];
           if (key === "domain_suffix" && value.startsWith(".")) {
             if (exact.has(value.slice(1))) value = value.slice(1);
@@ -532,7 +575,7 @@ export function nativeRules(
               domain: "DOMAIN-SUFFIX",
               full: "DOMAIN",
               keyword: "DOMAIN-KEYWORD",
-            } as any
+            } as Record<string, string>
           )[prefix] ?? prefix,
           value,
         );
@@ -552,7 +595,7 @@ export function nativeRules(
         rule = normalized(kind, value, options);
       }
       emit(rule, policy, explicit);
-    } catch (error: any) {
+    } catch (error) {
       filtered(
         line,
         String(error.message),
@@ -574,12 +617,12 @@ export type RuleMetadata = {
 };
 
 export function build(
-  config: any,
+  config: RuleConfiguration,
   inputs: Record<string, Uint8Array>,
-): [Record<string, string>, Record<string, RuleMetadata>, any[]] {
-  const anomalies: any[] = [],
+): [Record<string, string>, Record<string, RuleMetadata>, RuleAnomaly[]] {
+  const anomalies: RuleAnomaly[] = [],
     sites = geosites(inputs.geosite, anomalies),
-    appNames = new Set<string>(config.applications.map((a: any) => a.name)),
+    appNames = new Set<string>(config.applications.map((a) => a.name)),
     routingPolicies = config.routing_policies ?? {},
     scope = new Map<string, Set<Rule>>(),
     exclusions = new Map<string, [string, RegExp][]>();
@@ -587,7 +630,7 @@ export function build(
     buckets = new Map<string, Set<Rule>>(),
     authors = new Map<string, Set<string>>(),
     urls = new Map<string, Set<string>>();
-  const key = (...parts: any[]) => JSON.stringify(parts);
+  const key = (...parts: unknown[]) => JSON.stringify(parts);
   if (
     Object.entries(routingPolicies).some(
       ([n, p]) => !appNames.has(n) || p !== "PROXY",
@@ -596,7 +639,7 @@ export function build(
     throw Error("Invalid application routing policy");
   if (
     config.applications.some(
-      (a: any) =>
+      (a) =>
         a.name in routingPolicies && (a.split || a.proxy_tags?.length),
     )
   )
@@ -618,7 +661,7 @@ export function build(
       throw Error("Unknown rule exclusion category: " + name);
     exclusions.set(
       name,
-      (specs as any[]).map((s) => {
+      specs.map((s) => {
         if (
           Object.keys(s).sort().join(",") !== "kind,value_regex" ||
           !(s.kind in QX_TYPES)
@@ -704,13 +747,13 @@ export function build(
         try {
           result.add(
             normalized(
-              ({ 0: "DOMAIN-KEYWORD", 2: "DOMAIN-SUFFIX", 3: "DOMAIN" } as any)[
+              ({ 0: "DOMAIN-KEYWORD", 2: "DOMAIN-SUFFIX", 3: "DOMAIN" } as Record<number, string>)[
                 kind
               ],
               operand,
             ),
           );
-        } catch (error: any) {
+        } catch (error) {
           anomalies.push({
             source: "V2Fly",
             category: group,
@@ -760,7 +803,7 @@ export function build(
     origin,
   );
   const parsed = config.sources.map(
-    (s: any) =>
+    (s) =>
       [
         s,
         nativeRules(
@@ -771,7 +814,7 @@ export function build(
           anomalies,
           true,
         ),
-      ] as [any, any[]],
+      ] as [RuleSource, NativeRuleRow[]],
   );
   for (const [source, rows] of parsed)
     if (!source.standalone)
@@ -795,7 +838,7 @@ export function build(
         throw Error("Invalid application routing layer");
       if (
         (layer.sources ?? []).some(
-          (id: string) => !parsed.some(([s]: any) => s.id === id),
+          (id: string) => !parsed.some(([s]) => s.id === id),
         )
       )
         throw Error("Unknown application routing layer source");
@@ -1225,7 +1268,7 @@ export function build(
       };
     }
   }
-  const unique = new Map<string, any>();
+  const unique = new Map<string, RuleAnomaly & { categories: string[] }>();
   for (const item of anomalies) {
     const k = key(
       item.source,
@@ -1234,8 +1277,8 @@ export function build(
       item.target ?? "both",
     );
     if (!unique.has(k)) unique.set(k, { ...item, categories: [] });
-    if (item.category && !unique.get(k).categories.includes(item.category))
-      unique.get(k).categories.push(item.category);
+    if (item.category && !unique.get(k)!.categories.includes(item.category))
+      unique.get(k)!.categories.push(item.category);
   }
   return [rendered, metadata, [...unique.values()]];
 }

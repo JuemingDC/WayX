@@ -171,7 +171,7 @@ export async function executeChecks(
       if (stage === "verify" && id === "repository-audit" && item.status === "passed" &&
           !validAuditEvidence(item))
         throw Error("Missing or incomplete repository audit evidence");
-    } catch (error: any) {
+    } catch (error) {
       item.status = "failed";
       item.findings = [{ code: "invalid-check-evidence", text: error.message }];
       await fs.appendFile(log, "\n" + error.message + "\n");
@@ -471,7 +471,7 @@ async function readOptionalDirectory(file: string) {
   try {
     await fs.stat(file);
     return true;
-  } catch (e: any) {
+  } catch (e) {
     if (e.code === "ENOENT") return false;
     throw e;
   }

@@ -63,9 +63,14 @@ export function replaceScriptReferences(
 }
 
 // Modified: 2026-11-01 (chance). Reuse established stable backups during generation, avoiding a rewrite of every target on unchanged daily runs.
+export interface BackupBindingsIndex {
+  bindings?: Record<string, Record<string, ScriptBinding>>;
+  objects?: Record<string, { kind: string; path: string }>;
+  latest?: Record<string, string>;
+}
 export function bindKnownBackups(
   text: string,
-  index: any,
+  index: BackupBindingsIndex | null,
   rawBase: string,
   artifact?: string,
 ): string {
@@ -76,7 +81,7 @@ export function bindKnownBackups(
     const url = new URL(ref.value);
     url.hash = "";
     const known = index?.bindings?.[artifact ?? ""]?.[ref.value];
-    const record = index?.objects?.[index?.latest?.[url.href]];
+    const record = index?.objects?.[index?.latest?.[url.href]!];
     if (known) bindings[ref.value] = known;
     else if (record?.kind === "script")
       bindings[ref.value] = { path: record.path };

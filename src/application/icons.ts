@@ -3,13 +3,14 @@
 import path from "node:path";
 import crypto from "node:crypto";
 import { addAppIcon } from "../domain/icons.ts";
+import type { SourceEntry } from "../domain/contracts.ts";
 import type { IconIndex } from "../domain/icons.ts";
 import { loadIconIndex } from "../ingest/icons.ts";
 import { createResourceSnapshot } from "../ingest/resources.ts";
 import { commitFiles, readJson, readOptional } from "../publish/transaction.ts";
 export async function backfillIcons(root: string, index: IconIndex | null) {
   if (!index) return { added: [], existing: [], unmatched: [] };
-  const catalog = await readJson<any[]>(
+  const catalog = await readJson<SourceEntry[]>(
       path.join(root, ".github/sources/loon.json"),
       [],
     ),

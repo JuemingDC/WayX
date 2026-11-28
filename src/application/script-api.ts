@@ -1,3 +1,7 @@
+import type { SourceEntry, ManagedFileChanges } from "../domain/contracts.ts";
+import type { BackupAdapterRecord, BackupIndex, BackupObject } from "../ingest/resources.ts";
+import type { ArgumentSchema } from "../parser/script-argument.ts";
+import type { ApiProblem } from "../parser/script-api.ts";
 import { disableUnavailableDeclarations } from "../domain/source-health.ts";
 import { emitScriptApiProgram } from "../emit/script-api-program.ts";
 import { scriptRuntimePolicyVersion } from "../domain/script-api.ts";
@@ -32,7 +36,7 @@ import {
   universalScriptPath,
   type UniversalProfile,
 } from "../parser/universal-script.ts";
-import type { ScriptPlatform } from "../parser/script-api.ts";
+import type { ScriptApiContexts, ScriptPlatform } from "../parser/script-api.ts";
 import {
   scriptReferences,
   scriptReferencePhase,
@@ -53,13 +57,34 @@ const key = (v: string) => {
   u.hash = "";
   return u.href;
 };
+// Modified: 2026-11-28 (chance). Share typed archive bindings and target contexts with the API planner.
+type ScriptArtifact = { relative: string; text: string };
+type AdapterGroup = {
+  sourceUrl: string;
+  record: BackupObject;
+  from: Set<ScriptPlatform>;
+  profiles: UniversalProfile[];
+  refs: {
+    artifact: ScriptArtifact; ref: ReturnType<typeof scriptReferences>[number]; to: "qx" | "surge";
+    mode: ReturnType<typeof scriptReferencePhase>; nativeCopy: boolean; needsSurge: boolean;
+  }[];
+};
+type UniversalPlan = ReturnType<typeof planUniversalAdblockScript>;
+type AdapterResult = UniversalPlan
+  | { status: "native-copy"; features: string[]; problems: ApiProblem[]; contexts: ScriptApiContexts; operationPlans: UniversalPlan["operationPlans"] }
+  | { status: "blocked"; features: string[]; problems: ApiProblem[]; contexts?: ScriptApiContexts; operationPlans?: UniversalPlan["operationPlans"]; code?: null; runtimePolicyVersion?: number };
+type AdapterDiagnostic = {
+  artifact: string; sourceUrl: string; from: ScriptPlatform[]; to: ScriptPlatform; status: AdapterResult["status"];
+  features: string[]; problems: (ApiProblem & { category?: string })[];
+  omittedParameters?: string[]; path?: string; retained?: boolean;
+};
 export async function prepareScriptApiAdapters(
   root: string,
-  { artifacts, catalog, index, changes, rawBase }: any,
+  { artifacts, catalog, index, changes, rawBase }: { artifacts: ScriptArtifact[]; catalog: SourceEntry[]; index: BackupIndex; changes: ManagedFileChanges; rawBase: string },
 ) {
-  const adapters = index.adapters ?? {},
-    bindings: any = structuredClone(index.bindings ?? {}),
-    diagnostics: any[] = [],
+  const adapters: Record<string, BackupAdapterRecord & { conversionTargets?: string[]; contexts?: ScriptApiContexts; features?: string[]; runtimePolicyVersion?: number }> = index.adapters ?? {},
+    bindings = structuredClone(index.bindings ?? {}),
+    diagnostics: AdapterDiagnostic[] = [],
     counts = {
       adapted: 0,
       blocked: 0,
@@ -72,7 +97,7 @@ export async function prepareScriptApiAdapters(
     { path: string; sha256: string; sourceSha256: string }
   > = {};
   const priorApiPlans = index.apiPlans ?? {};
-  const known = new Map<string, any>();
+  const known = new Map<string, SourceEntry>();
   for (const entry of catalog)
     for (const file of [
       "Adblock/Quantumult X/" + entry.qx,
@@ -126,14 +151,14 @@ export async function prepareScriptApiAdapters(
         const binary =
           option?.value?.value === true ||
           /^(?:true|1)$/.test(String(option?.value ?? ""));
-        const argument: any = ir.script.argument;
+        const argument = ir.script.argument;
         const refs =
           ir.sourceSyntax === "legacy"
             ? parseLegacyLoonPluginObjectRefs(argument)
-            : argument?.type === "plugin-object"
-              ? argument.items.map((item: any) => item.name)
+            : (argument as import("../domain/contracts.ts").ScriptArgument | null)?.type === "plugin-object"
+              ? (argument as Extract<import("../domain/contracts.ts").ScriptArgument, { type: "plugin-object" }>).items.map((item) => item.name)
               : null;
-        let argumentSchema: any;
+        let argumentSchema: ArgumentSchema | undefined;
         if (refs) {
           if (
             refs.length &&
@@ -166,7 +191,7 @@ export async function prepareScriptApiAdapters(
         } else if (
           argument &&
           (ir.sourceSyntax === "legacy" ||
-            ["string", "raw-string"].includes(argument.type))
+            ["string", "raw-string"].includes((argument as import("../domain/contracts.ts").ScriptArgument).type))
         )
           argumentSchema = { kind: "string" };
         // Modified: 2026-11-02 (chance). Preserve original Loon body-read
@@ -177,12 +202,12 @@ export async function prepareScriptApiAdapters(
         const responseBody =
           bodyOption?.value?.value === true ||
           /^(?:true|1)$/.test(String(bodyOption?.value ?? ""));
-        const p = {
+        const p: UniversalProfile = {
           phase: ir.phase as "request" | "response",
           responseBody,
           binary,
           binaryKnown,
-          name: scriptIrTag(ir),
+          name: scriptIrTag(ir) as string | undefined,
           ...(argumentSchema ? { argumentSchema } : {}),
         };
         const id = entry.source + "\0" + url;
@@ -190,7 +215,7 @@ export async function prepareScriptApiAdapters(
       } catch {}
     }
   }
-  const groups = new Map<string, any>();
+  const groups = new Map<string, AdapterGroup>();
   for (const artifact of artifacts) {
     // Modified: 2026-11-12 (chance). Native Surge website modules retain their
     // original script SDK; only Loon/QX source APIs enter conversion planning.
@@ -217,7 +242,7 @@ export async function prepareScriptApiAdapters(
       if (record?.kind !== "script") continue;
       const mode = scriptReferencePhase(artifact.text, ref);
       // Modified: 2026-11-05 (chance). Module/task scripts follow the same target API rules; provenance is optional.
-      const group = groups.get(url) ?? {
+      const group: AdapterGroup = groups.get(url) ?? {
         sourceUrl: url,
         record,
         from: new Set(),
@@ -248,7 +273,7 @@ export async function prepareScriptApiAdapters(
           to === "qx" &&
           !entry &&
           artifacts.some(
-            (a: any) =>
+            (a) =>
               a.relative ===
               artifact.relative
                 .replace(/\/Quantumult ?X\//, "/Surge/")
@@ -266,8 +291,8 @@ export async function prepareScriptApiAdapters(
       changes.get(record.path) ??
       (await readOptional(path.join(root, record.path)));
     if (!raw) throw Error("Missing raw API input: " + record.path);
-    let result: any;
-    const sourceText = new TextDecoder("utf8", { fatal: false }).decode(raw);
+    let result: AdapterResult;
+    const sourceText = new TextDecoder("utf8", { fatal: false }).decode(raw as Uint8Array);
 
     // Modified: 2026-11-05 (chance). Infer a usable API family when provenance is absent or mixed;
     // actual target declarations supply phase/body data and never block by attribution alone.
@@ -281,13 +306,13 @@ export async function prepareScriptApiAdapters(
               (p: string) => p === "$loon" || p.startsWith("$loon."),
             ) || group.from.has("loon")
           ? "loon"
-          : group.refs.some((r: any) => r.to === "qx")
+          : group.refs.some((r) => r.to === "qx")
             ? "qx"
             : "surge";
       group.from = new Set([inferred]);
     }
     if (!group.profiles.length)
-      group.profiles = group.refs.map((r: any) => ({
+      group.profiles = group.refs.map((r) => ({
         phase: r.mode.phase,
         responseBody: r.mode.body,
         binary: false,
@@ -295,7 +320,7 @@ export async function prepareScriptApiAdapters(
       }));
     {
       try {
-        result = group.refs.every((r: any) => r.nativeCopy && !r.needsSurge)
+        result = group.refs.every((r) => r.nativeCopy && !r.needsSurge)
           ? {
               status: "native-copy",
               features: [],
@@ -304,11 +329,11 @@ export async function prepareScriptApiAdapters(
               operationPlans: {},
             }
           : planUniversalAdblockScript(
-              new TextDecoder("utf8", { fatal: true }).decode(raw),
+              new TextDecoder("utf8", { fatal: true }).decode(raw as Uint8Array),
               [...group.from][0] as ScriptPlatform,
               group.profiles,
             );
-      } catch (e: any) {
+      } catch (e) {
         result = {
           status: "blocked",
           features: [],
@@ -326,8 +351,8 @@ export async function prepareScriptApiAdapters(
     if (
       result.status === "universal" &&
       group.refs.some(
-        (r: any) =>
-          !result.contexts[
+        (r) =>
+          !(result as Extract<UniversalPlan, { status: "universal" }>).contexts[
             r.mode.phase === "response" ? "response" : "request"
           ],
       )
@@ -365,7 +390,7 @@ export async function prepareScriptApiAdapters(
     });
     // Modified: 2026-11-05 (chance). Inventories contain cross-client API plans only.
     for (const roles of [result.contexts ?? {}, result.operationPlans ?? {}])
-      for (const targets of Object.values<any>(roles))
+      for (const targets of Object.values(roles))
         for (const to of Object.keys(targets))
           if (
             !scriptConversionDirections.some(
@@ -408,7 +433,7 @@ export async function prepareScriptApiAdapters(
       for (const to of ["qx", "surge"]) {
         if (
           !group.refs.some(
-            (r: any) =>
+            (r) =>
               (r.to === to && !r.nativeCopy) ||
               (to === "surge" && r.needsSurge),
           )
@@ -421,11 +446,11 @@ export async function prepareScriptApiAdapters(
         )
           continue;
         const contexts = Object.fromEntries(
-          Object.entries<any>(result.contexts).filter(
+          Object.entries(result.contexts).filter(
             ([, targets]) => targets[to],
           ),
         );
-        for (const targets of Object.values<any>(contexts))
+        for (const targets of Object.values(contexts))
           targets[to].name ??= path.posix.basename(new URL(sourceUrl).pathname);
         if (!Object.keys(contexts).length) continue;
         const file = universalScriptPath(sourceUrl, to);
@@ -484,7 +509,7 @@ export async function prepareScriptApiAdapters(
         to,
         status: nativeCopy ? "native-copy" : result.status,
         features: result.features,
-        problems: (nativeCopy ? [] : result.problems).map((p: any) => ({
+        problems: (nativeCopy ? [] : result.problems).map((p) => ({
           ...p,
           category:
             result.status === "excluded"
@@ -498,7 +523,7 @@ export async function prepareScriptApiAdapters(
           ? {
               omittedParameters: [
                 ...new Set(
-                  Object.values(result.contexts).flatMap((role: any) => [
+                  Object.values(result.contexts).flatMap((role) => [
                     ...(role.qx?.omittedParameters ?? []),
                   ]),
                 ),
@@ -548,7 +573,7 @@ export async function prepareScriptApiAdapters(
   }
   // Modified: 2026-11-02 (chance). Retirement is performed once after all
   // outputs are rebound, with dependencies across every Script file included.
-  for (const [url, entry] of Object.entries<any>(priorApiPlans))
+  for (const [url, entry] of Object.entries(priorApiPlans))
     if (
       !apiPlans[url] &&
       entry.path === "Resource/Backup/script-api/" + digest(url) + ".json"
@@ -576,7 +601,7 @@ export async function prepareScriptApiAdapters(
     // same category metadata as fully planned references; none are left untyped.
     diagnostics: diagnostics.map((d) => ({
       ...d,
-      problems: d.problems.map((p: any) => ({
+      problems: d.problems.map((p) => ({
         ...p,
         category:
           d.status === "excluded"

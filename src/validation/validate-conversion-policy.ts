@@ -16,7 +16,7 @@ import { validateSurgeModule } from "./output.ts";
 import { validateConversionMetadata } from "./output.ts";
 import { loadLoonSourceCatalog } from "../parser/input.ts";
 const manifest = await loadLoonSourceCatalog(".github/sources/loon.json");
-const targets: any = manifest.flatMap((entry: any): any => [
+const targets = manifest.flatMap((entry) => [
   { entry, target: "qx", file: "Adblock/Quantumult X/" + entry.qx },
   { entry, target: "surge", file: "Adblock/Surge/" + entry.surge },
 ]);
@@ -30,17 +30,17 @@ const changed = new Set([
     .trim()
     .split("\n"),
 ]);
-const selected: any = process.argv.includes("--all")
+const selected = process.argv.includes("--all")
   ? targets
-  : targets.filter(({ file }: any) => changed.has(file));
-const errors: any = [];
+  : targets.filter(({ file }) => changed.has(file));
+const errors: { file: string; code: string; text: string; plugin?: string }[] = [];
 for (const { entry, target, file } of selected) {
   try {
     const text = await fs.readFile(file, "utf8");
     validateConversionMetadata(text, entry, target);
     if (target === "qx") validateQX(text, entry);
     else validateSurgeModule(text, entry);
-  } catch (error: any) {
+  } catch (error) {
     errors.push({
       file,
       plugin: entry.id,
@@ -55,7 +55,7 @@ try {
   routing = JSON.parse(
     await fs.readFile(".github/sources/rules-state.json", "utf8"),
   );
-} catch (error: any) {
+} catch (error) {
   if (error.code !== "ENOENT") throw error;
 }
 for (const file of Object.keys(routing.outputs || {})) {
@@ -72,7 +72,7 @@ for (const file of Object.keys(routing.outputs || {})) {
     else if (file.endsWith(".dconf"))
       validateSurgeRuleSection(text, { id: file });
     else validateSurgeRuleSet(text, { id: file });
-  } catch (error: any) {
+  } catch (error) {
     errors.push({
       file,
       code: "rule-collection-format",

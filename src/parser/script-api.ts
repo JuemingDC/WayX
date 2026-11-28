@@ -64,7 +64,7 @@ export function inspectScriptApis(source: string) {
   try {
     // Modified: 2026-11-05 (chance). Proxy entrypoints execute inside a function; top-level return is legal there.
     new vm.Script("(function(){\n" + source + "\n})");
-  } catch (e: any) {
+  } catch (e) {
     problems.push({
       api: "syntax",
       reason: e.message,
@@ -127,7 +127,7 @@ export function planScriptApiConversion(
     );
     try {
       new vm.Script(code);
-    } catch (e: any) {
+    } catch (e) {
       problems.push({
         api: "syntax",
         reason: e.message,

@@ -1,5 +1,6 @@
 // Modified: 2026-10-30 (chance). The sole CLI dispatches layered TypeScript
 // services. Proxy configuration stays inherited; no direct-network fallback.
+import type { ApiOptions } from "./parser/script-api.ts";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs/promises";
@@ -175,9 +176,9 @@ try {
           "Authorized script directions: loon -> qx, loon -> surge, qx -> surge",
         );
       const plan = planScriptApiConversion(Buffer.concat(chunks).toString(), {
-        from: from as any,
-        to: to as any,
-        phase: phase as any,
+        from: from as ApiOptions["from"],
+        to: to as ApiOptions["to"],
+        phase: phase as ApiOptions["phase"],
       });
       if (args.includes("--report") || plan.status === "blocked")
         console.log(
@@ -228,7 +229,7 @@ try {
     default:
       throw Error("Unknown WayX command: " + command);
   }
-} catch (error: any) {
+} catch (error) {
   // Modified: 2026-10-30 (chance). Keep the source failure detail and valid Issue report schema.
   if (command === "rules" && ["sync", "check"].includes(args[0]))
     await fs.mkdir(".github/monitor/.runtime", { recursive: true }).then(() =>

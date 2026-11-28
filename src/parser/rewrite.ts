@@ -1,5 +1,5 @@
 import { transformJqText } from "./jq-text.ts";
-import type { RewriteAst, RewriteSemanticIr, Phase, RewriteCondition, RewriteValue, SourceAction, LegacyRewriteOperation, V2RewriteOperation, LegacyRewriteIr, V2RewriteIr, RewriteOperation, RewriteOperationKind, ComparisonNode, ScriptValue, RewritePlan, RewritePlannerOptions, ConversionTarget } from "../domain/contracts.ts";
+import type { SurgeArgumentTable, RewriteDependencyRecord, LegacyMock, JsonValue, RewriteLinePlan, VariableNode, StringNode, RewriteDeclaration, RewriteAst, RewriteSemanticIr, Phase, RewriteCondition, RewriteValue, SourceAction, LegacyRewriteOperation, V2RewriteOperation, LegacyRewriteIr, V2RewriteIr, RewriteOperation, RewriteOperationKind, ComparisonNode, ScriptValue, RewritePlan, RewritePlannerOptions, ConversionTarget } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -205,7 +205,7 @@ export function tokenizeRewriteV2(source: string): RewriteToken[] {
       let regex: ReturnType<typeof scanSourceRegexLiteral>;
       try {
         regex = scanSourceRegexLiteral(s, st);
-      } catch (error: any) {
+      } catch (error) {
         fail(s, st, error.message);
       }
       i = regex.end;
@@ -432,7 +432,7 @@ export function selectRewritePipelineLayer(ast: RewriteAst): RewriteAst {
     sourceActionCount: ast.actions.length,
   };
 }
-export function isRewriteV2(s: any) {
+export function isRewriteV2(s: unknown) {
   return /^\s*(?:request|response)\s+if\b/.test(String(s ?? ""));
 }
 export function valueToSource(n: RewriteValue | ScriptValue): string {
@@ -571,7 +571,7 @@ const LEGACY_REJECT_VARIANTS = new Map([
 function rewriteSourceTokens(input: unknown): string[] {
   const out: string[] = [];
   let cur = "",
-    quote: any = null,
+    quote: string | null = null,
     esc = false;
   for (const ch of String(input ?? "")) {
     if (esc) {
@@ -604,7 +604,7 @@ function rewriteSourceTokens(input: unknown): string[] {
   if (cur) out.push(cur);
   return out;
 }
-export function unquoteRewriteToken(token: any) {
+export function unquoteRewriteToken(token: string) {
   const t = String(token ?? "");
   if (
     (t.startsWith('"') && t.endsWith('"')) ||
@@ -621,10 +621,10 @@ export const LOON_LEGACY_MOCK_OPTION_NAMES = new Set([
   "data-path",
   "mock-data-is-base64",
 ]);
-function legacyMockOptionNames(rest: string): any {
+function legacyMockOptionNames(rest: string) {
   const source = String(rest ?? "");
   const out: string[] = [];
-  let quote: any = null,
+  let quote: string | null = null,
     esc = false;
   for (let i = 0; i < source.length; ) {
     const ch = source[i];
@@ -660,7 +660,7 @@ function legacyMockOptionNames(rest: string): any {
   }
   return [...new Set(out)];
 }
-function parseLegacyMockData(rest: any) {
+function parseLegacyMockData(rest: string) {
   const source = String(rest || "");
   const quotedStart = source.search(/\bdata="/i);
   if (quotedStart >= 0) {
@@ -669,7 +669,7 @@ function parseLegacyMockData(rest: any) {
     const marker = tail.match(
       /"\s+(?=(?:status-code|data-path|mock-data-is-base64)=)/i,
     );
-    const end: any = marker
+    const end = marker
       ? valueStart + marker.index!
       : source.lastIndexOf('"');
     if (end >= valueStart) {
@@ -683,7 +683,7 @@ function parseLegacyMockData(rest: any) {
   const unquoted = source.match(/\bdata=([^\s]+)/i);
   return unquoted ? unquoted[1] : null;
 }
-function parseLegacyMock(rest: string): any {
+function parseLegacyMock(rest: string) {
   const type =
     (String(rest).match(/\bdata-type=([^\s]+)/i) || [])[1] || "text";
   const status = Number(
@@ -762,9 +762,9 @@ export function classifyLegacyRewriteAction(action: unknown): LegacyRewriteOpera
   }
   match = raw.match(/^mock-(request|response)-body\s+(.+)$/i);
   if (match) {
-    const optionNames: any = legacyMockOptionNames(match[2]);
-    const unknownOptions: any = optionNames.filter(
-      (name: any) => !LOON_LEGACY_MOCK_OPTION_NAMES.has(name),
+    const optionNames = legacyMockOptionNames(match[2]);
+    const unknownOptions = optionNames.filter(
+      (name) => !LOON_LEGACY_MOCK_OPTION_NAMES.has(name),
     );
     if (unknownOptions.length) {
       return {
@@ -784,40 +784,40 @@ export function classifyLegacyRewriteAction(action: unknown): LegacyRewriteOpera
   }
   return { kind: "unknown", raw };
 }
-export function isDiscardedLegacyJqPathIr(ir: any) {
+export function isDiscardedLegacyJqPathIr(ir: RewriteSemanticIr | null | undefined) {
   if (!ir || ir.type !== "rewrite-semantic-ir" || ir.sourceSyntax !== "legacy")
     return false;
   if (!Array.isArray(ir.operations) || ir.operations.length !== 1) return false;
-  const op: any = ir.operations[0];
+  const op = ir.operations[0];
   return (
     op?.kind === "json" &&
     op?.operation === "jq" &&
     /^jq-path\s*=/i.test(String(op?.rest || "").trim())
   );
 }
-export function isEmptyJsonJqIr(ir: any) {
+export function isEmptyJsonJqIr(ir: RewriteSemanticIr | null | undefined) {
   if (!ir || ir.type !== "rewrite-semantic-ir") return false;
   if (!Array.isArray(ir.operations) || ir.operations.length !== 1) return false;
-  const op: any = ir.operations[0];
+  const op = ir.operations[0];
   if (op?.kind !== "json" || op?.operation !== "jq") return false;
   if (ir.sourceSyntax === "legacy") {
-    const raw = String(op?.rest ?? "")
+    const raw = String((op as LegacyRewriteOperation & { rest?: string })?.rest ?? "")
       .replace(/[\u200B-\u200D\u2060\uFEFF]/gu, "")
       .trim();
     if (!raw) return true;
     return unquoteRewriteToken(raw).trim() === "";
   }
   if (ir.sourceSyntax === "v2") {
-    const node: any = op?.sourceAction?.args?.[0];
+    const node = (op as V2RewriteOperation)?.sourceAction?.args?.[0];
     return Boolean(
       node &&
         ["string", "raw-string"].includes(node.type) &&
-        String(node.value ?? "").trim() === "",
+        String((node as StringNode).value ?? "").trim() === "",
     );
   }
   return false;
 }
-export function isEmptyLegacyJsonJqIr(ir: any): any {
+export function isEmptyLegacyJsonJqIr(ir: RewriteSemanticIr | null | undefined) {
   return ir?.sourceSyntax === "legacy" && isEmptyJsonJqIr(ir);
 }
 export function legacyRewriteToSemanticIr(pattern: unknown, action: unknown): LegacyRewriteIr {
@@ -1134,35 +1134,43 @@ function validateCondition(node: RewriteCondition, phase: Phase): void {
       "header equality requires String, null, or String variable",
     );
 }
+type InspectableRewriteNode = {
+  type?: string;
+  flags?: string;
+  pattern?: string;
+  operator?: string;
+  right?: RewriteValue;
+  capture?: string;
+};
 export function validateRewriteV2Ast(
-  ast: RewriteAst,
+  ast: RewriteDeclaration,
   { regexEngine = "icu" }: { regexEngine?: "icu" | "javascript" } = {},
 ) {
   if (!ast || ast.type !== "rewrite")
     throw new TypeError("Expected Rewrite v2 AST root");
-  const validateRegexes: any = (node: any) => {
+  const validateRegexes = (node: unknown) => {
     if (!node || typeof node !== "object") return;
     // Modified: 2026-11-16 (chance). Source regex validation uses ICU without
     // rewriting atomic groups; JS execution remains a separate helper boundary.
-    if (node.type === "regex" && regexEngine === "javascript")
-      compileSourceRegex(node);
-    else if (node.type === "regex")
+    if ((node as InspectableRewriteNode).type === "regex" && regexEngine === "javascript")
+      compileSourceRegex(node as Extract<RewriteValue, { type: "regex" }>);
+    else if ((node as InspectableRewriteNode).type === "regex")
       validateIcuPattern(
-        (node.flags ? "(?" + node.flags + ")" : "") + node.pattern,
+        ((node as InspectableRewriteNode).flags ? "(?" + (node as InspectableRewriteNode).flags + ")" : "") + (node as InspectableRewriteNode).pattern,
         "Invalid source regex",
       );
-    const names: any =
-      node.type === "variable"
-        ? [node.name]
-        : node.type === "string"
-          ? stringTemplateParts(node)
-              .filter((p: any) => p[0] === "v")
-              .map((p: any): any => p[1])
+    const names =
+      (node as InspectableRewriteNode).type === "variable"
+        ? [(node as VariableNode).name]
+        : (node as InspectableRewriteNode).type === "string"
+          ? stringTemplateParts(node as StringNode)
+              .filter((p) => p[0] === "v")
+              .map((p) => p[1])
           : [];
     if (
       ast.phase === "request" &&
       names.some(
-        (name: any): any =>
+        (name) =>
           name === "response.status" || name.startsWith("response.header["),
       )
     )
@@ -1177,7 +1185,7 @@ export function validateRewriteV2Ast(
   return ast.actions.map(validateRewriteV2Action);
 }
 // Target adapters lower semantic fields, never provenance AST/source strings.
-export function rewriteIrDeclaration(ir: RewriteSemanticIr) {
+export function rewriteIrDeclaration(ir: RewriteSemanticIr): RewriteDeclaration {
   if (ir?.type !== "rewrite-semantic-ir" || ir.sourceSyntax !== "v2")
     throw new TypeError("Expected Rewrite v2 Semantic IR");
   return {
@@ -1195,15 +1203,20 @@ export function rewriteIrDeclaration(ir: RewriteSemanticIr) {
 // jqlang is authoritative for all generated JSON/JQ expressions.
 // Author: chance
 // Category: Converter / JQ
-export function parseJsonKeyPath(pathText: any): any {
+// Modified: 2026-11-28 (chance). Keep parsed array indices distinct from object keys.
+type JsonPath = (string | number)[];
+type JsonPathInput = readonly (string | number)[];
+type JsonPathEntry = { parts: JsonPathInput; value?: string };
+type DeleteJqOptions = { sourceForm?: "key-path" | "path-arrays" };
+export function parseJsonKeyPath(pathText: unknown) {
   const text = String(pathText ?? "");
   if (!text) throw new Error("JSON key path must not be empty");
-  const parts: any = [];
+  const parts: JsonPath = [];
   let i = 0;
-  const decodeSingleQuoted: any = (value: any) => {
+  const decodeSingleQuoted = (value: string) => {
     let out = "";
     for (let j = 1; j < value.length - 1; j++) {
-      const ch: any = value[j];
+      const ch = value[j];
       if (ch !== "\\") {
         out += ch;
         continue;
@@ -1212,7 +1225,7 @@ export function parseJsonKeyPath(pathText: any): any {
         out += "\\";
         continue;
       }
-      const next: any = value[++j];
+      const next = value[++j];
       if (next === "'" || next === "\\") out += next;
       else if (next === "n") out += "\n";
       else if (next === "r") out += "\r";
@@ -1239,7 +1252,7 @@ export function parseJsonKeyPath(pathText: any): any {
       );
       if (!quoted)
         throw new Error("unsupported JSON key-path bracket syntax: " + text);
-      let value: any;
+      let value: string;
       if (quoted[1].startsWith('"')) {
         try {
           value = JSON.parse(quoted[1]);
@@ -1261,52 +1274,52 @@ export function parseJsonKeyPath(pathText: any): any {
   if (!parts.length) throw new Error("JSON key path must not be empty");
   return parts;
 }
-function validateParts(parts: any): any {
+function validateParts(parts: unknown): JsonPathInput {
   if (
     !Array.isArray(parts) ||
     !parts.length ||
     parts.some(
-      (part: any) => typeof part !== "string" && !Number.isInteger(part),
+      (part) => typeof part !== "string" && !Number.isInteger(part),
     )
   ) {
     throw new Error(
       "JQ path must be a non-empty array of string/integer segments",
     );
   }
-  return parts;
+  return parts as JsonPathInput;
 }
 // Modified: 2026-10-28 (chance). Compact independent object deletions;
 // preserve sequential batch semantics with reduce for numeric/overlapping paths.
 export function planFixedPathDeleteJq(
-  paths: any,
-  { sourceForm = "key-path" }: any = {},
-): any {
+  paths: readonly (JsonPathInput | JsonPathEntry)[],
+  { sourceForm = "key-path" }: DeleteJqOptions = {},
+) {
   if (!Array.isArray(paths) || !paths.length)
     throw new Error("delete path list must contain nonempty parsed paths");
   if (!["key-path", "path-arrays"].includes(sourceForm))
     throw new Error("unknown deletion source representation");
-  const parts: any = paths.map((item: any): any =>
-    validateParts(Array.isArray(item) ? item : item?.parts),
+  const parts = paths.map((item) =>
+    validateParts(Array.isArray(item) ? item : (item as JsonPathEntry)?.parts),
   );
-  const prefix: any = (a: any, b: any): any =>
-    a.length < b.length && a.every((part: any, i: any) => part === b[i]);
-  const independent: any =
-    parts.every((path: any): any =>
-      path.every((part: any) => typeof part === "string"),
+  const prefix = (a: JsonPathInput, b: JsonPathInput) =>
+    a.length < b.length && a.every((part, i) => part === b[i]);
+  const independent =
+    parts.every((path) =>
+      path.every((part) => typeof part === "string"),
     ) &&
-    !parts.some((path: any, i: any): any =>
+    !parts.some((path, i) =>
       parts.some(
-        (other: any, j: any): any =>
+        (other, j) =>
           i !== j && (prefix(path, other) || prefix(other, path)),
       ),
     );
   if (independent) {
-    const selectors: any = parts.map(
-      (path: any) =>
+    const selectors = parts.map(
+      (path) =>
         "." +
         path
-          .map((key: any, i: any) =>
-            /^[A-Za-z_][A-Za-z0-9_]*$/.test(key)
+          .map((key, i) =>
+            /^[A-Za-z_][A-Za-z0-9_]*$/.test(key as string)
               ? (i ? "." : "") + key
               : "[" + JSON.stringify(key) + "]",
           )
@@ -1332,30 +1345,30 @@ export function planFixedPathDeleteJq(
   };
 }
 export function renderFixedPathDeleteJq(
-  paths: any,
-  options: any = undefined,
-): any {
+  paths: readonly (JsonPathInput | JsonPathEntry)[],
+  options: DeleteJqOptions | undefined = undefined,
+) {
   return planFixedPathDeleteJq(paths, options).jq;
 }
 // Integrated policy entry point retained from concurrent test-branch refactor.
-export function renderFixedJsonMutationJq(operation: any, entries: any): any {
+export function renderFixedJsonMutationJq(operation: string, entries: readonly JsonPathEntry[]) {
   if (!Array.isArray(entries) || !entries.length)
     throw new Error(operation + " entries must not be empty");
   if (operation === "delete") return renderFixedPathDeleteJq(entries);
   if (operation === "add")
     return entries
-      .map((entry: any): any => renderFixedPathAddJq(entry.parts, entry.value))
+      .map((entry) => renderFixedPathAddJq(entry.parts, entry.value!))
       .join(" | ");
   if (operation === "replace")
     return entries
-      .map((entry: any): any =>
-        renderFixedPathReplaceJq(entry.parts, entry.value),
+      .map((entry) =>
+        renderFixedPathReplaceJq(entry.parts, entry.value!),
       )
       .join(" | ");
   throw new Error("unsupported fixed JSON mutation: " + operation);
 }
 // Modified: 2026-11-14 (chance). jq comments respect interpolation and line continuation.
-export function stripJqComments(expr: any) {
+export function stripJqComments(expr: unknown) {
   return transformJqText(String(expr));
 }
 // 上游错误：jq keyword whitespace lost after an identity selector.
@@ -1453,20 +1466,20 @@ export function repairUpstreamJq(expr: unknown): JqRepairResult {
 export function minifyJq(expr: string) {
   return transformJqText(String(expr), {compact: true});
 }
-export function minifyJqFile(expr: any): any {
+export function minifyJqFile(expr: unknown) {
   return minifyJq(String(expr).replace(/^\uFEFF/, ""));
 }
-export function normalizeJqForSingleQuotedConfig(expr: any) {
+export function normalizeJqForSingleQuotedConfig(expr: unknown) {
   return transformJqText(String(expr), {quoteSafe: true});
 }
-export function quoteJq(expr: any) {
+export function quoteJq(expr: unknown) {
   return `'${normalizeJqForSingleQuotedConfig(expr)}'`;
 }
 
 // WayX Loon Rewrite v2 file-dependency resolver
 // Author: chance
 // Category: Converter / Dependency / Rewrite v2
-const FILE_ACTIONS: Readonly<Record<string, { inlineName?: string; pathIndex: number; kind: string }>> = Object.freeze({
+const FILE_ACTIONS: Readonly<Record<string, { inlineName?: string; pathIndex: number; kind: "jq" | "mock" }>> = Object.freeze({
   "request.json.jq_file": {
     inlineName: "request.json.jq",
     pathIndex: 0,
@@ -1488,32 +1501,49 @@ const TEXT_MOCK_TYPES = new Set([
   "javascript",
   "plain",
 ]);
-function stringValue(node: any): any {
+function stringValue(node: RewriteValue | undefined) {
   if (!node || !["string", "raw-string"].includes(node.type)) return null;
-  return String(node.value);
+  return String((node as StringNode).value);
 }
-function boolValue(node: any, fallback: boolean = false): any {
+function boolValue(node: RewriteValue | undefined, fallback: boolean = false) {
   if (!node) return fallback;
   return node.type === "boolean" ? node.value : fallback;
 }
-function numberValue(node: any, fallback: number): any {
+function numberValue(node: RewriteValue | undefined, fallback: number) {
   if (!node) return fallback;
   return node.type === "number" && Number.isFinite(node.value)
     ? node.value
     : fallback;
 }
+interface DependencyOptions { pluginSourceUrl?: string }
+type DependencyLocation = {
+  ref: string;
+  scope: "plugin-resource" | "remote";
+} & ({ resolvable: false; url: null; reason: string } | { resolvable: true; url: string; reason?: never });
+export type RewriteDependencySpec = DependencyLocation & {
+  action: string;
+  kind: "jq" | "mock";
+  pathIndex?: number | null;
+  inlineName?: string | null;
+  legacyAlias?: boolean;
+  contentType?: string;
+  base64?: boolean;
+  phase?: Phase;
+  status?: number | null;
+  binary?: boolean;
+};
 function dependencyLocation(
-  ref: any,
-  actionName: any,
+  ref: unknown,
+  actionName: string,
   pluginSourceUrl: string = "",
-): any {
+): DependencyLocation {
   const value = String(ref ?? "").trim();
   if (!value)
     throw new Error(
       `${actionName}: file dependency must be a fixed non-empty string`,
     );
-  let url: any = null;
-  let scope = "plugin-resource";
+  let url: string | null = null;
+  let scope: DependencyLocation["scope"] = "plugin-resource";
   try {
     const absolute = new URL(value);
     if (!/^https?:$/.test(absolute.protocol))
@@ -1537,7 +1567,7 @@ function dependencyLocation(
   }
   return { ref: value, scope, url, resolvable: true };
 }
-function legacyJqPathRef(value: any): any {
+function legacyJqPathRef(value: unknown) {
   const text = String(value ?? "").trim();
   const match = text.match(/^jq-path\s*=\s*(.+)$/i);
   if (!match) return null;
@@ -1551,36 +1581,36 @@ function legacyJqPathRef(value: any): any {
   return ref.trim() || null;
 }
 export function dependencySpecFromAction(
-  action: any,
-  { pluginSourceUrl = "" }: any = {},
-): any {
+  action: SourceAction,
+  { pluginSourceUrl = "" }: DependencyOptions = {},
+): RewriteDependencySpec | null {
   const def = FILE_ACTIONS[action?.name];
   if (!def) return null;
-  const path: any = action.args?.[def.pathIndex];
+  const path = action.args?.[def.pathIndex];
   if (!["string", "raw-string"].includes(path?.type))
     throw new Error(
       `${action.name}: file dependency must be a fixed non-empty string`,
     );
-  const parts: any = stringTemplateParts(path);
-  if (parts.some((p: any) => p[0] === "v"))
+  const parts = stringTemplateParts(path);
+  if (parts.some((p) => p[0] === "v"))
     throw new Error(
       `${action.name}: dynamic file dependency paths are not materialized`,
     );
-  const ref: any = parts.map((p: any): any => p[1]).join("");
+  const ref: unknown = parts.map((p) => p[1]).join("");
   if (!ref)
     throw new Error(
       `${action.name}: file dependency must be a fixed non-empty string`,
     );
-  const location: any = dependencyLocation(ref, action.name, pluginSourceUrl);
+  const location = dependencyLocation(ref, action.name, pluginSourceUrl);
   if (!location.resolvable) {
     return { action: action.name, kind: def.kind, ...location };
   }
-  const spec: any = { action: action.name, kind: def.kind, ...location };
+  const spec: RewriteDependencySpec = { action: action.name, kind: def.kind, ...location };
   if (def.kind === "jq") spec.inlineName = def.inlineName;
   if (def.kind === "mock") {
-    const contentType: any = stringValue(action.args?.[0])?.toLowerCase() || "";
+    const contentType = stringValue(action.args?.[0])?.toLowerCase() || "";
     const base64Index = action.name === "request.body.mock_file" ? 2 : 3;
-    const isBase64: any = boolValue(action.args?.[base64Index], false);
+    const isBase64 = boolValue(action.args?.[base64Index], false);
     spec.contentType = contentType;
     spec.base64 = isBase64;
     spec.phase = action.name.startsWith("request.") ? "request" : "response";
@@ -1591,16 +1621,16 @@ export function dependencySpecFromAction(
   return spec;
 }
 export function jqDependencySpecFromAction(
-  action: any,
-  { pluginSourceUrl = "" }: any = {},
-): any {
-  const official: any = dependencySpecFromAction(action, { pluginSourceUrl });
+  action: SourceAction,
+  { pluginSourceUrl = "" }: DependencyOptions = {},
+): RewriteDependencySpec | null {
+  const official = dependencySpecFromAction(action, { pluginSourceUrl });
   if (official?.kind === "jq")
     return { ...official, pathIndex: FILE_ACTIONS[action.name].pathIndex };
   if (!/^(?:request|response)\.json\.jq$/.test(action?.name || "")) return null;
-  const ref: any = legacyJqPathRef(stringValue(action.args?.[0]));
+  const ref = legacyJqPathRef(stringValue(action.args?.[0]));
   if (!ref) return null;
-  const location: any = dependencyLocation(ref, action.name, pluginSourceUrl);
+  const location = dependencyLocation(ref, action.name, pluginSourceUrl);
   return {
     action: action.name,
     kind: "jq",
@@ -1611,19 +1641,19 @@ export function jqDependencySpecFromAction(
   };
 }
 export function legacyJqPathDependencySpecFromIr(
-  ir: any,
-  { pluginSourceUrl = "" }: any = {},
-): any {
+  ir: RewriteSemanticIr | null | undefined,
+  { pluginSourceUrl = "" }: DependencyOptions = {},
+): RewriteDependencySpec | null {
   if (!ir || ir.type !== "rewrite-semantic-ir" || ir.sourceSyntax !== "legacy")
     return null;
   if (!Array.isArray(ir.operations) || ir.operations.length !== 1) return null;
-  const op: any = ir.operations[0];
+  const op = ir.operations[0];
   if (op?.kind !== "json" || op?.operation !== "jq") return null;
-  const ref: any = legacyJqPathRef(op.rest);
+  const ref = legacyJqPathRef(op.rest);
   if (!ref) return null;
   const actionName =
     (op.phase || ir.phase || "response") + ".body.json.jq";
-  const location: any = dependencyLocation(ref, actionName, pluginSourceUrl);
+  const location = dependencyLocation(ref, actionName, pluginSourceUrl);
   return {
     action: actionName,
     kind: "jq",
@@ -1633,18 +1663,18 @@ export function legacyJqPathDependencySpecFromIr(
     ...location,
   };
 }
-export function inlineResolvedLegacyJqPathIr(ir: any, content: any): any {
-  const spec: any = legacyJqPathDependencySpecFromIr(ir);
+export function inlineResolvedLegacyJqPathIr(ir: LegacyRewriteIr, content: string | undefined) {
+  const spec = legacyJqPathDependencySpecFromIr(ir);
   if (!spec) return { ir, changed: false, dependency: null };
   const jq = String(content ?? "").trim();
   if (!jq) throw new Error("legacy jq-path dependency resolved to empty JQ");
-  const phase: any = ir.operations[0].phase || ir.phase || "response";
-  const operation: any = {
-    ...ir.operations[0],
+  const phase = ir.operations[0].phase || ir.phase || "response";
+  const operation: LegacyRewriteOperation = {
+    ...(ir.operations[0] as Extract<LegacyRewriteOperation, { rest: string }>),
     rest: jq,
     raw: phase + "-body-json-jq " + jq,
   };
-  const sourcePayload: any = {
+  const sourcePayload = {
     ...ir.sourcePayload,
     action: phase + "-body-json-jq " + jq,
   };
@@ -1655,11 +1685,11 @@ export function inlineResolvedLegacyJqPathIr(ir: any, content: any): any {
   };
 }
 export function inlineResolvedDependency(
-  action: any,
-  content: any,
-  { pluginSourceUrl = "" }: any = {},
-): any {
-  const spec: any =
+  action: SourceAction,
+  content: string,
+  { pluginSourceUrl = "" }: DependencyOptions = {},
+) {
+  const spec =
     jqDependencySpecFromAction(action, { pluginSourceUrl }) ||
     dependencySpecFromAction(action, { pluginSourceUrl });
   if (!spec) return { action, changed: false, dependency: null };
@@ -1669,12 +1699,12 @@ export function inlineResolvedDependency(
       `${action.name}: mock_file must be converted through a generated target script, not inlined into Rewrite v2`,
     );
   }
-  const next: any = {
+  const next: SourceAction = {
     ...action,
-    name: spec.inlineName,
-    args: action.args.map((arg: any): any => ({ ...arg })),
+    name: spec.inlineName!,
+    args: action.args.map((arg) => ({ ...arg })),
   };
-  const pathIndex: any = spec.pathIndex ?? FILE_ACTIONS[action.name].pathIndex;
+  const pathIndex = spec.pathIndex ?? FILE_ACTIONS[action.name].pathIndex;
   next.args[pathIndex] = {
     type: "raw-string",
     value: String(content),
@@ -1683,14 +1713,14 @@ export function inlineResolvedDependency(
   return { action: next, changed: true, dependency: spec };
 }
 export function qxMockPlanFromAction(
-  action: any,
-  { pluginSourceUrl = "" }: any = {},
-): any {
-  const spec: any = dependencySpecFromAction(action, { pluginSourceUrl });
+  action: SourceAction,
+  { pluginSourceUrl = "" }: DependencyOptions = {},
+) {
+  const spec = dependencySpecFromAction(action, { pluginSourceUrl });
   if (!spec || spec.kind !== "mock") return null;
   if (!spec.resolvable) throw new Error(`${action.name}: ${spec.reason}`);
   return {
-    phase: spec.phase,
+    phase: spec.phase!,
     qxAction:
       spec.phase === "response"
         ? "script-echo-response"
@@ -1703,12 +1733,12 @@ export function qxMockPlanFromAction(
     sourceAction: action.name,
   };
 }
-export function listRewriteV2Dependencies(ast: any, options: any = {}): any {
+export function listRewriteV2Dependencies(ast: RewriteDeclaration, options: DependencyOptions = {}) {
   if (!ast || ast.type !== "rewrite")
     throw new TypeError("Expected Rewrite v2 AST");
   return ast.actions
     .map(
-      (action: any): any =>
+      (action: SourceAction) =>
         jqDependencySpecFromAction(action, options) ||
         dependencySpecFromAction(action, options),
     )
@@ -1719,50 +1749,50 @@ export { FILE_ACTIONS, TEXT_MOCK_TYPES };
 // WayX Loon feature collection / source capability registry
 // Author: chance
 // Category: Converter / Rewrite v2
-const families: any = Object.freeze([
+const families = Object.freeze<{ id: string; test: (action: SourceAction) => boolean }[]>([
   {
     id: "header-pipeline",
-    test: (a: any) =>
+    test: (a) =>
       /^(request|response)\.header\.(add|set|del|replace)$/.test(a.name),
   },
   {
     id: "body-pipeline",
-    test: (a: any) => /^(request|response)\.body\.replace$/.test(a.name),
+    test: (a) => /^(request|response)\.body\.replace$/.test(a.name),
   },
   {
     id: "json-pipeline",
-    test: (a: any) =>
+    test: (a) =>
       /^(request|response)\.json\.(add|delete|replace)$/.test(a.name),
   },
   {
     id: "jq-pipeline",
-    test: (a: any) =>
+    test: (a) =>
       /^(request|response)\.json\.(?:jq|jq_file)$/.test(a.name),
   },
   {
     id: "mock-pipeline",
-    test: (a: any) =>
+    test: (a) =>
       /^(request|response)\.body\.(?:mock|mock_file)$/.test(a.name),
   },
   {
     id: "url-control-pipeline",
-    test: (a: any) => a.name === "url.replace",
+    test: (a) => a.name === "url.replace",
   },
   {
     id: "synthetic-response-pipeline",
-    test: (a: any) =>
+    test: (a) =>
       /^(?:redirect|reject|reject_img|reject_dict|reject_array|reject_video)$/.test(
         a.name,
       ),
   },
 ]);
-export function classifyComplexRewrite(ast: any): any {
+export function classifyComplexRewrite(ast: RewriteDeclaration) {
   validateRewriteV2Ast(ast);
-  const matched: any = ast.actions.map(
-    (action: any): any =>
-      families.find((f: any): any => f.test(action))?.id || null,
+  const matched = ast.actions.map(
+    (action: SourceAction) =>
+      families.find((f) => f.test(action))?.id || null,
   );
-  if (matched.some((x: any) => x === null))
+  if (matched.some((x) => x === null))
     return { ok: false, reason: "unregistered complex action family" };
   return {
     ok: true,
@@ -1774,26 +1804,26 @@ export function classifyComplexRewrite(ast: any): any {
 // Features belong to the source expression, never to an upstream plugin ID.
 // Native adapters retain the fixed subset; semantic features share one helper
 // compiler for scalar, batch and multi-action declarations.
-function rewriteFeatureProfile(ast: any): any {
-  const features: any = new Set();
-  const visit: any = (node: any) => {
+function rewriteFeatureProfile(ast: RewriteDeclaration) {
+  const features = new Set<string>();
+  const visit = (node: unknown) => {
     if (!node || typeof node !== "object") return;
-    if (node.type === "regex" && node.flags) features.add("regex-flags");
+    if ((node as InspectableRewriteNode).type === "regex" && (node as InspectableRewriteNode).flags) features.add("regex-flags");
     if (
-      node.type === "comparison" &&
-      node.operator === "~=" &&
-      node.right?.type === "variable"
+      (node as InspectableRewriteNode).type === "comparison" &&
+      (node as InspectableRewriteNode).operator === "~=" &&
+      (node as InspectableRewriteNode).right?.type === "variable"
     )
       features.add("dynamic-regex");
-    if (node.type === "comparison" && node.capture)
+    if ((node as InspectableRewriteNode).type === "comparison" && (node as InspectableRewriteNode).capture)
       features.add("condition-captures");
-    if (node.type === "logical") features.add("condition-" + node.operator);
-    if (node.type === "array") features.add("batch-arguments");
-    if (node.type === "variable") features.add("runtime-values");
-    if (node.type === "string") {
-      if (stringTemplateParts(node).some((p: any) => p[0] === "v"))
+    if ((node as InspectableRewriteNode).type === "logical") features.add("condition-" + (node as InspectableRewriteNode).operator);
+    if ((node as InspectableRewriteNode).type === "array") features.add("batch-arguments");
+    if ((node as InspectableRewriteNode).type === "variable") features.add("runtime-values");
+    if ((node as InspectableRewriteNode).type === "string") {
+      if (stringTemplateParts(node as StringNode).some((p) => p[0] === "v"))
         features.add("string-templates");
-      if (/\\\$\{|\$0|\$&|\$\$/.test(node.raw || node.value))
+      if (/\\\$\{|\$0|\$&|\$\$/.test((node as StringNode).raw || (node as StringNode).value))
         features.add("special-characters");
     }
     for (const [key, value] of Object.entries(node))
@@ -1805,19 +1835,19 @@ function rewriteFeatureProfile(ast: any): any {
   visit(ast);
   if (ast.actions.some(isTextRequestMockAction))
     features.add("request-text-mock");
-  if (ast.actions.some((a: any) => fixedJqOperations(a) !== null))
+  if (ast.actions.some((a) => fixedJqOperations(a) !== null))
     features.add("fixed-jq-mutations");
   if (
     ast.actions.some(
-      (a: any): any =>
+      (a) =>
         /\.json\.(?:add|replace)$/.test(a.name) &&
-        scalarItems(a.args[1]).some((v: any) => v?.type === "raw-string"),
+        scalarItems(a.args[1]).some((v) => v?.type === "raw-string"),
     )
   )
     features.add("raw-json-value");
   if (ast.actions.length > 1) features.add("action-order");
-  const mutations: any = ast.actions.every(
-    (a: any) =>
+  const mutations = ast.actions.every(
+    (a) =>
       new RegExp(
         "^" +
           ast.phase +
@@ -1827,11 +1857,11 @@ function rewriteFeatureProfile(ast: any): any {
         /^request\.body\.mock(?:_file)?$/.test(a.name)) ||
       fixedJqOperations(a) !== null,
   );
-  const needsHelper: any =
-    (ast.actions.some((a: any) => fixedJqOperations(a) !== null) &&
+  const needsHelper =
+    (ast.actions.some((a) => fixedJqOperations(a) !== null) &&
       (ast.actions.length > 1 ||
         ast.condition?.type !== "comparison" ||
-        ast.condition.left?.name !== "url" ||
+        (ast.condition.left as VariableNode)?.name !== "url" ||
         ast.condition.operator !== "~=")) ||
     ast.actions.some(isTextRequestMockAction) ||
     [
@@ -1839,8 +1869,8 @@ function rewriteFeatureProfile(ast: any): any {
       "string-templates",
       "special-characters",
       "raw-json-value",
-    ].some((f: string): any => features.has(f)) ||
-    ast.actions.some((a: any) =>
+    ].some((f: string) => features.has(f)) ||
+    ast.actions.some((a) =>
       JSON.stringify(a.args).includes('"type":"variable"'),
     );
   return { kinds: [...features].sort(), mutations, needsHelper };
@@ -1848,13 +1878,20 @@ function rewriteFeatureProfile(ast: any): any {
 // Bounded inline JQ compiler. Never evaluate source text as JavaScript or
 // approximate arbitrary JQ streams, dynamic filters, or array selector semantics.
 // This internal API deliberately stays outside the public index facade.
-export function fixedJqOperations(action: any): any {
+export type FixedJqOperation = {
+  kind: "delete" | "identity" | "delete-many" | "set";
+  key?: string;
+  path?: string[];
+  paths?: string[][];
+  value?: JsonValue;
+};
+export function fixedJqOperations(action: SourceAction) {
   if (!/^(request|response)\.json\.jq$/.test(action?.name || "")) return null;
-  let text: any;
+  let text: string;
   try {
-    const parts: any = stringTemplateParts(action.args[0]);
-    if (parts.some((p: any) => p[0] !== "s")) return null;
-    text = parts.map((p: any): any => p[1]).join("");
+    const parts = stringTemplateParts(action.args[0]);
+    if (parts.some((p) => p[0] !== "s")) return null;
+    text = parts.map((p) => p[1]).join("");
   } catch {
     return null;
   }
@@ -1895,24 +1932,24 @@ export function fixedJqOperations(action: any): any {
     "|" +
     bracket +
     ")*";
-  const pathKeys: any = (path: any): any => {
-    const tokens: any = path
+  const pathKeys = (path: string) => {
+    const tokens = path
       .slice(1)
       .match(new RegExp(identifier + "|" + bracket, "g"));
-    return tokens.map((token: any): any =>
+    return tokens!.map((token) =>
       token.startsWith("[") ? JSON.parse(token.slice(1, -1).trim()) : token,
     );
   };
-  const ops: any = [];
+  const ops: FixedJqOperation[] = [];
   for (const part of pieces) {
     if (part === ".") {
       ops.push({ kind: "identity" });
       continue;
     }
-    const assignment: any = part.match(
+    const assignment = part.match(
       new RegExp("^(" + pathPattern + ")\\s*=\\s*([\\s\\S]+)$"),
     );
-    const deletion: any = part.match(
+    const deletion = part.match(
       new RegExp(
         "^del\\(\\s*(" +
           pathPattern +
@@ -1921,25 +1958,25 @@ export function fixedJqOperations(action: any): any {
           ")*)\\s*\\)$",
       ),
     );
-    const m: any = assignment || deletion;
+    const m = assignment || deletion;
     if (!m) return null;
     try {
       if (deletion) {
-        const paths: any = m[1]
-          .match(new RegExp(pathPattern, "g"))
+        const paths = m[1]
+          .match(new RegExp(pathPattern, "g"))!
           .map(pathKeys);
         if (paths.length > 1) {
           ops.push({ kind: "delete-many", paths });
           continue;
         }
       }
-      const path: any = pathKeys(m[1]);
-      const address: any = path.length === 1 ? { key: path[0] } : { path };
+      const path = pathKeys(m[1]);
+      const address = path.length === 1 ? { key: path[0] } : { path };
       if (deletion) ops.push({ kind: "delete", ...address });
       else {
-        const value: any = JSON.parse(m[2]);
+        const value: JsonValue = JSON.parse(m[2]);
         // JSON.parse silently rounds huge numeric literals. Keep them native.
-        const safe: any = (v: any) =>
+        const safe = (v: JsonValue): boolean =>
           typeof v === "number"
             ? Number.isFinite(v) &&
               (!Number.isInteger(v) || Number.isSafeInteger(v))
@@ -1957,16 +1994,16 @@ export function fixedJqOperations(action: any): any {
 }
 // Shared phase eligibility: only text request mocks enter the synchronous
 // mutation runtime. Binary/encoded bodies retain their existing adapters.
-export function isTextRequestMockAction(action: any) {
+export function isTextRequestMockAction(action: SourceAction) {
   if (!/^request\.body\.mock(?:_file)?$/.test(action?.name || "")) return false;
-  const type: any = action.args[0];
+  const type = action.args[0];
   if (!["string", "raw-string"].includes(type?.type)) return false;
-  const parts: any = stringTemplateParts(type);
-  if (parts.some((p: any) => p[0] === "v")) return false;
+  const parts = stringTemplateParts(type);
+  if (parts.some((p) => p[0] === "v")) return false;
   if (
     !["json", "text", "css", "html", "javascript", "plain"].includes(
       parts
-        .map((p: any): any => p[1])
+        .map((p) => p[1])
         .join("")
         .toLowerCase(),
     )
@@ -1977,7 +2014,7 @@ export function isTextRequestMockAction(action: any) {
     (action.args[2].type === "boolean" && action.args[2].value === false)
   );
 }
-export function supportsRewritePhaseActions(ast: any, target: string): any {
+export function supportsRewritePhaseActions(ast: RewriteDeclaration, target: string) {
   const mutations = new RegExp(
     "^" +
       ast.phase +
@@ -1986,7 +2023,7 @@ export function supportsRewritePhaseActions(ast: any, target: string): any {
       "set|del|replace)|body\\.replace|json\\.(?:add|delete|replace))$",
   );
   return ast.actions.every(
-    (action: any): any =>
+    (action: SourceAction) =>
       mutations.test(action.name) ||
       fixedJqOperations(action) !== null ||
       (ast.phase === "request" && isTextRequestMockAction(action)),
@@ -1995,23 +2032,23 @@ export function supportsRewritePhaseActions(ast: any, target: string): any {
 // Native JQ is a target capability, not a reason to introduce an HTTP Script.
 // Author JQ actions in one source pipeline stay in one native rule;
 // filters run in source order using native jq error propagation.
-function nativeJqPriorityPlan(ast: any, target: string): any {
-  if (!ast.actions.every((a: any) => a.name === ast.phase + ".json.jq"))
+function nativeJqPriorityPlan(ast: RewriteDeclaration, target: string) {
+  if (!ast.actions.every((a) => a.name === ast.phase + ".json.jq"))
     return null;
   try {
-    const filters: any = ast.actions.map((action: any): any => {
-      const parts: any = stringTemplateParts(action.args[0]);
-      if (parts.some((p: any) => p[0] !== "s"))
+    const filters = ast.actions.map((action: SourceAction) => {
+      const parts = stringTemplateParts(action.args[0]);
+      if (parts.some((p) => p[0] !== "s"))
         throw new Error("native JQ requires fixed source expression");
-      return parts.map((p: any): any => p[1]).join("");
+      return parts.map((p) => p[1]).join("");
     });
     // Modified: 2026-11-15 (chance). Keep author JQ filters in their source
     // pipeline, including streams/errors; parentheses preserve lexical scope.
-    const jq: any =
+    const jq =
       filters.length === 1
         ? filters[0]
-        : filters.map((filter: any) => "(" + minifyJqFile(filter) + ")").join(" | ");
-    const nativeAst: any = {
+        : filters.map((filter) => "(" + minifyJqFile(filter) + ")").join(" | ");
+    const nativeAst: RewriteDeclaration = {
       ...ast,
       actions: [
         {
@@ -2027,26 +2064,26 @@ function nativeJqPriorityPlan(ast: any, target: string): any {
       ],
     };
     if (target === "qx") {
-      const matcher: any = qxExactRewriteMatcherPlan(ast, {
+      const matcher = qxExactRewriteMatcherPlan(ast, {
         compatibility: true,
       });
       if (!matcher.ok) return unsupported(matcher.reason);
       return qxDirectRewritePlan(nativeAst, { matcher });
     }
     return surgeDirectRewritePlan(nativeAst);
-  } catch (error: any) {
+  } catch (error) {
     return unsupported(String(error?.message || error));
   }
 }
 // Modified: 2026-11-15 (chance). Prefer one native jq rule for the entire source JSON/JQ pipeline.
-function nativeJsonPriorityPlan(ast: any, target: string): any {
+function nativeJsonPriorityPlan(ast: RewriteDeclaration, target: string): RewriteLinePlan | null {
   if (
     ast.actions.length === 1 &&
-    !ast.actions[0].args.some((arg: any) => arg.type === "array")
+    !ast.actions[0].args.some((arg) => arg.type === "array")
   )
     return null;
   if (
-    !ast.actions.every((action: any) =>
+    !ast.actions.every((action: SourceAction) =>
       new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq)$").test(
         action.name,
       ),
@@ -2054,12 +2091,12 @@ function nativeJsonPriorityPlan(ast: any, target: string): any {
   )
     return null;
   // Fixed JSON batches use the same native matcher compatibility contract as JQ.
-  const matcher: any = simpleUrlRewriteCondition(ast, { target });
+  const matcher = simpleUrlRewriteCondition(ast, { target });
   if (!matcher.ok) return null;
-  const mapped: any = jsonPipelineToSafeNativeJq(ast);
+  const mapped = jsonPipelineToSafeNativeJq(ast);
   if (!mapped.ok) return null;
   // Modified: 2026-11-05 (chance). Both targets preserve source URL flags; omit the retired downgrade warning.
-  const mapping: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name];
+  const mapping = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name];
   const line =
     target === "qx"
       ? matcher.pattern + " url " + mapping.qx + " " + quoteJq(mapped.jq)
@@ -2082,7 +2119,7 @@ export function planRewriteFeatureHelper(
   // path remains governed by the existing compatibility/comment policy.
   if (
     target === "qx" &&
-    ast.actions.some((a: any): any => a.name.endsWith(".header.add"))
+    ast.actions.some((a) => a.name.endsWith(".header.add"))
   )
     return null;
   if (!ctx.generatedScripts)
@@ -2092,19 +2129,19 @@ export function planRewriteFeatureHelper(
       reason: "semantic feature helper requires a generated-script context",
     };
   try {
-    const jqCombination: any = ast.actions.some((a: any): any =>
+    const jqCombination = ast.actions.some((a) =>
       a.name.endsWith(".json.jq"),
     );
-    const jqMatcher: any = jqCombination
+    const jqMatcher = jqCombination
       ? simpleUrlRewriteCondition(ast, { target })
       : null;
-    const narrowJq: any =
+    const narrowJq =
       jqCombination &&
-      jqMatcher.ok &&
-      !rewriteFeatureProfile(ast).kinds.some((k: any) =>
+      jqMatcher!.ok &&
+      !rewriteFeatureProfile(ast).kinds.some((k) =>
         ["regex-flags", "dynamic-regex"].includes(k),
       );
-    const options: any = {
+    const options = {
       target,
       stamp: ctx.stamp,
       category: ctx.category,
@@ -2113,11 +2150,11 @@ export function planRewriteFeatureHelper(
       mockMaterialized: ctx.mockFiles?.get(ctx.sourceLine!),
       jqMaterialized: ctx.jqFiles?.get(ctx.sourceLine!),
     };
-    const plan: any =
+    const plan =
       ast.actions.length === 1
         ? renderSingleRewriteMutationScript(ast, options)
         : renderMixedRewriteScript(ast, options);
-    const refs: any = ctx.argumentRefs || [];
+    const refs = ctx.argumentRefs || [];
     if (target === "qx" && refs.length)
       throw new Error("Quantumult X plugin argument transport is not verified");
     const payload: { ok: boolean; value?: string | null; reason?: string } =
@@ -2137,9 +2174,9 @@ export function planRewriteFeatureHelper(
       ctx.id +
       "/" +
       filename;
-    if (narrowJq) plan.pattern = jqMatcher.pattern;
-    const prefix: any = narrowJq
-      ? jqMatcher.pattern + " url "
+    if (narrowJq) plan.pattern = (jqMatcher as SimpleUrlMatch).pattern;
+    const prefix = narrowJq
+      ? (jqMatcher as SimpleUrlMatch).pattern + " url "
       : qxRewriteMatcherPlan(ast).prefix;
     const line =
       target === "qx"
@@ -2155,14 +2192,14 @@ export function planRewriteFeatureHelper(
           (plan.requiresBody ? ",requires-body=true" : "") +
           (plan.fullHeaderMode ? ",full-header-mode=true" : "") +
           (payload.value ? ",argument=" + payload.value : "");
-    ctx.generatedScripts.set(filename, plan.script);
+    ctx.generatedScripts!.set(filename, plan.script);
     return {
       ok: true,
       handler: "source-feature-collection",
       section: target === "qx" ? "rewrite" : "script",
       line,
     };
-  } catch (error: any) {
+  } catch (error) {
     return {
       ok: false,
       terminal: true,
@@ -2170,10 +2207,10 @@ export function planRewriteFeatureHelper(
     };
   }
 }
-export const COMPLEX_REWRITE_FAMILIES: any = families.map(
-  (x: any): any => x.id,
+export const COMPLEX_REWRITE_FAMILIES = families.map(
+  (x) => x.id,
 );
-export function complexConditionKinds(node: any, out: any = []): any {
+export function complexConditionKinds(node: RewriteCondition, out: string[] = []): string[] {
   if (!node) return out;
   if (node.type === "group") return complexConditionKinds(node.expression, out);
   if (node.type === "logical") {
@@ -2184,26 +2221,26 @@ export function complexConditionKinds(node: any, out: any = []): any {
   }
   if (node.type === "comparison") {
     out.push(node.operator);
-    out.push(node.left?.name || "unknown");
+    out.push((node.left as VariableNode)?.name || "unknown");
     return out;
   }
   out.push("unsupported");
   return out;
 }
 export function compileComplexCondition(
-  node: any,
-  _target: any,
-  { argumentTable = null, sharedRuntime = false }: any = {},
+  node: RewriteCondition | null | undefined,
+  _target: string,
+  { argumentTable = null, sharedRuntime = false }: { argumentTable?: import("../domain/contracts.ts").SurgeArgumentTable | null; sharedRuntime?: boolean } = {},
 ) {
   for (const c of findRewriteComparisons(node, () => true)) {
     for (const value of [c.left, c.right]) {
-      const names: any =
+      const names =
         value?.type === "variable"
           ? [value.name]
           : value?.type === "string"
             ? stringTemplateParts(value)
-                .filter((p: any) => p[0] === "v")
-                .map((p: any): any => p[1])
+                .filter((p) => p[0] === "v")
+                .map((p) => p[1])
             : [];
       for (const name of names) {
         if (
@@ -2232,8 +2269,19 @@ export function compileComplexCondition(
 // WayX Loon feature collection / compatibility handler registry
 // Author: chance
 // Category: Converter / Rewrite v2 / Complex Routing
-const handlers: any = [];
-export function registerComplexRewriteHandler(definition: any) {
+type ComplexResult = {
+  ok: boolean; terminal?: boolean; section?: RewriteLinePlan["section"]; line?: string; lines?: string[];
+  reason?: string; handler?: string; issue?: boolean; issueCode?: string;
+  classified?: ReturnType<typeof classifyComplexRewrite>;
+};
+type ComplexHandler = {
+  id: string;
+  targets: readonly string[];
+  match: (ast: RewriteDeclaration, info: ReturnType<typeof classifyComplexRewrite>, context: RewritePlannerOptions) => boolean;
+  plan: (ast: RewriteDeclaration, target: string, context: RewritePlannerOptions) => ComplexResult | null;
+};
+const handlers: ComplexHandler[] = [];
+export function registerComplexRewriteHandler(definition: ComplexHandler) {
   if (
     !definition ||
     !definition.id ||
@@ -2242,22 +2290,22 @@ export function registerComplexRewriteHandler(definition: any) {
   ) {
     throw new TypeError("Invalid complex Rewrite handler");
   }
-  if (handlers.some((item: any) => item.id === definition.id))
+  if (handlers.some((item) => item.id === definition.id))
     throw new Error("Duplicate complex Rewrite handler: " + definition.id);
   handlers.push(Object.freeze({ ...definition }));
 }
 export function planComplexRewrite(
-  ast: any,
+  ast: RewriteDeclaration,
   target: string,
-  context: any = {},
-): any {
+  context: RewritePlannerOptions = {},
+): ComplexResult {
   if (!Array.isArray(ast?.actions) || !ast.actions.length) {
     return {
       ok: false,
       reason: "Rewrite feature helper requires source actions",
     };
   }
-  const classified: any = classifyComplexRewrite(ast);
+  const classified = classifyComplexRewrite(ast);
   if (!classified.ok) {
     return {
       ok: false,
@@ -2275,7 +2323,7 @@ export function planComplexRewrite(
   for (const handler of handlers) {
     if (!handler.targets.includes(target)) continue;
     if (!handler.match(ast, classified, context)) continue;
-    const result: any = handler.plan(ast, target, context);
+    const result = handler.plan(ast, target, context);
     if (result?.ok) return { ...result, handler: handler.id };
     if (result?.terminal) return { ...result, handler: handler.id };
   }
@@ -2284,12 +2332,12 @@ export function planComplexRewrite(
     terminal: true,
     reason:
       "no verified generic complex Rewrite handler matched families: " +
-      classified.families.join(","),
+      classified.families!.join(","),
     classified,
   };
 }
-export function listComplexRewriteHandlers(): any {
-  return handlers.map(({ id, targets }: any): any => ({
+export function listComplexRewriteHandlers() {
+  return handlers.map(({ id, targets }) => ({
     id,
     targets: [...targets],
   }));
@@ -2298,23 +2346,23 @@ export function listComplexRewriteHandlers(): any {
 // WayX deterministic Safe Tier analyzer for Loon Rewrite v2
 // Author: chance
 // Category: Converter / Rewrite v2 / Safe Tier
-function safeRewriteReview(reason: any, ast: any = null): any {
+function safeRewriteReview(reason: string, ast: RewriteDeclaration | null = null) {
   return { matched: true, safe: false, reason, ast };
 }
-export function analyzeSimpleUrlRegexCondition(condition: any): any {
+export function analyzeSimpleUrlRegexCondition(condition: RewriteCondition | null) {
   if (!condition || condition.type !== "comparison")
-    return { ok: false, reason: "condition is compound or grouped" };
+    return { ok: false as const, reason: "condition is compound or grouped" };
   if (condition.operator !== "~=")
-    return { ok: false, reason: "condition is not a URL regex match" };
+    return { ok: false as const, reason: "condition is not a URL regex match" };
   if (condition.left?.type !== "variable" || condition.left.name !== "url")
-    return { ok: false, reason: "left operand is not ${url}" };
+    return { ok: false as const, reason: "left operand is not ${url}" };
   if (condition.right?.type !== "regex")
-    return { ok: false, reason: "right operand is not a literal regex" };
+    return { ok: false as const, reason: "right operand is not a literal regex" };
   if (condition.capture)
-    return { ok: false, reason: "as capture requires semantic review" };
+    return { ok: false as const, reason: "as capture requires semantic review" };
   return compileRegexForTarget(condition.right);
 }
-function safeRejectAction(action: any): any {
+function safeRejectAction(action: SourceAction) {
   if (
     !["reject", "reject_img", "reject_dict", "reject_array"].includes(
       action?.name,
@@ -2330,7 +2378,7 @@ function safeRejectAction(action: any): any {
       ok: false,
       reason: "reject with custom body requires semantic review",
     };
-  const status: any = action.args[0];
+  const status = action.args[0];
   if (
     status?.type !== "number" ||
     !Number.isInteger(status.value) ||
@@ -2342,7 +2390,7 @@ function safeRejectAction(action: any): any {
       reason: "reject status must be an integer in Loon 100...599",
     };
   }
-  const mapped: any = qxPrimitiveForRewriteV2Action(action);
+  const mapped = qxPrimitiveForRewriteV2Action(action);
   if (!mapped)
     return {
       ok: false,
@@ -2358,24 +2406,24 @@ function safeRejectAction(action: any): any {
     status: status.value,
   };
 }
-export function analyzeSafeRewriteV2(line: any): any {
+export function analyzeSafeRewriteV2(line: string) {
   if (!isRewriteV2(line))
     return { matched: false, safe: false, reason: "not Rewrite v2" };
-  let ast: any;
+  let ast: RewriteAst;
   try {
     ast = parseRewriteV2(line);
     validateRewriteV2Ast(ast);
-  } catch (error: any) {
+  } catch (error) {
     return safeRewriteReview(
       `Rewrite v2 parse/action validation failed: ${String(error?.message || error).split("\n")[0]}`,
     );
   }
   if (ast.actions.length !== 1)
     return safeRewriteReview("action pipeline remains Review Tier", ast);
-  const condition: any = analyzeSimpleUrlRegexCondition(ast.condition);
-  if (!condition.ok) return safeRewriteReview(condition.reason, ast);
-  const action: any = safeRejectAction(ast.actions[0]);
-  if (!action.ok) return safeRewriteReview(action.reason, ast);
+  const condition = analyzeSimpleUrlRegexCondition(ast.condition);
+  if (!condition.ok) return safeRewriteReview(condition.reason!, ast);
+  const action = safeRejectAction(ast.actions[0]);
+  if (!action.ok) return safeRewriteReview(action.reason!, ast);
   return {
     matched: true,
     safe: true,
@@ -2391,17 +2439,17 @@ export function analyzeSafeRewriteV2(line: any): any {
 // WayX behavior-first Rewrite v2 semantic mapper
 // Author: chance
 // Category: Converter / Rewrite v2 / Semantic Mapping
-function unsupported(reason: any, extra: any = {}): any {
-  return { ok: false, reason, ...extra };
+function unsupported<T extends object = Record<never, never>>(reason: string, extra: T = {} as T) {
+  return { ok: false as const, reason, ...extra };
 }
-function stringNode(node: any): any {
+function stringNode(node: RewriteValue | undefined) {
   if (!node || !["string", "raw-string"].includes(node.type)) return null;
-  return String(node.value);
+  return String((node as StringNode).value);
 }
-function scalarItems(node: any): any {
+function scalarItems(node: RewriteValue | undefined) {
   return node?.type === "array" ? node.items : [node];
 }
-function urlComparisonRegex(c: any): any {
+function urlComparisonRegex(c: RewriteCondition | null): { regex: { type: "regex"; pattern: string; flags: string }; capture: string | null } | null {
   if (
     c?.type !== "comparison" ||
     c.left?.type !== "variable" ||
@@ -2410,46 +2458,62 @@ function urlComparisonRegex(c: any): any {
     return null;
   if (c.operator === "~=" && c.right?.type === "regex")
     return { regex: c.right, capture: c.capture || null };
-  if (c.operator !== "==" || !["string", "raw-string"].includes(c.right?.type))
+  if (c.operator !== "==" || !["string", "raw-string"].includes(c.right?.type!))
     return null;
-  const parts: any = stringTemplateParts(c.right);
-  if (parts.some(([kind]: any) => kind !== "s")) return null;
-  const value: any = parts.map(([, part]: any): any => part).join("");
+  const parts = stringTemplateParts(c.right);
+  if (parts.some(([kind]) => kind !== "s")) return null;
+  const value = parts.map(([, part]) => part).join("");
   const pattern =
     "^" +
     regexEscape(value).replace(
       /\s/g,
-      (ch: any) => "\\u" + ch.charCodeAt(0).toString(16).padStart(4, "0"),
+      (ch) => "\\u" + ch.charCodeAt(0).toString(16).padStart(4, "0"),
     ) +
     "$";
   return { regex: { type: "regex", pattern, flags: "" }, capture: null };
 }
+type TargetRegexResult = ReturnType<typeof compileRegexForTarget>;
+type SimpleUrlMatch = Extract<TargetRegexResult, { ok: true }> & {
+  regex: NonNullable<ReturnType<typeof urlComparisonRegex>>["regex"];
+  capture: string | null;
+};
+type UnsupportedPlan = { ok: false; reason: string };
+type NativeRewritePlan = {
+  ok: true;
+  strategy?: string;
+  section: RewriteLinePlan["section"];
+  pattern?: string;
+  line?: string;
+  lines?: string[];
+  notes?: string[];
+};
+type NativeRewriteResult = NativeRewritePlan | UnsupportedPlan;
 export function simpleUrlRewriteCondition(
-  ast: any,
-  { target = "generic" }: any = {},
-): any {
+  ast: { type: "rewrite"; condition: RewriteCondition | null },
+  { target = "generic" }: { target?: string } = {},
+): SimpleUrlMatch | UnsupportedPlan {
   if (!ast || ast.type !== "rewrite")
     return unsupported("expected Rewrite v2 AST");
-  const c: any = unwrap(ast.condition);
-  const match: any = urlComparisonRegex(c);
+  const c = unwrap(ast.condition);
+  const match = urlComparisonRegex(c);
   if (!match)
     return unsupported("condition is not a single fixed URL comparison");
   // URL matcher bodies are source regex bodies after the Loon literal wrapper
   // has been removed by the parser. Do not compile/canonicalize them here.
   // Modified: 2026-11-01 (chance). Honor target URL flags, including Script v2.
-  const compiled: any = compileRegexForTarget(match.regex, { target });
+  const compiled = compileRegexForTarget(match.regex, { target });
   if (!compiled.ok) return compiled;
   return { ...compiled, regex: match.regex, capture: match.capture };
 }
-function parseKeyPath(path: any): any {
+function parseKeyPath(path: unknown) {
   return parseJsonKeyPath(path);
 }
 // WayX jq path grammar: direct selectors for add; never a shared
 // Shared path segments retain key types; bracket keys retain root identity.
-export function jqPathSelector(parts: any): any {
+export function jqPathSelector(parts: JsonPathInput) {
   validateParts(parts);
-  return parts.reduce(
-    (out: any, part: any) =>
+  return parts.reduce<string>(
+    (out, part) =>
       typeof part === "number"
         ? out + "[" + part + "]"
         : /^[A-Za-z_][A-Za-z0-9_]*$/.test(part)
@@ -2458,20 +2522,20 @@ export function jqPathSelector(parts: any): any {
     ".",
   );
 }
-function pathSelector(path: any): any {
+function pathSelector(path: unknown) {
   return jqPathSelector(parseKeyPath(path));
 }
-export function renderFixedPathAddJq(parts: any, value: any) {
+export function renderFixedPathAddJq(parts: JsonPathInput, value: string) {
   validateParts(parts);
   return "setpath(" + JSON.stringify(parts) + "; " + value + ")";
 }
-function anyToJq(node: any) {
+function anyToJq(node: RewriteValue | undefined) {
   if (!node) throw new Error("missing JSON value");
   if (node.type === "string") {
-    const parts: any = stringTemplateParts(node);
-    if (parts.some((p: any) => p[0] === "v"))
+    const parts = stringTemplateParts(node);
+    if (parts.some((p) => p[0] === "v"))
       throw new Error("JSON template requires a semantic feature helper");
-    return JSON.stringify(parts.map((p: any): any => p[1]).join(""));
+    return JSON.stringify(parts.map((p) => p[1]).join(""));
   }
   if (node.type === "raw-string") {
     try {
@@ -2489,27 +2553,27 @@ function anyToJq(node: any) {
     );
   throw new Error("unsupported JSON value node: " + node.type);
 }
-function qxQuote(value: any): any {
+function qxQuote(value: unknown) {
   return quoteJq(value);
 }
-export function renderFixedPathReplaceJq(parts: any, value: any) {
+export function renderFixedPathReplaceJq(parts: JsonPathInput, value: string) {
   validateParts(parts);
   return "setpath(" + JSON.stringify(parts) + "; " + value + ")";
 }
-export function jsonActionToJq(action: any): any {
-  const name: any = action?.name || "";
+export function jsonActionToJq(action: SourceAction): { ok: true; jq: string } | UnsupportedPlan {
+  const name = action?.name || "";
   if (!/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(name)) {
     return unsupported(
       "JSON action is outside add/delete/replace direct subset",
     );
   }
   if (name.endsWith(".delete")) {
-    const nodes: any = scalarItems(action.args[0]);
-    const paths: any = nodes.map((node: any): any => {
-      const value: any = stringNode(node);
+    const nodes = scalarItems(action.args[0]);
+    const paths = nodes.map((node) => {
+      const value = stringNode(node);
       if (value === null)
         throw new Error(name + ": key path must be a fixed string");
-      const parts: any = parseKeyPath(value);
+      const parts = parseKeyPath(value);
       return {
         parts,
         literal: JSON.stringify(parts),
@@ -2518,16 +2582,16 @@ export function jsonActionToJq(action: any): any {
     });
     return { ok: true, jq: renderFixedPathDeleteJq(paths) };
   }
-  const paths: any = scalarItems(action.args[0]);
-  const values: any = scalarItems(action.args[1]);
+  const paths = scalarItems(action.args[0]);
+  const values = scalarItems(action.args[1]);
   if (paths.length !== values.length)
     throw new Error(name + ": batch argument lengths differ");
-  const ops: any = paths.map((node: any, index: any): any => {
-    const key: any = stringNode(node);
+  const ops = paths.map((node, index) => {
+    const key = stringNode(node);
     if (key === null)
       throw new Error(name + ": key path must be a fixed string");
-    const parts: any = parseKeyPath(key);
-    const value: any = anyToJq(values[index]);
+    const parts = parseKeyPath(key);
+    const value = anyToJq(values![index]);
     if (name.endsWith(".add")) {
       return renderFixedPathAddJq(parts, value);
     }
@@ -2535,42 +2599,42 @@ export function jsonActionToJq(action: any): any {
   });
   return { ok: true, jq: ops.join(" | ") };
 }
-function fixedJsonKeyPath(node: any, actionName: any): any {
-  if (!["string", "raw-string"].includes(node?.type))
+function fixedJsonKeyPath(node: RewriteValue | undefined, actionName: string) {
+  if (!["string", "raw-string"].includes(node?.type!))
     throw new Error(actionName + ": key path must be a fixed string");
-  const pieces: any = stringTemplateParts(node);
-  if (pieces.some((piece: any) => piece[0] !== "s"))
+  const pieces = stringTemplateParts(node);
+  if (pieces.some((piece) => piece[0] !== "s"))
     throw new Error(
       actionName + ": dynamic key path requires runtime transport",
     );
-  const parts: any = parseKeyPath(
-    pieces.map((piece: any): any => piece[1]).join(""),
+  const parts = parseKeyPath(
+    pieces.map((piece) => piece[1]).join(""),
   );
   // Modified: 2026-11-15 (chance). Use the existing native path lowering for
   // whole pipelines, including array indices and ordered deletion effects.
   return parts;
 }
-function fixedJsonOps(action: any): any {
-  const name: any = action?.name || "";
+function fixedJsonOps(action: SourceAction): { ok: true; ops: string[] } | UnsupportedPlan {
+  const name = action?.name || "";
   if (!/^(?:request|response)\.json\.(?:add|delete|replace)$/.test(name)) {
     return unsupported(
       "JSON pipeline action is outside add/delete/replace subset",
     );
   }
-  const paths: any = scalarItems(action.args[0]);
-  const values: any = name.endsWith(".delete")
+  const paths = scalarItems(action.args[0]);
+  const values = name.endsWith(".delete")
     ? null
     : scalarItems(action.args[1]);
   if (values && paths.length !== values.length) {
     return unsupported(name + ": batch argument lengths differ");
   }
-  const operation: any = name.split(".").at(-1);
-  const entries: any = [];
+  const operation = name.split(".").at(-1)!;
+  const entries: JsonPathEntry[] = [];
   for (let index = 0; index < paths.length; index++) {
-    let key: any;
+    let key: JsonPath;
     try {
       key = fixedJsonKeyPath(paths[index], name);
-    } catch (error: any) {
+    } catch (error) {
       return unsupported(String(error?.message || error));
     }
     if (operation === "delete") {
@@ -2578,15 +2642,15 @@ function fixedJsonOps(action: any): any {
       continue;
     }
     try {
-      entries.push({ parts: key, value: anyToJq(values[index]) });
-    } catch (error: any) {
+      entries.push({ parts: key, value: anyToJq(values![index]) });
+    } catch (error) {
       return unsupported(String(error?.message || error));
     }
   }
-  const ops: any = [renderFixedJsonMutationJq(operation, entries)];
+  const ops = [renderFixedJsonMutationJq(operation, entries)];
   return { ok: true, ops };
 }
-export function jsonPipelineToSafeNativeJq(ast: any): any {
+export function jsonPipelineToSafeNativeJq(ast: RewriteDeclaration): { ok: true; jq: string } | UnsupportedPlan {
   validateRewriteV2Ast(ast);
   if (!Array.isArray(ast?.actions) || ast.actions.length < 1) {
     return unsupported("native JSON pipeline requires at least one action");
@@ -2596,7 +2660,7 @@ export function jsonPipelineToSafeNativeJq(ast: any): any {
   }
   if (
     ast.actions.some(
-      (action: any) =>
+      (action: SourceAction) =>
         !new RegExp("^" + ast.phase + "\\.json\\.(?:add|delete|replace|jq)$").test(
           action.name,
         ),
@@ -2606,32 +2670,32 @@ export function jsonPipelineToSafeNativeJq(ast: any): any {
       "native JSON pipeline requires same-phase add/delete/replace/jq actions only",
     );
   }
-  const ops: any = [];
+  const ops: string[] = [];
   // Modified: 2026-11-15 (chance). Translate each action inside the source
   // declaration directly to jq; never split its pipeline into target rules.
   for (const action of ast.actions) {
     if (action.name === ast.phase + ".json.jq") {
       const parts = stringTemplateParts(action.args[0]);
-      if (parts.some((part: any): boolean => part[0] !== "s"))
+      if (parts.some((part): boolean => part[0] !== "s"))
         return unsupported("native JQ requires fixed source expression");
-      const expression = parts.map((part: any): string => part[1]).join("");
+      const expression = parts.map((part): string => part[1]).join("");
       ops.push("(" + minifyJqFile(expression) + ")");
       continue;
     }
-    const mapped: any = fixedJsonOps(action);
+    const mapped = fixedJsonOps(action);
     if (!mapped.ok) return mapped;
     ops.push(...mapped.ops);
   }
   return { ok: true, jq: ops.join(" | ") };
 }
 export function qxDirectRewritePlan(
-  ast: any,
-  { matcher = null }: any = {},
-): any {
+  ast: RewriteDeclaration,
+  { matcher = null }: { matcher?: { exact?: boolean; prefix?: string; urlPattern?: string } | null } = {},
+): NativeRewriteResult {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1)
     return unsupported("QX direct mapping requires exactly one action");
-  let condition: any;
+  let condition: { ok: true; pattern: string; prefix: string; notes: string[] } | UnsupportedPlan;
   if (matcher) {
     if (matcher.exact !== true || !matcher.prefix) {
       return unsupported(
@@ -2640,18 +2704,18 @@ export function qxDirectRewritePlan(
     }
     condition = {
       ok: true,
-      pattern: matcher.urlPattern,
+      pattern: matcher.urlPattern!,
       prefix: matcher.prefix,
       notes: [],
     };
   } else {
-    condition = simpleUrlRewriteCondition(ast, { target: "qx" });
+    condition = simpleUrlRewriteCondition(ast, { target: "qx" }) as typeof condition | UnsupportedPlan;
     if (!condition.ok) return condition;
     condition = { ...condition, prefix: condition.pattern + " url " };
   }
-  const action: any = ast.actions[0];
+  const action = ast.actions[0];
   if (action.name === "redirect") {
-    const status: any = action.args[0];
+    const status = action.args[0];
     if (
       ast.phase !== "request" ||
       status?.type !== "number" ||
@@ -2661,16 +2725,16 @@ export function qxDirectRewritePlan(
         "QX native redirect requires request phase and status 302 or 307",
       );
     }
-    const urlConditions: any = findRewriteComparisons(
+    const urlConditions = findRewriteComparisons(
       ast.condition,
-      (c: any) => Boolean(urlComparisonRegex(c)),
+      (c) => Boolean(urlComparisonRegex(c)),
     );
     if (urlConditions.length !== 1)
       return unsupported(
         "QX native redirect requires one URL regex capture scope",
       );
     try {
-      const replacement: any = loonTemplateToNativeUrl(
+      const replacement = loonTemplateToNativeUrl(
         action.args[1],
         urlConditions[0].capture,
         null,
@@ -2684,11 +2748,11 @@ export function qxDirectRewritePlan(
         line: condition.prefix + status.value + " " + replacement,
         notes: condition.notes,
       };
-    } catch (error: any) {
+    } catch (error) {
       return unsupported(String(error.message || error));
     }
   }
-  const primitive: any = qxPrimitiveForRewriteV2Action(action);
+  const primitive = qxPrimitiveForRewriteV2Action(action);
   if (primitive && /^(?:reject-|reject$)/.test(primitive)) {
     return {
       ok: true,
@@ -2700,10 +2764,10 @@ export function qxDirectRewritePlan(
     };
   }
   if (action.name === "request.json.jq" || action.name === "response.json.jq") {
-    const jq: any = stringNode(action.args[0]);
+    const jq = stringNode(action.args[0]);
     if (jq === null)
       return unsupported(action.name + ": inline JQ must be a fixed string");
-    const token: any = primitive;
+    const token = primitive;
     return {
       ok: true,
       strategy: "direct",
@@ -2716,9 +2780,9 @@ export function qxDirectRewritePlan(
   if (
     /^(?:request|response)\.json\.(?:add|delete|replace)$/.test(action.name)
   ) {
-    const mapped: any = jsonActionToJq(action);
+    const mapped = jsonActionToJq(action);
     if (!mapped.ok) return mapped;
-    const token: any = primitive;
+    const token = primitive;
     return {
       ok: true,
       strategy: "direct",
@@ -2732,26 +2796,26 @@ export function qxDirectRewritePlan(
     action.name === "request.body.replace" ||
     action.name === "response.body.replace"
   ) {
-    if (action.args.some((node: any) => node.type === "array")) {
-      const members: any = expandBulkAction(action).map((args: any): any =>
+    if (action.args.some((node) => node.type === "array")) {
+      const members = expandBulkAction(action).map((args) =>
         qxDirectRewritePlan(
           { ...ast, actions: [{ ...action, args }] },
           { matcher },
         ),
       );
-      if (members.some((plan: any) => !plan.ok))
-        return members.find((plan: any) => !plan.ok);
-      const lines: any = members.flatMap(
-        (plan: any): any => plan.lines || [plan.line],
+      if (members.some((plan) => !plan.ok))
+        return members.find((plan) => !plan.ok)!;
+      const lines = members.flatMap(
+        (plan) => (plan as NativeRewritePlan).lines || [(plan as NativeRewritePlan).line!],
       );
-      return { ...members[0], line: lines[0], lines };
+      return { ...(members[0] as NativeRewritePlan), line: lines[0], lines };
     }
-    const regex: any = action.args[0];
-    const replacement: any = stringNode(action.args[1]);
+    const regex = action.args[0];
+    const replacement = stringNode(action.args[1]);
     if (regex?.type !== "regex" || replacement === null)
       return unsupported(action.name + ": invalid body replacement arguments");
     // Modified: 2026-11-05 (chance). Preserve all source ims flags in QX body matching.
-    const bodyRegex: any = compileRegexForTarget(regex, {
+    const bodyRegex = compileRegexForTarget(regex, {
       subject: "body",
       target: "qx",
     });
@@ -2760,7 +2824,7 @@ export function qxDirectRewritePlan(
       return unsupported(
         "QX direct body replacement with literal whitespace requires script fallback",
       );
-    const token: any = primitive;
+    const token = primitive;
     return {
       ok: true,
       strategy: "direct",
@@ -2782,21 +2846,21 @@ export function qxDirectRewritePlan(
     "action requires generated script or target-specific mapping",
   );
 }
-function surgeQuoteJq(jq: any): any {
+function surgeQuoteJq(jq: unknown) {
   return quoteJq(jq);
 }
-export function surgeDirectRewritePlan(ast: any): any {
+export function surgeDirectRewritePlan(ast: RewriteDeclaration): NativeRewriteResult {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1)
     return unsupported("Surge direct mapping requires exactly one action");
-  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
+  const condition = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
-  const action: any = ast.actions[0];
+  const action = ast.actions[0];
   if (action.name === "request.json.jq" || action.name === "response.json.jq") {
-    const jq: any = stringNode(action.args[0]);
+    const jq = stringNode(action.args[0]);
     if (jq === null)
       return unsupported(action.name + ": inline JQ must be a fixed string");
-    const token: any = REWRITE_MUTATION_MAPPINGS[action.name].surge;
+    const token = REWRITE_MUTATION_MAPPINGS[action.name].surge;
     return {
       ok: true,
       strategy: "direct",
@@ -2809,9 +2873,9 @@ export function surgeDirectRewritePlan(ast: any): any {
   if (
     /^(?:request|response)\.json\.(?:add|delete|replace)$/.test(action.name)
   ) {
-    const mapped: any = jsonActionToJq(action);
+    const mapped = jsonActionToJq(action);
     if (!mapped.ok) return mapped;
-    const token: any = REWRITE_MUTATION_MAPPINGS[action.name].surge;
+    const token = REWRITE_MUTATION_MAPPINGS[action.name].surge;
     return {
       ok: true,
       strategy: "direct",
@@ -2825,23 +2889,23 @@ export function surgeDirectRewritePlan(ast: any): any {
     action.name === "request.body.replace" ||
     action.name === "response.body.replace"
   ) {
-    if (action.args.some((node: any) => node.type === "array")) {
-      const members: any = expandBulkAction(action).map((args: any): any =>
+    if (action.args.some((node) => node.type === "array")) {
+      const members = expandBulkAction(action).map((args) =>
         surgeDirectRewritePlan({ ...ast, actions: [{ ...action, args }] }),
       );
-      if (members.some((plan: any) => !plan.ok))
-        return members.find((plan: any) => !plan.ok);
-      const lines: any = members.flatMap(
-        (plan: any): any => plan.lines || [plan.line],
+      if (members.some((plan) => !plan.ok))
+        return members.find((plan) => !plan.ok)!;
+      const lines = members.flatMap(
+        (plan) => (plan as NativeRewritePlan).lines || [(plan as NativeRewritePlan).line!],
       );
-      return { ...members[0], line: lines[0], lines };
+      return { ...(members[0] as NativeRewritePlan), line: lines[0], lines };
     }
-    const regex: any = action.args[0];
-    const replacement: any = stringNode(action.args[1]);
+    const regex = action.args[0];
+    const replacement = stringNode(action.args[1]);
     if (regex?.type !== "regex" || replacement === null)
       return unsupported(action.name + ": invalid body replacement arguments");
     // Modified: 2026-11-01 (chance). Restore flags and account for Surge body default m.
-    const bodyRegex: any = compileRegexForTarget(regex, {
+    const bodyRegex = compileRegexForTarget(regex, {
       subject: "body",
       target: "surge",
     });
@@ -2850,7 +2914,7 @@ export function surgeDirectRewritePlan(ast: any): any {
       return unsupported(
         "Surge direct body replacement with literal whitespace requires script fallback",
       );
-    const token: any = REWRITE_MUTATION_MAPPINGS[action.name].surge;
+    const token = REWRITE_MUTATION_MAPPINGS[action.name].surge;
     return {
       ok: true,
       strategy: "direct",
@@ -2872,13 +2936,13 @@ export function surgeDirectRewritePlan(ast: any): any {
   );
 }
 function loonTemplateToNativeUrl(
-  node: any,
-  capture: any,
-  argumentTable: any = null,
+  node: RewriteValue | undefined,
+  capture: string | null,
+  argumentTable: SurgeArgumentTable | null = null,
   target: string = "Surge",
-): any {
+) {
   return stringTemplateParts(node)
-    .map(([kind, value]: any): any => {
+    .map(([kind, value]) => {
       if (kind === "s") {
         // Native URL Rewrite has no documented literal-dollar escape. Never
         // reinterpret raw/escaped Loon text as a target capture or placeholder.
@@ -2890,7 +2954,7 @@ function loonTemplateToNativeUrl(
           );
         return value;
       }
-      const ref: any = value.match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
+      const ref = value.match(/^([A-Za-z_][A-Za-z0-9_-]*)\.(\d+)$/);
       if (ref) {
         if (!capture || ref[1] !== capture)
           throw new Error("URL replacement contains a non-URL capture");
@@ -2901,7 +2965,7 @@ function loonTemplateToNativeUrl(
           );
         return "$" + Number(ref[2]);
       }
-      const entry: any = argumentTable?.byId?.get(value);
+      const entry = argumentTable?.byId?.get(value);
       if (!entry)
         throw new Error(
           "URL replacement contains an unsupported variable: " + value,
@@ -2911,9 +2975,9 @@ function loonTemplateToNativeUrl(
     .join("");
 }
 export function surgeRedirectRewritePlan(
-  ast: any,
-  { argumentTable = null }: any = {},
-): any {
+  ast: RewriteDeclaration,
+  { argumentTable = null }: { argumentTable?: SurgeArgumentTable | null } = {},
+): NativeRewriteResult {
   validateRewriteV2Ast(ast);
   if (
     ast.actions.length !== 1 ||
@@ -2923,18 +2987,18 @@ export function surgeRedirectRewritePlan(
       "Surge URL Rewrite mapping requires one redirect/url.replace action",
     );
   }
-  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
+  const condition = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
-  const action: any = ast.actions[0];
+  const action = ast.actions[0];
   if (action.name === "redirect") {
-    const status: any = action.args[0];
-    const target: any = stringNode(action.args[1]);
+    const status = action.args[0];
+    const target = stringNode(action.args[1]);
     if (status?.type !== "number" || ![302, 307].includes(status.value))
       return unsupported("redirect status must be 302 or 307");
     if (target === null)
       return unsupported("redirect target must be a fixed string");
     try {
-      const replacement: any = loonTemplateToNativeUrl(
+      const replacement = loonTemplateToNativeUrl(
         action.args[1],
         condition.capture,
         argumentTable,
@@ -2947,15 +3011,15 @@ export function surgeRedirectRewritePlan(
         line: condition.pattern + " " + replacement + " " + status.value,
         notes: condition.notes,
       };
-    } catch (error: any) {
+    } catch (error) {
       return unsupported(String(error.message || error));
     }
   }
-  const target: any = stringNode(action.args[0]);
+  const target = stringNode(action.args[0]);
   if (target === null)
     return unsupported("url.replace target must be a fixed string");
   try {
-    const replacement: any = loonTemplateToNativeUrl(
+    const replacement = loonTemplateToNativeUrl(
       action.args[0],
       condition.capture,
       argumentTable,
@@ -2968,27 +3032,27 @@ export function surgeRedirectRewritePlan(
       line: condition.pattern + " " + replacement + " header",
       notes: condition.notes,
     };
-  } catch (error: any) {
+  } catch (error) {
     return unsupported(String(error.message || error));
   }
 }
 function mapLocalData(value: string) {
   return JSON.stringify(String(value));
 }
-export function surgeRejectRewritePlan(ast: any): any {
+export function surgeRejectRewritePlan(ast: RewriteDeclaration): NativeRewriteResult {
   validateRewriteV2Ast(ast);
   if (ast.actions.length !== 1)
     return unsupported("Surge reject mapping requires exactly one action");
-  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
+  const condition = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
-  const action: any = ast.actions[0];
+  const action = ast.actions[0];
   if (
     !["reject", "reject_img", "reject_dict", "reject_array"].includes(
       action.name,
     )
   )
     return unsupported("reject action has no direct Surge mapping");
-  const status: any = action.args[0];
+  const status = action.args[0];
   if (
     status?.type !== "number" ||
     !Number.isInteger(status.value) ||
@@ -3024,7 +3088,7 @@ export function surgeRejectRewritePlan(ast: any): any {
       notes: condition.notes,
     };
   }
-  let body = "";
+  let body: string | null = "";
   let header = "";
   if (action.name === "reject_dict") {
     body = "{}";
@@ -3053,41 +3117,41 @@ export function surgeRejectRewritePlan(ast: any): any {
     notes: condition.notes,
   };
 }
-function fixedNoTemplate(node: any, what: string): any {
-  const value: any = stringNode(node);
+function fixedNoTemplate(node: RewriteValue | undefined, what: string) {
+  const value = stringNode(node);
   if (value === null) throw new Error(what + " must be a fixed string");
   if (value.includes("$" + "{"))
     throw new Error(what + " contains a runtime variable");
   return value;
 }
-function expandBulkAction(action: any): any {
-  if (!action.args.some((arg: any) => arg.type === "array"))
+function expandBulkAction(action: SourceAction) {
+  if (!action.args.some((arg) => arg.type === "array"))
     return [action.args];
-  const arrays: any = action.args.map((arg: any): any => arg.items);
-  return arrays[0].map((_: any, index: any): any =>
-    arrays.map((items: any): any => items[index]),
+  const arrays = action.args.map((arg) => (arg as Extract<RewriteValue, { type: "array" }>).items);
+  return arrays[0].map((_, index) =>
+    arrays.map((items) => items[index]),
   );
 }
-function surgeHeaderLine(pattern: any, action: any, args: any): any {
-  const mapping: any = REWRITE_MUTATION_MAPPINGS[action.name];
-  const direction: any = mapping.surge;
-  const name: any = fixedNoTemplate(args[0], "header name");
+function surgeHeaderLine(pattern: string, action: SourceAction, args: readonly RewriteValue[]) {
+  const mapping = REWRITE_MUTATION_MAPPINGS[action.name];
+  const direction = mapping.surge;
+  const name = fixedNoTemplate(args[0], "header name");
   if (/\s/.test(name)) throw new Error("header name contains whitespace");
-  return mapping.surgeActions.map((type: any) => {
+  return mapping.surgeActions!.map((type) => {
     if (type === "header-del")
       return direction + " " + pattern + " " + type + " " + name;
     if (type === "header-add") {
-      const value: any = fixedNoTemplate(args[1], "header value");
+      const value = fixedNoTemplate(args[1], "header value");
       if (/[\r\n]/.test(value))
         throw new Error("header value contains a line break");
       return direction + " " + pattern + " " + type + " " + name + " " + value;
     }
-    const regex: any = args[1];
-    const replacement: any = fixedNoTemplate(args[2], "header replacement");
+    const regex = args[1];
+    const replacement = fixedNoTemplate(args[2], "header replacement");
     if (regex?.type !== "regex")
       throw new Error("header.replace regex must be fixed");
     // Modified: 2026-11-01 (chance). Surge support confirms header inline flags.
-    const compiled: any = compileRegexForTarget(regex, {
+    const compiled = compileRegexForTarget(regex, {
       subject: "header",
       target: "surge",
     });
@@ -3112,7 +3176,7 @@ function surgeHeaderLine(pattern: any, action: any, args: any): any {
     );
   });
 }
-export function surgeHeaderRewritePlan(ast: any): any {
+export function surgeHeaderRewritePlan(ast: RewriteDeclaration): NativeRewriteResult {
   validateRewriteV2Ast(ast);
   const allowed = new Set([
     ast.phase + ".header.add",
@@ -3122,16 +3186,16 @@ export function surgeHeaderRewritePlan(ast: any): any {
   ]);
   if (
     !ast.actions.length ||
-    ast.actions.some((action: any) => !allowed.has(action.name))
+    ast.actions.some((action: SourceAction) => !allowed.has(action.name))
   ) {
     return unsupported(
       "Surge Header Rewrite requires same-phase header actions only",
     );
   }
-  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
+  const condition = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
   try {
-    const lines: any = [];
+    const lines: string[] = [];
     for (const action of ast.actions) {
       for (const args of expandBulkAction(action))
         lines.push(...surgeHeaderLine(condition.pattern, action, args));
@@ -3144,7 +3208,7 @@ export function surgeHeaderRewritePlan(ast: any): any {
       lines,
       notes: condition.notes,
     };
-  } catch (error: any) {
+  } catch (error) {
     return unsupported(String(error.message || error));
   }
 }
@@ -3171,27 +3235,27 @@ const MOCK_TEXT_TYPES = new Set([
   "javascript",
   "plain",
 ]);
-function boolArg(node: any, fallback: boolean = false): any {
+function boolArg(node: RewriteValue | undefined, fallback: boolean = false) {
   if (!node) return fallback;
   if (node.type !== "boolean")
     throw new Error("mock Base64 flag must be Boolean");
   return node.value;
 }
-function intArg(node: any, fallback: number): any {
+function intArg(node: RewriteValue | undefined, fallback: number) {
   if (!node) return fallback;
   if (node.type !== "number" || !Number.isInteger(node.value))
     throw new Error("mock status must be an integer");
   return node.value;
 }
-function applyStaticHeaderAction(headers: any, action: any) {
-  const remove: any = (name: any) => {
-    const wanted: any = name.toLowerCase();
+function applyStaticHeaderAction(headers: string[][], action: SourceAction) {
+  const remove = (name: string) => {
+    const wanted = name.toLowerCase();
     for (let i = headers.length - 1; i >= 0; i--) {
       if (headers[i][0].toLowerCase() === wanted) headers.splice(i, 1);
     }
   };
   for (const args of expandBulkAction(action)) {
-    const name: any = fixedNoTemplate(args[0], "header name");
+    const name = fixedNoTemplate(args[0], "header name");
     if (action.name.endsWith(".add")) {
       headers.push([name, fixedNoTemplate(args[1], "header value")]);
     } else if (action.name.endsWith(".set")) {
@@ -3200,15 +3264,15 @@ function applyStaticHeaderAction(headers: any, action: any) {
     } else if (action.name.endsWith(".del")) {
       remove(name);
     } else {
-      const regex: any = args[1];
-      const replacement: any = fixedNoTemplate(args[2], "header replacement");
+      const regex = args[1];
+      const replacement = fixedNoTemplate(args[2], "header replacement");
       if (regex?.type !== "regex")
         throw new Error("header.replace regex must be fixed");
       const re = new RegExp(
         normalizeRegexBodyForTarget(regex.pattern),
         regex.flags || "",
       );
-      const wanted: any = name.toLowerCase();
+      const wanted = name.toLowerCase();
       for (const pair of headers) {
         if (pair[0].toLowerCase() === wanted)
           pair[1] = String(pair[1]).replace(re, replacement);
@@ -3216,14 +3280,14 @@ function applyStaticHeaderAction(headers: any, action: any) {
     }
   }
 }
-export function surgeInlineMockPlan(ast: any): any {
+export function surgeInlineMockPlan(ast: RewriteDeclaration): NativeRewriteResult {
   validateRewriteV2Ast(ast);
   if (ast.phase !== "response")
     return unsupported("Surge Map Local maps response.body.mock only");
-  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
+  const condition = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
-  const mocks: any = ast.actions.filter(
-    (action: any) => action.name === "response.body.mock",
+  const mocks = ast.actions.filter(
+    (action: SourceAction) => action.name === "response.body.mock",
   );
   if (mocks.length !== 1)
     return unsupported(
@@ -3231,7 +3295,7 @@ export function surgeInlineMockPlan(ast: any): any {
     );
   if (
     ast.actions.some(
-      (action: any) =>
+      (action: SourceAction) =>
         action !== mocks[0] &&
         !/^response\.header\.(?:add|set|del|replace)$/.test(action.name),
     )
@@ -3241,14 +3305,14 @@ export function surgeInlineMockPlan(ast: any): any {
     );
   }
   try {
-    const mock: any = mocks[0];
-    const type: any = fixedNoTemplate(
+    const mock = mocks[0];
+    const type = fixedNoTemplate(
       mock.args[0],
       "mock content type",
     ).toLowerCase();
-    const body: any = fixedNoTemplate(mock.args[1], "mock body");
-    const status: any = intArg(mock.args[2], 200);
-    const base64: any = boolArg(mock.args[3], false);
+    const body = fixedNoTemplate(mock.args[1], "mock body");
+    const status = intArg(mock.args[2], 200);
+    const base64 = boolArg(mock.args[3], false);
     if (status < 200 || status > 999)
       return unsupported(
         "Surge Map Local cannot preserve this Loon mock status",
@@ -3259,7 +3323,7 @@ export function surgeInlineMockPlan(ast: any): any {
       return unsupported(
         "binary inline mock requires Base64=true for Surge Map Local",
       );
-    const compactBase64: any = base64 ? body.replace(/\s+/g, "") : "";
+    const compactBase64 = base64 ? body.replace(/\s+/g, "") : "";
     if (
       base64 &&
       (!/^[A-Za-z0-9+/]*={0,2}$/.test(compactBase64) ||
@@ -3281,7 +3345,7 @@ export function surgeInlineMockPlan(ast: any): any {
     const headerValue = headers
       .map((pair: string[]) => pair[0] + ":" + pair[1])
       .join("|");
-    const data: any = base64 ? compactBase64 : body;
+    const data = base64 ? compactBase64 : body;
     const dataType = base64 ? "base64" : "text";
     const line =
       condition.pattern +
@@ -3300,22 +3364,22 @@ export function surgeInlineMockPlan(ast: any): any {
       line,
       notes: condition.notes,
     };
-  } catch (error: any) {
+  } catch (error) {
     return unsupported(String(error.message || error));
   }
 }
 export function surgeMockFilePlan(
-  ast: any,
-  { pluginSourceUrl = "", materialized = null, publication = null }: any = {},
-): any {
+  ast: RewriteDeclaration,
+  { pluginSourceUrl = "", materialized = null, publication = null }: DependencyOptions & { materialized?: RewriteDependencyRecord | null; publication?: RewritePlannerOptions | null } = {},
+): NativeRewriteResult {
   validateRewriteV2Ast(ast);
   if (ast.phase !== "response") {
     return unsupported("Surge Map Local file mapping requires response phase");
   }
-  const condition: any = simpleUrlRewriteCondition(ast, { target: "surge" });
+  const condition = simpleUrlRewriteCondition(ast, { target: "surge" });
   if (!condition.ok) return condition;
-  const mocks: any = ast.actions.filter(
-    (action: any) => action.name === "response.body.mock_file",
+  const mocks = ast.actions.filter(
+    (action: SourceAction) => action.name === "response.body.mock_file",
   );
   if (mocks.length !== 1)
     return unsupported(
@@ -3323,7 +3387,7 @@ export function surgeMockFilePlan(
     );
   if (
     ast.actions.some(
-      (action: any) =>
+      (action: SourceAction) =>
         action !== mocks[0] &&
         !/^response\.header\.(?:add|set|del|replace)$/.test(action.name),
     )
@@ -3333,20 +3397,20 @@ export function surgeMockFilePlan(
     );
   }
   try {
-    const action: any = mocks[0];
-    const spec: any = dependencySpecFromAction(action, { pluginSourceUrl });
+    const action = mocks[0];
+    const spec = dependencySpecFromAction(action, { pluginSourceUrl });
     if (!spec?.resolvable || !spec.url)
       return unsupported(spec?.reason || "mock_file is not resolvable");
-    if (spec.status < 200 || spec.status > 999)
+    if (spec.status! < 200 || spec.status! > 999)
       return unsupported(
         "Surge Map Local cannot preserve this Loon mock_file status",
       );
-    if (!Object.hasOwn(MOCK_MIME, spec.contentType))
+    if (!Object.hasOwn(MOCK_MIME, spec.contentType!))
       return unsupported(
         "unsupported Loon mock_file content type: " + spec.contentType,
       );
     let dataType = "file";
-    let data: any = spec.url;
+    let data = spec.url;
     if (spec.base64) {
       if (
         !materialized ||
@@ -3361,7 +3425,7 @@ export function surgeMockFilePlan(
       dataType = "base64";
       data = materialized.bodyBase64;
     }
-    const headers = [["Content-Type", MOCK_MIME[spec.contentType]]];
+    const headers = [["Content-Type", MOCK_MIME[spec.contentType!]]];
     for (const item of ast.actions) {
       if (item !== action) applyStaticHeaderAction(headers, item);
     }
@@ -3392,7 +3456,7 @@ export function surgeMockFilePlan(
       const filename = "map_local_" + digest + suffix;
       data = surgeRewriteRawBase(publication) + "/Script/" + publication.id + "/" + filename;
       dataType = "file";
-      publication.generatedScripts.set(filename, bytes);
+      publication.generatedScripts!.set(filename, bytes as Buffer);
     }
     return {
       ok: true,
@@ -3410,36 +3474,36 @@ export function surgeMockFilePlan(
         (headerValue ? " header=" + JSON.stringify(headerValue) : ""),
       notes: condition.notes,
     };
-  } catch (error: any) {
+  } catch (error) {
     return unsupported(String(error?.message || error));
   }
 }
-export function fixedStringValue(node: any) {
+export function fixedStringValue(node: RewriteValue | undefined) {
   // Legacy redirect/mock renderers validate and expand their own templates.
   // Keep their public input contract; the feature planner selects the semantic
   // string compiler for mutation actions before native lowering.
   return node && ["string", "raw-string"].includes(node.type)
-    ? String(node.value)
+    ? String((node as StringNode).value)
     : null;
 }
 // Loon splits mutations by operation; targets group them by phase and family.
 // This table names supported target types. Argument/condition lowering remains
 // responsible for translating JSON paths, file JQ and whole-header patterns.
-export const REWRITE_MUTATION_MAPPINGS: any = Object.freeze(
+export const REWRITE_MUTATION_MAPPINGS: Readonly<Record<string, { qx: string; surge: string; section: string; surgeActions?: readonly string[] }>> = Object.freeze(
   Object.fromEntries(
-    ["request", "response"].flatMap((phase: string): any => [
+    ["request", "response"].flatMap((phase: string) => [
       ...[
         ["add", ["header-add"]],
         ["set", ["header-del", "header-add"]],
         ["del", ["header-del"]],
         ["replace", ["header-replace-regex"]],
-      ].map(([operation, surgeActions]: any): any => [
+      ].map(([operation, surgeActions]) => [
         phase + ".header." + operation,
         Object.freeze({
           qx: phase + "-header",
           surge: "http-" + phase,
           section: "header",
-          surgeActions: Object.freeze(surgeActions),
+          surgeActions: Object.freeze(surgeActions as string[]),
         }),
       ]),
       ...["add", "delete", "replace", "jq", "jq_file"].map(
@@ -3475,7 +3539,7 @@ export const QX_REWRITE_PRIMITIVES: Readonly<Record<string, string | Readonly<Re
   reject_video: null,
   ...Object.fromEntries(
     Object.entries(REWRITE_MUTATION_MAPPINGS).map(
-      ([name, mapping]: any): any => [name, mapping.qx],
+      ([name, mapping]) => [name, mapping.qx],
     ),
   ),
   "request.body.mock": null,
@@ -3483,14 +3547,14 @@ export const QX_REWRITE_PRIMITIVES: Readonly<Record<string, string | Readonly<Re
   "response.body.mock": null,
   "response.body.mock_file": null,
 });
-export function qxPrimitiveForRewriteV2Action(action: any): any {
+export function qxPrimitiveForRewriteV2Action(action: SourceAction) {
   validateRewriteV2Action(action);
   const mapping = QX_REWRITE_PRIMITIVES[action.name];
   if (!mapping) return null;
   if (typeof mapping === "string") return mapping;
   // A custom reject body needs the existing semantic/script planner.
   if (action.name === "reject" && action.args.length !== 1) return null;
-  const status: any = action.args[0];
+  const status = action.args[0];
   return status?.type === "number" ? (mapping[status.value] ?? null) : null;
 }
 // Consolidated: 2026-10-03
@@ -3527,19 +3591,27 @@ export function rewriteIssue(source: string, code: string, reason: unknown): Rew
 // Quantumult X Rewrite native matcher planner
 // Author: chance
 // Category: Converter / Quantumult X / Rewrite Matching
-function unwrap(node: any): any {
-  let cur: any = node;
+// Modified: 2026-11-28 (chance). Track the native predicates retained by the target matcher.
+type QxPredicate =
+  | { kind: "url-regex"; key: string; pattern: string; sourceFlags: string }
+  | { kind: "request-method-eq"; key: string; value: string }
+  | { kind: "request-header-eq"; key: string; name: string; value: string; pattern: string }
+  | { kind: "request-header-present"; key: string; name: string; pattern: string };
+type PredicateSet = Map<string, QxPredicate>;
+type ExactPredicates = { ok: true; predicates: PredicateSet } | { ok: false; reason: string };
+function unwrap(node: RewriteCondition | null) {
+  let cur = node;
   while (cur?.type === "group") cur = cur.expression;
   return cur;
 }
-function fixedString(node: any): any {
+function fixedString(node: RewriteValue | undefined) {
   if (!node || !["string", "raw-string"].includes(node.type)) return null;
-  return String(node.value);
+  return String((node as StringNode).value);
 }
-function regexEscape(value: any) {
+function regexEscape(value: unknown) {
   return String(value).replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&");
 }
-function requestHeaderName(variableName: any): any {
+function requestHeaderName(variableName: unknown) {
   const match = String(variableName || "").match(
     /^request\.header\[(['"])([^'"]+)\1\]$/,
   );
@@ -3548,9 +3620,9 @@ function requestHeaderName(variableName: any): any {
   if (!/^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(name)) return null;
   return name;
 }
-function headerNameRegex(name: any) {
+function headerNameRegex(name: string) {
   return [...String(name)]
-    .map((ch: string): any => {
+    .map((ch: string) => {
       if (/[A-Za-z]/.test(ch)) {
         return "[" + ch.toUpperCase() + ch.toLowerCase() + "]";
       }
@@ -3558,15 +3630,15 @@ function headerNameRegex(name: any) {
     })
     .join("");
 }
-function requestHeaderLinePattern(name: any, value: any = null) {
+function requestHeaderLinePattern(name: string, value: string | null = null) {
   const field = "\\r\\n" + headerNameRegex(name) + ":[ \\t]*";
   if (value === null) return field + "[^\\r\\n]*(?:\\r\\n|$)";
   return field + regexEscape(value) + "[ \\t]*(?:\\r\\n|$)";
 }
-function comparisonKey(node: any): any {
-  const n: any = unwrap(node);
+function comparisonKey(node: RewriteCondition): QxPredicate | null {
+  const n = unwrap(node);
   if (n?.type !== "comparison" || n.left?.type !== "variable") return null;
-  const url: any = urlComparisonRegex(n);
+  const url = urlComparisonRegex(n);
   // Modified: 2026-11-05 (chance). Flagged URLs are native QX predicates, including helper prefilters.
   if (url) {
     return {
@@ -3581,7 +3653,7 @@ function comparisonKey(node: any): any {
     };
   }
   if (n.left.name === "request.method" && n.operator === "==") {
-    const value: any = fixedString(n.right);
+    const value = fixedString(n.right);
     if (value === null || !value || /[\s\r\n]/.test(value)) return null;
     return {
       kind: "request-method-eq",
@@ -3589,11 +3661,11 @@ function comparisonKey(node: any): any {
       value,
     };
   }
-  const headerName: any = requestHeaderName(n.left.name);
+  const headerName = requestHeaderName(n.left.name);
   if (headerName) {
-    const normalizedName: any = headerName.toLowerCase();
+    const normalizedName = headerName.toLowerCase();
     if (n.operator === "==") {
-      const value: any = fixedString(n.right);
+      const value = fixedString(n.right);
       if (value === null || /[\x00-\x1F\x7F]/.test(value)) return null;
       return {
         kind: "request-header-eq",
@@ -3618,37 +3690,37 @@ function comparisonKey(node: any): any {
   }
   return null;
 }
-function guaranteedPredicates(node: any): any {
-  const n: any = unwrap(node);
+function guaranteedPredicates(node: RewriteCondition): PredicateSet {
+  const n = unwrap(node);
   if (!n) return new Map();
   if (n.type === "comparison") {
-    const item: any = comparisonKey(n);
+    const item = comparisonKey(n);
     return item ? new Map([[item.key, item]]) : new Map();
   }
   if (n.type !== "logical") return new Map();
-  const left: any = guaranteedPredicates(n.left);
-  const right: any = guaranteedPredicates(n.right);
+  const left = guaranteedPredicates(n.left);
+  const right = guaranteedPredicates(n.right);
   if (n.operator === "&&") {
     return new Map([...left, ...right]);
   }
   if (n.operator === "||") {
-    const out: any = new Map();
+    const out = new Map<string, QxPredicate>();
     for (const [key, item] of left) if (right.has(key)) out.set(key, item);
     return out;
   }
   return new Map();
 }
-function selectUrlPredicate(predicates: any): any {
+function selectUrlPredicate(predicates: PredicateSet) {
   for (const item of predicates.values())
     if (item.kind === "url-regex") return item;
   return null;
 }
-function selectMethodPredicate(predicates: any): any {
+function selectMethodPredicate(predicates: PredicateSet) {
   for (const item of predicates.values())
     if (item.kind === "request-method-eq") return item;
   return null;
 }
-function selectHeaderPredicate(predicates: any): any {
+function selectHeaderPredicate(predicates: PredicateSet) {
   for (const item of predicates.values()) {
     if (
       item.kind === "request-header-eq" ||
@@ -3658,11 +3730,11 @@ function selectHeaderPredicate(predicates: any): any {
   }
   return null;
 }
-function exactPredicates(node: any): any {
-  const n: any = unwrap(node);
+function exactPredicates(node: RewriteCondition): ExactPredicates {
+  const n = unwrap(node);
   if (!n) return { ok: false, reason: "missing Rewrite condition" };
   if (n.type === "comparison") {
-    const item: any = comparisonKey(n);
+    const item = comparisonKey(n);
     if (!item || item.kind.startsWith("request-header-")) {
       return {
         ok: false,
@@ -3678,16 +3750,16 @@ function exactPredicates(node: any): any {
         "exact QX matcher currently requires a comparison or AND-only condition",
     };
   }
-  const left: any = exactPredicates(n.left);
+  const left = exactPredicates(n.left);
   if (!left.ok) return left;
-  const right: any = exactPredicates(n.right);
+  const right = exactPredicates(n.right);
   if (!right.ok) return right;
-  const merged: any = new Map([...left.predicates, ...right.predicates]);
-  const urls: any = [...merged.values()].filter(
-    (item: any) => item.kind === "url-regex",
+  const merged = new Map([...left.predicates, ...right.predicates]);
+  const urls = [...merged.values()].filter(
+    (item) => item.kind === "url-regex",
   );
-  const methods: any = [...merged.values()].filter(
-    (item: any) => item.kind === "request-method-eq",
+  const methods = [...merged.values()].filter(
+    (item) => item.kind === "request-method-eq",
   );
   if (urls.length > 1)
     return {
@@ -3703,13 +3775,13 @@ function exactPredicates(node: any): any {
     };
   return { ok: true, predicates: merged };
 }
-function matcherFromPredicates(predicates: any): any {
-  const url: any = selectUrlPredicate(predicates);
-  const method: any = selectMethodPredicate(predicates);
-  const header: any = selectHeaderPredicate(predicates);
+function matcherFromPredicates(predicates: PredicateSet) {
+  const url = selectUrlPredicate(predicates);
+  const method = selectMethodPredicate(predicates);
+  const header = selectHeaderPredicate(predicates);
   const hasUrl = Boolean(url);
   const hasHeaders = Boolean(method || header);
-  const urlPattern: any = hasUrl ? url.pattern : "^https?://";
+  const urlPattern = hasUrl ? url!.pattern : "^https?://";
   if (hasHeaders) {
     // Quantumult X url-and-header evaluates URL first and then one regex over
     // a serialized request-side string containing method, path and headers.
@@ -3718,7 +3790,7 @@ function matcherFromPredicates(predicates: any): any {
     const methodPattern = method
       ? "^" + regexEscape(method.value) + "[ ]"
       : null;
-    let headersPattern: any = header?.pattern || methodPattern;
+    let headersPattern = header?.pattern || methodPattern;
     if (methodPattern && header) {
       headersPattern = methodPattern + "[\\s\\S]*" + header.pattern;
     }
@@ -3727,7 +3799,7 @@ function matcherFromPredicates(predicates: any): any {
     if (header)
       pushedDown.push("request.header[" + JSON.stringify(header.name) + "]");
     return {
-      ok: true,
+      ok: true as const,
       matcher: "url-and-header",
       matchScope: hasUrl ? "url-and-headers" : "headers-only",
       urlPattern,
@@ -3737,7 +3809,7 @@ function matcherFromPredicates(predicates: any): any {
     };
   }
   return {
-    ok: true,
+    ok: true as const,
     matcher: "url",
     matchScope: hasUrl ? "url-only" : "unfiltered",
     urlPattern,
@@ -3746,10 +3818,10 @@ function matcherFromPredicates(predicates: any): any {
     pushedDown: [],
   };
 }
-export function qxExactRewriteMatcherPlan(ast: any, options: any = {}): any {
-  const exact: any = exactPredicates(ast?.condition);
+export function qxExactRewriteMatcherPlan(ast: RewriteDeclaration, options: { compatibility?: boolean } = {}) {
+  const exact = exactPredicates(ast?.condition);
   if (!exact.ok) return exact;
-  const plan: any = matcherFromPredicates(exact.predicates);
+  const plan = matcherFromPredicates(exact.predicates);
   if (!options.compatibility && plan.urlPattern === "^https?://") {
     plan.urlPattern = "^";
     plan.prefix = plan.prefix.replace("^https?:// ", "^ ");
@@ -3760,11 +3832,11 @@ export function qxExactRewriteMatcherPlan(ast: any, options: any = {}): any {
     compatibilityUnverified: false,
   };
 }
-export function qxRewriteMatcherPlan(ast: any): any {
-  const predicates: any = guaranteedPredicates(ast?.condition);
+export function qxRewriteMatcherPlan(ast: RewriteDeclaration) {
+  const predicates: PredicateSet = guaranteedPredicates(ast?.condition);
   // Prefilter mode may intentionally drop non-native predicates because the
   // generated helper re-evaluates the complete source condition.
-  const plan: any = matcherFromPredicates(predicates);
+  const plan = matcherFromPredicates(predicates);
   if (plan.urlPattern === "^https?://") {
     plan.urlPattern = "^";
     plan.prefix = plan.prefix.replace("^https?:// ", "^ ");
@@ -3781,7 +3853,7 @@ function legacyRewriteReview(pattern: string, action: string, reason: unknown): 
     line: `# [WayX] REVIEW REQUIRED: ${reason}\n# Source declaration: ${pattern} ${action}`,
   };
 }
-function issue(pattern: any, action: any, code: any, reason: string): any {
+function issue(pattern: string, action: string, code: string, reason: string): RewritePlan {
   return {
     section: "comment",
     line: `# [WayX] ISSUE REQUIRED [${code}]: ${reason}\n# Source declaration: ${pattern} ${action}`,
@@ -3789,13 +3861,13 @@ function issue(pattern: any, action: any, code: any, reason: string): any {
     issueCode: code,
   };
 }
-function legacyShellTokens(input: any): any {
+function legacyShellTokens(input: string) {
   const out: string[] = [];
   let cur = "",
-    quote: any = null,
+    quote: string | null = null,
     esc = false;
   for (let i = 0; i < input.length; i++) {
-    const ch: any = input[i];
+    const ch = input[i];
     if (esc) {
       cur += ch;
       esc = false;
@@ -3826,7 +3898,7 @@ function legacyShellTokens(input: any): any {
   if (cur) out.push(cur);
   return out;
 }
-function unquote(token: any) {
+function unquote(token: unknown) {
   const t = String(token ?? "");
   if (
     (t.startsWith('"') && t.endsWith('"')) ||
@@ -3836,18 +3908,18 @@ function unquote(token: any) {
   }
   return t;
 }
-function jqPath(pathText: any): any {
+function jqPath(pathText: unknown) {
   try {
     return parseJsonKeyPath(pathText);
   } catch {
     return null;
   }
 }
-function jqAccess(pathText: any): any {
-  const parts: any = jqPath(pathText);
+function jqAccess(pathText: unknown) {
+  const parts = jqPath(pathText);
   return parts ? jqPathSelector(parts) : null;
 }
-function parseJsonValue(token: any): any {
+function parseJsonValue(token: unknown): JsonValue {
   const t = String(token).trim();
   try {
     return JSON.parse(t);
@@ -3860,23 +3932,23 @@ function parseJsonValue(token: any): any {
   return t;
 }
 // Modified: 2026-11-03 (chance). JSON mutation compilation only consumes its operation and operands.
-function compileJsonMutation(op: any, rest: any): any {
+function compileJsonMutation(op: string, rest: string) {
   if (op === "jq")
     return { ok: true, jq: unquote(String(rest).trim()), preserve: true };
-  const tokens: any = legacyShellTokens(rest);
+  const tokens = legacyShellTokens(rest);
   if (op === "del") {
     if (!tokens.length) return { ok: false, reason: "missing JSON path" };
-    const paths: any = tokens.map(unquote).map((path: any): any => ({
+    const paths = tokens.map(unquote).map((path) => ({
       parts: jqPath(path),
       access: jqAccess(path),
     }));
-    if (paths.some((path: any) => !path.parts || !path.access))
+    if (paths.some((path) => !path.parts || !path.access))
       return { ok: false, reason: "unsupported JSON path syntax" };
     return {
       ok: true,
       jq: renderFixedPathDeleteJq(
-        paths.map((path: any): any => ({
-          parts: path.parts,
+        paths.map((path) => ({
+          parts: path.parts!,
           selector: path.access,
         })),
       ),
@@ -3887,7 +3959,7 @@ function compileJsonMutation(op: any, rest: any): any {
       return { ok: false, reason: "json-" + op + " requires path/value pairs" };
     const ops: string[] = [];
     for (let i = 0; i < tokens.length; i += 2) {
-      const path: any = jqPath(unquote(tokens[i]));
+      const path = jqPath(unquote(tokens[i]));
       if (!path) return { ok: false, reason: "unsupported JSON path syntax" };
       const value = JSON.stringify(parseJsonValue(tokens[i + 1]));
       if (op === "add") {
@@ -3900,8 +3972,8 @@ function compileJsonMutation(op: any, rest: any): any {
   }
   return { ok: false, reason: "unsupported JSON operation" };
 }
-export function classifyLegacyRewrite(action: any): any {
-  const parsed: any = classifyLegacyRewriteAction(action);
+export function classifyLegacyRewrite(action: string) {
+  const parsed = classifyLegacyRewriteAction(action);
   if (parsed.kind === "reject" && parsed.variant === "video")
     return { kind: "reject-video" };
   if (parsed.kind === "header")
@@ -3930,14 +4002,14 @@ export function classifyLegacyRewrite(action: any): any {
     return { kind: "url-rewrite", target: parsed.target };
   return { kind: "unknown", raw: parsed.raw };
 }
-function legacyStringNode(value: any) {
+function legacyStringNode(value: unknown): import("../domain/contracts.ts").StringNode {
   return {
     type: "string",
     value: String(value),
     raw: JSON.stringify(String(value)),
   };
 }
-function legacyRegexNode(pattern: any) {
+function legacyRegexNode(pattern: unknown): Extract<RewriteValue, { type: "regex" }> {
   return {
     type: "regex",
     pattern: String(pattern),
@@ -3945,14 +4017,16 @@ function legacyRegexNode(pattern: any) {
     raw: "/" + String(pattern).replaceAll("/", "\\/") + "/",
   };
 }
-function legacyHeaderAst(pattern: any, parsed: any, tokens: any): any {
+type LegacyMutation = { phase: Phase; rest: string; op?: string };
+type ParsedLegacyMock = { phase: Phase; mock: LegacyMock };
+function legacyHeaderAst(pattern: string, parsed: LegacyMutation, tokens: string[]) {
   const width =
     parsed.op === "del" ? 1 : parsed.op === "replace-regex" ? 3 : 2;
-  const actions: any = [];
+  const actions: SourceAction[] = [];
   for (let i = 0; i < tokens.length; i += width) {
-    const args: any = tokens.slice(i, i + width).map(unquote);
-    let suffix: any;
-    let nodes: any;
+    const args = tokens.slice(i, i + width).map(unquote);
+    let suffix: string;
+    let nodes: RewriteValue[];
     if (parsed.op === "del") {
       suffix = "del";
       nodes = [legacyStringNode(args[0])];
@@ -3991,13 +4065,13 @@ function legacyHeaderAst(pattern: any, parsed: any, tokens: any): any {
   };
 }
 function planHeader(
-  pattern: any,
-  action: any,
-  parsed: any,
-  target: any,
-  ctx: any,
-): any {
-  const tokens: any = legacyShellTokens(parsed.rest);
+  pattern: string,
+  action: string,
+  parsed: LegacyMutation,
+  target: string,
+  ctx: RewritePlannerOptions,
+): RewritePlan {
+  const tokens = legacyShellTokens(parsed.rest);
   const direction =
     parsed.phase === "response" ? "http-response" : "http-request";
   const width =
@@ -4013,8 +4087,8 @@ function planHeader(
     parsed.op === "add" &&
     ["request", "response"].includes(parsed.phase)
   ) {
-    const targetPattern: any = normalizeUrlRegexForTarget(pattern);
-    const pairs: any = [];
+    const targetPattern = normalizeUrlRegexForTarget(pattern);
+    const pairs: [string, string][] = [];
     for (let i = 0; i < tokens.length; i += width) {
       const [name, value] = tokens.slice(i, i + width).map(unquote);
       if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) {
@@ -4029,8 +4103,8 @@ function planHeader(
     }
     if (pairs.length === tokens.length / width) {
       const token = parsed.phase + "-header";
-      const inserted: any = pairs
-        .map(([name, value]: any) => name + ": " + value + "$2")
+      const inserted = pairs
+        .map(([name, value]) => name + ": " + value + "$2")
         .join("");
       return {
         section: "rewrite",
@@ -4058,8 +4132,8 @@ function planHeader(
   }
   if (target === "qx") {
     try {
-      const ast: any = legacyHeaderAst(pattern, parsed, tokens);
-      const plan: any = renderQxHeaderScript(ast, {
+      const ast = legacyHeaderAst(pattern, parsed, tokens) as RewriteDeclaration;
+      const plan = renderQxHeaderScript(ast, {
         stamp: ctx.stamp || "",
         category: ctx.category || "Rewrite / Legacy Header",
         sourceLine: pattern + " " + action,
@@ -4070,7 +4144,7 @@ function planHeader(
         .digest("hex")
         .slice(0, 10);
       const filename = "legacy_header_" + key + ".js";
-      ctx.generatedScripts.set(filename, plan.script);
+      ctx.generatedScripts!.set(filename, plan.script);
       return {
         section: "rewrite",
         line:
@@ -4084,7 +4158,7 @@ function planHeader(
           "/" +
           filename,
       };
-    } catch (error: any) {
+    } catch (error) {
       return legacyRewriteReview(
         pattern,
         action,
@@ -4092,10 +4166,10 @@ function planHeader(
       );
     }
   }
-  const targetPattern: any = normalizeUrlRegexForTarget(pattern);
+  const targetPattern = normalizeUrlRegexForTarget(pattern);
   const lines: string[] = [];
   for (let i = 0; i < tokens.length; i += width) {
-    const args: any = tokens.slice(i, i + width).map(unquote);
+    const args = tokens.slice(i, i + width).map(unquote);
     if (parsed.op === "replace-regex")
       args[1] = normalizeRegexBodyForTarget(args[1]);
     lines.push(
@@ -4105,19 +4179,19 @@ function planHeader(
   return { section: "header", lines };
 }
 function planBodyRegex(
-  pattern: any,
-  action: any,
-  parsed: any,
-  target: any,
-): any {
-  const tokens: any = legacyShellTokens(parsed.rest).map(unquote);
+  pattern: string,
+  action: string,
+  parsed: LegacyMutation,
+  target: string,
+): RewritePlan {
+  const tokens = legacyShellTokens(parsed.rest).map(unquote);
   if (!tokens.length || tokens.length % 2)
     return legacyRewriteReview(
       pattern,
       action,
       "body regex rewrite requires regex/replacement pairs",
     );
-  const targetPattern: any = normalizeUrlRegexForTarget(pattern);
+  const targetPattern = normalizeUrlRegexForTarget(pattern);
   for (let i = 0; i < tokens.length; i += 2)
     tokens[i] = normalizeRegexBodyForTarget(tokens[i]);
   if (target === "qx") {
@@ -4137,11 +4211,11 @@ function planBodyRegex(
     line: `${direction} ${targetPattern} ${tokens.join(" ")}`,
   };
 }
-function planJson(pattern: any, action: any, parsed: any, target: any): any {
-  let compiled: any;
+function planJson(pattern: string, action: string, parsed: LegacyMutation, target: string): RewritePlan {
+  let compiled: { ok: boolean; jq?: string; preserve?: boolean; reason?: string };
   try {
-    compiled = compileJsonMutation(parsed.op, parsed.rest);
-  } catch (error: any) {
+    compiled = compileJsonMutation(parsed.op!, parsed.rest);
+  } catch (error) {
     return legacyRewriteReview(
       pattern,
       action,
@@ -4150,37 +4224,37 @@ function planJson(pattern: any, action: any, parsed: any, target: any): any {
   }
   if (!compiled.ok)
     return legacyRewriteReview(pattern, action, compiled.reason);
-  const jq: any = compiled.jq;
+  const jq = compiled.jq!;
   if (parsed.op === "jq" && !String(jq).trim()) {
     // Source-authored empty JQ expressions have no executable target filter.
     // Emitting jsonjq/http-*-jq with '' is invalid; treat the declaration as
     // an intentional no-op/drop rather than inventing target semantics.
     return { section: "drop", reason: "empty-legacy-json-jq" };
   }
-  let quoted: any;
+  let quoted: string;
   try {
     quoted = quoteJq(jq);
-  } catch (error: any) {
+  } catch (error) {
     return legacyRewriteReview(
       pattern,
       action,
       String(error?.message || error),
     );
   }
-  const targetPattern: any = normalizeUrlRegexForTarget(pattern);
+  const targetPattern = normalizeUrlRegexForTarget(pattern);
   if (target === "qx") {
-    const verb: any = REWRITE_MUTATION_MAPPINGS[parsed.phase + ".json.jq"].qx;
+    const verb = REWRITE_MUTATION_MAPPINGS[parsed.phase + ".json.jq"].qx;
     return {
       section: "rewrite",
       line: `${targetPattern} url ${verb} ${quoted}`,
     };
   }
-  const verb: any = REWRITE_MUTATION_MAPPINGS[parsed.phase + ".json.jq"].surge;
+  const verb = REWRITE_MUTATION_MAPPINGS[parsed.phase + ".json.jq"].surge;
   return { section: "body", line: `${verb} ${targetPattern} ${quoted}` };
 }
-function legacyMockAst(pattern: any, parsed: any): any {
-  const mock: any = parsed.mock;
-  const args: any = [legacyStringNode(mock.type), legacyStringNode(mock.data)];
+function legacyMockAst(pattern: string, parsed: ParsedLegacyMock) {
+  const mock = parsed.mock;
+  const args: RewriteValue[] = [legacyStringNode(mock.type), legacyStringNode(mock.data)];
   if (parsed.phase === "response") {
     args.push({ type: "number", value: mock.status, raw: String(mock.status) });
     if (mock.base64) args.push({ type: "boolean", value: true, raw: "true" });
@@ -4201,13 +4275,13 @@ function legacyMockAst(pattern: any, parsed: any): any {
   };
 }
 function planMock(
-  pattern: any,
-  action: any,
-  parsed: any,
-  target: any,
-  ctx: any,
-): any {
-  const mock: any = parsed.mock;
+  pattern: string,
+  action: string,
+  parsed: ParsedLegacyMock,
+  target: string,
+  ctx: RewritePlannerOptions,
+): RewritePlan {
+  const mock = parsed.mock;
   if (mock.dataPath)
     return legacyRewriteReview(
       pattern,
@@ -4221,9 +4295,9 @@ function planMock(
       "legacy body mock has no inline data",
     );
   try {
-    const ast: any = legacyMockAst(pattern, parsed);
+    const ast = legacyMockAst(pattern, parsed) as RewriteDeclaration;
     if (target === "qx") {
-      const plan: any = renderQxInlineMockScript(ast, {
+      const plan = renderQxInlineMockScript(ast, {
         stamp: ctx.stamp || "",
         category: ctx.category || "Rewrite / Legacy Mock",
         sourceLine: pattern + " " + action,
@@ -4234,7 +4308,7 @@ function planMock(
         .digest("hex")
         .slice(0, 10);
       const filename = "legacy_mock_" + key + ".js";
-      ctx.generatedScripts.set(filename, plan.script);
+      ctx.generatedScripts!.set(filename, plan.script);
       return {
         section: "rewrite",
         line:
@@ -4250,7 +4324,7 @@ function planMock(
       };
     }
     if (parsed.phase === "response") {
-      const direct: any = surgeInlineMockPlan(ast);
+      const direct = surgeInlineMockPlan(ast);
       if (direct.ok)
         return {
           section: direct.section,
@@ -4259,7 +4333,7 @@ function planMock(
         };
       return legacyRewriteReview(pattern, action, direct.reason);
     }
-    const plan: any = renderSurgeRequestMockScript(ast, {
+    const plan = renderSurgeRequestMockScript(ast, {
       stamp: ctx.stamp || "",
       category: ctx.category || "Rewrite / Legacy Mock",
       sourceLine: pattern + " " + action,
@@ -4270,7 +4344,7 @@ function planMock(
       .digest("hex")
       .slice(0, 10);
     const filename = "legacy_request_mock_" + key + ".js";
-    ctx.generatedScripts.set(filename, plan.script);
+    ctx.generatedScripts!.set(filename, plan.script);
     return {
       section: "script",
       line:
@@ -4289,7 +4363,7 @@ function planMock(
         ",requires-body=true" +
         (plan.binaryBodyMode ? ",binary-body-mode=true" : ""),
     };
-  } catch (error: any) {
+  } catch (error) {
     return legacyRewriteReview(
       pattern,
       action,
@@ -4311,14 +4385,14 @@ export function planLegacyRewriteIr(ir: LegacyRewriteIr, target: ConversionTarge
     return { section: "drop", reason: "empty-legacy-json-jq" };
   const targetPattern = normalizeUrlRegexForTarget(pattern);
   const operation = ir.operations[0];
-  const parsed: any = classifyLegacyRewrite(action);
+  const parsed = classifyLegacyRewrite(action);
   if (operation.kind === "reject" && operation.variant !== "video") {
     if (target === "qx")
       return {
         section: "rewrite",
         line: `${targetPattern} url ${parsed.action}`,
       };
-    const mapping = LEGACY_REJECT_VARIANTS.get(parsed.action)!;
+    const mapping = LEGACY_REJECT_VARIANTS.get(parsed.action!)!;
     return {
       section: mapping.surgeSection as "url" | "map",
       line: `${targetPattern} ${mapping.surgeArguments}`,
@@ -4351,13 +4425,13 @@ export function planLegacyRewriteIr(ir: LegacyRewriteIr, target: ConversionTarge
         );
   }
   if (operation.kind === "header")
-    return planHeader(pattern, action, parsed, target, ctx);
+    return planHeader(pattern, action, parsed as LegacyMutation, target, ctx);
   if (operation.kind === "body-regex")
-    return planBodyRegex(pattern, action, parsed, target);
+    return planBodyRegex(pattern, action, parsed as LegacyMutation, target);
   if (operation.kind === "json")
-    return planJson(pattern, action, parsed, target);
+    return planJson(pattern, action, parsed as LegacyMutation, target);
   if (operation.kind === "mock")
-    return planMock(pattern, action, parsed, target, ctx);
+    return planMock(pattern, action, parsed as ParsedLegacyMock, target, ctx);
   return issue(
     pattern,
     action,
@@ -4366,11 +4440,11 @@ export function planLegacyRewriteIr(ir: LegacyRewriteIr, target: ConversionTarge
   );
 }
 export function planLegacyRewrite(
-  pattern: any,
-  action: any,
-  target: any,
-  ctx: any = {},
-): any {
+  pattern: string,
+  action: string,
+  target: ConversionTarget,
+  ctx: RewritePlannerOptions = {},
+) {
   return planLegacyRewriteIr(
     legacyRewriteToSemanticIr(pattern, action),
     target,
@@ -4381,10 +4455,10 @@ export function planLegacyRewrite(
 // Quantumult X Rewrite target planner
 // Author: chance
 // Category: Converter / Rewrite / Quantumult X
-function qxRewriteSourceLine(ir: any, ctx: any) {
+function qxRewriteSourceLine(ir: RewriteSemanticIr, ctx: RewritePlannerOptions) {
   return String(ctx.sourceLine || ir?.source || "").trim();
 }
-function qxRewriteRawBase(ctx: any) {
+function qxRewriteRawBase(ctx: RewritePlannerOptions) {
   const base = String(ctx.rawBase || "").replace(/\/$/, "");
   if (!base)
     throw new Error(
@@ -4399,7 +4473,7 @@ function ensureQxRewriteHandlers() {
   registerComplexRewriteHandler({
     id: "qx-inline-mock-header-pipeline",
     targets: ["qx"],
-    match: (ast: any): any => {
+    match: (ast: RewriteDeclaration) => {
       if (ast.phase !== "response") return false;
       const mockName = "response.body.mock";
       const headerNames = new Set([
@@ -4408,24 +4482,24 @@ function ensureQxRewriteHandlers() {
         ast.phase + ".header.del",
         ast.phase + ".header.replace",
       ]);
-      const mocks: any = ast.actions.filter(
-        (action: any) => action.name === mockName,
+      const mocks = ast.actions.filter(
+        (action) => action.name === mockName,
       );
       return (
         mocks.length === 1 &&
         ast.actions.every(
-          (action: any) =>
+          (action) =>
             action.name === mockName || headerNames.has(action.name),
         )
       );
     },
-    plan: (ast: any, _target: any, ctx: any) => {
+    plan: (ast: RewriteDeclaration, _target: string, ctx: RewritePlannerOptions) => {
       try {
-        const matcher: any = qxExactRewriteMatcherPlan(ast, {
+        const matcher = qxExactRewriteMatcherPlan(ast, {
           compatibility: true,
         });
         if (!matcher.ok) throw new Error(matcher.reason);
-        const plan: any = renderQxInlineMockScript(ast, {
+        const plan = renderQxInlineMockScript(ast, {
           conditionMode: "external-exact",
           stamp: ctx.stamp,
           category: ctx.category,
@@ -4437,7 +4511,7 @@ function ensureQxRewriteHandlers() {
           .digest("hex")
           .slice(0, 10);
         const filename = "mock_" + key + ".js";
-        ctx.generatedScripts.set(filename, plan.script);
+        ctx.generatedScripts!.set(filename, plan.script);
         return {
           ok: true,
           section: "rewrite",
@@ -4451,7 +4525,7 @@ function ensureQxRewriteHandlers() {
             "/" +
             filename,
         };
-      } catch (error: any) {
+      } catch (error) {
         return {
           ok: false,
           terminal: true,
@@ -4461,28 +4535,28 @@ function ensureQxRewriteHandlers() {
     },
   });
 }
-function qxNativeHeaderPlan(ast: any): any {
+function qxNativeHeaderPlan(ast: RewriteDeclaration): RewriteLinePlan | null {
   if (!["request", "response"].includes(ast?.phase) || !ast.actions?.length)
     return null;
   if (
     ast.actions.length === 1 &&
     simpleUrlRewriteCondition(ast).ok &&
-    !ast.condition.capture &&
+    !(ast.condition as ComparisonNode).capture &&
     [ast.phase + ".header.set", ast.phase + ".header.del"].includes(
       ast.actions[0].name,
     )
   ) {
     try {
-      const matcher: any = qxExactRewriteMatcherPlan(ast, {
+      const matcher = qxExactRewriteMatcherPlan(ast, {
         compatibility: true,
       });
       if (!matcher.ok) return null;
-      const token: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx,
+      const token = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx,
         lines: string[] = [];
       for (const args of expandBulkAction(ast.actions[0])) {
-        const name: any = fixedNoTemplate(args[0], "header name");
+        const name = fixedNoTemplate(args[0], "header name");
         if (!name || /[\s:\r\n]/.test(name)) return null;
-        const field: any = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const field = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         lines.push(
           matcher.prefix +
             token +
@@ -4493,7 +4567,7 @@ function qxNativeHeaderPlan(ast: any): any {
             " $1",
         );
         if (ast.actions[0].name.endsWith(".set")) {
-          const value: any = fixedNoTemplate(args[1], "header value");
+          const value = fixedNoTemplate(args[1], "header value");
           if (/[\r\n$]/.test(value)) return null;
           lines.push(
             matcher.prefix +
@@ -4516,19 +4590,19 @@ function qxNativeHeaderPlan(ast: any): any {
   if (
     ast.actions.length === 1 &&
     simpleUrlRewriteCondition(ast).ok &&
-    !ast.condition.capture &&
+    !(ast.condition as ComparisonNode).capture &&
     ast.actions[0].name === ast.phase + ".header.replace"
   ) {
     try {
-      const matcher: any = qxExactRewriteMatcherPlan(ast, {
+      const matcher = qxExactRewriteMatcherPlan(ast, {
         compatibility: true,
       });
       if (!matcher.ok) return null;
       const lines: string[] = [];
       for (const args of expandBulkAction(ast.actions[0])) {
-        const name: any = fixedNoTemplate(args[0], "header name");
-        const replacement: any = fixedNoTemplate(args[2], "header replacement");
-        const regex: any = args[1];
+        const name = fixedNoTemplate(args[0], "header name");
+        const replacement = fixedNoTemplate(args[2], "header replacement");
+        const regex = args[1];
         if (
           !name ||
           /[\s:\r\n]/.test(name) ||
@@ -4544,10 +4618,10 @@ function qxNativeHeaderPlan(ast: any): any {
           (regex.flags?.includes("s") && pattern.includes("."))
         )
           return null;
-        const field: any = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const field = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         // Modified: 2026-11-05 (chance). Preserve source ims within the Header
         // value group, independently of case-insensitive field-name matching.
-        const compiled: any = compileRegexForTarget(regex, {
+        const compiled = compileRegexForTarget(regex, {
           subject: "header",
           target: "qx",
         });
@@ -4555,14 +4629,14 @@ function qxNativeHeaderPlan(ast: any): any {
         const body = compiled.mappedFlags
           ? "(?" + compiled.mappedFlags + ":" + pattern + ")"
           : "(?:" + pattern + ")";
-        const token: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
+        const token = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
         const search =
           "(?m)^((?i:" + field + "):[\\t\\x20]*[^\\r\\n]*?)(" + body + ")";
         const value =
           "$1" +
           replacement.replace(
             /\$(\d+)/g,
-            (_: any, number: any) => "$" + (Number(number) + 2),
+            (_: string, number: string) => "$" + (Number(number) + 2),
           );
         if (/\$(?!\d)/.test(replacement)) return null;
         lines.push(
@@ -4576,26 +4650,26 @@ function qxNativeHeaderPlan(ast: any): any {
   }
   if (
     ast.actions.some(
-      (action: any) => action.name !== ast.phase + ".header.add",
+      (action) => action.name !== ast.phase + ".header.add",
     )
   )
     return null;
-  const matcher: any = qxExactRewriteMatcherPlan(ast, { compatibility: true });
+  const matcher = qxExactRewriteMatcherPlan(ast, { compatibility: true });
   if (!matcher.ok) return null;
   const pairs: string[][] = [];
   for (const action of ast.actions) {
-    const names: any =
+    const names =
       action.args[0]?.type === "array"
         ? action.args[0].items
         : [action.args[0]];
-    const values: any =
+    const values =
       action.args[1]?.type === "array"
         ? action.args[1].items
         : [action.args[1]];
     if (!names.length || names.length !== values.length) return null;
     for (let i = 0; i < names.length; i++) {
-      const nameNode: any = names[i],
-        valueNode: any = values[i];
+      const nameNode = names[i],
+        valueNode = values[i];
       if (
         !nameNode ||
         !["string", "raw-string"].includes(nameNode.type) ||
@@ -4603,8 +4677,8 @@ function qxNativeHeaderPlan(ast: any): any {
         !["string", "raw-string"].includes(valueNode.type)
       )
         return null;
-      const name = String(nameNode.value),
-        value = String(valueNode.value);
+      const name = String((nameNode as StringNode).value),
+        value = String((valueNode as StringNode).value);
       if (!name || /[\s:\r\n]/.test(name) || /[\r\n$]/.test(value)) return null;
       pairs.push([name, value]);
     }
@@ -4613,10 +4687,10 @@ function qxNativeHeaderPlan(ast: any): any {
   // A source-authored add|add pipeline can therefore be coalesced into one
   // whole-header insertion without changing duplicate-header semantics or
   // source action order.
-  const token: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
+  const token = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
   const headerPattern = "^([^\\r\\n]+)(\\r\\n)";
-  const inserted: any = pairs
-    .map(([name, value]: any) => name + ": " + value + "$2")
+  const inserted = pairs
+    .map(([name, value]) => name + ": " + value + "$2")
     .join("");
   return {
     section: "rewrite",
@@ -4631,17 +4705,17 @@ function qxNativeHeaderPlan(ast: any): any {
       inserted,
   };
 }
-function qxNativeJsonPipelinePlan(ast: any): any {
+function qxNativeJsonPipelinePlan(ast: RewriteDeclaration): RewriteLinePlan | null {
   if (
     !["request", "response"].includes(ast?.phase) ||
     (ast.actions?.length || 0) < 2
   )
     return null;
-  const matcher: any = qxExactRewriteMatcherPlan(ast, { compatibility: true });
+  const matcher = qxExactRewriteMatcherPlan(ast, { compatibility: true });
   if (!matcher.ok) return null;
-  const mapped: any = jsonPipelineToSafeNativeJq(ast);
+  const mapped = jsonPipelineToSafeNativeJq(ast);
   if (!mapped.ok) return null;
-  const token: any = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
+  const token = REWRITE_MUTATION_MAPPINGS[ast.actions[0].name].qx;
   return {
     section: "rewrite",
     line: matcher.prefix + token + " " + quoteJq(mapped.jq),
@@ -4659,10 +4733,10 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
     );
   }
   ensureQxRewriteHandlers();
-  const source: any = qxRewriteSourceLine(ir, ctx);
-  const ast: any = rewriteIrDeclaration(ir);
-  const singleOp: any = singleRewriteOperation(ir);
-  const argumentRefs: any = ctx.argumentRefs || [];
+  const source = qxRewriteSourceLine(ir, ctx);
+  const ast = rewriteIrDeclaration(ir);
+  const singleOp = singleRewriteOperation(ir) as V2RewriteOperation | null;
+  const argumentRefs = ctx.argumentRefs || [];
   if (argumentRefs.length) {
     if (singleOp?.kind === "redirect")
       return {
@@ -4681,7 +4755,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
     );
   }
   if (singleOp?.kind === "redirect") {
-    const matcher: any = qxExactRewriteMatcherPlan(ast, {
+    const matcher = qxExactRewriteMatcherPlan(ast, {
       compatibility: true,
     });
     if (!matcher.ok)
@@ -4689,14 +4763,14 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
         source,
         "QX native redirect requires an exact condition: " + matcher.reason,
       );
-    const direct: any = qxDirectRewritePlan(ast, { matcher });
+    const direct = qxDirectRewritePlan(ast, { matcher });
     return direct.ok
       ? { section: direct.section, line: direct.line }
       : rewriteReview(source, direct.reason);
   }
-  const nativeJson: any = nativeJsonPriorityPlan(ast, "qx");
+  const nativeJson = nativeJsonPriorityPlan(ast, "qx");
   if (nativeJson) return nativeJson;
-  const nativeJq: any = nativeJqPriorityPlan(ast, "qx");
+  const nativeJq = nativeJqPriorityPlan(ast, "qx");
   if (nativeJq)
     return nativeJq.ok
       ? {
@@ -4705,7 +4779,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
           lines: nativeJq.lines,
         }
       : rewriteReview(source, nativeJq.reason);
-  const nativeHeaderFirst: any = qxNativeHeaderPlan(ast);
+  const nativeHeaderFirst = qxNativeHeaderPlan(ast);
   if (nativeHeaderFirst) return nativeHeaderFirst;
   if (
     (rewriteFeatureProfile(ast).needsHelper &&
@@ -4722,13 +4796,13 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
         ? { section: featurePlan.section, line: featurePlan.line }
         : rewriteReview(source, featurePlan.reason);
   }
-  const fileMocks: any = ast.actions.filter(
-    (action: any) => action.name === ast.phase + ".body.mock_file",
+  const fileMocks = ast.actions.filter(
+    (action) => action.name === ast.phase + ".body.mock_file",
   );
-  const fileMockPipeline: any =
+  const fileMockPipeline =
     fileMocks.length === 1 &&
     ast.actions.every(
-      (action: any) =>
+      (action) =>
         action === fileMocks[0] ||
         new RegExp(
           "^" + ast.phase + "\\.header\\.(?:add|set|del|replace)$",
@@ -4739,26 +4813,26 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
     (ast.phase === "response" || ast.actions.length === 1)
   ) {
     try {
-      const matcher: any = qxExactRewriteMatcherPlan(ast, {
+      const matcher = qxExactRewriteMatcherPlan(ast, {
         compatibility: true,
       });
       if (!matcher.ok) throw new Error(matcher.reason);
-      const fileMock: any = fileMocks[0];
-      const plan: any = qxMockPlanFromAction(fileMock, {
+      const fileMock = fileMocks[0];
+      const plan = qxMockPlanFromAction(fileMock, {
         pluginSourceUrl: ctx.sourceUrl,
       });
-      const materialized: any = ctx.mockFiles?.get(source);
+      const materialized = ctx.mockFiles?.get(source);
       if (!materialized)
         throw new Error("mock_file was not materialized during conversion");
       if (materialized.error) throw new Error(materialized.error);
-      const headerOps: any = headerOpsForMock(ast, fileMock);
+      const headerOps = headerOpsForMock(ast, fileMock);
       const key = crypto
         .createHash("sha1")
         .update("mock-file\0" + source)
         .digest("hex")
         .slice(0, 10);
       const filename = "mock_file_" + key + ".js";
-      const script: any = renderQxMockFileScript(plan, {
+      const script = renderQxMockFileScript(plan!, {
         ...materialized,
         headerOps,
         stamp: ctx.stamp,
@@ -4770,7 +4844,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
         section: "rewrite",
         line:
           matcher.prefix +
-          plan.qxAction +
+          plan!.qxAction +
           " " +
           qxRewriteRawBase(ctx) +
           "/Script/" +
@@ -4778,7 +4852,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
           "/" +
           filename,
       };
-    } catch (error: any) {
+    } catch (error) {
       return rewriteReview(
         source,
         String(error?.message || error).split("\n")[0],
@@ -4787,11 +4861,11 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
   }
   if (singleOp?.kind === "mock" && singleOp.operation === "inline") {
     try {
-      const matcher: any = qxExactRewriteMatcherPlan(ast, {
+      const matcher = qxExactRewriteMatcherPlan(ast, {
         compatibility: true,
       });
       if (!matcher.ok) throw new Error(matcher.reason);
-      const plan: any = renderQxInlineMockScript(ast, {
+      const plan = renderQxInlineMockScript(ast, {
         conditionMode: "external-exact",
         stamp: ctx.stamp,
         category: ctx.category,
@@ -4808,7 +4882,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
         section: "rewrite",
         line:
           matcher.prefix +
-          plan.qxAction +
+          plan!.qxAction +
           " " +
           qxRewriteRawBase(ctx) +
           "/Script/" +
@@ -4816,23 +4890,23 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
           "/" +
           filename,
       };
-    } catch (error: any) {
+    } catch (error) {
       return rewriteReview(
         source,
         String(error?.message || error).split("\n")[0],
       );
     }
   }
-  const nativeHeader: any = qxNativeHeaderPlan(ast);
+  const nativeHeader = qxNativeHeaderPlan(ast);
   if (nativeHeader) return nativeHeader;
-  const nativeJsonPipeline: any = qxNativeJsonPipelinePlan(ast);
+  const nativeJsonPipeline = qxNativeJsonPipelinePlan(ast);
   if (nativeJsonPipeline) return nativeJsonPipeline;
   try {
-    const exactMatcher: any = qxExactRewriteMatcherPlan(ast, {
+    const exactMatcher = qxExactRewriteMatcherPlan(ast, {
       compatibility: true,
     });
     if (exactMatcher.ok) {
-      const direct: any = qxDirectRewritePlan(ast, { matcher: exactMatcher });
+      const direct = qxDirectRewritePlan(ast, { matcher: exactMatcher });
       if (direct.ok)
         return {
           section: direct.section,
@@ -4840,7 +4914,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
           lines: direct.lines,
         };
     }
-  } catch (error: any) {
+  } catch (error) {
     return rewriteReview(
       source,
       String(error?.message || error).split("\n")[0],
@@ -4874,9 +4948,9 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
         throw new Error(
           "QX header.add cannot be represented losslessly: duplicate-header runtime semantics are not verified",
         );
-      const exact: any = qxExactRewriteMatcherPlan(ast);
+      const exact = qxExactRewriteMatcherPlan(ast);
       if (exact.ok) {
-        const plan: any = renderQxHeaderScript(ast, {
+        const plan = renderQxHeaderScript(ast, {
           conditionMode: "external-exact",
           stamp: ctx.stamp,
           category: ctx.category,
@@ -4902,7 +4976,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
             filename,
         };
       }
-      const plan: any = renderSingleRewriteMutationScript(ast, {
+      const plan = renderSingleRewriteMutationScript(ast, {
         target: "qx",
         stamp: ctx.stamp,
         category: ctx.category,
@@ -4915,12 +4989,12 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
         .slice(0, 10);
       const filename = "header_" + key + ".js";
       ctx.generatedScripts!.set(filename, plan.script);
-      const matcher: any = qxRewriteMatcherPlan(ast);
+      const matcher = qxRewriteMatcherPlan(ast);
       return {
         section: "rewrite",
         line:
           matcher.prefix +
-          plan.qxAction +
+          plan!.qxAction +
           " " +
           qxRewriteRawBase(ctx) +
           "/Script/" +
@@ -4928,7 +5002,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
           "/" +
           filename,
       };
-    } catch (error: any) {
+    } catch (error) {
       return rewriteReview(
         source,
         String(error?.message || error).split("\n")[0],
@@ -4941,7 +5015,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
     singleOp.phase === ir.phase
   ) {
     try {
-      const plan: any = renderSingleJsonMutationScript(ast, {
+      const plan = renderSingleJsonMutationScript(ast, {
         target: "qx",
         stamp: ctx.stamp,
         category: ctx.category,
@@ -4954,12 +5028,12 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
         .slice(0, 10);
       const filename = "json_add_qx_" + key + ".js";
       ctx.generatedScripts!.set(filename, plan.script);
-      const matcher: any = qxRewriteMatcherPlan(ast);
+      const matcher = qxRewriteMatcherPlan(ast);
       return {
         section: "rewrite",
         line:
           matcher.prefix +
-          plan.qxAction +
+          plan!.qxAction +
           " " +
           qxRewriteRawBase(ctx) +
           "/Script/" +
@@ -4967,7 +5041,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
           "/" +
           filename,
       };
-    } catch (error: any) {
+    } catch (error) {
       return rewriteReview(
         source,
         String(error?.message || error).split("\n")[0],
@@ -4979,7 +5053,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
     ast.actions[0]?.name === ast.phase + ".body.replace"
   ) {
     try {
-      const plan: any = renderSingleRewriteMutationScript(ast, {
+      const plan = renderSingleRewriteMutationScript(ast, {
         target: "qx",
         stamp: ctx.stamp,
         category: ctx.category,
@@ -4992,12 +5066,12 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
         .slice(0, 10);
       const filename = "body_" + key + ".js";
       ctx.generatedScripts!.set(filename, plan.script);
-      const matcher: any = qxRewriteMatcherPlan(ast);
+      const matcher = qxRewriteMatcherPlan(ast);
       return {
         section: "rewrite",
         line:
           matcher.prefix +
-          plan.qxAction +
+          plan!.qxAction +
           " " +
           qxRewriteRawBase(ctx) +
           "/Script/" +
@@ -5005,7 +5079,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
           "/" +
           filename,
       };
-    } catch (error: any) {
+    } catch (error) {
       return rewriteReview(
         source,
         String(error?.message || error).split("\n")[0],
@@ -5017,11 +5091,11 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
     ["reject", "reject_dict", "reject_array"].includes(singleOp.actionName)
   ) {
     try {
-      const matcher: any = qxExactRewriteMatcherPlan(ast, {
+      const matcher = qxExactRewriteMatcherPlan(ast, {
         compatibility: true,
       });
       if (!matcher.ok) throw new Error(matcher.reason);
-      const plan: any = renderQxRejectScript(ast, {
+      const plan = renderQxRejectScript(ast, {
         conditionMode: "external-exact",
         stamp: ctx.stamp,
         category: ctx.category,
@@ -5038,7 +5112,7 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
         section: "rewrite",
         line:
           matcher.prefix +
-          plan.qxAction +
+          plan!.qxAction +
           " " +
           qxRewriteRawBase(ctx) +
           "/Script/" +
@@ -5046,21 +5120,21 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
           "/" +
           filename,
       };
-    } catch (error: any) {
+    } catch (error) {
       return rewriteReview(
         source,
         String(error?.message || error).split("\n")[0],
       );
     }
   }
-  const complex: any = planComplexRewrite(ast, "qx", {
+  const complex = planComplexRewrite(ast, "qx", {
     ...ctx,
     sourceLine: source,
     argumentRefs,
   });
   if (complex.ok)
     return {
-      section: complex.section,
+      section: complex.section!,
       line: complex.line,
       lines: complex.lines,
     };
@@ -5083,10 +5157,10 @@ export function planQxRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptions 
 // Surge Rewrite target planner
 // Author: chance
 // Category: Converter / Rewrite / Surge
-function surgeRewriteSourceLine(ir: any, ctx: any) {
+function surgeRewriteSourceLine(ir: RewriteSemanticIr, ctx: RewritePlannerOptions) {
   return String(ctx.sourceLine || ir?.source || "").trim();
 }
-function surgeRewriteRawBase(ctx: any) {
+function surgeRewriteRawBase(ctx: RewritePlannerOptions) {
   const base = String(ctx.rawBase || "").replace(/\/$/, "");
   if (!base)
     throw new Error(
@@ -5101,13 +5175,13 @@ function ensureSurgeRewriteHandlers() {
   registerComplexRewriteHandler({
     id: "surge-complex-body-pipeline-script",
     targets: ["surge"],
-    match: (_ast: any, info: any): any =>
-      info.families.includes("mock-pipeline") &&
-      (info.families.includes("body-pipeline") ||
-        info.families.includes("json-pipeline")),
-    plan: (ast: any, _target: any, ctx: any) => {
+    match: (_ast: RewriteDeclaration, info: ReturnType<typeof classifyComplexRewrite>) =>
+      info.families!.includes("mock-pipeline") &&
+      (info.families!.includes("body-pipeline") ||
+        info.families!.includes("json-pipeline")),
+    plan: (ast: RewriteDeclaration, _target: string, ctx: RewritePlannerOptions) => {
       try {
-        const plan: any = renderMixedRewriteScript(ast, {
+        const plan = renderMixedRewriteScript(ast, {
           target: "surge",
           stamp: ctx.stamp,
           category: ctx.category,
@@ -5145,7 +5219,7 @@ function ensureSurgeRewriteHandlers() {
             (plan.fullHeaderMode ? ",full-header-mode=true" : "") +
             (payload.value ? ",argument=" + payload.value : ""),
         };
-      } catch (error: any) {
+      } catch (error) {
         return {
           ok: false,
           terminal: true,
@@ -5168,13 +5242,13 @@ export function planSurgeRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptio
     );
   }
   ensureSurgeRewriteHandlers();
-  const source: any = surgeRewriteSourceLine(ir, ctx);
-  const ast: any = rewriteIrDeclaration(ir);
-  const singleOp: any = singleRewriteOperation(ir);
-  const argumentRefs: any = ctx.argumentRefs || [];
-  const nativeJson: any = nativeJsonPriorityPlan(ast, "surge");
+  const source = surgeRewriteSourceLine(ir, ctx);
+  const ast = rewriteIrDeclaration(ir);
+  const singleOp = singleRewriteOperation(ir);
+  const argumentRefs = ctx.argumentRefs || [];
+  const nativeJson = nativeJsonPriorityPlan(ast, "surge");
   if (nativeJson) return nativeJson;
-  const nativeJq: any = nativeJqPriorityPlan(ast, "surge");
+  const nativeJq = nativeJqPriorityPlan(ast, "surge");
   if (nativeJq)
     return nativeJq.ok
       ? {
@@ -5200,14 +5274,14 @@ export function planSurgeRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptio
   }
   if (
     ir.operations.some(
-      (op: any) =>
+      (op) =>
         op.kind === "mock" &&
         op.phase === "response" &&
         op.operation === "file",
     )
   ) {
     try {
-      const mapped: any = surgeMockFilePlan(ast, {
+      const mapped = surgeMockFilePlan(ast, {
         pluginSourceUrl: ctx.sourceUrl,
         materialized: ctx.mockFiles?.get(source) || null,
         publication: ctx,
@@ -5224,7 +5298,7 @@ export function planSurgeRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptio
   }
   if (singleOp?.kind === "mock" && singleOp.phase === "request") {
     try {
-      const plan: any = renderSurgeRequestMockScript(ast, {
+      const plan = renderSurgeRequestMockScript(ast, {
         materialized:
           singleOp.operation === "file"
             ? ctx.mockFiles?.get(source) || null
@@ -5258,7 +5332,7 @@ export function planSurgeRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptio
           ",requires-body=true" +
           (plan.binaryBodyMode ? ",binary-body-mode=true" : ""),
       };
-    } catch (error: any) {
+    } catch (error) {
       return rewriteReview(
         source,
         String(error?.message || error).split("\n")[0],
@@ -5270,7 +5344,7 @@ export function planSurgeRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptio
     ["redirect", "url.replace"].includes(ast.actions[0]?.name)
   ) {
     try {
-      const mapped: any = surgeRedirectRewritePlan(ast, {
+      const mapped = surgeRedirectRewritePlan(ast, {
         argumentTable: ctx.argumentTable,
       });
       if (mapped.ok)
@@ -5292,7 +5366,7 @@ export function planSurgeRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptio
         surgeRedirectRewritePlan,
         surgeRejectRewritePlan,
       ]) {
-        const mapped: any = mapper(ast);
+        const mapped = mapper(ast);
         if (mapped.ok)
           return {
             section: mapped.section,
@@ -5312,7 +5386,7 @@ export function planSurgeRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptio
     !ast.actions[0].name.endsWith("header.add")
   ) {
     try {
-      const plan: any = renderSingleRewriteMutationScript(ast, {
+      const plan = renderSingleRewriteMutationScript(ast, {
         target: "surge",
         stamp: ctx.stamp,
         category: ctx.category,
@@ -5348,21 +5422,21 @@ export function planSurgeRewrite(ir: RewriteSemanticIr, ctx: RewritePlannerOptio
           ",requires-body=true" +
           (payload.value ? ",argument=" + payload.value : ""),
       };
-    } catch (error: any) {
+    } catch (error) {
       return rewriteReview(
         source,
         String(error?.message || error).split("\n")[0],
       );
     }
   }
-  const complex: any = planComplexRewrite(ast, "surge", {
+  const complex = planComplexRewrite(ast, "surge", {
     ...ctx,
     sourceLine: source,
     argumentRefs,
   });
   if (complex.ok)
     return {
-      section: complex.section,
+      section: complex.section!,
       line: complex.line,
       lines: complex.lines,
     };

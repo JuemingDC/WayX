@@ -1,4 +1,4 @@
-import type { ScriptSemanticIr, ScriptV2Ast, LegacyScriptAst, LegacyScriptIr, V2ScriptIr, ScriptPhase, ScriptTrigger, ScriptValue, ScriptArgument, ScriptOption, RewriteCondition, VariableNode, StringNode, Phase, LoonArgumentDeclaration, SurgeArgumentEntry, SurgeArgumentTable } from "../domain/contracts.ts";
+import type { RewriteDeclaration, ConversionTarget, ScriptSemanticIr, ScriptV2Ast, LegacyScriptAst, LegacyScriptIr, V2ScriptIr, ScriptPhase, ScriptTrigger, ScriptValue, ScriptArgument, ScriptOption, RewriteCondition, VariableNode, StringNode, Phase, LoonArgumentDeclaration, SurgeArgumentEntry, SurgeArgumentTable } from "../domain/contracts.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript parser layer; preserve source behavior.
 // Consolidated: 2026-10-03
 // Author: chance
@@ -23,7 +23,7 @@ import {
 // Loon [Argument] parser and Surge module parameter conversion
 // Author: chance
 // Category: Converter / Argument / Surge Module
-function unquote(s: any) {
+function unquote(s: string) {
   const v = String(s ?? "").trim();
   if (
     (v.startsWith('"') && v.endsWith('"')) ||
@@ -71,13 +71,13 @@ export function parseLoonArguments(lines: string[] = []): LoonArgumentDeclaratio
   }
   return args;
 }
-function surgeArgumentName(id: any) {
+function surgeArgumentName(id: string) {
   const raw = String(id || "");
   const safe = raw.replace(/[^A-Za-z0-9_]/g, "_");
   if (!safe || !/^[A-Za-z_]/.test(safe)) return "_" + safe;
   return safe;
 }
-function metadataDefaultValue(value: any, id: any) {
+function metadataDefaultValue(value: unknown, id: string) {
   const text = String(value ?? "");
   if (/[\r\n,]/.test(text)) {
     throw new Error(
@@ -196,27 +196,51 @@ function validatePluginObjectRefs(refs: string[]) {
     seen.add(id);
   }
 }
+// Modified: 2026-11-28 (chance). Share the source declaration and binding types across both target planners.
+type V2ScriptDeclaration = ScriptV2Ast | V2ScriptIr;
+type ArgumentIds = ReadonlySet<string> | readonly string[];
+interface ScriptBindingOptions {
+  argumentIds?: ArgumentIds | null;
+  argumentTable?: SurgeArgumentTable | null;
+}
+interface ScriptPlannerOptions extends ScriptBindingOptions {
+  scriptUrl?: string;
+  sourceText?: string;
+  name?: string;
+}
+interface ArgumentUse {
+  section: "Rewrite" | "Script";
+  kind: string;
+  line: string;
+  option?: string;
+}
+interface ArgumentUsageSources {
+  argumentLines?: string[];
+  rewriteLines?: string[];
+  scriptLines?: string[];
+  ruleLines?: string[];
+}
 function scriptObjectBindings(
-  ast: any,
-  { argumentIds = null, argumentTable = null }: any = {},
-): any {
-  const refs: any =
-    ast.sourceSyntax === "legacy"
-      ? parseLegacyLoonPluginObjectRefs(ast.argument)
-      : ast.script?.argument?.type === "plugin-object"
-        ? ast.script.argument.items.map((item: any): any => item.name)
+  ast: ScriptV2Ast | ScriptSemanticIr,
+  { argumentIds = null, argumentTable = null }: ScriptBindingOptions = {},
+) {
+  const refs =
+    (ast as ScriptSemanticIr).sourceSyntax === "legacy"
+      ? parseLegacyLoonPluginObjectRefs((ast as LegacyScriptIr).argument)
+      : (ast as V2ScriptDeclaration).script?.argument?.type === "plugin-object"
+        ? ((ast as V2ScriptDeclaration).script.argument as Extract<ScriptArgument, { type: "plugin-object" }>).items.map((item) => item.name)
         : null;
   if (refs === null) return { ok: true };
   try {
     validatePluginObjectRefs(refs);
-  } catch (error: any) {
+  } catch (error) {
     return unsupported(error.message);
   }
-  const declared: any =
+  const declared =
     argumentIds ?? (argumentTable ? new Set(argumentTable.byId.keys()) : null);
   if (declared !== null) {
-    const ids: any = declared instanceof Set ? declared : new Set(declared);
-    const missing: any = refs.filter((id: any) => !ids.has(id));
+    const ids = declared instanceof Set ? declared : new Set(declared);
+    const missing = refs.filter((id) => !ids.has(id));
     if (missing.length)
       return unsupported(
         "undeclared plugin [Argument] object reference(s): " +
@@ -228,7 +252,7 @@ function scriptObjectBindings(
 export function surgePluginObjectArgument(refs: string[] = [], table: SurgeArgumentTable | null | undefined): { ok: true; value: string } | { ok: false; reason: string } {
   try {
     validatePluginObjectRefs(refs);
-  } catch (error: any) {
+  } catch (error) {
     return { ok: false, reason: error.message };
   }
   const fields: string[] = [];
@@ -560,10 +584,10 @@ function fixedScriptString(
 ): string {
   if (!node || !["string", "raw-string"].includes(node.type))
     throw new Error(label + " must be a fixed string");
-  const parts: any = stringTemplateParts(node);
-  if (parts.some(([kind]: any) => kind === "v"))
+  const parts = stringTemplateParts(node);
+  if (parts.some(([kind]) => kind === "v"))
     throw new Error(label + " does not accept variables or string templates");
-  const value: any = parts.map(([, text]: any): any => text).join("");
+  const value = parts.map(([, text]) => text).join("");
   if (nonempty && !value)
     throw new Error(label + " must be a fixed non-empty string");
   return value;
@@ -688,7 +712,7 @@ export function parseScriptV2(source: unknown): ScriptV2Ast {
     let expression: ScriptValue;
     try {
       expression = parseValue(triggerText.replace(/^cron\s+/, ""));
-    } catch (error: any) {
+    } catch (error) {
       fail(raw, "Invalid Cron Script expression: " + error.message);
     }
     if (!["string", "raw-string", "variable"].includes(expression.type)) {
@@ -719,7 +743,7 @@ export function parseScriptV2(source: unknown): ScriptV2Ast {
     pathValue.value = fixedScriptString(pathValue, "script path", {
       nonempty: true,
     });
-  } catch (error: any) {
+  } catch (error) {
     fail(raw, error.message);
   }
   const argument = callArgs[1] ? parseValue(callArgs[1]) : null;
@@ -745,7 +769,7 @@ export function parseScriptV2(source: unknown): ScriptV2Ast {
   }
   try {
     validateOptions(options, phase);
-  } catch (error: any) {
+  } catch (error) {
     fail(raw, error.message);
   }
   return {
@@ -788,15 +812,15 @@ export function scriptV2DynamicOptionRefs(ast: Pick<ScriptV2Ast | V2ScriptIr, "o
   }
   return out;
 }
-export function scriptV2ToSource(ast: any) {
+export function scriptV2ToSource(ast: ScriptV2Ast) {
   if (!ast || ast.type !== "script")
     throw new TypeError("Expected Script v2 AST");
-  const args: any = [
+  const args = [
     ast.script.pathNode
       ? valueToSource(ast.script.pathNode)
       : JSON.stringify(ast.script.path).replace(/\$\{/g, "\\${"),
   ];
-  const argument: any = ast.script.argument;
+  const argument = ast.script.argument;
   if (argument) {
     if (argument.type === "plugin-object")
       args.push("{" + argument.items.map(valueToSource).join(", ") + "}");
@@ -806,15 +830,15 @@ export function scriptV2ToSource(ast: any) {
     ? " with " +
       ast.options
         .map(
-          (option: any) => option.name + "=" + valueToSource(option.value),
+          (option) => option.name + "=" + valueToSource(option.value),
         )
         .join(", ")
     : "";
-  let triggerSource: any;
+  let triggerSource: string;
   if (ast.phase === "request" || ast.phase === "response") {
-    triggerSource = ast.phase + " if " + conditionToSource(ast.condition);
+    triggerSource = ast.phase + " if " + conditionToSource(ast.condition!);
   } else if (ast.phase === "cron") {
-    triggerSource = "cron " + valueToSource(ast.trigger?.expression);
+    triggerSource = "cron " + valueToSource((ast.trigger as Extract<ScriptTrigger, { type: "cron" }> | null)?.expression!);
   } else if (ast.phase === "network-changed") {
     triggerSource = "network-changed";
   } else if (ast.phase === "generic") {
@@ -1026,27 +1050,27 @@ export function legacyScriptIrDeclaration(ir: ScriptSemanticIr) {
 // WayX Loon plugin [Argument] usage analysis
 // Author: chance
 // Category: Converter / Argument / Semantic Analysis
-function activeLines(lines: any = []): any {
+function activeLines(lines: readonly string[] = []) {
   return lines
-    .map((raw: any) => String(raw ?? "").trim())
+    .map((raw) => String(raw ?? "").trim())
     .filter(
-      (line: any): any =>
+      (line) =>
         line &&
         !line.startsWith("#") &&
         !line.startsWith(";") &&
         !line.startsWith("//"),
     );
 }
-function collectVariableNames(node: any, out: any = new Set()): any {
+function collectVariableNames(node: unknown, out = new Set<string>()): Set<string> {
   if (!node || typeof node !== "object") return out;
   if (Array.isArray(node)) {
     for (const item of node) collectVariableNames(item, out);
     return out;
   }
-  if (node.type === "variable" && typeof node.name === "string")
-    out.add(node.name);
-  if (node.type === "string")
-    for (const [kind, name] of stringTemplateParts(node))
+  if ((node as VariableNode).type === "variable" && typeof (node as VariableNode).name === "string")
+    out.add((node as VariableNode).name);
+  if ((node as StringNode).type === "string")
+    for (const [kind, name] of stringTemplateParts(node as StringNode))
       if (kind === "v") out.add(name);
   for (const [key, value] of Object.entries(node)) {
     if (key === "raw") continue;
@@ -1054,7 +1078,7 @@ function collectVariableNames(node: any, out: any = new Set()): any {
   }
   return out;
 }
-function isBuiltInRuntimeVariable(name: any) {
+function isBuiltInRuntimeVariable(name: unknown) {
   const value = String(name || "");
   return (
     value === "url" ||
@@ -1062,21 +1086,21 @@ function isBuiltInRuntimeVariable(name: any) {
     value.startsWith("response.")
   );
 }
-function declaredRefs(node: any, declaredIds: any): any {
-  const declared: any =
+function declaredRefs(node: unknown, declaredIds: ArgumentIds) {
+  const declared =
     declaredIds instanceof Set ? declaredIds : new Set(declaredIds || []);
   return [...collectVariableNames(node)]
     .filter(
-      (name: any): any => declared.has(name) && !isBuiltInRuntimeVariable(name),
+      (name) => declared.has(name) && !isBuiltInRuntimeVariable(name),
     )
     .sort();
 }
-function pluginObjectRefs(ast: any): any {
+function pluginObjectRefs(ast: V2ScriptDeclaration) {
   return scriptV2ArgumentRefs(ast);
 }
-function addUse(usage: any, id: any, use: any) {
+function addUse(usage: Map<string, ArgumentUse[]>, id: string, use: ArgumentUse) {
   if (!usage.has(id)) usage.set(id, []);
-  const list: any = usage.get(id);
+  const list = usage.get(id)!;
   const key = JSON.stringify([
     use.section,
     use.kind,
@@ -1085,7 +1109,7 @@ function addUse(usage: any, id: any, use: any) {
   ]);
   if (
     !list.some(
-      (item: any) =>
+      (item) =>
         JSON.stringify([
           item.section,
           item.kind,
@@ -1097,7 +1121,7 @@ function addUse(usage: any, id: any, use: any) {
     list.push(use);
   }
 }
-function boundaryValue(line: any, key: string) {
+function boundaryValue(line: unknown, key: string) {
   const re = new RegExp(
     "(?:^|,)\\s*" +
       key +
@@ -1106,21 +1130,21 @@ function boundaryValue(line: any, key: string) {
   );
   return (String(line).match(re) || [])[1]?.trim() || "";
 }
-function legacyRefs(value: string): any {
-  const refs: any = new Set();
+function legacyRefs(value: string) {
+  const refs = new Set<string>();
   const source = String(value || "");
   for (const match of source.matchAll(/\$?\{([A-Za-z_][\w-]*)\}/g))
     refs.add(match[1]);
   return [...refs];
 }
 export function rewriteV2PluginArgumentRefs(
-  ast: any,
-  declaredIds: any = [],
-): any {
-  const declared: any =
+  ast: RewriteDeclaration,
+  declaredIds: ArgumentIds | null = [],
+) {
+  const declared =
     declaredIds instanceof Set ? declaredIds : new Set(declaredIds || []);
-  const conditionRefs: any = declaredRefs(ast?.condition, declared);
-  const actionRefs: any = declaredRefs(ast?.actions, declared);
+  const conditionRefs = declaredRefs(ast?.condition, declared);
+  const actionRefs = declaredRefs(ast?.actions, declared);
   return {
     conditionRefs,
     actionRefs,
@@ -1128,24 +1152,24 @@ export function rewriteV2PluginArgumentRefs(
   };
 }
 export function scriptV2PluginArgumentUsage(
-  ast: any,
-  declaredIds: any = [],
-): any {
-  const declared: any =
+  ast: V2ScriptDeclaration,
+  declaredIds: ArgumentIds | null = [],
+) {
+  const declared =
     declaredIds instanceof Set ? declaredIds : new Set(declaredIds || []);
-  const conditionRefs: any = declaredRefs(ast?.condition, declared);
-  const triggerRefs: any = declaredRefs(ast?.trigger, declared);
-  const objectRefs: any = pluginObjectRefs(ast);
-  const dynamicOptions: any = scriptV2DynamicOptionRefs(ast);
-  const undeclaredObjectRefs: any = objectRefs.filter(
-    (id: any) => !declared.has(id),
+  const conditionRefs = declaredRefs(ast?.condition, declared);
+  const triggerRefs = declaredRefs(ast?.trigger, declared);
+  const objectRefs = pluginObjectRefs(ast);
+  const dynamicOptions = scriptV2DynamicOptionRefs(ast);
+  const undeclaredObjectRefs = objectRefs.filter(
+    (id) => !declared.has(id),
   );
-  const undeclaredOptionRefs: any = dynamicOptions.filter(
-    (ref: any) => !declared.has(ref.id),
+  const undeclaredOptionRefs = dynamicOptions.filter(
+    (ref) => !declared.has(ref.id),
   );
-  const undeclaredTriggerRefs: any = [...collectVariableNames(ast?.trigger)]
+  const undeclaredTriggerRefs = [...collectVariableNames(ast?.trigger)]
     .filter(
-      (id: any) => !declared.has(id) && !isBuiltInRuntimeVariable(id),
+      (id) => !declared.has(id) && !isBuiltInRuntimeVariable(id),
     )
     .sort();
   return {
@@ -1160,10 +1184,10 @@ export function scriptV2PluginArgumentUsage(
       ...new Set([
         ...conditionRefs,
         ...triggerRefs,
-        ...objectRefs.filter((id: any): any => declared.has(id)),
+        ...objectRefs.filter((id) => declared.has(id)),
         ...dynamicOptions
-          .filter((ref: any): any => declared.has(ref.id))
-          .map((ref: any): any => ref.id),
+          .filter((ref) => declared.has(ref.id))
+          .map((ref) => ref.id),
       ]),
     ].sort(),
   };
@@ -1173,22 +1197,22 @@ export function analyzePluginArgumentUsage({
   rewriteLines = [],
   scriptLines = [],
   ruleLines = [],
-}: any = {}): any {
-  const declarations: any = parseLoonArguments(argumentLines);
-  const declaredIds: any = new Set(declarations.map((arg: any): any => arg.id));
-  const usage: any = new Map(declarations.map((arg: any): any => [arg.id, []]));
-  const undeclaredRefs: any = [];
-  const parseErrors: any = [];
+}: ArgumentUsageSources = {}) {
+  const declarations = parseLoonArguments(argumentLines);
+  const declaredIds = new Set(declarations.map((arg) => arg.id));
+  const usage = new Map<string, ArgumentUse[]>(declarations.map((arg) => [arg.id, []]));
+  const undeclaredRefs: (ArgumentUse & { id: string })[] = [];
+  const parseErrors: { section: "Rewrite" | "Script"; line: string; error: string }[] = [];
   for (const line of activeLines(rewriteLines)) {
     if (!isRewriteV2(line) || isScriptV2(line)) continue;
     try {
-      const ast: any = selectRewritePipelineLayer(parseRewriteV2(line));
-      const refs: any = rewriteV2PluginArgumentRefs(ast, declaredIds);
+      const ast = selectRewritePipelineLayer(parseRewriteV2(line));
+      const refs = rewriteV2PluginArgumentRefs(ast, declaredIds);
       for (const id of refs.conditionRefs)
         addUse(usage, id, { section: "Rewrite", kind: "condition", line });
       for (const id of refs.actionRefs)
         addUse(usage, id, { section: "Rewrite", kind: "action", line });
-    } catch (error: any) {
+    } catch (error) {
       parseErrors.push({
         section: "Rewrite",
         line,
@@ -1202,8 +1226,8 @@ export function analyzePluginArgumentUsage({
   ]) {
     if (isScriptV2(line)) {
       try {
-        const ast: any = parseScriptV2(line);
-        const refs: any = scriptV2PluginArgumentUsage(ast, declaredIds);
+        const ast = parseScriptV2(line);
+        const refs = scriptV2PluginArgumentUsage(ast, declaredIds);
         for (const id of refs.conditionRefs)
           addUse(usage, id, { section: "Script", kind: "condition", line });
         for (const id of refs.triggerRefs)
@@ -1242,7 +1266,7 @@ export function analyzePluginArgumentUsage({
               line,
             });
         }
-      } catch (error: any) {
+      } catch (error) {
         parseErrors.push({
           section: "Script",
           line,
@@ -1282,12 +1306,12 @@ export function analyzePluginArgumentUsage({
         });
     }
   }
-  const policyBindings: any = activeLines(ruleLines)
-    .filter((line: any) => /(?:^|,)\s*PROXY\s*(?:,|$)/i.test(line))
-    .map((line: any): any => ({ policy: "PROXY", line }));
+  const policyBindings = activeLines(ruleLines)
+    .filter((line) => /(?:^|,)\s*PROXY\s*(?:,|$)/i.test(line))
+    .map((line) => ({ policy: "PROXY", line }));
   return {
     declarations,
-    arguments: declarations.map((arg: any): any => ({
+    arguments: declarations.map((arg) => ({
       ...arg,
       uses: usage.get(arg.id) || [],
       used: (usage.get(arg.id) || []).length > 0,
@@ -1324,7 +1348,7 @@ export function selectQxScriptAction({
   phase,
   requiresBody = false,
   sourceText = "",
-}: any) {
+}: { phase: string; requiresBody?: boolean; sourceText?: string; scriptUrl?: string }) {
   const p = String(phase)
     .toLowerCase()
     .replace(/^http-/, "");
@@ -1357,42 +1381,42 @@ export function selectQxScriptAction({
 // WayX behavior-first Loon Script v2 target planning
 // Author: chance
 // Category: Converter / Script v2 / Target Mapping
-function unsupported(reason: any): any {
-  return { ok: false, reason };
+function unsupported(reason: string) {
+  return { ok: false as const, reason };
 }
-function scriptUrlCondition(ast: any, target: string = "generic"): any {
+function scriptUrlCondition(ast: V2ScriptDeclaration, target: string = "generic") {
   return simpleUrlRewriteCondition(
     { type: "rewrite", condition: ast.condition },
     { target },
   );
 }
-function fixedOption(ast: any, name: string): any {
-  const value: any = scriptOption(ast, name);
+function fixedOption(ast: V2ScriptDeclaration, name: string) {
+  const value = scriptOption(ast, name);
   if (!value) return null;
   if (["string", "raw-string", "number", "boolean"].includes(value.type))
     return value.value;
   return null;
 }
-function argumentDefault(id: any, table: any): any {
-  const entry: any = table?.byId?.get(String(id));
+function argumentDefault(id: unknown, table: SurgeArgumentTable | null | undefined) {
+  const entry = table?.byId?.get(String(id));
   return entry?.hasDefault ? entry.defaultValue : undefined;
 }
 // Modified: 2026-11-17 (chance). Carry Loon arguments through QX's official
 // remote-script fragment transport; preserve original fragments and typed defaults.
-export function qxScriptArgumentUrl(scriptUrl: any, argument: any, table: any, notes: any, legacy: boolean = false): any {
+export function qxScriptArgumentUrl(scriptUrl: string, argument: ScriptArgument | string | null | undefined, table: SurgeArgumentTable | null | undefined, notes: string[], legacy: boolean = false) {
   if (argument === null || argument === undefined || argument === "") return scriptUrl;
-  let value: any;
-  const refs: any = legacy ? parseLegacyLoonPluginObjectRefs(argument)
-    : argument.type === "plugin-object" ? argument.items.map((item: any) => item.name) : null;
+  let value: string | Record<string, string | number | boolean | undefined>;
+  const refs = legacy ? parseLegacyLoonPluginObjectRefs(argument)
+    : (argument as ScriptArgument).type === "plugin-object" ? (argument as Extract<ScriptArgument, { type: "plugin-object" }>).items.map((item) => item.name) : null;
   if (refs) {
-    if (refs.some((id: any) => !table?.byId?.get(id)?.hasDefault)) {
+    if (refs.some((id) => !table?.byId?.get(id)?.hasDefault)) {
       notes.push("Source Script argument ignored: PluginObject has no declared default for Quantumult X fragment transport.");
       return scriptUrl;
     }
-    const fields: any = [];
+    const fields: [string, string | number | boolean | undefined][] = [];
     for (const id of refs) {
-      const entry: any = table.byId.get(id), raw: any = entry.defaultValue;
-      let decoded: any = raw;
+      const entry = table!.byId.get(id)!, raw = entry.defaultValue;
+      let decoded: string | number | boolean | undefined = raw;
       if (entry.valueType === "number") {
         if (!String(raw).trim() || !Number.isFinite(Number(raw))) {
           notes.push("Source Script argument ignored: invalid numeric PluginObject default.");
@@ -1414,12 +1438,12 @@ export function qxScriptArgumentUrl(scriptUrl: any, argument: any, table: any, n
     const raw = String(argument);
     value = /^["']/.test(raw) ? decodeQuoted(raw) : raw;
   } else {
-    if (!["string", "raw-string"].includes(argument.type) ||
-        (argument.type === "string" && stringTemplateParts(argument).some((part: any) => part[0] === "v"))) {
+    if (!["string", "raw-string"].includes((argument as ScriptArgument).type) ||
+        ((argument as ScriptArgument).type === "string" && stringTemplateParts(argument as ScriptArgument).some((part) => part[0] === "v"))) {
       notes.push("Source Script argument ignored: dynamic String transport has no verified Quantumult X binding.");
       return scriptUrl;
     }
-    value = argument.value;
+    value = (argument as StringNode).value;
   }
   if (!/^https?:\/\//i.test(scriptUrl)) {
     notes.push("Source Script argument ignored: official Quantumult X fragment transport requires a remote HTTP(S) script.");
@@ -1434,8 +1458,8 @@ export function qxScriptArgumentUrl(scriptUrl: any, argument: any, table: any, n
   notes.push("Source Script argument transported through Quantumult X URL fragment _wayx_argument.");
   return scriptUrl + (scriptUrl.includes("#") ? (scriptUrl.endsWith("#") ? "" : "&") : "#") + "_wayx_argument=" + payload;
 }
-function noteQxForcedEnable(ast: any, notes: any) {
-  const enable: any = scriptOption(ast, "enable");
+function noteQxForcedEnable(ast: V2ScriptDeclaration, notes: string[]) {
+  const enable = scriptOption(ast, "enable");
   if (enable?.type === "variable" || enable?.value === false)
     notes.push(
       "Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.",
@@ -1443,10 +1467,10 @@ function noteQxForcedEnable(ast: any, notes: any) {
 }
 // 上游错误 / 转换失败案例：Cron bindings must be effective String
 // parameters before a target emits, disables or omits the task.
-function dynamicScriptCronBinding(ast: any, argumentTable: any): any {
-  const node: any = ast.phase === "cron" ? ast.trigger?.expression : null;
+function dynamicScriptCronBinding(ast: V2ScriptDeclaration, argumentTable: SurgeArgumentTable | null | undefined) {
+  const node = ast.phase === "cron" ? (ast.trigger as Extract<ScriptTrigger, { type: "cron" }> | null)?.expression : null;
   if (node?.type !== "variable") return { ok: true };
-  const entry: any = argumentTable?.byId?.get(node.name);
+  const entry = argumentTable?.byId?.get(node.name);
   if (!entry)
     return unsupported(
       "undeclared plugin [Argument] reference for Cron: " + node.name,
@@ -1477,13 +1501,13 @@ function dynamicScriptCronBinding(ast: any, argumentTable: any): any {
     );
   return { ok: true };
 }
-function qxCronExpression(ast: any, argumentTable: any, notes: any): any {
-  const node: any = ast.trigger?.expression;
+function qxCronExpression(ast: V2ScriptDeclaration, argumentTable: SurgeArgumentTable | null | undefined, notes: string[]) {
+  const node = (ast.trigger as Extract<ScriptTrigger, { type: "cron" }> | null)?.expression;
   if (!node) return unsupported("Cron Script is missing its expression");
   if (node.type === "string" || node.type === "raw-string")
     return { ok: true, value: String(node.value) };
   if (node.type === "variable") {
-    const value: any = argumentDefault(node.name, argumentTable);
+    const value = argumentDefault(node.name, argumentTable);
     if (value === undefined || value === null || String(value).trim() === "") {
       return unsupported(
         "dynamic Cron expression has no plugin default for Quantumult X: " +
@@ -1499,10 +1523,10 @@ function qxCronExpression(ast: any, argumentTable: any, notes: any): any {
   }
   return unsupported("unsupported Cron expression type for Quantumult X");
 }
-function qxTaskOptions(ast: any, notes: any): any {
+function qxTaskOptions(ast: V2ScriptDeclaration, notes: string[]) {
   const parts: string[] = [];
-  const tag: any = fixedOption(ast, "tag");
-  const img: any = fixedOption(ast, "img_url");
+  const tag = fixedOption(ast, "tag");
+  const img = fixedOption(ast, "img_url");
   if (tag !== null && String(tag)) parts.push("tag=" + String(tag));
   if (img !== null && String(img)) {
     if (/^https?:\/\//i.test(String(img))) parts.push("img-url=" + String(img));
@@ -1518,15 +1542,15 @@ function qxTaskOptions(ast: any, notes: any): any {
   return parts;
 }
 function qxNonHttpScriptV2Plan(
-  ast: any,
-  { scriptUrl, argumentTable = null }: any = {},
-): any {
+  ast: V2ScriptDeclaration,
+  { scriptUrl, argumentTable = null }: { scriptUrl?: string; argumentTable?: SurgeArgumentTable | null } = {},
+) {
   const notes: string[] = [];
-  scriptUrl = qxScriptArgumentUrl(scriptUrl, ast.script.argument, argumentTable, notes);
-  const timeout: any = scriptOption(ast, "timeout");
+  scriptUrl = qxScriptArgumentUrl(scriptUrl!, ast.script.argument, argumentTable, notes);
+  const timeout = scriptOption(ast, "timeout");
   if (timeout)
     notes.push("Source Script timeout ignored for Quantumult X task syntax.");
-  const debug: any = scriptOption(ast, "debug");
+  const debug = scriptOption(ast, "debug");
   if (
     debug?.type === "variable" ||
     (debug?.type === "boolean" && debug.value === true)
@@ -1535,11 +1559,11 @@ function qxNonHttpScriptV2Plan(
       "Source Script debug is not a Quantumult X task field and was omitted.",
     );
   }
-  let prefix: any;
+  let prefix: string;
   if (ast.phase === "cron") {
-    const cron: any = qxCronExpression(ast, argumentTable, notes);
+    const cron = qxCronExpression(ast, argumentTable, notes);
     if (!cron.ok) return cron;
-    const fields: any = cron.value.trim().split(/\s+/);
+    const fields = cron.value.trim().split(/\s+/);
     if (![5, 6].includes(fields.length)) {
       return unsupported(
         "Quantumult X task cron requires a 5- or 6-field expression",
@@ -1555,7 +1579,7 @@ function qxNonHttpScriptV2Plan(
       "unsupported non-HTTP Script v2 phase for Quantumult X: " + ast.phase,
     );
   }
-  const options: any = qxTaskOptions(ast, notes);
+  const options = qxTaskOptions(ast, notes);
   return {
     ok: true,
     strategy: "native-task",
@@ -1570,14 +1594,14 @@ function qxNonHttpScriptV2Plan(
   };
 }
 function validateScriptV2Bindings(
-  ast: any,
-  { argumentIds, argumentTable, target }: any,
-): any {
+  ast: V2ScriptDeclaration,
+  { argumentIds, argumentTable, target }: ScriptBindingOptions & { target: ConversionTarget },
+) {
   if (!ast || !["script", "script-semantic-ir"].includes(ast.type))
     return unsupported("expected Script v2 AST");
-  const cron: any = dynamicScriptCronBinding(ast, argumentTable);
+  const cron = dynamicScriptCronBinding(ast, argumentTable);
   if (!cron.ok) return cron;
-  const objects: any = scriptObjectBindings(ast, {
+  const objects = scriptObjectBindings(ast, {
     argumentIds,
     argumentTable,
   });
@@ -1585,15 +1609,15 @@ function validateScriptV2Bindings(
   return dynamicScriptOptionBindings(ast, { argumentTable, target });
 }
 export function qxScriptV2Plan(
-  ast: any,
+  ast: V2ScriptDeclaration,
   {
     scriptUrl = ast?.script?.path,
     sourceText = "",
     argumentIds = null,
     argumentTable = null,
-  }: any = {},
-): any {
-  const bindings: any = validateScriptV2Bindings(ast, {
+  }: ScriptPlannerOptions = {},
+) {
+  const bindings = validateScriptV2Bindings(ast, {
     argumentIds,
     argumentTable,
     target: "qx",
@@ -1613,15 +1637,15 @@ export function qxScriptV2Plan(
   // timeout, debug or binary_body_mode fields. Target planning therefore
   // omits those fields instead of emitting invented QX syntax. Keep
   // requires_body separate: it alone selects the QX header/body action family.
-  const timeout: any = scriptOption(ast, "timeout");
-  const debug: any = scriptOption(ast, "debug");
-  const binaryBodyMode: any = scriptOptionBoolean(
+  const timeout = scriptOption(ast, "timeout");
+  const debug = scriptOption(ast, "debug");
+  const binaryBodyMode = scriptOptionBoolean(
     ast,
     "binary_body_mode",
     false,
   );
   if (argumentIds !== null) {
-    const usage: any = scriptV2PluginArgumentUsage(ast, argumentIds);
+    const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
     if (usage.conditionRefs.length) {
       return unsupported(
         "plugin [Argument] condition cannot be represented by the Quantumult X rewrite declaration: " +
@@ -1630,11 +1654,11 @@ export function qxScriptV2Plan(
     }
   }
   // Modified: 2026-11-05 (chance). QX Script v2 matchers preserve Loon URL flags.
-  const condition: any = scriptUrlCondition(ast, "qx");
+  const condition = scriptUrlCondition(ast, "qx");
   if (!condition.ok) return condition;
-  const notes: any = [...(condition.notes || [])];
+  const notes: string[] = [...(condition.notes || [])];
   noteQxForcedEnable(ast, notes);
-  scriptUrl = qxScriptArgumentUrl(scriptUrl, ast.script.argument, argumentTable, notes);
+  scriptUrl = qxScriptArgumentUrl(scriptUrl!, ast.script.argument, argumentTable, notes);
   const omittedOptions: string[] = [];
   if (binaryBodyMode) omittedOptions.push("binary_body_mode=true");
   if (timeout) omittedOptions.push("timeout");
@@ -1644,7 +1668,7 @@ export function qxScriptV2Plan(
   if (omittedOptions.length) {
     notes.push("QX Script V2 omitted unsupported options: " + omittedOptions.join(", "));
   }
-  const action: any = selectQxScriptAction({
+  const action = selectQxScriptAction({
     phase: ast.phase,
     requiresBody: scriptOptionBoolean(ast, "requires_body", false),
     scriptUrl,
@@ -1665,19 +1689,19 @@ export function qxScriptV2Plan(
     notes,
   };
 }
-function surgeTriggerParams(ast: any, argumentTable: any): any {
+function surgeTriggerParams(ast: V2ScriptDeclaration, argumentTable: SurgeArgumentTable | null | undefined): { ok: true; params: string[] } | { ok: false; reason: string } | null {
   if (ast.phase === "request" || ast.phase === "response") return null;
   if (ast.phase === "generic") return { ok: true, params: ["type=generic"] };
   if (ast.phase === "network-changed")
     return { ok: true, params: ["type=event", "event-name=network-changed"] };
   if (ast.phase === "cron") {
-    const node: any = ast.trigger?.expression;
+    const node = (ast.trigger as Extract<ScriptTrigger, { type: "cron" }> | null)?.expression;
     if (!node) return unsupported("Cron Script is missing its expression");
-    let expression: any;
+    let expression: string;
     if (node.type === "string" || node.type === "raw-string") {
       expression = String(node.value);
     } else if (node.type === "variable") {
-      const placeholder: any = surgeDynamicOptionValue(
+      const placeholder = surgeDynamicOptionValue(
         node.name,
         argumentTable,
       );
@@ -1701,22 +1725,22 @@ function surgeTriggerParams(ast: any, argumentTable: any): any {
 // valid for every Script option. Validate source bindings before lowering or
 // omitting a target field; never coerce the parameter's $argument type.
 function dynamicScriptOptionBindings(
-  ast: any,
-  { argumentTable, target }: any,
-): any {
+  ast: ScriptV2Ast | ScriptSemanticIr,
+  { argumentTable, target }: Pick<ScriptBindingOptions, "argumentTable"> & { target: ConversionTarget },
+) {
   for (const option of ast.options || []) {
-    const name: any = option.name === "enabled" ? "enable" : option.name;
+    const name = option.name === "enabled" ? "enable" : option.name;
     if (!["enable", "debug", "timeout"].includes(name)) continue;
     if (target === "qx") continue; // QX omits timeout/debug and uses the force-enable policy.
-    const value: any = option.value;
-    const id: any =
-      value?.type === "variable"
-        ? value.name
+    const value = option.value;
+    const id =
+      (value as ScriptValue)?.type === "variable"
+        ? (value as VariableNode).name
         : typeof value === "string"
           ? value.match(/^\$?\{([A-Za-z_][\w-]*)\}$/)?.[1]
           : null;
     if (!id) continue;
-    const entry: any = argumentTable?.byId?.get(id);
+    const entry = argumentTable?.byId?.get(id);
     if (!entry)
       return unsupported(
         "undeclared plugin [Argument] reference for " + name + ": " + id,
@@ -1758,25 +1782,25 @@ function dynamicScriptOptionBindings(
   return { ok: true };
 }
 export function surgeScriptV2Plan(
-  ast: any,
+  ast: V2ScriptDeclaration,
   {
     scriptUrl = ast?.script?.path,
     name = "script",
     argumentIds = null,
     argumentTable = null,
-  }: any = {},
-): any {
-  const bindings: any = validateScriptV2Bindings(ast, {
+  }: ScriptPlannerOptions = {},
+) {
+  const bindings = validateScriptV2Bindings(ast, {
     argumentIds,
     argumentTable,
     target: "surge",
   });
   if (!bindings.ok) return bindings;
   if (argumentIds !== null) {
-    const usage: any = scriptV2PluginArgumentUsage(ast, argumentIds);
-    const undeclared: any = [
+    const usage = scriptV2PluginArgumentUsage(ast, argumentIds);
+    const undeclared = [
       ...usage.undeclaredObjectRefs,
-      ...usage.undeclaredOptionRefs.map((ref: any): any => ref.id),
+      ...usage.undeclaredOptionRefs.map((ref) => ref.id),
       ...usage.undeclaredTriggerRefs,
     ];
     if (undeclared.length) {
@@ -1792,11 +1816,11 @@ export function surgeScriptV2Plan(
       );
     }
   }
-  const enable: any = scriptOption(ast, "enable");
+  const enable = scriptOption(ast, "enable");
   if (enable?.type === "boolean" && enable.value === false) {
     return { ok: true, disabled: true, reason: "Loon Script v2 enable=false" };
   }
-  let requirementPrefix: any = null;
+  let requirementPrefix: string | null = null;
   if (enable?.type === "variable") {
     requirementPrefix = surgeEnableRequirement(enable.name, argumentTable);
     if (!requirementPrefix) {
@@ -1806,10 +1830,10 @@ export function surgeScriptV2Plan(
       );
     }
   }
-  let params: any;
-  let notes: any = [];
+  let params: string[];
+  let notes: string[] = [];
   if (ast.phase === "request" || ast.phase === "response") {
-    const condition: any = scriptUrlCondition(ast, "surge");
+    const condition = scriptUrlCondition(ast, "surge");
     if (!condition.ok) return condition;
     notes = condition.notes || [];
     params = [
@@ -1817,9 +1841,9 @@ export function surgeScriptV2Plan(
       "pattern=" + surgeRegexParameter(condition.pattern),
     ];
   } else {
-    const trigger: any = surgeTriggerParams(ast, argumentTable);
-    if (!trigger.ok) return trigger;
-    params = [...trigger.params];
+    const trigger = surgeTriggerParams(ast, argumentTable);
+    if (!trigger!.ok) return trigger!;
+    params = [...trigger!.params];
   }
   params.push("script-path=" + scriptUrl);
   if (scriptOptionBoolean(ast, "requires_body", false)) {
@@ -1827,10 +1851,10 @@ export function surgeScriptV2Plan(
   }
   if (scriptOptionBoolean(ast, "binary_body_mode", false))
     params.push("binary-body-mode=true");
-  const timeout: any = scriptOption(ast, "timeout");
+  const timeout = scriptOption(ast, "timeout");
   if (timeout?.type === "number") params.push("timeout=" + timeout.value);
   else if (timeout?.type === "variable") {
-    const placeholder: any = surgeDynamicOptionValue(
+    const placeholder = surgeDynamicOptionValue(
       timeout.name,
       argumentTable,
     );
@@ -1841,12 +1865,12 @@ export function surgeScriptV2Plan(
       );
     params.push("timeout=" + placeholder);
   }
-  const argument: any = ast.script.argument;
+  const argument = ast.script.argument;
   if (argument?.type === "string" || argument?.type === "raw-string") {
     params.push("argument=" + JSON.stringify(argument.value));
   } else if (argument?.type === "plugin-object") {
-    const encoded: any = surgePluginObjectArgument(
-      argument.items.map((item: any): any => item.name),
+    const encoded = surgePluginObjectArgument(
+      argument.items.map((item) => item.name),
       argumentTable,
     );
     if (encoded.ok) params.push("argument=" + encoded.value);
@@ -1858,10 +1882,10 @@ export function surgeScriptV2Plan(
   } else if (argument) {
     return unsupported("unsupported Loon Script v2 argument form");
   }
-  const debug: any = scriptOption(ast, "debug");
+  const debug = scriptOption(ast, "debug");
   if (debug?.type === "boolean" && debug.value) params.push("debug=true");
   else if (debug?.type === "variable") {
-    const placeholder: any = surgeDynamicOptionValue(debug.name, argumentTable);
+    const placeholder = surgeDynamicOptionValue(debug.name, argumentTable);
     if (!placeholder)
       return unsupported(
         "dynamic debug references undeclared Surge module argument: " +
@@ -1883,7 +1907,7 @@ export function surgeScriptV2Plan(
     usesLineRequirement: Boolean(requirementPrefix),
   };
 }
-export function scriptV2DeclarationGaps(ast: any): any {
+export function scriptV2DeclarationGaps(ast: V2ScriptDeclaration) {
   return {
     argumentRefs: scriptV2ArgumentRefs(ast),
     dynamicOptions: scriptV2DynamicOptionRefs(ast),
@@ -1895,10 +1919,10 @@ export const scriptV2BridgeNeeds = scriptV2DeclarationGaps;
 // Quantumult X Source Script target planner
 // Author: chance
 // Category: Converter / Script / Quantumult X
-export function planQxScript(ir: any, ctx: any = {}): any {
+export function planQxScript(ir: ScriptSemanticIr, ctx: ScriptPlannerOptions = {}) {
   if (!ir || ir.type !== "script-semantic-ir")
     throw new TypeError("Expected Script Semantic IR");
-  let scriptUrl: any = ctx.scriptUrl || ir.script.path;
+  let scriptUrl = ctx.scriptUrl || ir.script.path;
   if (ir.sourceSyntax === "v2") {
     return qxScriptV2Plan(ir, {
       scriptUrl,
@@ -1908,19 +1932,19 @@ export function planQxScript(ir: any, ctx: any = {}): any {
     });
   }
   if (ir.sourceSyntax !== "legacy") {
-    return unsupported("unsupported Script source syntax: " + ir.sourceSyntax);
+    return unsupported("unsupported Script source syntax: " + (ir as { sourceSyntax: string }).sourceSyntax);
   }
-  const objects: any = scriptObjectBindings(ir, ctx);
+  const objects = scriptObjectBindings(ir, ctx);
   if (!objects.ok) return objects;
-  const bindings: any = dynamicScriptOptionBindings(ir, {
+  const bindings = dynamicScriptOptionBindings(ir, {
     argumentTable: ctx.argumentTable,
     target: "qx",
   });
   if (!bindings.ok) return bindings;
-  const sc: any = legacyScriptIrDeclaration(ir);
+  const sc = legacyScriptIrDeclaration(ir);
   if (!sc?.script?.path)
     return unsupported("Legacy Script declaration is missing script-path");
-  const targetPattern: any = normalizeUrlRegexForTarget(sc.pattern);
+  const targetPattern = normalizeUrlRegexForTarget(sc.pattern);
   const enableFixed = sc.enable
     ? String(sc.enable).trim().toLowerCase()
     : "";
@@ -1930,7 +1954,7 @@ export function planQxScript(ir: any, ctx: any = {}): any {
   const debugEnabled =
     Boolean(sc.debug) && !["false", "0"].includes(debugFixed);
   const notes: string[] = [];
-  scriptUrl = qxScriptArgumentUrl(scriptUrl, sc.argument, ctx.argumentTable, notes, true);
+  scriptUrl = qxScriptArgumentUrl(scriptUrl!, sc.argument, ctx.argumentTable, notes, true);
   if (enableDynamic) {
     notes.push(
       "Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.",
@@ -1954,7 +1978,7 @@ export function planQxScript(ir: any, ctx: any = {}): any {
       "Source enable forced to enabled for Quantumult X by user conversion policy; source default/off switch is not carried over.",
     );
   }
-  const action: any = selectQxScriptAction({
+  const action = selectQxScriptAction({
     phase: sc.httpType,
     requiresBody: sc.requiresBody,
     sourceText: ctx.sourceText || "",
@@ -1974,10 +1998,10 @@ export function planQxScript(ir: any, ctx: any = {}): any {
 // Surge Source Script target planner
 // Author: chance
 // Category: Converter / Script / Surge
-export function planSurgeScript(ir: any, ctx: any = {}): any {
+export function planSurgeScript(ir: ScriptSemanticIr, ctx: ScriptPlannerOptions = {}) {
   if (!ir || ir.type !== "script-semantic-ir")
     throw new TypeError("Expected Script Semantic IR");
-  const scriptUrl: any = ctx.scriptUrl || ir.script.path;
+  const scriptUrl = ctx.scriptUrl || ir.script.path;
   if (ir.sourceSyntax === "v2") {
     return surgeScriptV2Plan(ir, {
       scriptUrl,
@@ -1987,19 +2011,19 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
     });
   }
   if (ir.sourceSyntax !== "legacy") {
-    return unsupported("unsupported Script source syntax: " + ir.sourceSyntax);
+    return unsupported("unsupported Script source syntax: " + (ir as { sourceSyntax: string }).sourceSyntax);
   }
-  const objects: any = scriptObjectBindings(ir, ctx);
+  const objects = scriptObjectBindings(ir, ctx);
   if (!objects.ok) return objects;
-  const bindings: any = dynamicScriptOptionBindings(ir, {
+  const bindings = dynamicScriptOptionBindings(ir, {
     argumentTable: ctx.argumentTable,
     target: "surge",
   });
   if (!bindings.ok) return bindings;
-  const sc: any = legacyScriptIrDeclaration(ir);
+  const sc = legacyScriptIrDeclaration(ir);
   if (!sc?.script?.path)
     return unsupported("Legacy Script declaration is missing script-path");
-  const targetPattern: any = normalizeUrlRegexForTarget(sc.pattern);
+  const targetPattern = normalizeUrlRegexForTarget(sc.pattern);
   const enableFixed = sc.enable
     ? String(sc.enable).trim().toLowerCase()
     : "";
@@ -2015,7 +2039,7 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
   let requirementPrefix = "";
   if (enableDynamic) {
     const ref = String(sc.enable).match(/^\$?\{([A-Za-z_][\w-]*)\}$/);
-    const requirement: any = ref
+    const requirement = ref
       ? surgeEnableRequirement(ref[1], ctx.argumentTable)
       : null;
     if (!requirement) {
@@ -2041,7 +2065,7 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
       /^\$?\{([A-Za-z_][\w-]*)\}$/,
     );
     if (timeoutRef) {
-      const placeholder: any = surgeDynamicOptionValue(
+      const placeholder = surgeDynamicOptionValue(
         timeoutRef[1],
         ctx.argumentTable,
       );
@@ -2055,9 +2079,9 @@ export function planSurgeScript(ir: any, ctx: any = {}): any {
     }
   }
   if (sc.argument) {
-    const refs: any = parseLegacyLoonPluginObjectRefs(sc.argument);
+    const refs = parseLegacyLoonPluginObjectRefs(sc.argument);
     if (refs) {
-      const encoded: any = surgePluginObjectArgument(refs, ctx.argumentTable);
+      const encoded = surgePluginObjectArgument(refs, ctx.argumentTable);
       if (encoded.ok) params.push("argument=" + encoded.value);
       else
         notes.push(

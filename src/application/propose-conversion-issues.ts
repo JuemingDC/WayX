@@ -1,3 +1,4 @@
+import type { ParsedPlugin, SourceEntry } from "../domain/contracts.ts";
 import { checkFailureExcerpt } from "../domain/check-failure.ts";
 import { readValidationReport } from "./automation.ts";
 // Modified: 2026-10-30 (chance). Move semantic implementation into the TypeScript application layer; preserve source behavior.
@@ -40,7 +41,45 @@ const repo = process.env.GITHUB_REPOSITORY || "";
 const REVIEW_RE = /^# \[WayX\]\s*([^:]*REVIEW REQUIRED):\s*(.*)$/;
 const ISSUE_RE = /^# \[WayX\]\s*ISSUE REQUIRED \[([^\]]+)\]:\s*(.*)$/;
 const SOURCE_RE = /^# Source declaration:\s*(.*)$/;
-function gh(args: any) {
+// Modified: 2026-11-28 (chance). Describe validated report and issue payloads at their boundaries.
+type SourceLine = { section: string; line: string };
+type IssueRecord = { title: string; state: string; labels?: { name: string }[] };
+type TargetProblem = {
+  fingerprint: string;
+  kind: string;
+  code: string;
+  plugin: SourceEntry;
+  source: string;
+  reasons: string[];
+  locations: { file: string; line: number }[];
+  sourceSection: string | null;
+  declarations: SourceLine[];
+};
+type SyncFailure = {
+  plugin: SourceEntry;
+  stage: string;
+  reason: string;
+  detail?: string;
+  declarationContext?: string;
+  declarations?: SourceLine[];
+};
+type MonitorSource = { id: string; url?: string; repo?: string; ref?: string };
+type MonitorFailure = { source: MonitorSource; stage: string; reason: string; errorType: string; rollbackSucceeded: boolean };
+type SyncReport = { version?: number; failures: SyncFailure[]; publishable?: boolean; convertedPlugins?: string[] };
+type MonitorReport = { version?: number; failures: MonitorFailure[]; complete?: boolean; results?: { source: MonitorSource; succeeded: boolean }[] };
+type ValidationReport = Awaited<ReturnType<typeof readValidationReport>>;
+type ValidationFailure = { stage: string; checks: ValidationReport["stages"][string]["checks"] };
+type QuarantinedRule = { source: string; code: string; declaration: string; reason: string };
+type RuleReport = { version: number; complete: boolean; quarantined: QuarantinedRule[] };
+type RuleProblem = { fingerprint: string; source: string; code: string; items: QuarantinedRule[] };
+type IssueCollectionOptions = {
+  root?: string;
+  catalog?: readonly SourceEntry[] | null;
+  sourceOverrides?: ReadonlyMap<string, string> | null;
+  includeTargets?: boolean;
+  includeSyncFailures?: boolean;
+};
+function gh(args: string[]) {
   return execFileSync("gh", args, {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
@@ -49,39 +88,41 @@ function gh(args: any) {
     maxBuffer: 32 * 1024 * 1024,
   }).trim();
 }
-function fingerprint(parts: any) {
+function fingerprint(parts: readonly unknown[]) {
   return crypto
     .createHash("sha256")
-    .update(parts.map((x: any) => String(x ?? "")).join("\0"))
+    .update(parts.map((x) => String(x ?? "")).join("\0"))
     .digest("hex")
     .slice(0, 16);
 }
-async function readFailureReport(file: string, kind: string): Promise<any> {
-  let report: any;
+async function readFailureReport(file: string, kind: "sync"): Promise<SyncReport>;
+async function readFailureReport(file: string, kind: "monitor"): Promise<MonitorReport>;
+async function readFailureReport(file: string, kind: "sync" | "monitor"): Promise<SyncReport | MonitorReport> {
+  let report: SyncReport | MonitorReport;
   try {
     report = JSON.parse(await fs.readFile(file, "utf8"));
-  } catch (error: any) {
+  } catch (error) {
     if (error?.code === "ENOENT") return { version: 1, failures: [] };
     throw new Error(
       "Cannot read failure report " + file + ": " + error.message,
       { cause: error },
     );
   }
-  const invalid: any = (reason: any) => {
+  const invalid = (reason: string) => {
     throw new Error("Invalid failure report " + file + ": " + reason);
   };
-  const object: any = (value: any) =>
+  const object = (value: unknown) =>
     value !== null && typeof value === "object" && !Array.isArray(value);
-  const text: any = (value: any) =>
+  const text = (value: unknown) =>
     typeof value === "string" && value.trim().length > 0;
   if (
     !object(report) ||
-    !(kind === "sync" ? [1, 2] : [1]).includes(report.version) ||
+    !(kind === "sync" ? [1, 2] : [1]).includes(report.version!) ||
     !Array.isArray(report.failures)
   )
     invalid("expected supported version and failures array");
   for (const [index, failure] of report.failures.entries()) {
-    const owner: any = failure?.[kind === "sync" ? "plugin" : "source"];
+    const owner = (failure as SyncFailure & MonitorFailure)?.[kind === "sync" ? "plugin" : "source"];
     if (
       !object(failure) ||
       !object(owner) ||
@@ -92,23 +133,23 @@ async function readFailureReport(file: string, kind: string): Promise<any> {
       invalid("invalid failures[" + index + "]");
     if (
       kind === "monitor" &&
-      (!text(failure.errorType) ||
-        typeof failure.rollbackSucceeded !== "boolean")
+      (!text((failure as MonitorFailure).errorType) ||
+        typeof (failure as MonitorFailure).rollbackSucceeded !== "boolean")
     )
       invalid("invalid monitor failure details at " + index);
   }
   for (const key of kind === "sync" ? ["publishable"] : ["complete"]) {
-    if (key in report && typeof report[key] !== "boolean")
+    if (key in report && typeof (report as SyncReport & MonitorReport)[key as "publishable" | "complete"] !== "boolean")
       invalid(key + " must be boolean");
   }
-  if (kind === "monitor" && report.complete === true && report.failures.length)
+  if (kind === "monitor" && (report as MonitorReport).complete === true && report.failures.length)
     invalid("complete report contains failures");
   return report;
 }
-async function targetFiles(): Promise<any> {
+async function targetFiles(): Promise<string[]> {
   const out: string[] = [];
   for (const dir of TARGET_DIRS) {
-    let entries: any = [];
+    let entries: import("node:fs").Dirent[] = [];
     try {
       entries = await fs.readdir(dir, { withFileTypes: true });
     } catch {
@@ -122,11 +163,11 @@ async function targetFiles(): Promise<any> {
   }
   return out.sort();
 }
-function extractTargetMarkers(text: string, file: string): any {
+function extractTargetMarkers(text: string, file: string) {
   const lines = String(text ?? "")
     .replace(/\r\n?/g, "\n")
     .split("\n");
-  const out: any = [];
+  const out: { kind: string; code: string; reason: string; source: string; file: string; line: number }[] = [];
   for (let i = 0; i < lines.length; i++) {
     const value = lines[i].trim();
     const review = value.match(REVIEW_RE);
@@ -158,8 +199,8 @@ function extractTargetMarkers(text: string, file: string): any {
   }
   return out;
 }
-function targetMap(catalog: any): any {
-  const map: any = new Map();
+function targetMap(catalog: readonly SourceEntry[]) {
+  const map = new Map<string, SourceEntry>();
   for (const entry of catalog) {
     map.set("Adblock/Quantumult X/" + entry.qx, entry);
     map.set("Adblock/Surge/" + entry.surge, entry);
@@ -167,18 +208,18 @@ function targetMap(catalog: any): any {
   return map;
 }
 async function sourceContextFor(
-  entry: any,
-  declaration: any,
-  { limit = 40 }: any = {},
-): Promise<any> {
+  entry: SourceEntry,
+  declaration: string,
+  { limit = 40 }: { limit?: number } = {},
+): Promise<{ section: string | null; declarations: SourceLine[] }> {
   if (!entry) return { section: null, declarations: [] };
   try {
     const text = await fs.readFile(
       path.join(ROOT, "Resource", "Loon", entry.file),
       "utf8",
     );
-    const parsed: any = parseLoonPlugin(text);
-    const fallback: any = [];
+    const parsed = parseLoonPlugin(text);
+    const fallback: SourceLine[] = [];
     for (const [section, lines] of parsed.sections) {
       if (section === "Argument") continue;
       for (const raw of lines) {
@@ -194,12 +235,12 @@ async function sourceContextFor(
     return { section: null, declarations: [] };
   }
 }
-async function groupedTargetProblems(catalog: any): Promise<any> {
-  const mapping: any = targetMap(catalog);
-  const groups: any = new Map();
+async function groupedTargetProblems(catalog: readonly SourceEntry[]): Promise<TargetProblem[]> {
+  const mapping = targetMap(catalog);
+  const groups = new Map<string, Omit<TargetProblem, "reasons" | "sourceSection" | "declarations"> & { reasons: Set<string> }>();
   for (const file of await targetFiles()) {
     const relative = path.relative(ROOT, file).replaceAll(path.sep, "/");
-    const entry: any = mapping.get(relative);
+    const entry = mapping.get(relative);
     if (!entry) continue;
     const text = await fs.readFile(file, "utf8");
     for (const marker of extractTargetMarkers(text, relative)) {
@@ -220,20 +261,20 @@ async function groupedTargetProblems(catalog: any): Promise<any> {
           locations: [],
         });
       }
-      const group: any = groups.get(key);
+      const group = groups.get(key)!;
       if (marker.reason) group.reasons.add(marker.reason);
       if (
         !group.locations.some(
-          (x: any) => x.file === marker.file && x.line === marker.line,
+          (x) => x.file === marker.file && x.line === marker.line,
         )
       ) {
         group.locations.push({ file: marker.file, line: marker.line });
       }
     }
   }
-  const out: any = [];
+  const out: TargetProblem[] = [];
   for (const group of groups.values()) {
-    const context: any = await sourceContextFor(group.plugin, group.source);
+    const context = await sourceContextFor(group.plugin, group.source);
     out.push({
       ...group,
       reasons: [...group.reasons].sort(),
@@ -241,21 +282,21 @@ async function groupedTargetProblems(catalog: any): Promise<any> {
       declarations: context.declarations,
     });
   }
-  return out.sort((a: any, b: any): any =>
+  return out.sort((a, b) =>
     a.fingerprint.localeCompare(b.fingerprint),
   );
 }
-function ruleBlock(section: any, declarations: any): any {
+function ruleBlock(section: string | null, declarations: readonly SourceLine[] | undefined) {
   if (!declarations?.length) return "(new upstream rule content unavailable)";
   return declarations
-    .map((item: any) => {
+    .map((item) => {
       if (typeof item === "string") return item;
       return "[" + (item.section || section || "Source") + "] " + item.line;
     })
     .join("\n");
 }
-export function targetProblemIssueBody(group: any) {
-  const plugin: any = group.plugin;
+export function targetProblemIssueBody(group: TargetProblem) {
+  const plugin = group.plugin;
   return [
     "## Related plugin",
     "",
@@ -269,7 +310,7 @@ export function targetProblemIssueBody(group: any) {
     "",
     "- Type: " + group.kind,
     "- Code: " + group.code,
-    ...group.reasons.map((reason: any) => "- " + reason),
+    ...group.reasons.map((reason) => "- " + reason),
     "",
     "## Corresponding source rule",
     "",
@@ -280,7 +321,7 @@ export function targetProblemIssueBody(group: any) {
     "## Generated target locations",
     "",
     ...(group.locations.length
-      ? group.locations.map((x: any) => "- " + x.file + ":" + x.line)
+      ? group.locations.map((x) => "- " + x.file + ":" + x.line)
       : ["- (none)"]),
     "",
     "## Automation behavior",
@@ -289,8 +330,8 @@ export function targetProblemIssueBody(group: any) {
     "",
   ].join("\n");
 }
-export function syncFailureIssueBody(failure: any) {
-  const plugin: any = failure.plugin;
+export function syncFailureIssueBody(failure: SyncFailure) {
+  const plugin = failure.plugin;
   return [
     "## Related plugin",
     "",
@@ -323,7 +364,7 @@ export function syncFailureIssueBody(failure: any) {
     "",
   ].join("\n");
 }
-export function targetProblemTitle(group: any) {
+export function targetProblemTitle(group: TargetProblem) {
   return (
     "[conversion-" +
     group.kind +
@@ -335,13 +376,13 @@ export function targetProblemTitle(group: any) {
     group.code
   );
 }
-export function syncFailureTitle(failure: any) {
+export function syncFailureTitle(failure: SyncFailure) {
   const fp = fingerprint([
     failure.plugin.id,
     failure.stage,
     failure.reason,
     ...(failure.declarations || []).map(
-      (x: any) => (x.section || "") + "\0" + x.line,
+      (x) => (x.section || "") + "\0" + x.line,
     ),
   ]);
   return (
@@ -349,16 +390,16 @@ export function syncFailureTitle(failure: any) {
   );
 }
 async function sourceSemanticProblems(
-  catalog: any,
-  { root = ROOT, sourceOverrides = null }: any = {},
-): Promise<any> {
-  const out: any = [];
+  catalog: readonly SourceEntry[],
+  { root = ROOT, sourceOverrides = null }: Pick<IssueCollectionOptions, "root" | "sourceOverrides"> = {},
+): Promise<TargetProblem[]> {
+  const out: TargetProblem[] = [];
   for (const entry of catalog) {
-    let plugin: any;
+    let plugin: ParsedPlugin;
     try {
       plugin = parseLoonPlugin(
         sourceOverrides?.has(entry.id)
-          ? sourceOverrides.get(entry.id)
+          ? sourceOverrides.get(entry.id)!
           : await fs.readFile(
               path.join(root, "Resource/Loon", entry.file),
               "utf8",
@@ -369,7 +410,7 @@ async function sourceSemanticProblems(
     } // Source I/O failures belong to the sync transaction.
     for (const section of ["Rewrite", "Script"])
       for (const raw of plugin.sections.get(section) || []) {
-        const line: any = raw.trim();
+        const line = raw.trim();
         if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
         try {
           if (isScriptV2(line)) parseScriptV2(line);
@@ -378,10 +419,10 @@ async function sourceSemanticProblems(
               selectRewritePipelineLayer(parseRewriteV2(line)),
             );
           else if (section === "Rewrite") {
-            const separator: any = line.search(/\s/);
+            const separator = line.search(/\s/);
             if (separator < 1)
               throw new Error("Malformed Legacy Rewrite declaration");
-            const operation: any = classifyLegacyRewriteAction(
+            const operation = classifyLegacyRewriteAction(
               line
                 .slice(separator)
                 .trim()
@@ -391,13 +432,13 @@ async function sourceSemanticProblems(
               throw new Error(
                 operation.reason || "Unknown Legacy Rewrite action",
               );
-            for (const option of operation.optionNames || [])
+            for (const option of (operation as { optionNames?: string[] }).optionNames || [])
               if (!LOON_LEGACY_MOCK_OPTION_NAMES.has(option))
                 throw new Error("Unknown Legacy mock option: " + option);
           } else if (!parseLegacyScriptLine(line))
             throw new Error("Unregistered Legacy Script declaration or option");
-        } catch (error: any) {
-          const code: any = "unknown-source-syntax";
+        } catch (error) {
+          const code = "unknown-source-syntax";
           out.push({
             fingerprint: fingerprint([entry.id, "unknown", code, line]),
             kind: "unknown",
@@ -416,13 +457,13 @@ async function sourceSemanticProblems(
 }
 export async function validationIssueCandidates(
   root: string = ROOT,
-  stages: any = {},
-): Promise<any> {
+  stages: Record<string, { outcome?: string }> = {},
+) {
   const report = await readValidationReport(root);
-  const failures: any[] = [];
+  const failures: ValidationFailure[] = [];
   for (const [stage, result] of Object.entries(report.stages)) {
     const checks = result.checks.filter(
-      (check: any) => check.status === "failed",
+      (check) => check.status === "failed",
     );
     if (!result.complete)
       checks.push({
@@ -433,11 +474,11 @@ export async function validationIssueCandidates(
       });
     if (checks.length) failures.push({ stage, checks });
   }
-  for (const [stage, result] of Object.entries(stages) as [string, any][])
+  for (const [stage, result] of Object.entries(stages))
     if (
       result.outcome === "failure" &&
       !["issues", "gate", "publish"].includes(stage) &&
-      !failures.some((failure: any) => failure.stage === stage)
+      !failures.some((failure) => failure.stage === stage)
     ) {
       failures.push({
         stage,
@@ -453,7 +494,7 @@ export async function validationIssueCandidates(
     }
   return { validationReport: report, validationFailures: failures };
 }
-export function validationFailureTitle(failure: any) {
+export function validationFailureTitle(failure: ValidationFailure) {
   return (
     "[WayX validation] " +
     failure.stage +
@@ -462,7 +503,7 @@ export function validationFailureTitle(failure: any) {
     "]"
   );
 }
-export function validationFailureIssueBody(failure: any) {
+export function validationFailureIssueBody(failure: ValidationFailure) {
   const run = process.env.GITHUB_RUN_ID,
     server = process.env.GITHUB_SERVER_URL || "https://github.com";
   const lines = [
@@ -498,25 +539,25 @@ export function validationFailureIssueBody(failure: any) {
     lines.push("Additional failures are preserved in the artifact.");
   return lines.join("\n");
 }
-export function recoveredValidationIssues(report: any, issues: any): any {
-  return issues.filter((issue: any): any => {
+export function recoveredValidationIssues(report: ValidationReport, issues: readonly IssueRecord[]) {
+  return issues.filter((issue) => {
     const match = String(issue.title ?? "").match(
       /^\[WayX validation\] (\S+) \[([a-f0-9]{16})\]$/,
     );
-    const result: any = match && report?.stages?.[match[1]];
+    const result = match && report?.stages?.[match[1]];
     return (
       issue.state === "OPEN" &&
       issue.labels?.some(
-        (label: any) => label.name === "validation-failure",
+        (label) => label.name === "validation-failure",
       ) &&
       result?.complete === true &&
       result.checks?.length > 0 &&
-      result.checks.every((check: any) => check.status === "passed")
+      result.checks.every((check) => check.status === "passed")
     );
   });
 }
-export async function ruleIssueCandidates(root: string = ROOT): Promise<any> {
-  let report: any;
+export async function ruleIssueCandidates(root: string = ROOT) {
+  let report: RuleReport;
   try {
     report = JSON.parse(
       await fs.readFile(
@@ -524,7 +565,7 @@ export async function ruleIssueCandidates(root: string = ROOT): Promise<any> {
         "utf8",
       ),
     );
-  } catch (error: any) {
+  } catch (error) {
     if (error.code === "ENOENT") return { ruleReport: null, ruleProblems: [] };
     throw error;
   }
@@ -534,7 +575,7 @@ export async function ruleIssueCandidates(root: string = ROOT): Promise<any> {
     !Array.isArray(report.quarantined)
   )
     throw new Error("Invalid rules-result.json");
-  const groups: any = new Map();
+  const groups = new Map<string, RuleProblem>();
   for (const item of report.quarantined) {
     if (!item.source || !item.code || !item.declaration || !item.reason)
       throw new Error("Invalid quarantined source rule");
@@ -546,16 +587,16 @@ export async function ruleIssueCandidates(root: string = ROOT): Promise<any> {
         code: item.code,
         items: [],
       });
-    groups.get(key).items.push(item);
+    groups.get(key)!.items.push(item);
   }
   return { ruleReport: report, ruleProblems: [...groups.values()] };
 }
-export function ruleProblemTitle(group: any) {
+export function ruleProblemTitle(group: RuleProblem) {
   return (
     "[WayX rules:" + group.fingerprint + "] " + group.source + " " + group.code
   );
 }
-export function ruleProblemBody(group: any) {
+export function ruleProblemBody(group: RuleProblem) {
   return [
     "Native rule aggregation quarantined declarations that cannot be emitted without changing matching semantics.",
     "- Source: " + group.source,
@@ -570,16 +611,16 @@ export function ruleProblemBody(group: any) {
   ].join("\n");
 }
 export function recoveredRuleIssues(
-  report: any,
-  problems: any,
-  issues: any,
-): any {
+  report: RuleReport | null,
+  problems: readonly RuleProblem[],
+  issues: readonly IssueRecord[],
+) {
   if (report?.complete !== true) return [];
-  const active: any = new Set(problems.map(ruleProblemTitle));
+  const active = new Set(problems.map(ruleProblemTitle));
   return issues.filter(
-    (issue: any): any =>
+    (issue) =>
       issue.state === "OPEN" &&
-      issue.labels?.some((label: any) => label.name === "rules-review") &&
+      issue.labels?.some((label) => label.name === "rules-review") &&
       /^\[WayX rules:[a-f0-9]{16}\] /.test(issue.title) &&
       !active.has(issue.title),
   );
@@ -590,11 +631,11 @@ export async function collectIssueCandidates({
   sourceOverrides = null,
   includeTargets = true,
   includeSyncFailures = true,
-}: any = {}): Promise<any> {
+}: IssueCollectionOptions = {}) {
   catalog =
     catalog ||
     (await loadLoonSourceCatalog(path.join(root, ".github/sources/loon.json")));
-  const targetProblems: any = includeTargets
+  const targetProblems = includeTargets
     ? await groupedTargetProblems(catalog)
     : [];
   for (const problem of await sourceSemanticProblems(catalog, {
@@ -603,34 +644,34 @@ export async function collectIssueCandidates({
   })) {
     if (
       !targetProblems.some(
-        (group: any) =>
+        (group) =>
           group.plugin.id === problem.plugin.id &&
           group.source === problem.source,
       )
     )
       targetProblems.push(problem);
   }
-  const syncReport: any = includeSyncFailures
+  const syncReport: SyncReport = includeSyncFailures
     ? await readFailureReport(
         path.join(root, ".github/monitor/.runtime/sync-failures.json"),
         "sync",
       )
     : { failures: [] };
-  const syncFailures: any = syncReport.failures;
-  const monitorReport: any = includeSyncFailures
+  const syncFailures = syncReport.failures;
+  const monitorReport: MonitorReport = includeSyncFailures
     ? await readFailureReport(
         path.join(root, ".github/monitor/.runtime/monitor-result.json"),
         "monitor",
       )
     : { failures: [] };
-  const monitorFailures: any = monitorReport.failures;
-  const validation: any = includeSyncFailures
+  const monitorFailures = monitorReport.failures;
+  const validation: { validationReport: ValidationReport; validationFailures: ValidationFailure[] } = includeSyncFailures
     ? await validationIssueCandidates(
         root,
         JSON.parse(process.env.STAGES || "{}"),
       )
     : { validationReport: { version: 1, stages: {} }, validationFailures: [] };
-  const rules: any = includeSyncFailures
+  const rules: { ruleReport: RuleReport | null; ruleProblems: RuleProblem[] } = includeSyncFailures
     ? await ruleIssueCandidates(root)
     : { ruleReport: null, ruleProblems: [] };
   return {
@@ -643,8 +684,8 @@ export async function collectIssueCandidates({
     ...rules,
   };
 }
-export function monitorFailureTitle(failure: any) {
-  const source: any = failure.source;
+export function monitorFailureTitle(failure: MonitorFailure) {
+  const source = failure.source;
   return (
     "[WayX monitor] " +
     source.id +
@@ -659,8 +700,8 @@ export function monitorFailureTitle(failure: any) {
     "]"
   );
 }
-export function monitorFailureIssueBody(failure: any) {
-  const source: any = failure.source;
+export function monitorFailureIssueBody(failure: MonitorFailure) {
+  const source = failure.source;
   return [
     "Upstream monitoring failed; publication remains blocked until a complete run succeeds.",
     "",
@@ -677,7 +718,7 @@ export function monitorFailureIssueBody(failure: any) {
   ].join("\n");
 }
 // Only explicit successful source results can resolve managed monitoring alerts.
-export function recoveredMonitorIssues(report: any, issues: any): any {
+export function recoveredMonitorIssues(report: MonitorReport, issues: readonly IssueRecord[]) {
   if (
     report?.complete !== true ||
     !Array.isArray(report.failures) ||
@@ -685,27 +726,27 @@ export function recoveredMonitorIssues(report: any, issues: any): any {
     !Array.isArray(report.results)
   )
     return [];
-  const recovered: any = new Set(
+  const recovered = new Set(
     report.results
       .filter(
-        (result: any) =>
+        (result) =>
           result?.succeeded === true && typeof result.source?.id === "string",
       )
-      .map((result: any): any => result.source.id),
+      .map((result) => result.source.id),
   );
-  const failed: any = new Set(
+  const failed = new Set(
     report.results
-      .filter((result: any) => result?.succeeded !== true)
-      .map((result: any): any => result?.source?.id),
+      .filter((result) => result?.succeeded !== true)
+      .map((result) => result?.source?.id),
   );
-  return issues.filter((issue: any): any => {
+  return issues.filter((issue) => {
     const match = String(issue.title ?? "").match(
       /^\[WayX monitor\] (\S+) \[([a-f0-9]{16})\]$/,
     );
     return (
       issue.state === "OPEN" &&
       issue.labels?.some(
-        (label: any) => label.name === "upstream-monitor-failure",
+        (label) => label.name === "upstream-monitor-failure",
       ) &&
       match &&
       recovered.has(match[1]) &&
@@ -714,21 +755,21 @@ export function recoveredMonitorIssues(report: any, issues: any): any {
   });
 }
 export function recoveredConversionIssues(
-  { syncReport, targetProblems }: any,
-  issues: any,
-): any {
+  { syncReport, targetProblems }: { syncReport: SyncReport; targetProblems: readonly TargetProblem[] },
+  issues: readonly IssueRecord[],
+) {
   if (
     syncReport?.publishable !== true ||
     !Array.isArray(syncReport.convertedPlugins) ||
     !Array.isArray(syncReport.failures)
   )
     return [];
-  const healthy: any = new Set(syncReport.convertedPlugins),
-    failed: any = new Set(
-      syncReport.failures.map((failure: any): any => failure.plugin.id),
+  const healthy = new Set(syncReport.convertedPlugins),
+    failed = new Set(
+      syncReport.failures.map((failure) => failure.plugin.id),
     );
   for (const problem of targetProblems) failed.add(problem.plugin.id);
-  return issues.filter((issue: any): any => {
+  return issues.filter((issue) => {
     const match = String(issue.title ?? "").match(
       /^\[conversion-(failure|unknown|review):[a-f0-9]{16}\] (\S+) /,
     );
@@ -736,7 +777,7 @@ export function recoveredConversionIssues(
       issue.state === "OPEN" &&
       match &&
       issue.labels?.some(
-        (label: any) => label.name === "conversion-" + match[1],
+        (label) => label.name === "conversion-" + match[1],
       ) &&
       healthy.has(match[2]) &&
       !failed.has(match[2])
@@ -745,7 +786,7 @@ export function recoveredConversionIssues(
 }
 // Modified: 2026-11-12 (chance). Details remain grouped by problem type; only
 // acquisition failures lower to stable IDs, never one issue per plugin/stage.
-export function buildIssueGroupPlans(context: any, numbers: AdblockNumbers) {
+export function buildIssueGroupPlans(context: Awaited<ReturnType<typeof collectIssueCandidates>>, numbers: AdblockNumbers) {
   const { targetProblems, syncFailures, monitorFailures, validationFailures, ruleProblems,
     syncReport, monitorReport, ruleReport, validationReport } = context;
   const number = (id: string) => {
@@ -753,22 +794,22 @@ export function buildIssueGroupPlans(context: any, numbers: AdblockNumbers) {
     if (!value) throw Error("Missing Adblock number for " + id);
     return value;
   };
-  const fetchFailures = syncFailures.filter((failure: any) => /fetch|download/.test(failure.stage) ||
+  const fetchFailures = syncFailures.filter((failure) => /fetch|download/.test(failure.stage) ||
     /HTTP \d{3} from original source|source timed out|fetch failed|ECONNRESET|ETIMEDOUT|ENOTFOUND|EAI_AGAIN/i.test(failure.reason));
-  const conversions = syncFailures.filter((failure: any) => !fetchFailures.includes(failure));
+  const conversions = syncFailures.filter((failure) => !fetchFailures.includes(failure));
   return groupedIssuePlans({
-    fetch: { entries: fetchFailures.map((failure: any) => number(failure.plugin.id)), complete: syncReport.publishable === true },
+    fetch: { entries: fetchFailures.map((failure) => number(failure.plugin.id)), complete: syncReport.publishable === true },
     conversion: {
       entries: [
-        ...targetProblems.map((group: any) => "## " + number(group.plugin.id) + " · " + group.plugin.id + "\n\n" + targetProblemIssueBody(group)),
-        ...conversions.map((failure: any) => "## " + number(failure.plugin.id) + " · " + failure.plugin.id + "\n\n" + syncFailureIssueBody(failure)),
+        ...targetProblems.map((group) => "## " + number(group.plugin.id) + " · " + group.plugin.id + "\n\n" + targetProblemIssueBody(group)),
+        ...conversions.map((failure) => "## " + number(failure.plugin.id) + " · " + failure.plugin.id + "\n\n" + syncFailureIssueBody(failure)),
       ],
       complete: syncReport.publishable === true,
     },
     rules: { entries: ruleProblems.map(ruleProblemBody), complete: ruleReport?.complete === true },
     monitor: { entries: monitorFailures.map(monitorFailureIssueBody), complete: monitorReport.complete === true },
     validation: { entries: validationFailures.map(validationFailureIssueBody), complete: syncReport.publishable === true && monitorReport.complete === true && ruleReport?.complete === true &&
-      Object.values<any>(validationReport.stages ?? {}).length > 0 && Object.values<any>(validationReport.stages ?? {}).every(stage => stage.complete) },
+      Object.values(validationReport.stages ?? {}).length > 0 && Object.values(validationReport.stages ?? {}).every(stage => stage.complete) },
   });
 }
 async function main() {
@@ -846,8 +887,8 @@ async function main() {
     return;
   }
   if (!repo) throw Error("GITHUB_REPOSITORY is required to reconcile grouped issues");
-  const extra = [...syncFailures.map((failure: any) => failure.plugin), ...targetProblems.map((group: any) => group.plugin)]
-    .map((plugin: any) => ({ id: plugin.id, paths: [] as string[] }));
+  const extra = [...syncFailures.map((failure) => failure.plugin), ...targetProblems.map((group) => group.plugin)]
+    .map((plugin) => ({ id: plugin.id, paths: [] as string[] }));
   const numbers = await ensureAdblockNumbers(ROOT, undefined, extra);
   const plans = buildIssueGroupPlans({ targetProblems, syncFailures, monitorFailures,
     validationFailures, ruleProblems, syncReport, monitorReport, ruleReport, validationReport }, numbers);

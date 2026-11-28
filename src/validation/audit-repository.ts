@@ -120,14 +120,14 @@ for (const file of files) {
       if (/^# Converted:[^\r\n]*\r?\n# Converted by: chance(?:\r?\n|$)/m.test(text))
         throw Error("Legacy conversion timestamp remains; expected Updated");
       validateConversionMetadata(text, entry, target);
-    } catch (error: any) {
+    } catch (error) {
       add(file, 1, "conversion-metadata", error.message);
     }
   }
   if (routing.has(rp)) {
     try {
       validatePublishedRuleList(text, rp);
-    } catch (error: any) {
+    } catch (error) {
       add(file, 1, "rule-format", error.message);
     }
   }
@@ -135,7 +135,7 @@ for (const file of files) {
     try {
       validateQX(text, { id: rp });
       validated.qx++;
-    } catch (error: any) {
+    } catch (error) {
       add(file, 1, "qx-validator", error?.message || error);
     }
     for (let i = 0; i < lines.length; i++) {
@@ -177,7 +177,7 @@ for (const file of files) {
           { uniqueScripts: rp.split("/").length >= 5 },
         );
         validated.surge++;
-      } catch (error: any) {
+      } catch (error) {
         add(file, 1, "surge-adblock-validator", error?.message || error);
       }
     }
@@ -207,13 +207,13 @@ for (const file of files) {
     try {
       parseLoonPlugin(text);
       validated.loon++;
-    } catch (error: any) {
+    } catch (error) {
       add(file, 1, "source-plugin-parser", error?.message || error);
     }
   }
   if (/^src\//.test(rp) && rp !== "src/validation/audit-repository.ts") {
     for (let i = 0; i < lines.length; i++) {
-      const t: any = lines[i];
+      const t = lines[i];
       if (/\[hH\]\[tT\]\[tT\]\[pP\]/.test(t))
         add(file, i + 1, "converter-synthetic-casefold", t.trim());
       if (/Original Loon metadata|# Original Loon:/.test(t))
@@ -259,17 +259,17 @@ if (regexAudit.error || regexAudit.status !== 0) {
     text: regexAudit.error?.message || regexAudit.stderr || regexAudit.stdout,
   });
 } else console.log(regexAudit.stdout.trim());
-const plugins: any = catalog
-  .filter((entry: any) =>
+const plugins = catalog
+  .filter((entry) =>
     [
       "Resource/Loon/" + entry.file,
       qxTargetPath(entry),
       surgeTargetPath(entry),
-    ].every((file: string): any => artifacts[file]),
+    ].every((file: string) => artifacts[file]),
   )
-  .map((entry: any): any => entry.id);
+  .map((entry) => entry.id);
 const opaque = await opaqueEntries(process.cwd());
-for (const entry of catalog.filter((e: any) => opaque[e.id]?.url !== e.source))
+for (const entry of catalog.filter((e) => opaque[e.id]?.url !== e.source))
   for (const file of [
     "Resource/Loon/" + entry.file,
     qxTargetPath(entry),

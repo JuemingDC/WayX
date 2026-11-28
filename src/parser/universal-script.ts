@@ -130,7 +130,7 @@ export function planUniversalAdblockScript(
   const code = emitScriptApiProgram(source, contexts);
   try {
     new vm.Script(code);
-  } catch (e: any) {
+  } catch (e) {
     return {
       status: "blocked" as const,
       code: null,

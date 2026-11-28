@@ -1,4 +1,4 @@
-import type { SourceEntry, ConversionOutput } from "../domain/contracts.ts";
+import type { SourceEntry, SourceSectionItem, ConversionOutput } from "../domain/contracts.ts";
 // Modified: 2026-11-10 (chance). Plugin headers copy upstream dates, independent of conversion stamps.
 import { upstreamUpdateTime } from "../domain/update-metadata.ts";
 // Modified: 2026-11-08 (chance). Emit update timestamps only; no separate conversion time.
@@ -41,8 +41,8 @@ import {
 // WayX target metadata normalization
 // Author: chance
 // Category: Converter / Metadata
-export function parseSourceMetadataHeader(headerLines: any = []): any {
-  const directives: any = new Map();
+export function parseSourceMetadataHeader(headerLines: readonly string[] = []) {
+  const directives = new Map<string, string>();
   const comments: string[] = [];
   for (const raw of headerLines) {
     const line = String(raw ?? "").trimEnd();
@@ -67,11 +67,11 @@ const KNOWN_LABELS = new Map([
   ["system", "Platform"],
   ["system_version", "System Version"],
 ]);
-function targetText(value: any, target: string): any {
+function targetText(value: string, target: string) {
   if (!value) return value;
   return String(value).replace(/\bLoon\b/g, target);
 }
-function metadataComments(directives: any, target: string): any {
+function metadataComments(directives: ReadonlyMap<string, string>, target: string) {
   const out: string[] = [];
   for (const [key, value] of directives) {
     if (!value) continue;
@@ -84,19 +84,19 @@ function metadataComments(directives: any, target: string): any {
     if (key === "system" && /^(?:ios|mac)$/i.test(value) && target === "Surge")
       continue;
     if (key === "category" && target === "Surge") continue;
-    const label: any =
+    const label =
       KNOWN_LABELS.get(key) ||
       key
         .replace(
           /(^|[-_])(\w)/g,
-          (_: any, __: any, c: any) => " " + c.toUpperCase(),
+          (_: string, __: string, c: string) => " " + c.toUpperCase(),
         )
         .trim();
     out.push(`# ${label}: ${value}`);
   }
   return out;
 }
-function preservedComments(lines: any): any {
+function preservedComments(lines: readonly string[]) {
   const out: string[] = [];
   for (const raw of lines) {
     const line = String(raw ?? "").trimEnd();
@@ -110,18 +110,18 @@ function preservedComments(lines: any): any {
   return out;
 }
 export function renderQxSnippetHeader(
-  headerLines: any,
-  entry: any,
-  _stamp: any,
-): any {
+  headerLines: readonly string[],
+  entry: Pick<SourceEntry, "id" | "source" | "category">,
+  _stamp: unknown,
+) {
   const { directives, comments } = parseSourceMetadataHeader(headerLines);
-  const out: any = [];
-  const name: any = directives.get("name") || entry.id;
-  const desc: any = targetText(directives.get("desc") || "", "Quantumult X");
+  const out: string[] = [];
+  const name = directives.get("name") || entry.id;
+  const desc = targetText(directives.get("desc") || "", "Quantumult X");
   out.push(`# Name: ${name}`);
   if (desc) out.push(`# Description: ${desc}`);
   out.push(...metadataComments(directives, "Quantumult X"));
-  const original: any = preservedComments(comments);
+  const original = preservedComments(comments);
   if (original.length) {
     out.push("");
     out.push(...original);
@@ -136,26 +136,26 @@ export function renderQxSnippetHeader(
   return out;
 }
 export function renderSurgeModuleHeader(
-  headerLines: any,
-  entry: any,
-  _stamp: any,
+  headerLines: readonly string[],
+  entry: Pick<SourceEntry, "id" | "source">,
+  _stamp: unknown,
   {
     needsCore20 = false,
     argumentMetadata = [],
     needsLineRequirement = false,
-  }: any = {},
+  }: { needsCore20?: boolean; argumentMetadata?: readonly string[]; needsLineRequirement?: boolean } = {},
 ) {
   const { directives, comments } = parseSourceMetadataHeader(headerLines);
-  const name: any = directives.get("name") || entry.id;
-  const desc: any = targetText(directives.get("desc") || entry.id, "Surge");
+  const name = directives.get("name") || entry.id;
+  const desc = targetText(directives.get("desc") || entry.id, "Surge");
   const out = ["#!name=" + name, "#!desc=" + desc, "#!category=WayX"];
-  const system: any = directives.get("system");
+  const system = directives.get("system");
   if (system && /^mac$/i.test(system)) out.push("#!system=mac");
   if (needsLineRequirement) out.push("#!requirement=CORE_VERSION>=22");
   else if (needsCore20) out.push("#!requirement=CORE_VERSION>=20");
   out.push(...argumentMetadata);
-  const meta: any = metadataComments(directives, "Surge");
-  const original: any = preservedComments(comments);
+  const meta = metadataComments(directives, "Surge");
+  const original = preservedComments(comments);
   if (meta.length || original.length) out.push("");
   out.push(...meta);
   if (meta.length && original.length) out.push("");
@@ -171,9 +171,9 @@ export function renderSurgeModuleHeader(
 // Modified: 2026-11-03 (chance). Target is implicit in client syntax; retain essential conversion metadata.
 // Generated-file policy metadata; target syntax is validated by its sole adapter.
 export function validateConversionMetadata(
-  text: any,
-  entry: any,
-  target: any,
+  text: string,
+  entry: Pick<SourceEntry, "id">,
+  target: string,
 ) {
   const common = [
     /^# (?:Updated|Converted):\s*.+$/m,
@@ -200,8 +200,8 @@ export function validateConversionMetadata(
       throw new Error(`${entry.id}: legacy Surge Category comment`);
     let mitm = false;
     for (const raw of text.split("\n")) {
-      const line: any = raw.trim(),
-        section: any = line.match(/^\[([^\]]+)\]$/);
+      const line: string = raw.trim(),
+        section = line.match(/^\[([^\]]+)\]$/);
       if (section) {
         mitm = section[1] === "MITM";
         continue;
@@ -222,10 +222,10 @@ export function validateConversionMetadata(
 // Target output builders for Quantumult X and Surge
 // Author: chance
 // Category: Converter / Output
-export function compactOutputLines(lines: any = []): any {
-  const out: any = [];
+export function compactOutputLines(lines: readonly (string | null | undefined)[] = []) {
+  const out: string[] = [];
   for (const raw of lines) {
-    const line: any = raw ?? "";
+    const line: string = raw ?? "";
     if (line === "" && out.at(-1) === "") continue;
     out.push(line);
   }
@@ -234,9 +234,9 @@ export function compactOutputLines(lines: any = []): any {
 }
 // Modified: 2026-10-25 (chance). Remove only identical active routing rules;
 // preserve all comments, policy differences and mutation/Script execution counts.
-export function uniqueRoutingLines(lines: any = []): any {
-  const seen: any = new Set();
-  return lines.filter((raw: any) => {
+export function uniqueRoutingLines(lines: readonly (string | null | undefined)[] = []) {
+  const seen = new Set();
+  return lines.filter((raw) => {
     const line = String(raw ?? "").trim();
     if (!line || /^(?:#|;|\/\/)/.test(line)) return true;
     if (seen.has(line)) return false;
@@ -244,8 +244,8 @@ export function uniqueRoutingLines(lines: any = []): any {
     return true;
   });
 }
-export function hasActiveOutputLines(lines: any = []): any {
-  return lines.some((raw: any) => {
+export function hasActiveOutputLines(lines: readonly (string | null | undefined)[] = []) {
+  return lines.some((raw) => {
     const line = String(raw ?? "").trim();
     return (
       line &&
@@ -301,8 +301,8 @@ export function qxRewriteOutputDestination(state: QxOutputState, section: string
 // Modified: 2026-10-25 (chance). Every author/app emits one mixed snippet;
 // filter, rewrite and MITM stay together for the single rewrite subscription.
 export function renderQxOutput({ state, headerLines, entry, stamp }: { state: QxOutputState; headerLines: string[]; entry: SourceEntry; stamp: string }): string {
-  const header: any = renderQxSnippetHeader(headerLines, entry, stamp);
-  const lines: any = [
+  const header = renderQxSnippetHeader(headerLines, entry, stamp);
+  const lines = [
     ...header,
     "",
     ...(state.notes.length ? [...state.notes, ""] : []),
@@ -376,7 +376,7 @@ export function appendSurgeOutput(
   dest.push(...lines);
   return true;
 }
-export function surgeRuleOutputDestination(state: SurgeOutputState, section: string) {
+export function surgeRuleOutputDestination(state: SurgeOutputState, section: string | undefined) {
   return surgeOutputDestination(state, section === "map" ? "map" : "rule");
 }
 export function surgeRewriteOutputDestination(state: SurgeOutputState, section: string) {
@@ -394,14 +394,14 @@ export function renderSurgeOutput({
   argumentMetadata = [],
   needsLineRequirement = false,
 }: { state: SurgeOutputState; headerLines: string[]; entry: SourceEntry; stamp: string; argumentMetadata?: string[]; needsLineRequirement?: boolean }): string {
-  const needsCore20: any =
+  const needsCore20 =
     hasActiveOutputLines(state.body) || hasActiveOutputLines(state.map);
-  const header: any = renderSurgeModuleHeader(headerLines, entry, stamp, {
+  const header = renderSurgeModuleHeader(headerLines, entry, stamp, {
     needsCore20,
     argumentMetadata,
     needsLineRequirement,
   });
-  const sections: any = [];
+  const sections: string[] = [];
   if (state.notes.length) sections.push(...state.notes, "");
   for (const [key, title] of SURGE_SECTION_ORDER) {
     if (!state[key].length) continue;
@@ -420,8 +420,8 @@ export function renderSurgeOutput({
 // Author: chance
 // Category: Converter / Comments / Quantumult X
 export function looksLikeCommentedSourceDeclaration(
-  text: any,
-  sectionKind: any,
+  text: string,
+  sectionKind: string,
 ) {
   const value = String(text || "").trim();
   if (!value) return false;
@@ -445,20 +445,20 @@ export function looksLikeCommentedSourceDeclaration(
   return false;
 }
 export function qxInlineNoteCandidate(
-  sectionLines: any,
-  item: any,
-  sectionKind: any,
-): any {
+  sectionLines: readonly string[],
+  item: SourceSectionItem,
+  sectionKind: string,
+) {
   if (
     !item?.line ||
     !Number.isInteger(item.sourceIndex) ||
     item.sourceIndex < 1
   )
     return null;
-  const index: any = item.sourceIndex;
-  const previousRaw: any = sectionLines[index - 1];
+  const index = item.sourceIndex;
+  const previousRaw = sectionLines[index - 1];
   const previous = String(previousRaw ?? "").trim();
-  const note: any = sourceCommentText(previousRaw);
+  const note = sourceCommentText(previousRaw);
   if (
     !previous ||
     note === null ||
@@ -486,15 +486,15 @@ export function attachQxInlineNote({
   sectionKind,
   lines,
   eligible = true,
-}: any): any {
-  const output: any = (lines || []).filter(
-    (line: any) =>
+}: { sectionLines: readonly string[]; item: SourceSectionItem; sectionKind: string; lines?: readonly (string | null | undefined)[]; eligible?: boolean }) {
+  const output = (lines || []).filter(
+    (line) =>
       line !== undefined && line !== null && String(line).length,
-  );
-  const candidate: any = eligible
+  ) as string[];
+  const candidate = eligible
     ? qxInlineNoteCandidate(sectionLines, item, sectionKind)
     : null;
-  const singleActive: any =
+  const singleActive =
     candidate &&
     output.length === 1 &&
     !String(output[0]).includes("\n") &&
@@ -502,7 +502,7 @@ export function attachQxInlineNote({
   if (!singleActive) {
     return { comments: cleanSourceComments(item.comments), lines: output };
   }
-  const remaining: any = [...item.comments];
+  const remaining = [...item.comments];
   if (remaining.length && remaining.at(-1) === candidate.raw) remaining.pop();
   return {
     comments: cleanSourceComments(remaining),
@@ -513,7 +513,7 @@ export function attachQxInlineNote({
 // Quantumult X snippet validator
 // Author: chance
 // Category: Converter / Quantumult X / Validation
-function stripQxLeadingNote(line: any, entry: any) {
+function stripQxLeadingNote(line: string, entry: Pick<SourceEntry, "id">) {
   const text = String(line ?? "").trim();
   if (!text.startsWith("{#")) return { line: text, note: null };
   const match = text.match(/^\{#\s*(.*?)\s*#\}\s+(.+)$/);
@@ -524,7 +524,7 @@ function stripQxLeadingNote(line: any, entry: any) {
   }
   return { line: match[2].trim(), note: match[1].trim() };
 }
-function splitQxRewriteLine(line: any): any {
+function splitQxRewriteLine(line: string) {
   const withHeaders = String(line).match(
     /^(\S+)\s+(.+?)\s+url-and-header\s+(.+)$/,
   );
@@ -548,18 +548,18 @@ function splitQxRewriteLine(line: any): any {
   return null;
 }
 function targetRegex(
-  pattern: any,
-  entry: any,
+  pattern: unknown,
+  entry: Pick<SourceEntry, "id">,
   target: string,
   token: boolean = true,
 ) {
   validateTargetRegex(pattern, entry.id + ": " + target, { token });
 }
-function validateQxRewriteAction(action: any, line: any, entry: any) {
+function validateQxRewriteAction(action: string, line: string, entry: Pick<SourceEntry, "id">) {
   if (QX_WAYX_REJECT_ACTIONS.has(action)) return;
   if (/^(?:302|307)\s+\S+$/.test(action)) return;
   if (/^jsonjq-(?:request|response)-body\s+'.+'$/.test(action)) return;
-  const replacement: any = action.match(
+  const replacement = action.match(
     /^(request-body|response-body|request-header|response-header)\s+(.+?)\s+\1\s+.+$/,
   );
   if (replacement) {
@@ -571,11 +571,11 @@ function validateQxRewriteAction(action: any, line: any, entry: any) {
     );
     return;
   }
-  const echo: any = action.match(
+  const echo = action.match(
     /^echo-response\s+(.+)\s+echo-response\s+(\S+)$/,
   );
   if (echo) {
-    const resourcePath: any = echo[2];
+    const resourcePath = echo[2];
     if (
       /^[A-Za-z][A-Za-z0-9+.-]*:/.test(resourcePath) ||
       resourcePath.startsWith("/") ||
@@ -587,7 +587,7 @@ function validateQxRewriteAction(action: any, line: any, entry: any) {
     }
     return;
   }
-  const script: any = action.match(/^(script-[a-z-]+)\s+(\S+)$/);
+  const script = action.match(/^(script-[a-z-]+)\s+(\S+)$/);
   if (script && QX_WAYX_SCRIPT_ACTIONS.has(script[1])) return;
   const codepoints = [...String(action)]
     .map((ch: string) => ch.codePointAt(0)!.toString(16))
@@ -596,7 +596,7 @@ function validateQxRewriteAction(action: any, line: any, entry: any) {
     `${entry.id}: unverified/unsupported Quantumult X rewrite action: ${action}; codepoints=${codepoints}; line: ${line}`,
   );
 }
-function validateQxTaskLine(line: any, entry: any) {
+function validateQxTaskLine(line: string, entry: Pick<SourceEntry, "id">) {
   const source = String(line).trim();
   const comma = source.indexOf(",");
   const declaration = (
@@ -609,9 +609,9 @@ function validateQxTaskLine(line: any, entry: any) {
   if (!event) {
     const tokens = declaration.split(/\s+/);
     if (tokens.length < 6) return false;
-    const scriptUrl: any = tokens.at(-1);
-    const cron: any = tokens.slice(0, -1);
-    if (![5, 6].includes(cron.length) || !/^https?:\/\/\S+$/i.test(scriptUrl))
+    const scriptUrl = tokens.at(-1);
+    const cron = tokens.slice(0, -1);
+    if (![5, 6].includes(cron.length) || !/^https?:\/\/\S+$/i.test(scriptUrl!))
       return false;
   }
   if (!optionText) return true;
@@ -640,15 +640,15 @@ function validateQxTaskLine(line: any, entry: any) {
   return true;
 }
 function validateQxExecutableLine(
-  line: any,
-  entry: any,
-  section: any = null,
+  line: string,
+  entry: Pick<SourceEntry, "id">,
+  section: string | null = null,
 ) {
-  const noted: any = stripQxLeadingNote(line, entry);
+  const noted = stripQxLeadingNote(line, entry);
   line = noted.line;
   // Modified: 2026-11-12 (chance). URL regexes may begin with query_key=;
   // a parsed rewrite takes precedence over MITM assignment detection.
-  const rewrite: any = splitQxRewriteLine(line);
+  const rewrite = splitQxRewriteLine(line);
   if (noted.note && !rewrite && /^([A-Za-z0-9_-]+)\s*=/.test(line)) {
     throw new Error(
       `${entry.id}: Quantumult X leading notes are only valid on filter/rewrite rules: ${line}`,
@@ -660,7 +660,7 @@ function validateQxExecutableLine(
       `${entry.id}: malformed/unverified Quantumult X task line: ${line}`,
     );
   }
-  const mitm: any = !rewrite && line.match(/^([A-Za-z0-9_-]+)\s*=/);
+  const mitm = !rewrite && line.match(/^([A-Za-z0-9_-]+)\s*=/);
   if (mitm) {
     if (section && section !== "mitm")
       throw new Error(
@@ -699,19 +699,19 @@ function validateQxExecutableLine(
     validateQxRewriteAction(rewrite.action, line, entry);
     return;
   }
-  const comma: any = line.indexOf(",");
+  const comma = line.indexOf(",");
   if (comma > 0) {
     if (section && section !== "filter_local")
       throw new Error(
         entry.id + ": QX filter outside filter_local section: " + line,
       );
-    const type: any = line.slice(0, comma).trim().toLowerCase();
+    const type = line.slice(0, comma).trim().toLowerCase();
     if (!QX_WAYX_FILTER_TYPES.has(type)) {
       throw new Error(
         `${entry.id}: unverified/unsupported Quantumult X filter type: ${type}`,
       );
     }
-    const fields: any = line.split(",").map((part: any): any => part.trim());
+    const fields = line.split(",").map((part) => part.trim());
     if (fields.length < 3 || !fields[1] || !fields[2]) {
       throw new Error(
         `${entry.id}: malformed Quantumult X filter line: ${line}`,
@@ -719,7 +719,7 @@ function validateQxExecutableLine(
     }
     if (
       ["ip-cidr", "ip6-cidr", "geoip", "ip-asn"].includes(type) &&
-      fields.slice(3).some((x: any) => x.toLowerCase() === "no-resolve")
+      fields.slice(3).some((x) => x.toLowerCase() === "no-resolve")
     ) {
       throw new Error(
         `${entry.id}: Quantumult X IP-class rules must remove no-resolve`,
@@ -731,18 +731,18 @@ function validateQxExecutableLine(
     `${entry.id}: unclassified active Quantumult X line: ${line}`,
   );
 }
-export function validateQX(text: any, entry: any) {
-  const activeMetadata: any = text
+export function validateQX(text: string, entry: Pick<SourceEntry, "id">) {
+  const activeMetadata = text
     .split("\n")
-    .filter((line: any) => /^#!(?!source=)/.test(line.trim()));
+    .filter((line: string) => /^#!(?!source=)/.test(line.trim()));
   if (activeMetadata.length) {
     throw new Error(
       `${entry.id}: Quantumult X snippet metadata must be plain comments, not active #! directives`,
     );
   }
-  const activeSections: any = text
+  const activeSections = text
     .split("\n")
-    .filter((line: any) =>
+    .filter((line: string) =>
       /^\[(filter_local|rewrite_local|task_local|mitm)\]$/i.test(line.trim()),
     );
   if (activeSections.length) {
@@ -750,10 +750,10 @@ export function validateQX(text: any, entry: any) {
       `${entry.id}: Quantumult X section headings must be commented`,
     );
   }
-  let section: any = null;
+  let section: string | null = null;
   for (const raw of text.split("\n")) {
-    const line: any = raw.trim();
-    const sectionMatch: any = line.match(
+    const line: string = raw.trim();
+    const sectionMatch = line.match(
       /^#\s*\[(filter_local|rewrite_local|task_local|mitm)\]\s*$/i,
     );
     if (sectionMatch) {
@@ -780,10 +780,10 @@ export function validateQX(text: any, entry: any) {
     "response-body-json-jq",
     "mock-response-body",
   ]) {
-    const active: any = text
+    const active = text
       .split("\n")
       .find(
-        (line: any): any =>
+        (line: string) =>
           line.trim() &&
           !/^(?:#|;|\/\/)/.test(line.trim()) &&
           line.includes(bad),
@@ -801,8 +801,8 @@ export function validateQX(text: any, entry: any) {
 // WayX Surge Module formatter / validator
 // Author: chance
 // Category: Converter / Surge Module
-export function hasActiveSurgeLines(lines: any = []): any {
-  return lines.some((raw: any) => {
+export function hasActiveSurgeLines(lines: readonly (string | null | undefined)[] = []) {
+  return lines.some((raw) => {
     const line = String(raw).trim();
     return (
       line &&
@@ -814,19 +814,19 @@ export function hasActiveSurgeLines(lines: any = []): any {
 }
 function validateSurgeRuleLine(
   line: string,
-  entry: any,
-  declaredArguments: any = new Set(),
+  entry: Pick<SourceEntry, "id">,
+  declaredArguments: ReadonlySet<string> = new Set(),
   profilePolicies: boolean = false,
 ) {
-  const parts: any = splitTopLevelCsv(line);
-  const typeTree: any = surgeRuleTypesInTree(line);
+  const parts = splitTopLevelCsv(line);
+  const typeTree = surgeRuleTypesInTree(line);
   if (!typeTree.ok) {
     throw new Error(
       `${entry.id}: unsupported Surge rule type/combination in module (${typeTree.reason}): ${line}`,
     );
   }
-  const parsed: any = parseLoonRuleAst(line);
-  walkRuleAst(parsed.ast, (node: any) => {
+  const parsed = parseLoonRuleAst(line);
+  walkRuleAst(parsed.ast!, (node) => {
     if (node.type === "URL-REGEX")
       targetRegex(node.value, entry, "Surge URL-REGEX", false);
   });
@@ -855,8 +855,8 @@ function validateSurgeRuleLine(
 // Native filter/rule-set resources use the same rule-line contracts as modules.
 export function validateQxFilterList(
   text: string,
-  entry: any = { id: "filter-list" },
-  { builtInPoliciesOnly = false }: any = {},
+  entry: Pick<SourceEntry, "id"> = { id: "filter-list" },
+  { builtInPoliciesOnly = false }: { builtInPoliciesOnly?: boolean } = {},
 ) {
   for (const raw of String(text).split("\n")) {
     const line = raw.trim();
@@ -878,18 +878,18 @@ export function validateQxFilterList(
 }
 export function validateSurgeRuleSet(
   text: string,
-  entry: any = { id: "rule-set" },
+  entry: Pick<SourceEntry, "id"> = { id: "rule-set" },
 ) {
   for (const raw of String(text).split("\n")) {
     const line = raw.trim();
     if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
-    const parts: any = splitTopLevelCsv(line);
+    const parts = splitTopLevelCsv(line);
     if (
       parts.length < 2 ||
       parts
         .slice(2)
         .some(
-          (option: any) =>
+          (option) =>
             !["no-resolve", "extended-matching"].includes(option),
         )
     )
@@ -904,9 +904,9 @@ export function validateSurgeRuleSet(
 }
 export function validateSurgeRuleSection(
   text: string,
-  entry: any = { id: "rule-section" },
+  entry: Pick<SourceEntry, "id"> = { id: "rule-section" },
 ) {
-  let section: any = null;
+  let section: string | null = null;
   for (const raw of String(text).split("\n")) {
     const line = raw.trim();
     if (!line || /^(?:#|;|\/\/)/.test(line)) continue;
@@ -924,8 +924,8 @@ export function validateSurgeRuleSection(
     throw new Error(entry.id + ": missing [Rule] section");
 }
 export function validateSurgeModule(
-  text: any,
-  entry: any = { id: "module" },
+  text: string,
+  entry: Pick<SourceEntry, "id"> = { id: "module" },
   { uniqueScripts = false }: { uniqueScripts?: boolean } = {},
 ) {
   const allowedSections = new Set([
@@ -953,12 +953,12 @@ export function validateSurgeModule(
     throw new Error(`${entry.id}: Surge module must declare #!category=WayX`);
   // Modified: 2026-11-05 (chance). Final published modules reject duplicate script identities.
   const scriptNames = new Set<string>();
-  let current: any = null;
+  let current: string | null = null;
   let hasBodyRewrite = false;
   let hasInlineMapLocal = false;
   let hasLineRequirement = false;
-  const declaredArguments: any = new Set();
-  let moduleRequirementCore: any = null;
+  const declaredArguments = new Set<string>();
+  let moduleRequirementCore: number | null = null;
   for (const raw of String(text).split("\n")) {
     let line = raw.trim();
     if (!line) continue;
@@ -1113,12 +1113,12 @@ export function validateSurgeModule(
         throw Error(entry.id + ": duplicate Surge script name: " + scriptName);
       scriptNames.add(scriptName);
       const body = declaration[2];
-      const params: any = parseSurgeParameters(
+      const params = parseSurgeParameters(
         body,
         entry.id + ": Surge Script",
       );
-      const type: any = params.get("type");
-      if (!SURGE_WAYX_SCRIPT_TYPES.has(type))
+      const type = params.get("type");
+      if (!SURGE_WAYX_SCRIPT_TYPES.has(type!))
         throw new Error(
           entry.id + ": unsupported/missing Surge Script type: " + line,
         );
@@ -1160,12 +1160,12 @@ export function validateSurgeModule(
       continue;
     }
   }
-  if ((hasBodyRewrite || hasInlineMapLocal) && !(moduleRequirementCore >= 20)) {
+  if ((hasBodyRewrite || hasInlineMapLocal) && !(moduleRequirementCore! >= 20)) {
     throw new Error(
       `${entry.id}: Body Rewrite / inline Map Local requires #!requirement CORE_VERSION>=20 or newer`,
     );
   }
-  if (hasLineRequirement && !(moduleRequirementCore >= 22)) {
+  if (hasLineRequirement && !(moduleRequirementCore! >= 22)) {
     throw new Error(
       `${entry.id}: parameterized line requirements require #!requirement CORE_VERSION>=22 or newer`,
     );

@@ -18,7 +18,7 @@ export function safePath(root: string, relative: string): string {
 export async function readOptional(file: string): Promise<Buffer | null> {
   try {
     return await fs.readFile(file);
-  } catch (error: any) {
+  } catch (error) {
     if (error.code === "ENOENT") return null;
     throw error;
   }
@@ -79,7 +79,7 @@ async function inspectManagedPath(root: string, file: string, checked: Set<strin
       const info = await fs.lstat(current);
       if (info.isSymbolicLink()) throw Error("Managed path contains a symbolic link: " + current);
       if (info.isDirectory()) checked.add(current);
-    } catch (error: any) {
+    } catch (error) {
       if (error.code === "ENOENT") break;
       throw error;
     }
@@ -139,7 +139,7 @@ export async function listFiles(root: string): Promise<string[]> {
           .split(path.sep)
           .join("/"),
       );
-  } catch (error: any) {
+  } catch (error) {
     if (error.code === "ENOENT") return [];
     throw error;
   }
